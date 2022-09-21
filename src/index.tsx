@@ -6,7 +6,9 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const CourierReactNative = NativeModules.CourierReactNative  ? NativeModules.CourierReactNative  : new Proxy(
+const CourierReactNative = NativeModules.CourierReactNative
+  ? NativeModules.CourierReactNative
+  : new Proxy(
       {},
       {
         get() {
@@ -17,4 +19,12 @@ const CourierReactNative = NativeModules.CourierReactNative  ? NativeModules.Cou
 
 export function multiply(a: number, b: number): Promise<number> {
   return CourierReactNative.multiply(a, b);
+}
+
+interface SignInProps {
+  userId: String;
+  authToken: String;
+}
+export function signIn({ userId, authToken }: SignInProps): Promise<any> {
+  return CourierReactNative.signIn(userId, authToken);
 }

@@ -1,13 +1,17 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from '@trycourier/courier-react-native';
+import { multiply, signIn } from '@trycourier/courier-react-native';
+
+const userId = '';
+const authToken = '';
 
 export default function App() {
   const [result, setResult] = React.useState<number | undefined>();
 
   React.useEffect(() => {
     multiply(3, 7).then(setResult);
+    signIn({ userId, authToken }).then(console.log).catch(console.log);
   }, []);
 
   return (
