@@ -53,6 +53,12 @@ export default function App() {
       });
   };
 
+  const handleSendPush = () => {
+    CourierPush.sendPush({ authKey: authToken, userId })
+      .then(showToast)
+      .catch(showToast);
+  };
+
   const handleGetFcmToken = () => {
     CourierPush.getFcmToken().then(setFcmToken).catch(console.log);
   };
@@ -83,6 +89,7 @@ export default function App() {
       {isSignedIn && (
         <>
           <View>
+            <Button title="Send Push" onPress={handleSendPush} />
             <Button title="Get Fcm Token" onPress={handleGetFcmToken} />
             <Button title="Get User Id" onPress={handleGetUserId} />
           </View>

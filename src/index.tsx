@@ -40,3 +40,18 @@ export function getUserId(): Promise<string> {
 export function signOut(): Promise<string> {
   return CourierReactNative.signOut();
 }
+
+type SendPushProps = {
+  authKey: string;
+  userId: string;
+  title?: string;
+  body?: string;
+};
+export function sendPush({
+  authKey,
+  userId,
+  title = 'This is a title',
+  body = 'This is a messge',
+}: SendPushProps): Promise<string> {
+  return CourierReactNative.sendPush(authKey, userId, title, body);
+}
