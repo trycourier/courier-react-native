@@ -1,11 +1,9 @@
 package com.trycouriercourierreactnative
 
 import android.util.Log
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.Promise
 import com.courier.android.Courier
+import com.facebook.react.bridge.*
+import com.facebook.react.modules.core.DeviceEventManagerModule
 
 class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
@@ -37,12 +35,40 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     )
   }
 
-
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
   @ReactMethod
-  fun multiply(a: Int, b: Int, promise: Promise) {
-    promise.resolve(a * b)
+  fun getFcmToken(promise: Promise) {
+    if (Courier.shared.fcmToken == null) {
+      promise.reject("error", "Fcm token not found")
+    } else {
+      promise.resolve(Courier.shared.fcmToken)
+    }
+  }
+
+  @ReactMethod
+  fun getUserId(promise: Promise) {
+    if (Courier.shared.userId == null) {
+      promise.reject("error", "UserId token not found")
+    } else {
+      promise.resolve(Courier.shared.userId)
+    }
+  }
+
+  @ReactMethod
+  fun signOut(promise: Promise) {
+    Courier.shared.signOut(onSuccess = {
+      promise.resolve("Signout successful")
+    }, onFailure = { e ->
+      println("************* error message ************ $e")
+      promise.reject("error", e)
+    })
+  }
+
+
+  //  TODO: send event to react-native side
+  private fun sendEvent(reactContext: ReactContext, eventName: String, params: Int) {
+    reactContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(eventName, params)
   }
 
 }

@@ -18,13 +18,25 @@ const CourierReactNative = NativeModules.CourierReactNative
     );
 
 export function multiply(a: number, b: number): Promise<number> {
-  return CourierReactNative.multiply(a, b);
+  return Promise.resolve(a * b);
 }
 
 interface SignInProps {
   userId: String;
   authToken: String;
 }
-export function signIn({ userId, authToken }: SignInProps): Promise<any> {
+export function signIn({ userId, authToken }: SignInProps): Promise<string> {
   return CourierReactNative.signIn(userId, authToken);
+}
+
+export function getFcmToken(): Promise<string> {
+  return CourierReactNative.getFcmToken();
+}
+
+export function getUserId(): Promise<string> {
+  return CourierReactNative.getUserId();
+}
+
+export function signOut(): Promise<string> {
+  return CourierReactNative.signOut();
 }
