@@ -1,8 +1,13 @@
 package com.trycouriercourierreactnative
 
+import android.content.Intent
+import android.os.Bundle
+import com.courier.android.Courier
+import com.courier.android.trackPushNotificationClick
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactRootView
+import com.google.firebase.messaging.RemoteMessage
 
 public open class CourierReactNativeActivity: ReactActivity() {
   /**
@@ -26,8 +31,40 @@ public open class CourierReactNativeActivity: ReactActivity() {
     override fun createRootView(): ReactRootView {
       val reactRootView = ReactRootView(context)
       // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED)
+      reactRootView.setIsFabric(false)
       return reactRootView
     }
   }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    Courier.initialize(this)
+
+    // See if there is a pending click event
+    checkIntentForPushNotificationClick(intent)
+
+    // Handle delivered messages on the main thread
+    Courier.getLastDeliveredMessage { message ->
+      postPushNotificationDelivered(message)
+    }
+
+  }
+
+  private fun checkIntentForPushNotificationClick(intent: Intent?) {
+    intent?.trackPushNotificationClick { message ->
+      postPushNotificationClicked(message)
+    }
+  }
+
+  private fun postPushNotificationDelivered(message: RemoteMessage) {
+//    eventChannel?.invokeMethod("pushNotificationDelivered", message.data)
+  }
+
+  private fun postPushNotificationClicked(message: RemoteMessage) {
+//    eventChannel?.invokeMethod("pushNotificationClicked", message.data)
+  }
+
+
+
 }

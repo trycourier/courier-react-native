@@ -10,11 +10,6 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
-
-  init {
-    Courier.initialize(reactContext)
-  }
-
   override fun getName(): String {
     return "CourierReactNative"
   }
