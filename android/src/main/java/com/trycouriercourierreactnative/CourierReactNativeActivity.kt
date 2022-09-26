@@ -7,6 +7,9 @@ import com.courier.android.trackPushNotificationClick
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactRootView
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
 
 public open class CourierReactNativeActivity: ReactActivity() {
@@ -17,6 +20,9 @@ public open class CourierReactNativeActivity: ReactActivity() {
   override fun getMainComponentName(): String? {
     return "main"
   }
+
+  //  TODO: send event to react-native side
+
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. There the RootView is created and
@@ -36,6 +42,18 @@ public open class CourierReactNativeActivity: ReactActivity() {
     }
   }
 
+  private fun sendEvent(eventName: String, params: WritableMap) {
+    val reactContext = getReactInstanceManager().getCurrentReactContext();
+    println("rctContext "+ reactContext);
+    if(reactContext != null){
+      reactContext
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+        .emit(eventName, params)
+    }
+  }
+
+
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -48,7 +66,11 @@ public open class CourierReactNativeActivity: ReactActivity() {
     Courier.getLastDeliveredMessage { message ->
       postPushNotificationDelivered(message)
     }
+  }
 
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    checkIntentForPushNotificationClick(intent);
   }
 
   private fun checkIntentForPushNotificationClick(intent: Intent?) {
@@ -58,13 +80,16 @@ public open class CourierReactNativeActivity: ReactActivity() {
   }
 
   private fun postPushNotificationDelivered(message: RemoteMessage) {
-//    eventChannel?.invokeMethod("pushNotificationDelivered", message.data)
+    val params = Arguments.createMap().apply {
+      putString("pushNotificationDelivered", "delivered data")
+    }
+    sendEvent("pushNotificationDelivered", params)
   }
 
   private fun postPushNotificationClicked(message: RemoteMessage) {
-//    eventChannel?.invokeMethod("pushNotificationClicked", message.data)
+    val params = Arguments.createMap().apply {
+      putString("Clicked", "clicked data")
+    }
+    sendEvent("pushNotificationClicked", params)
   }
-
-
-
 }

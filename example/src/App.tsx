@@ -69,6 +69,8 @@ export default function App() {
 
   useEffect(() => {
     handleSignIn();
+    const unsubscribe = CourierPush.init();
+    return unsubscribe;
   }, []);
 
   if (isLoading)

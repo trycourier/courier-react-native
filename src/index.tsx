@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, DeviceEventEmitter } from 'react-native';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
@@ -51,7 +51,18 @@ export function sendPush({
   authKey,
   userId,
   title = 'This is a title',
-  body = 'This is a messge',
+  body = 'This is a message',
 }: SendPushProps): Promise<string> {
   return CourierReactNative.sendPush(authKey, userId, title, body);
+}
+
+export function init() {
+  DeviceEventEmitter.addListener('pushNotificationClicked', (e) => {
+    console.log('emitted', e);
+  });
+  DeviceEventEmitter.addListener('pushNotificationDelivered', (e) => {
+    console.log('emitted', e);
+  });
+
+  return DeviceEventEmitter.removeAllListeners;
 }
