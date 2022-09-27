@@ -56,13 +56,14 @@ export function sendPush({
   return CourierReactNative.sendPush(authKey, userId, title, body);
 }
 
-export function init() {
-  DeviceEventEmitter.addListener('pushNotificationClicked', (e) => {
-    console.log('emitted', e);
-  });
-  DeviceEventEmitter.addListener('pushNotificationDelivered', (e) => {
-    console.log('emitted', e);
-  });
+export function onNotificationClicked(callback: (message: any) => void) {
+  DeviceEventEmitter.addListener('pushNotificationClicked', callback);
+}
 
-  return DeviceEventEmitter.removeAllListeners;
+export function onNotificationDelivered(callback: (message: any) => void) {
+  DeviceEventEmitter.addListener('pushNotificationDelivered', callback);
+}
+
+export function unsubscribe() {
+  return DeviceEventEmitter.removeAllListeners();
 }
