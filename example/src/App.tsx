@@ -69,13 +69,16 @@ export default function App() {
 
   useEffect(() => {
     handleSignIn();
-    CourierPush.onNotificationDelivered((notification) => {
-      console.log('delivered', notification);
+    const unsubscribe = CourierPush.registerPushNotificationListeners({
+      onNotificationClicked: (notification) => {
+        console.log('clicked', notification);
+      },
+      onNotificationDelivered: (notification) => {
+        console.log('delivered', notification);
+      },
     });
-    CourierPush.onNotificationClicked((notification) => {
-      console.log('clicked', notification);
-    });
-    return CourierPush.unsubscribe;
+
+    return unsubscribe;
   }, []);
 
   if (isLoading)
