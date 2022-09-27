@@ -76,9 +76,11 @@ export default function App() {
     const unsubscribe = CourierPush.registerPushNotificationListeners({
       onNotificationClicked: (notification) => {
         console.log('clicked', notification);
+        showToast('notification clicked');
       },
       onNotificationDelivered: (notification) => {
         console.log('delivered', notification);
+        showToast('notification delivered');
       },
     });
 
