@@ -54,7 +54,10 @@ export default function App() {
   };
 
   const handleSendPush = () => {
-    CourierPush.sendPush({ authKey: authToken, userId })
+    CourierPush.sendPush({
+      authKey: authToken,
+      userId,
+    })
       .then(showToast)
       .catch(showToast);
   };

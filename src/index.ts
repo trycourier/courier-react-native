@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { NativeModules, Platform, DeviceEventEmitter } from 'react-native';
 
 const LINKING_ERROR =
@@ -63,18 +64,17 @@ export function registerPushNotificationListeners({
   onNotificationClicked: (message: any) => void;
   onNotificationDelivered: (message: any) => void;
 }) {
-  DeviceEventEmitter.addListener(
+  const notificationClickedListener = DeviceEventEmitter.addListener(
     'pushNotificationClicked',
     onNotificationClicked
   );
-  DeviceEventEmitter.addListener(
+  const notificationDeliveredListener = DeviceEventEmitter.addListener(
     'pushNotificationDelivered',
     onNotificationDelivered
   );
 
-  return DeviceEventEmitter.removeAllListeners;
-}
-
-export function unsubscribe() {
-  return DeviceEventEmitter.removeAllListeners();
+  return () => {
+    notificationClickedListener.remove();
+    notificationDeliveredListener.remove();
+  };
 }
