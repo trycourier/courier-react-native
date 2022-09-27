@@ -61,13 +61,22 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun sendPush(authKey: String, userId: String, title: String, body:String, promise: Promise){
+  fun sendPush(authKey: String, userId: String, title: String, body:String, providers:  ReadableArray, promise: Promise){
+    val normalizedProviders: MutableList<CourierProvider> = mutableListOf();
+    for(provider in providers.toArrayList()){
+      CourierProvider.values().forEach {
+        if(it.value == provider){
+          normalizedProviders.add(it);
+        }
+      }
+    }
+    
     Courier.shared.sendPush(
       authKey=authKey,
       userId=userId,
       title=title,
       body=body,
-      providers = listOf(CourierProvider.FCM),
+      providers =  normalizedProviders,
       onSuccess = {
         val successMessage = "**************** Push sent**************"
         println(successMessage)

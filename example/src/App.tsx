@@ -57,6 +57,7 @@ export default function App() {
     CourierPush.sendPush({
       authKey: authToken,
       userId,
+      providers: [CourierPush.CourierProvider.FCM],
     })
       .then(showToast)
       .catch(showToast);

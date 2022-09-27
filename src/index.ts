@@ -1,5 +1,9 @@
 /* eslint-disable */
 import { NativeModules, Platform, DeviceEventEmitter } from 'react-native';
+export enum CourierProvider {
+  FCM = 'firebase-fcm',
+  APNS = 'apn',
+}
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
@@ -47,14 +51,16 @@ type SendPushProps = {
   userId: string;
   title?: string;
   body?: string;
+  providers: (CourierProvider.FCM | CourierProvider.APNS)[];
 };
 export function sendPush({
   authKey,
   userId,
   title = 'This is a title',
   body = 'This is a message',
+  providers,
 }: SendPushProps): Promise<string> {
-  return CourierReactNative.sendPush(authKey, userId, title, body);
+  return CourierReactNative.sendPush(authKey, userId, title, body, providers);
 }
 
 export function registerPushNotificationListeners({
