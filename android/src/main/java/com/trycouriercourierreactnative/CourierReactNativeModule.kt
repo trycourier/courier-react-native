@@ -6,6 +6,7 @@ import com.courier.android.Courier
 import com.courier.android.models.CourierProvider
 import com.courier.android.requestNotificationPermission
 import com.courier.android.sendPush
+import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 
@@ -13,6 +14,9 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
+  init {
+    Courier.initialize(reactContext);
+  }
 
   override fun getName(): String {
     return "CourierReactNative"
@@ -79,7 +83,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       val value = providerValue as String
       return@map CourierProvider.valueOf(value)
     }
-    
+
     Courier.shared.sendPush(
       authKey = authKey,
       userId = userId,
@@ -100,13 +104,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun requestNotificationPermission(promise: Promise) {
-    (this.currentActivity as AppCompatActivity?)?.requestNotificationPermission { isGranted ->
-      if (isGranted) {
-        promise.resolve("Permission granted")
-        Courier.initialize(context = reactApplicationContext)
-      } else {
-        promise.reject("error", "Permission notGranted granted")
+    try {
+      val reactActivity = currentActivity as? ReactActivity
+      reactActivity?.requestNotificationPermission { isGranted ->
+        val status = if (isGranted) "authorized" else "denied"
+        promise.resolve(status)
       }
+    } catch (e: Exception) {
+      promise.reject("error", e)
     }
   }
 

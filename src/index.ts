@@ -81,6 +81,8 @@ export function registerPushNotificationListeners({
   };
 }
 
-export function requestNotificationPermission(): Promise<string> {
+export function requestNotificationPermission(): Promise<
+  'authorized' | 'denied'
+> {
   return CourierReactNative.requestNotificationPermission();
 }
