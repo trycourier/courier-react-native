@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { NativeModules, Platform, DeviceEventEmitter } from 'react-native';
 export enum CourierProvider {
-  FCM = 'firebase-fcm',
-  APNS = 'apn',
+  FCM = 'FCM',
+  APNS = 'APNS',
 }
 
 const LINKING_ERROR =
