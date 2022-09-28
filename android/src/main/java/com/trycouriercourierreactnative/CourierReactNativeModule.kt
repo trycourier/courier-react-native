@@ -14,6 +14,10 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
+  companion object {
+    private const val COURIER_ERROR_TAG = "Courier Android SDK Error"
+  }
+
   init {
     Courier.initialize(reactContext);
   }
@@ -36,17 +40,17 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       },
       onFailure = { e ->
         println("************* error message ************ $e")
-        promise.reject("error", e)
+        promise.reject(COURIER_ERROR_TAG, e)
       }
     )
   }
 
   @ReactMethod
   fun getFcmToken(promise: Promise) {
-    if (Courier.shared.fcmToken == null) {
-      promise.reject("error", "Fcm token not found")
-    } else {
+    try{
       promise.resolve(Courier.shared.fcmToken)
+    }catch (e:Exception){
+      promise.reject(e);
     }
   }
 

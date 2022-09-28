@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 
 type PropType = {
-  token: string;
+  token?: string;
   title: string;
 };
 const Token = ({ token, title }: PropType) => {

@@ -22,8 +22,8 @@ const showToast = (toastMessage: string) => {
 export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
-  const [fcmToken, setFcmToken] = useState<string>('');
-  const [signedInUserId, setSignedInUserId] = useState<string>('');
+  const [fcmToken, setFcmToken] = useState<string | undefined>('');
+  const [signedInUserId, setSignedInUserId] = useState<string | undefined>('');
 
   const handleSignIn = () => {
     setIsLoading(true);
@@ -68,7 +68,7 @@ export default function App() {
   };
 
   const handleGetUserId = () => {
-    CourierPush.getFcmToken().then(setSignedInUserId).catch(console.log);
+    CourierPush.getUserId().then(setSignedInUserId).catch(console.log);
   };
 
   useEffect(() => {
@@ -117,15 +117,13 @@ export default function App() {
       )}
       {isSignedIn && (
         <>
-          <View>
-            <Button title="Send Push" onPress={handleSendPush} />
-            <Button title="Get Fcm Token" onPress={handleGetFcmToken} />
-            <Button title="Get User Id" onPress={handleGetUserId} />
-          </View>
-          <Token title="fcm Token" token={fcmToken} />
-          <Token title="User Id" token={signedInUserId} />
+          <Button title="Send Push" onPress={handleSendPush} />
         </>
       )}
+      <Button title="Get Fcm Token" onPress={handleGetFcmToken} />
+      <Button title="Get User Id" onPress={handleGetUserId} />
+      <Token title="fcm Token" token={fcmToken} />
+      <Token title="User Id" token={signedInUserId} />
     </View>
   );
 }

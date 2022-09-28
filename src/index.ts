@@ -30,7 +30,7 @@ export function signIn({ userId, authToken }: SignInProps): Promise<string> {
   return CourierReactNative.signIn(userId, authToken);
 }
 
-export function getFcmToken(): Promise<string> {
+export function getFcmToken(): Promise<string | undefined> {
   return CourierReactNative.getFcmToken();
 }
 
