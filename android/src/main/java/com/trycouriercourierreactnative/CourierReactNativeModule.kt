@@ -47,19 +47,19 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun getFcmToken(promise: Promise) {
-    try{
+    try {
       promise.resolve(Courier.shared.fcmToken)
-    }catch (e:Exception){
-      promise.reject(e);
+    } catch (e: Exception) {
+      promise.reject(COURIER_ERROR_TAG, e);
     }
   }
 
   @ReactMethod
   fun getUserId(promise: Promise) {
-    if (Courier.shared.userId == null) {
-      promise.reject("error", "UserId token not found")
-    } else {
+    try {
       promise.resolve(Courier.shared.userId)
+    } catch (e: Exception) {
+      promise.reject(COURIER_ERROR_TAG, e);
     }
   }
 

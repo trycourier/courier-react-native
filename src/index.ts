@@ -34,7 +34,7 @@ export function getFcmToken(): Promise<string | undefined> {
   return CourierReactNative.getFcmToken();
 }
 
-export function getUserId(): Promise<string> {
+export function getUserId(): Promise<string | undefined> {
   return CourierReactNative.getUserId();
 }
 
