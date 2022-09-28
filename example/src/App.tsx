@@ -11,6 +11,18 @@ import * as CourierPush from '@trycourier/courier-react-native';
 import { userId, authToken } from './config/constants';
 import { Token, Button } from './components';
 
+const addListeners = () =>
+  CourierPush.registerPushNotificationListeners({
+    onNotificationClicked: (notification) => {
+      console.log('clicked', notification);
+      showToast('notification clicked');
+    },
+    onNotificationDelivered: (notification) => {
+      console.log('delivered', notification);
+      showToast('notification delivered');
+    },
+  });
+
 const showToast = (toastMessage: string) => {
   ToastAndroid.showWithGravity(
     toastMessage,
@@ -25,78 +37,85 @@ export default function App() {
   const [fcmToken, setFcmToken] = useState<string | undefined>('');
   const [signedInUserId, setSignedInUserId] = useState<string | undefined>('');
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     setIsLoading(true);
-    CourierPush.signIn({ userId, authToken })
-      .then((res) => {
-        showToast(res);
-        setIsSignedIn(true);
-      })
-      .catch(console.log)
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      const res = await CourierPush.signIn({ userId, authToken });
+      showToast(res);
+      setIsSignedIn(true);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setIsLoading(true);
-    CourierPush.signOut()
-      .then((res) => {
-        showToast(res);
-        setIsSignedIn(false);
-        setFcmToken('');
-        setSignedInUserId('');
-      })
-      .catch(console.log)
-      .finally(() => {
-        setIsLoading(false);
+    try {
+      const res = await CourierPush.signOut();
+      showToast(res);
+      setIsSignedIn(false);
+      setFcmToken('');
+      setSignedInUserId('');
+    } catch (err: any) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendPush = async () => {
+    try {
+      const res = await CourierPush.sendPush({
+        authKey: authToken,
+        userId,
+        providers: [CourierPush.CourierProvider.FCM],
       });
+      showToast(res);
+    } catch (err: any) {
+      showToast(err);
+    }
   };
 
-  const handleSendPush = () => {
-    CourierPush.sendPush({
-      authKey: authToken,
-      userId,
-      providers: [CourierPush.CourierProvider.FCM],
-    })
-      .then(showToast)
-      .catch(showToast);
+  const handleGetFcmToken = async () => {
+    try {
+      const fcmToken = await CourierPush.getFcmToken();
+      setFcmToken(fcmToken);
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
-  const handleGetFcmToken = () => {
-    CourierPush.getFcmToken().then(setFcmToken).catch(console.log);
+  const handleGetUserId = async () => {
+    try {
+      const fcmToken = await CourierPush.getUserId();
+      setSignedInUserId(fcmToken);
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
-  const handleGetUserId = () => {
-    CourierPush.getUserId().then(setSignedInUserId).catch(console.log);
+  const init = async () => {
+    try {
+      const requestStatus = await CourierPush.requestNotificationPermission();
+      showToast(requestStatus);
+      if (requestStatus === 'denied') return;
+      handleSignIn();
+      return addListeners();
+    } catch (e: any) {
+      console.log(e);
+      showToast(e);
+    }
   };
 
   useEffect(() => {
-    let unsubscribe: () => void;
-    CourierPush.requestNotificationPermission()
-      .then((res) => {
-        showToast(res);
-        console.log(res);
-        handleSignIn();
-        unsubscribe = CourierPush.registerPushNotificationListeners({
-          onNotificationClicked: (notification) => {
-            console.log('clicked', notification);
-            showToast('notification clicked');
-          },
-          onNotificationDelivered: (notification) => {
-            console.log('delivered', notification);
-            showToast('notification delivered');
-          },
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        showToast(err);
-      });
+    let unsubscribe: (() => void) | undefined;
+    (async () => {
+      unsubscribe = await init();
+    })();
     return () => {
-      if (typeof unsubscribe === 'function') {
-        unsubscribe();
-      }
+      if (typeof unsubscribe === 'function') unsubscribe();
     };
   }, []);
 
