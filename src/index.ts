@@ -80,3 +80,7 @@ export function registerPushNotificationListeners({
     notificationDeliveredListener.remove();
   };
 }
+
+export function requestNotificationPermission(): Promise<string> {
+  return CourierReactNative.requestNotificationPermission();
+}

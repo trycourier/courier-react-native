@@ -72,19 +72,32 @@ export default function App() {
   };
 
   useEffect(() => {
-    handleSignIn();
-    const unsubscribe = CourierPush.registerPushNotificationListeners({
-      onNotificationClicked: (notification) => {
-        console.log('clicked', notification);
-        showToast('notification clicked');
-      },
-      onNotificationDelivered: (notification) => {
-        console.log('delivered', notification);
-        showToast('notification delivered');
-      },
-    });
-
-    return unsubscribe;
+    let unsubscribe: () => void;
+    CourierPush.requestNotificationPermission()
+      .then((res) => {
+        showToast(res);
+        console.log(res);
+        handleSignIn();
+        unsubscribe = CourierPush.registerPushNotificationListeners({
+          onNotificationClicked: (notification) => {
+            console.log('clicked', notification);
+            showToast('notification clicked');
+          },
+          onNotificationDelivered: (notification) => {
+            console.log('delivered', notification);
+            showToast('notification delivered');
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        showToast(err);
+      });
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
   }, []);
 
   if (isLoading)

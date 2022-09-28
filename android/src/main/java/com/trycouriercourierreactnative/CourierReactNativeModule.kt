@@ -1,14 +1,18 @@
 package com.trycouriercourierreactnative
 
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.courier.android.Courier
 import com.courier.android.models.CourierProvider
+import com.courier.android.requestNotificationPermission
 import com.courier.android.sendPush
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 
+
 class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
+
 
   override fun getName(): String {
     return "CourierReactNative"
@@ -16,6 +20,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun signIn(userId: String, accessToken: String, promise: Promise) {
+
     Log.d("CourierModule", "setCredential invoked \n userId: $userId  \naccessToken: $accessToken")
     Courier.shared.signIn(
       accessToken = accessToken,
@@ -61,22 +66,29 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun sendPush(authKey: String, userId: String, title: String, body:String, providers:  ReadableArray, promise: Promise){
+  fun sendPush(
+    authKey: String,
+    userId: String,
+    title: String,
+    body: String,
+    providers: ReadableArray,
+    promise: Promise
+  ) {
     val normalizedProviders: MutableList<CourierProvider> = mutableListOf();
-    for(provider in providers.toArrayList()){
+    for (provider in providers.toArrayList()) {
       CourierProvider.values().forEach {
-        if(it.value == provider){
+        if (it.value == provider) {
           normalizedProviders.add(it);
         }
       }
     }
-    
+
     Courier.shared.sendPush(
-      authKey=authKey,
-      userId=userId,
-      title=title,
-      body=body,
-      providers =  normalizedProviders,
+      authKey = authKey,
+      userId = userId,
+      title = title,
+      body = body,
+      providers = normalizedProviders,
       onSuccess = {
         val successMessage = "**************** Push sent**************"
         println(successMessage)
@@ -87,6 +99,18 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
         promise.reject("error", e)
       }
     )
+  }
+
+  @ReactMethod
+  fun requestNotificationPermission(promise: Promise) {
+    (this.currentActivity as AppCompatActivity?)?.requestNotificationPermission { isGranted ->
+      if (isGranted) {
+        promise.resolve("Permission granted")
+        Courier.initialize(context = reactApplicationContext)
+      } else {
+        promise.reject("error", "Permission notGranted granted")
+      }
+    }
   }
 
   //  TODO: send event to react-native side

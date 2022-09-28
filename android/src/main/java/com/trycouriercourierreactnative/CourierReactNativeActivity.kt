@@ -54,35 +54,9 @@ public open class CourierReactNativeActivity : ReactActivity() {
     }
   }
 
-  private fun setup() {
-    requestNotificationPermission { isGranted ->
-      if (isGranted) {
-        println("***************Notification permission granted ***********");
-//        Toast.makeText(
-//          this@CourierReactNativeActivity,
-//          "Notification permissions are granted",
-//          Toast.LENGTH_LONG
-//        ).show()
-        // Init Courier
-        Courier.initialize(context = this)
-//        Toast.makeText(this, "SDK Initialized", Toast.LENGTH_LONG).show()
-      } else {
-//        Toast.makeText(
-//          this@CourierReactNativeActivity,
-//          "Notification permissions not granted",
-//          Toast.LENGTH_LONG
-//        ).show()
-
-        println("***************Notification permission not granted ***********");
-        setup()
-      }
-    }
-  }
-
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setup()
 
     // See if there is a pending click event
     checkIntentForPushNotificationClick(intent)
