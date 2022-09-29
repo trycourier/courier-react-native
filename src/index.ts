@@ -1,5 +1,10 @@
 /* eslint-disable */
-import { NativeModules, Platform, DeviceEventEmitter } from 'react-native';
+import {
+  NativeModules,
+  Platform,
+  DeviceEventEmitter,
+  NativeEventEmitter,
+} from 'react-native';
 export enum CourierProvider {
   FCM = 'FCM',
   APNS = 'APNS',
@@ -78,6 +83,25 @@ export function registerPushNotificationListeners<T>({
   return () => {
     notificationClickedListener.remove();
     notificationDeliveredListener.remove();
+  };
+}
+
+export function debuggerListener() {
+  const eventEmitter = new NativeEventEmitter(NativeModules.CourierReactNative);
+  const eventListener = eventEmitter.addListener(
+    'courierDebugEvent',
+    (event) => {
+      console.log('\x1b[36m%s\x1b[0m', 'DEBUGGING COURIER', event);
+    }
+  );
+  return eventListener.remove;
+}
+
+export async function setDebugMode(isDebugging: boolean) {
+  return {
+    status: (await CourierReactNative.setDebugMode(
+      __DEV__ ? isDebugging : false
+    )) as boolean,
   };
 }
 

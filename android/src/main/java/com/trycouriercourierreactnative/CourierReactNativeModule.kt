@@ -18,9 +18,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     private const val COURIER_ERROR_TAG = "Courier Android SDK Error"
   }
 
+
   init {
     Courier.initialize(reactContext);
     Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
+    Courier.shared.logListener = { data ->
+      sendEvent(reactContext, "courierDebugEvent", data)
+    }
+
   }
 
   override fun getName(): String {
@@ -121,8 +126,19 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  @ReactMethod
+  fun setDebugMode(isDebugging: Boolean, promise: Promise) {
+    try {
+      Courier.shared.isDebugging = isDebugging;
+      promise.resolve(Courier.shared.isDebugging)
+    } catch (e: Exception) {
+      promise.reject(COURIER_ERROR_TAG, e)
+    }
+
+  }
+
   //  TODO: send event to react-native side
-  private fun sendEvent(reactContext: ReactContext, eventName: String, params: Int) {
+  private fun sendEvent(reactContext: ReactContext, eventName: String, params: String) {
     reactContext
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       .emit(eventName, params)

@@ -17,7 +17,7 @@ type NotificationType = {
   trackingUrl: string;
 };
 
-const addListeners = () =>
+const addNotificationListeners = () =>
   CourierPush.registerPushNotificationListeners<NotificationType>({
     onNotificationClicked: (notification) => {
       console.log('clicked', notification);
@@ -108,7 +108,13 @@ export default function App() {
       showToast(requestStatus);
       if (requestStatus === 'denied') return;
       handleSignIn();
-      return addListeners();
+      const unsubscribeAddNotificationListener = addNotificationListeners();
+      const unsubscribeDebugListener = CourierPush.debuggerListener();
+
+      return () => {
+        unsubscribeAddNotificationListener();
+        unsubscribeDebugListener();
+      };
     } catch (e: any) {
       console.log(e);
       showToast(e);
@@ -132,6 +138,15 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <Button
+        title="Start Debugging"
+        onPress={() => CourierPush.setDebugMode(true)}
+      />
+      <Button
+        title="Stop Debugging"
+        onPress={() => CourierPush.setDebugMode(false)}
+      />
+
       <Text style={styles.signInStatus}>
         {isSignedIn ? 'Signed In' : 'Not Signed In'}
       </Text>
