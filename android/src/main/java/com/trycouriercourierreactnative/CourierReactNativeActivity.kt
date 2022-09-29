@@ -78,17 +78,19 @@ public open class CourierReactNativeActivity : ReactActivity() {
     }
   }
 
-  private fun postPushNotificationDelivered(message: RemoteMessage) {
-    val params = Arguments.createMap().apply {
-      putString("pushNotificationDelivered", "delivered data")
+  private fun mapToWritableMap(mappedData: Map<String, String>): WritableMap {
+    val convertedMap = Arguments.createMap()
+    mappedData.forEach { entry ->
+      convertedMap.putString(entry.key, entry.value);
     }
-    sendEvent("pushNotificationDelivered", params)
+    return convertedMap
+  }
+
+  private fun postPushNotificationDelivered(message: RemoteMessage) {
+    sendEvent("pushNotificationDelivered", mapToWritableMap(message.data))
   }
 
   private fun postPushNotificationClicked(message: RemoteMessage) {
-    val params = Arguments.createMap().apply {
-      putString("Clicked", "clicked data")
-    }
-    sendEvent("pushNotificationClicked", params)
+    sendEvent("pushNotificationClicked", mapToWritableMap(message.data));
   }
 }

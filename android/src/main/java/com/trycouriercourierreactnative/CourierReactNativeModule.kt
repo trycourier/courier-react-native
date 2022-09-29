@@ -1,7 +1,6 @@
 package com.trycouriercourierreactnative
 
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import com.courier.android.Courier
 import com.courier.android.models.CourierProvider
 import com.courier.android.requestNotificationPermission
@@ -25,6 +24,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   override fun getName(): String {
     return "CourierReactNative"
   }
+
 
   @ReactMethod
   fun signIn(userId: String, accessToken: String, promise: Promise) {
@@ -69,7 +69,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       promise.resolve("Signout successful")
     }, onFailure = { e ->
       println("************* error message ************ $e")
-      promise.reject("error", e)
+      promise.reject(COURIER_ERROR_TAG, e)
     })
   }
 
@@ -101,7 +101,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       },
       onFailure = { e ->
         println("************* push sending failed ************ $e")
-        promise.reject("error", e)
+        promise.reject(COURIER_ERROR_TAG, e)
       }
     )
   }
@@ -115,7 +115,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
         promise.resolve(status)
       }
     } catch (e: Exception) {
-      promise.reject("error", e)
+      promise.reject(COURIER_ERROR_TAG, e)
     }
   }
 
