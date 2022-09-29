@@ -2,6 +2,7 @@ package com.trycouriercourierreactnative
 
 import android.util.Log
 import com.courier.android.Courier
+import com.courier.android.models.CourierAgent
 import com.courier.android.models.CourierProvider
 import com.courier.android.requestNotificationPermission
 import com.courier.android.sendPush
@@ -19,6 +20,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
 
   init {
     Courier.initialize(reactContext);
+    Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
   }
 
   override fun getName(): String {
