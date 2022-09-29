@@ -59,12 +59,12 @@ export function sendPush({
   return CourierReactNative.sendPush(authKey, userId, title, body, providers);
 }
 
-export function registerPushNotificationListeners({
+export function registerPushNotificationListeners<T>({
   onNotificationClicked,
   onNotificationDelivered,
 }: {
-  onNotificationClicked: (message: any) => void;
-  onNotificationDelivered: (message: any) => void;
+  onNotificationClicked: (message: T) => void;
+  onNotificationDelivered: (message: T) => void;
 }) {
   const notificationClickedListener = DeviceEventEmitter.addListener(
     'pushNotificationClicked',

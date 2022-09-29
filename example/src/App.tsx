@@ -11,15 +11,21 @@ import * as CourierPush from '@trycourier/courier-react-native';
 import { userId, authToken } from './config/constants';
 import { Token, Button } from './components';
 
+type NotificationType = {
+  body: string;
+  title: string;
+  trackingUrl: string;
+};
+
 const addListeners = () =>
-  CourierPush.registerPushNotificationListeners({
+  CourierPush.registerPushNotificationListeners<NotificationType>({
     onNotificationClicked: (notification) => {
       console.log('clicked', notification);
-      showToast('notification clicked');
+      showToast(`notification clicked  \n ${notification.title}`);
     },
     onNotificationDelivered: (notification) => {
       console.log('delivered', notification);
-      showToast('notification delivered');
+      showToast(`notification delivered \n ${notification.title}`);
     },
   });
 
