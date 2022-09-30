@@ -38,7 +38,7 @@ const showToast = (toastMessage: string) => {
 };
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [fcmToken, setFcmToken] = useState<string | undefined>('');
   const [signedInUserId, setSignedInUserId] = useState<string | undefined>('');
@@ -105,6 +105,9 @@ export default function App() {
   const init = async () => {
     try {
       const requestStatus = await CourierPush.requestNotificationPermission();
+      const notificationPermissionStatus =
+        await CourierPush.getNotificationPermissionStatus();
+      console.log('notificationPermissionStatus', notificationPermissionStatus);
       showToast(requestStatus);
       if (requestStatus === 'denied') return;
       handleSignIn();
