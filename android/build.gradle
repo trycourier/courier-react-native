@@ -145,6 +145,6 @@ if (isNewArchitectureEnabled()) {
   react {
     jsRootDir = file("../src/")
     libraryName = "CourierReactNative"
-    codegenJavaPackageName = "com.trycouriercourierreactnative"
+    codegenJavaPackageName = "com.courierreactnative"
   }
 }

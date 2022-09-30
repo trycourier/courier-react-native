@@ -1,4 +1,4 @@
-package com.example.trycouriercourierreactnative;
+package com.courier.reactnative;
 
 import androidx.annotation.NonNull;
 

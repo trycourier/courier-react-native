@@ -1,4 +1,4 @@
-package com.example.trycouriercourierreactnative.newarchitecture;
+package com.courier.reactnative.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.example.trycouriercourierreactnative.BuildConfig;
-import com.example.trycouriercourierreactnative.newarchitecture.components.MainComponentsRegistry;
-import com.example.trycouriercourierreactnative.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.courier.reactnative.BuildConfig;
+import com.courier.reactnative.newarchitecture.components.MainComponentsRegistry;
+import com.courier.reactnative.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

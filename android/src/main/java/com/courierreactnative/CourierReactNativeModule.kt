@@ -1,4 +1,4 @@
-package com.trycouriercourierreactnative
+package com.courierreactnative
 
 import android.util.Log
 import com.courier.android.Courier

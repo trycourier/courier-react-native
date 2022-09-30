@@ -1,4 +1,4 @@
-package com.example.trycouriercourierreactnative.newarchitecture.components;
+package com.courier.reactnative.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

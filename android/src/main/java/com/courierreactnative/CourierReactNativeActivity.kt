@@ -1,10 +1,8 @@
-package com.trycouriercourierreactnative
+package com.courierreactnative
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import com.courier.android.Courier
-import com.courier.android.requestNotificationPermission
 import com.courier.android.trackPushNotificationClick
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
