@@ -2,6 +2,7 @@ package com.courierreactnative
 
 import android.util.Log
 import com.courier.android.Courier
+import com.courier.android.getNotificationPermissionStatus
 import com.courier.android.models.CourierAgent
 import com.courier.android.models.CourierProvider
 import com.courier.android.requestNotificationPermission
@@ -125,6 +126,21 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       promise.reject(COURIER_ERROR_TAG, e)
     }
   }
+
+  @ReactMethod
+  fun getNotificationPermissionStatus(promise: Promise) {
+    try {
+      val reactActivity = currentActivity as? ReactActivity
+      reactActivity?.getNotificationPermissionStatus{ isGranted ->
+        val status = if (isGranted) "authorized" else "denied"
+        promise.resolve(status)
+      }
+    } catch (e: Exception) {
+      promise.reject(COURIER_ERROR_TAG, e)
+    }
+  }
+
+
 
   @ReactMethod
   fun setDebugMode(isDebugging: Boolean, promise: Promise) {

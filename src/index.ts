@@ -110,3 +110,9 @@ export function requestNotificationPermission(): Promise<
 > {
   return CourierReactNative.requestNotificationPermission();
 }
+
+export function getNotificationPermissionStatus(): Promise<
+  'authorized' | 'denied'
+> {
+  return CourierReactNative.getNotificationPermissionStatus();
+}
