@@ -14,8 +14,6 @@ While developing, you can run the [example app](/example/) to test your changes.
 
 ## Link the project
 
----
-
 in the root directory run:
 
 ```sh
@@ -30,8 +28,6 @@ yarn link @trycourier/courier-react-native
 
 ## Setup Env variables
 
----
-
 in the example directory run:
 
 ```sh
@@ -42,8 +38,6 @@ a .env file will be created in the example directory
 populate the variables with appropriate values
 
 ## Android sdk setup
-
----
 
 open android studio
 

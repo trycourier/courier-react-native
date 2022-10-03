@@ -17,10 +17,11 @@ type NotificationType = {
   trackingUrl: string;
 };
 
-const addNotificationListeners = () =>
+const addNotificationListeners = (cb: any) =>
   CourierPush.registerPushNotificationListeners<NotificationType>({
     onNotificationClicked: (notification) => {
       console.log('clicked', notification);
+      cb(JSON.stringify(notification));
       showToast(`notification clicked  \n ${notification.title}`);
     },
     onNotificationDelivered: (notification) => {
@@ -42,6 +43,7 @@ export default function App() {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [fcmToken, setFcmToken] = useState<string | undefined>('');
   const [signedInUserId, setSignedInUserId] = useState<string | undefined>('');
+  const [isClickedData, setIsClickedData] = useState('test');
 
   const handleSignIn = async () => {
     setIsLoading(true);
@@ -104,6 +106,10 @@ export default function App() {
 
   const init = async () => {
     try {
+      const unsubscribeAddNotificationListener =
+        addNotificationListeners(setIsClickedData);
+      const unsubscribeDebugListener = CourierPush.debuggerListener();
+
       const requestStatus = await CourierPush.requestNotificationPermission();
       const notificationPermissionStatus =
         await CourierPush.getNotificationPermissionStatus();
@@ -111,9 +117,6 @@ export default function App() {
       showToast(requestStatus);
       if (requestStatus === 'denied') return;
       handleSignIn();
-      const unsubscribeAddNotificationListener = addNotificationListeners();
-      const unsubscribeDebugListener = CourierPush.debuggerListener();
-
       return () => {
         unsubscribeAddNotificationListener();
         unsubscribeDebugListener();
@@ -141,6 +144,16 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          backgroundColor: 'black',
+          minHeight: 100,
+          minWidth: 100,
+          marginTop: 100,
+        }}
+      >
+        <Text style={{ backgroundColor: 'black' }}>{isClickedData}</Text>
+      </View>
       <Button
         title="Start Debugging"
         onPress={() => CourierPush.setDebugMode(true)}

@@ -1,15 +1,14 @@
 package com.courierreactnative
 
+import android.content.Intent
 import android.util.Log
-import com.courier.android.Courier
-import com.courier.android.getNotificationPermissionStatus
+import com.courier.android.*
 import com.courier.android.models.CourierAgent
 import com.courier.android.models.CourierProvider
-import com.courier.android.requestNotificationPermission
-import com.courier.android.sendPush
 import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.google.firebase.messaging.RemoteMessage
 
 
 class CourierReactNativeModule(reactContext: ReactApplicationContext) :
@@ -120,6 +119,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       val reactActivity = currentActivity as? ReactActivity
       reactActivity?.requestNotificationPermission { isGranted ->
         val status = if (isGranted) "authorized" else "denied"
+        checkIntentForPushNotificationClick(reactActivity.intent)
         promise.resolve(status)
       }
     } catch (e: Exception) {
@@ -131,7 +131,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   fun getNotificationPermissionStatus(promise: Promise) {
     try {
       val reactActivity = currentActivity as? ReactActivity
-      reactActivity?.getNotificationPermissionStatus{ isGranted ->
+      reactActivity?.getNotificationPermissionStatus { isGranted ->
         val status = if (isGranted) "authorized" else "denied"
         promise.resolve(status)
       }
@@ -140,6 +140,20 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  private fun checkIntentForPushNotificationClick(intent: Intent?) {
+    intent?.trackPushNotificationClick { message ->
+      postPushNotificationClicked(message)
+    }
+  }
+
+  private fun postPushNotificationClicked(message: RemoteMessage) {
+    val convertedMap = Arguments.createMap()
+    message.data.forEach { entry ->
+      convertedMap.putString(entry.key, entry.value);
+    }
+    reactApplicationContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      ?.emit("pushNotificationClicked", convertedMap)
+  }
 
 
   @ReactMethod
