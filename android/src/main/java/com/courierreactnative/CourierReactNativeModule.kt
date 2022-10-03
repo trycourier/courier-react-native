@@ -15,7 +15,9 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
   companion object {
-    private const val COURIER_ERROR_TAG = "Courier Android SDK Error"
+    private const val COURIER_ERROR_TAG = "Courier Android SDK Error";
+    private const val COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked";
+    private const val COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent";
   }
 
 
@@ -23,7 +25,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     Courier.initialize(reactContext);
     Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
     Courier.shared.logListener = { data ->
-      sendEvent(reactContext, "courierDebugEvent", data)
+      sendEvent<String>(reactContext, COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, data)
     }
 
   }
@@ -119,7 +121,6 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       val reactActivity = currentActivity as? ReactActivity
       reactActivity?.requestNotificationPermission { isGranted ->
         val status = if (isGranted) "authorized" else "denied"
-        checkIntentForPushNotificationClick(reactActivity.intent)
         promise.resolve(status)
       }
     } catch (e: Exception) {
@@ -140,6 +141,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     }
   }
 
+  @ReactMethod
+  fun registerPushNotificationClickedOnKilledState() {
+    val reactActivity = currentActivity as? ReactActivity
+    if (reactActivity != null) {
+      checkIntentForPushNotificationClick(reactActivity.intent)
+    }
+  }
+
   private fun checkIntentForPushNotificationClick(intent: Intent?) {
     intent?.trackPushNotificationClick { message ->
       postPushNotificationClicked(message)
@@ -151,8 +160,11 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     message.data.forEach { entry ->
       convertedMap.putString(entry.key, entry.value);
     }
-    reactApplicationContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-      ?.emit("pushNotificationClicked", convertedMap)
+    sendEvent<WritableMap>(
+      reactApplicationContext,
+      COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+      convertedMap
+    )
   }
 
 
@@ -167,8 +179,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
 
   }
 
-  //  TODO: send event to react-native side
-  private fun sendEvent(reactContext: ReactContext, eventName: String, params: String) {
+  private fun <T> sendEvent(reactContext: ReactContext, eventName: String, params: T) {
     reactContext
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       .emit(eventName, params)

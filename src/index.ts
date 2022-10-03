@@ -71,6 +71,7 @@ export function registerPushNotificationListeners<T>({
   onNotificationClicked: (message: T) => void;
   onNotificationDelivered: (message: T) => void;
 }) {
+  CourierReactNative.registerPushNotificationClickedOnKilledState();
   const notificationClickedListener = DeviceEventEmitter.addListener(
     'pushNotificationClicked',
     onNotificationClicked
