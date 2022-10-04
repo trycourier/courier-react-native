@@ -12,7 +12,6 @@
     "setupEnv": "if [[ ! -e .env ]] ; then cp .env.sample .env ; fi "
   },
   "dependencies": {
-    "@react-native-firebase/app": "^15.6.0",
     "react": "17.0.2",
     "react-native": "0.68.2",
     "react-native-dotenv": "^3.3.1"

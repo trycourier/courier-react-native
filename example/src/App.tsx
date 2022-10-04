@@ -6,6 +6,7 @@ import {
   Text,
   ActivityIndicator,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 import * as CourierPush from '@trycourier/courier-react-native';
 import { userId, authToken } from './config/constants';
@@ -103,23 +104,28 @@ export default function App() {
   };
 
   const init = async () => {
-    try {
-      const requestStatus = await CourierPush.requestNotificationPermission();
-      const notificationPermissionStatus =
-        await CourierPush.getNotificationPermissionStatus();
-      console.log('notificationPermissionStatus', notificationPermissionStatus);
-      const unsubscribeAddNotificationListener = addNotificationListeners();
-      const unsubscribeDebugListener = CourierPush.debuggerListener();
-      showToast(requestStatus);
-      if (requestStatus === 'denied') return;
-      handleSignIn();
-      return () => {
-        unsubscribeAddNotificationListener();
-        unsubscribeDebugListener();
-      };
-    } catch (e: any) {
-      console.log(e);
-      showToast(e);
+    if (Platform.OS === 'android') {
+      try {
+        const requestStatus = await CourierPush.requestNotificationPermission();
+        const notificationPermissionStatus =
+          await CourierPush.getNotificationPermissionStatus();
+        console.log(
+          'notificationPermissionStatus',
+          notificationPermissionStatus
+        );
+        const unsubscribeAddNotificationListener = addNotificationListeners();
+        const unsubscribeDebugListener = CourierPush.debuggerListener();
+        showToast(requestStatus);
+        if (requestStatus === 'denied') return;
+        handleSignIn();
+        return () => {
+          unsubscribeAddNotificationListener();
+          unsubscribeDebugListener();
+        };
+      } catch (e: any) {
+        console.log(e);
+        showToast(e);
+      }
     }
   };
 
@@ -142,28 +148,71 @@ export default function App() {
     <View style={styles.container}>
       <Button
         title="Start Debugging"
-        onPress={() => CourierPush.setDebugMode(true)}
+        onPress={() => {
+          if (Platform.OS === 'android') {
+            CourierPush.setDebugMode(true);
+          }
+        }}
       />
       <Button
         title="Stop Debugging"
-        onPress={() => CourierPush.setDebugMode(false)}
+        onPress={() => {
+          if (Platform.OS === 'android') {
+            CourierPush.setDebugMode(false);
+          }
+        }}
       />
 
       <Text style={styles.signInStatus}>
         {isSignedIn ? 'Signed In' : 'Not Signed In'}
       </Text>
       {isSignedIn ? (
-        <Button title="Sign out" onPress={handleSignOut} />
+        <Button
+          title="Sign out"
+          onPress={() => {
+            if (Platform.OS == 'android') {
+              handleSignOut();
+            }
+          }}
+        />
       ) : (
-        <Button title="Sign in" onPress={handleSignIn} />
+        <Button
+          title="Sign in"
+          onPress={() => {
+            if (Platform.OS === 'android') {
+              handleSignIn();
+            }
+          }}
+        />
       )}
       {isSignedIn && (
         <>
-          <Button title="Send Push" onPress={handleSendPush} />
+          <Button
+            title="Send Push"
+            onPress={() => {
+              if (Platform.OS === 'android') {
+                handleSendPush();
+              }
+            }}
+          />
         </>
       )}
-      <Button title="Get Fcm Token" onPress={handleGetFcmToken} />
-      <Button title="Get User Id" onPress={handleGetUserId} />
+      <Button
+        title="Get Fcm Token"
+        onPress={() => {
+          if (Platform.OS === 'android') {
+            handleGetFcmToken();
+          }
+        }}
+      />
+      <Button
+        title="Get User Id"
+        onPress={() => {
+          if (Platform.OS === 'android') {
+            handleGetUserId();
+          }
+        }}
+      />
       <Token title="fcm Token" token={fcmToken} />
       <Token title="User Id" token={signedInUserId} />
     </View>
