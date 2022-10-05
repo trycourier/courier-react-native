@@ -1,3 +1,4 @@
+import { USER_ID, AUTH_KEY, ACCESS_TOKEN } from "@env"
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -8,8 +9,8 @@ import {
   ToastAndroid,
   Platform,
 } from 'react-native';
+
 import * as CourierPush from '@trycourier/courier-react-native';
-import { userId, authToken } from './config/constants';
 import { Token, Button } from './components';
 
 type NotificationType = {
@@ -47,7 +48,10 @@ export default function App() {
   const handleSignIn = async () => {
     setIsLoading(true);
     try {
-      const res = await CourierPush.signIn({ userId, authToken });
+      const res = await CourierPush.signIn({
+        accessToken: ACCESS_TOKEN,
+        userId: USER_ID,
+      });
       showToast(res);
       setIsSignedIn(true);
     } catch (e) {
@@ -75,9 +79,12 @@ export default function App() {
   const handleSendPush = async () => {
     try {
       const res = await CourierPush.sendPush({
-        authKey: authToken,
-        userId,
+        authKey: AUTH_KEY,
+        userId: USER_ID,
+        title: 'This is a title',
+        body: 'This is a body',
         providers: [CourierPush.CourierProvider.FCM],
+        isProduction: false,
       });
       showToast(res);
     } catch (err: any) {
@@ -96,8 +103,8 @@ export default function App() {
 
   const handleGetUserId = async () => {
     try {
-      const fcmToken = await CourierPush.getUserId();
-      setSignedInUserId(fcmToken);
+      const userId = await CourierPush.getUserId();
+      setSignedInUserId(userId);
     } catch (err: any) {
       console.log(err);
     }

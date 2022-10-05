@@ -29,7 +29,8 @@
     "release": "release-it",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn && yarn example pods",
-    "linkPackage": "yarn link && yarn example link @trycourier/courier-react-native && yarn example setupEnv"
+    "linkPackage": "yarn link && yarn example link @trycourier/courier-react-native && yarn example setupEnv",
+    "setup": "sh setup.sh"
   },
   "keywords": [
     "react-native",

@@ -27,12 +27,12 @@ const CourierReactNative = NativeModules.CourierReactNative
       }
     );
 
-interface SignInProps {
-  userId: String;
-  authToken: String;
+type SignInProps = {
+  accessToken: String;
+  userId: string;
 }
-export function signIn({ userId, authToken }: SignInProps): Promise<string> {
-  return CourierReactNative.signIn(userId, authToken);
+export function signIn({ accessToken, userId }: SignInProps): Promise<string> {
+  return CourierReactNative.signIn(userId, accessToken);
 }
 
 export function getFcmToken(): Promise<string | undefined> {
@@ -53,14 +53,10 @@ type SendPushProps = {
   title?: string;
   body?: string;
   providers: (CourierProvider.FCM | CourierProvider.APNS)[];
+  isProduction: boolean;
 };
-export function sendPush({
-  authKey,
-  userId,
-  title = 'This is a title',
-  body = 'This is a message',
-  providers,
-}: SendPushProps): Promise<string> {
+export function sendPush({ authKey, userId, title, body, providers, isProduction }: SendPushProps): Promise<string> {
+  console.log(`Setup isProduction: ${isProduction}`)
   return CourierReactNative.sendPush(authKey, userId, title, body, providers);
 }
 
