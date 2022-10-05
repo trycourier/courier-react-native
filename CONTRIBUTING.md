@@ -2,11 +2,9 @@
 
 ## Getting Started
 
-From the root directory, run:
-
-```sh
-yarn setup
-```
+1. From root, run: `yarn setup`
+2. Run `open example/.env`, add your testing credentials, and save the file
+3. Drag and drop your google-services.json file into `example/android/app` (Needed for Firebase FCM testing)
 
 From here, you are all set to start working on the package! 🙌
 
