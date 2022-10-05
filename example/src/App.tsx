@@ -5,8 +5,8 @@ import {
   View,
   Text,
   ActivityIndicator,
-  ToastAndroid,
   Platform,
+  Alert,
 } from 'react-native';
 import * as CourierPush from '@trycourier/courier-react-native';
 import { userId, authToken } from './config/constants';
@@ -31,11 +31,7 @@ const addNotificationListeners = () =>
   });
 
 const showToast = (toastMessage: string) => {
-  ToastAndroid.showWithGravity(
-    toastMessage,
-    ToastAndroid.SHORT,
-    ToastAndroid.CENTER
-  );
+  Alert.alert(toastMessage);
 };
 
 export default function App() {
@@ -47,7 +43,10 @@ export default function App() {
   const handleSignIn = async () => {
     setIsLoading(true);
     try {
-      const res = await CourierPush.signIn({ userId, authToken });
+      const res = await CourierPush.signIn({
+        userId,
+        authToken,
+      });
       showToast(res);
       setIsSignedIn(true);
     } catch (e) {
@@ -167,23 +166,9 @@ export default function App() {
         {isSignedIn ? 'Signed In' : 'Not Signed In'}
       </Text>
       {isSignedIn ? (
-        <Button
-          title="Sign out"
-          onPress={() => {
-            if (Platform.OS == 'android') {
-              handleSignOut();
-            }
-          }}
-        />
+        <Button title="Sign out" onPress={handleSignOut} />
       ) : (
-        <Button
-          title="Sign in"
-          onPress={() => {
-            if (Platform.OS === 'android') {
-              handleSignIn();
-            }
-          }}
-        />
+        <Button title="Sign in" onPress={handleSignIn} />
       )}
       {isSignedIn && (
         <>
