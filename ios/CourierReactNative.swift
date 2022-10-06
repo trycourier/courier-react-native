@@ -30,4 +30,11 @@ class CourierReactNative: NSObject {
         reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
       })
   }
+
+  @objc(getUserId: withRejecter:)
+  func getUserId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    resolve(Courier.shared.userId)
+  }
+
+
 }

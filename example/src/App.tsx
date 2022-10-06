@@ -194,14 +194,7 @@ export default function App() {
           }
         }}
       />
-      <Button
-        title="Get User Id"
-        onPress={() => {
-          if (Platform.OS === 'android') {
-            handleGetUserId();
-          }
-        }}
-      />
+      <Button title="Get User Id" onPress={handleGetUserId} />
       <Token title="fcm Token" token={fcmToken} />
       <Token title="User Id" token={signedInUserId} />
     </View>
