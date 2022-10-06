@@ -1,6 +1,6 @@
 import Courier_iOS
 @objc(CourierReactNative)
-class CourierReactNative: NSObject {
+class CourierReactNative: RCTEventEmitter {
 
   private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
   internal static let CORE_CHANNEL = "courier_flutter_core"
@@ -44,6 +44,10 @@ class CourierReactNative: NSObject {
   @objc(getApnsToken: withRejecter:)
   func getApnsToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
     resolve(Courier.shared.apnsToken)
+  }
+  
+  override func supportedEvents() -> [String]! {
+    return ["testEvent"]
   }
 
 }
