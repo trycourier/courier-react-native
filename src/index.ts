@@ -30,7 +30,7 @@ const CourierReactNative = NativeModules.CourierReactNative
 type SignInProps = {
   accessToken: String;
   userId: string;
-}
+};
 export function signIn({ accessToken, userId }: SignInProps): Promise<string> {
   return CourierReactNative.signIn(userId, accessToken);
 }
@@ -55,8 +55,15 @@ type SendPushProps = {
   providers: (CourierProvider.FCM | CourierProvider.APNS)[];
   isProduction: boolean;
 };
-export function sendPush({ authKey, userId, title, body, providers, isProduction }: SendPushProps): Promise<string> {
-  console.log(`Setup isProduction: ${isProduction}`)
+export function sendPush({
+  authKey,
+  userId,
+  title,
+  body,
+  providers,
+  isProduction,
+}: SendPushProps): Promise<string> {
+  console.log(`Setup isProduction: ${isProduction}`);
   return CourierReactNative.sendPush(authKey, userId, title, body, providers);
 }
 
@@ -113,4 +120,13 @@ export function getNotificationPermissionStatus(): Promise<
   'authorized' | 'denied'
 > {
   return CourierReactNative.getNotificationPermissionStatus();
+}
+
+export function getApnsToken(): Promise<string | undefined> {
+  if (Platform.OS === 'android') {
+    return Promise.reject(
+      'This function is not available for android platform'
+    );
+  }
+  return CourierReactNative.getApnsToken();
 }

@@ -40,6 +40,7 @@ export default function App() {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [fcmToken, setFcmToken] = useState<string | undefined>('');
   const [signedInUserId, setSignedInUserId] = useState<string | undefined>('');
+  const [apnsToken, setApnsToken] = useState<string | undefined>('');
 
   const handleSignIn = async () => {
     setIsLoading(true);
@@ -65,6 +66,7 @@ export default function App() {
       setIsSignedIn(false);
       setFcmToken('');
       setSignedInUserId('');
+      setApnsToken('');
     } catch (err: any) {
       console.log(err);
     } finally {
@@ -103,6 +105,17 @@ export default function App() {
       setSignedInUserId(userId);
     } catch (err: any) {
       console.log(err);
+    }
+  };
+
+  const handleApnsToken = async () => {
+    if (Platform.OS === 'ios') {
+      try {
+        const currentApnsToken = await CourierPush.getApnsToken();
+        setApnsToken(currentApnsToken);
+      } catch (err: any) {
+        console.log(err);
+      }
     }
   };
 
@@ -188,31 +201,25 @@ export default function App() {
       )}
       <Button title="Get Fcm Token" onPress={handleGetFcmToken} />
       <Button title="Get User Id" onPress={handleGetUserId} />
+      {Platform.OS === 'ios' && (
+        <Button title="Get APNS token" onPress={handleApnsToken} />
+      )}
       <Token title="fcm Token" token={fcmToken} />
       <Token title="User Id" token={signedInUserId} />
+      {Platform.OS === 'ios' && <Token title="Apns Token" token={apnsToken} />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   signInStatus: {
-    fontSize: 16,
+    backgroundColor: 'black',
     color: 'white',
-    fontWeight: 'bold',
-    margin: 20,
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-  divider: {
-    marginVertical: 12,
   },
   buttonStyle: {
     padding: 12,

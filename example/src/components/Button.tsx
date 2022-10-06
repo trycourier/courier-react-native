@@ -15,10 +15,11 @@ const Button = ({ onPress, title }: PropType) => {
 
 const styles = StyleSheet.create({
   buttonStyle: {
-    padding: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     backgroundColor: '#008CBA',
     borderRadius: 4,
-    margin: 12,
+    margin: 8,
     alignItems: 'center',
   },
   buttonTextStyle: {

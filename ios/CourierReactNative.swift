@@ -6,11 +6,11 @@ class CourierReactNative: NSObject {
   internal static let CORE_CHANNEL = "courier_flutter_core"
   internal static let EVENTS_CHANNEL = "courier_flutter_events"
 
-
-  @objc(multiply: withB: withResolver: withRejecter:)
-  func multiply(a: Float, b: Float, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-    resolve(a * b)
+  public override init() {
+    super.init()
+    Courier.agent = CourierAgent.flutter_ios
   }
+
 
   @objc(signIn: accessToken: withResolver: withRejecter:)
   func signIn(userId: NSString, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
@@ -35,10 +35,15 @@ class CourierReactNative: NSObject {
   func getUserId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
     resolve(Courier.shared.userId)
   }
-  
+
   @objc(getFcmToken: withRejecter:)
   func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
     resolve(Courier.shared.fcmToken)
+  }
+  
+  @objc(getApnsToken: withRejecter:)
+  func getApnsToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    resolve(Courier.shared.apnsToken)
   }
 
 }
