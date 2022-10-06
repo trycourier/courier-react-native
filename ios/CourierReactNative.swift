@@ -35,6 +35,10 @@ class CourierReactNative: NSObject {
   func getUserId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
     resolve(Courier.shared.userId)
   }
-
+  
+  @objc(getFcmToken: withRejecter:)
+  func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    resolve(Courier.shared.fcmToken)
+  }
 
 }

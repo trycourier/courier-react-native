@@ -16,6 +16,9 @@ RCT_EXTERN_METHOD(signOut: (RCTPromiseResolveBlock)resolve
 
 RCT_EXTERN_METHOD(getUserId: (RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getFcmToken: (RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
                   
 
 
