@@ -14,8 +14,14 @@ yarn link @trycourier/courier-react-native
 echo "\n3️⃣  Setting up React Native dotenv\n"
 yarn setupEnv
 
-# 4. Open Android Studio for project to install gradle dependencies
-echo "\n4️⃣  Opening Android Studio to fetch gradle dependencies\n"
+# 4. Install iOS Pods
+echo "\n4️⃣  Installing iOS Pods\n"
+cd ios
+pod install
+cd ..
+
+# 5. Open Android Studio for project to install gradle dependencies
+echo "\n5️⃣  Opening Android Studio to fetch gradle dependencies\n"
 yarn add @react-native-community/cli-platform-android --dev
 open -a /Applications/Android\ Studio.app android
 

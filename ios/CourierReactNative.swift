@@ -1,4 +1,5 @@
 import Courier_iOS
+
 @objc(CourierReactNative)
 class CourierReactNative: RCTEventEmitter {
 
