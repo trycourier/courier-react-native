@@ -6,15 +6,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
 #import <React/RCTBridgeDelegate.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CourierReactNativeDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
+@interface CourierReactNativeDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, UNUserNotificationCenterDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
-
-- (void) test;
 
 @end
 

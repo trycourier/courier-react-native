@@ -12,36 +12,49 @@
 
 @implementation CourierReactNativeDelegate
 
-//- (instancetype)init
-//{
-//    NSLog(@"Start!");
-//}
-
 - (id) init {
     self = [super init];
     if (self) {
-        NSLog(@"_init: %@", self);
+        
+        // Register for remote notifications
+        UIApplication *app = [UIApplication sharedApplication];
+        [app registerForRemoteNotifications];
+        
+        // Register notification center changes
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        center.delegate = self;
+        
     }
     return(self);
 }
 
-//- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-//    NSLog(@"YAY!");
-//    return YES;
-//}
-
-- (void) test
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
-    NSLog(@"Hellow!");
+    // TODO
 }
 
-//- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-//{
-//#if DEBUG
-//  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-//#else
-//  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-//#endif
-//}
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
+{
+    // TODO
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    // TODO
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    
+    const char *data = [deviceToken bytes];
+    NSMutableString *token = [NSMutableString string];
+
+    for (NSUInteger i = 0; i < [deviceToken length]; i++) {
+        [token appendFormat:@"%02.2hhX", data[i]];
+    }
+    
+    NSLog(@"%@", token);
+    
+}
 
 @end
