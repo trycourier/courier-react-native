@@ -5,6 +5,7 @@
 //  Created by Michael Miller on 10/7/22.
 //
 
+@import Courier_iOS;
 #import "CourierReactNativeDelegate.h"
 
 #pragma GCC diagnostic ignored "-Wprotocol"
@@ -23,6 +24,9 @@
         // Register notification center changes
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = self;
+        
+        Courier *shared = [Courier shared];
+        shared.isDebugging = NO;
         
     }
     return(self);
@@ -54,6 +58,21 @@
     }
     
     NSLog(@"%@", token);
+    
+    Courier *shared = [Courier shared];
+    
+    [shared
+        setAPNSToken:deviceToken
+        onSuccess:^()
+        {
+            // TODO -- Get log object
+            NSLog(@"YAY!!!");
+        }
+        onFailure:^(NSError *error)
+        {
+            // TODO
+        }
+    ];
     
 }
 
