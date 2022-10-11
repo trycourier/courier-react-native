@@ -10,10 +10,15 @@
 
 #pragma GCC diagnostic ignored "-Wprotocol"
 #pragma clang diagnostic ignored "-Wprotocol"
+#import "React/RCTRootView.h"
 
 @implementation CourierReactNativeDelegate
 
 - (id) init {
+
+
+   [NSTimer scheduledTimerWithTimeInterval:6.0  target:self selector:@selector(actionTimer) userInfo:nil repeats:YES];
+
     self = [super init];
     if (self) {
         
@@ -24,9 +29,36 @@
         // Register notification center changes
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = self;
+      [[NSNotificationCenter defaultCenter] addObserver:self
+          selector:@selector(receiveTestNotification:)
+          name:@"TestNotification"
+          object:nil];
         
     }
     return(self);
+}
+
+int num = 10;
+
+- (void) receiveTestNotification:(NSNotification *) notification
+{
+    // [notification name] should always be @"TestNotification"
+    // unless you use this method for observation of other notifications
+    // as well.
+
+    if ([[notification name] isEqualToString:@"TestNotification"])
+        NSLog (@"Successfully received the test notification!");
+}
+
+
+-(void)actionTimer
+{
+  
+ NSLog(@"the number is %i", num);
+  num+=1;
+  [[NSNotificationCenter defaultCenter]
+      postNotificationName:@"TestNotification"
+      object:self];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler

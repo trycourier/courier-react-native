@@ -10,8 +10,16 @@ class CourierReactNative: RCTEventEmitter {
   public override init() {
     super.init()
     Courier.agent = CourierAgent.flutter_ios
+    let nc = NotificationCenter.default
+    nc.addObserver(self, selector: #selector(receiveTestNotification), name: Notification.Name("TestNotification"), object: nil)
   }
-
+  
+  
+  @objc func receiveTestNotification(notification: NSNotification) {
+    print("Notification received here")
+    
+  }
+  
 
   @objc(signIn: accessToken: withResolver: withRejecter:)
   func signIn(userId: NSString, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
