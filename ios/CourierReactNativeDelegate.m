@@ -29,10 +29,11 @@
         // Register notification center changes
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = self;
-      [[NSNotificationCenter defaultCenter] addObserver:self
-          selector:@selector(receiveTestNotification:)
-          name:@"TestNotification"
-          object:nil];
+        
+//      [[NSNotificationCenter defaultCenter] addObserver:self
+//          selector:@selector(receiveTestNotification:)
+//          name:@"TestNotification"
+//          object:nil];
         
     }
     return(self);
@@ -40,25 +41,27 @@
 
 int num = 10;
 
-- (void) receiveTestNotification:(NSNotification *) notification
-{
-    // [notification name] should always be @"TestNotification"
-    // unless you use this method for observation of other notifications
-    // as well.
-
-    if ([[notification name] isEqualToString:@"TestNotification"])
-        NSLog (@"Successfully received the test notification!");
-}
+//- (void) receiveTestNotification:(NSNotification *) notification
+//{
+//    // [notification name] should always be @"TestNotification"
+//    // unless you use this method for observation of other notifications
+//    // as well.
+//
+//    if ([[notification name] isEqualToString:@"TestNotification"])
+//        NSLog (@"Successfully received the test notification!");
+//}
 
 
 -(void)actionTimer
 {
   
- NSLog(@"the number is %i", num);
-  num+=1;
-  [[NSNotificationCenter defaultCenter]
-      postNotificationName:@"TestNotification"
-      object:self];
+// NSLog(@"the number is %i", num);
+    num+=1;
+    
+    NSDictionary *userInfo = @{ @"the_number" : @(num) };
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TestNotification" object:nil userInfo:userInfo];
+    
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler

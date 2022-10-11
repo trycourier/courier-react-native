@@ -6,20 +6,30 @@ class CourierReactNative: RCTEventEmitter {
   private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
   internal static let CORE_CHANNEL = "courier_flutter_core"
   internal static let EVENTS_CHANNEL = "courier_flutter_events"
-
-  public override init() {
-    super.init()
-    Courier.agent = CourierAgent.flutter_ios
-    let nc = NotificationCenter.default
-    nc.addObserver(self, selector: #selector(receiveTestNotification), name: Notification.Name("TestNotification"), object: nil)
-  }
+    
+    private var lastClickedMessage: [AnyHashable : Any]? = nil
+    
+    override init() {
+        super.init()
+        Courier.agent = CourierAgent.react_native_ios
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(receiveTestNotification), name: Notification.Name(rawValue: "TestNotification"), object: nil)
+    }
   
   
-  @objc func receiveTestNotification(notification: NSNotification) {
-    print("Notification received here")
+  @objc private func receiveTestNotification(notification: Notification) {
+      
+//      Courier.requestNotificationPermission { status in
+//
+//      }
+      
+      lastClickedMessage = notification.userInfo
+      
+      let number = lastClickedMessage?["the_number"]
+      
+      print("\(number)")
     
   }
-  
 
   @objc(signIn: accessToken: withResolver: withRejecter:)
   func signIn(userId: NSString, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {

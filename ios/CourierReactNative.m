@@ -23,7 +23,7 @@ RCT_EXTERN_METHOD(getApnsToken: (RCTPromiseResolveBlock)resolve
 
 + (BOOL)requiresMainQueueSetup
 {
-  return NO;
+  return YES;
 }
 
 @end
