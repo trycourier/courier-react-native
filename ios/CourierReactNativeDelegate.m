@@ -25,55 +25,80 @@
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = self;
         
-        Courier *shared = [Courier shared];
-        shared.isDebugging = NO;
-        
     }
     return(self);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
-    // TODO
+    
+    NSDictionary *message = notification.request.content.userInfo;
+    
+    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventDelivered completionHandler:^(NSError *error)
+    {
+        
+        if (error != nil) {
+            [self log:error];
+        }
+        
+        // TODO: Need variable exposed for making this settable inside React Native javascript.. tbd on how just yet
+        if (@available(iOS 14.0, *)) {
+            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge);
+        } else {
+            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge);
+        }
+        
+    }
+    ];
+    
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
 {
-    // TODO
+    
+    NSDictionary *message = response.notification.request.content.userInfo;
+    
+    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventClicked completionHandler:^(NSError *error)
+    {
+        
+        if (error != nil) {
+            [self log:error];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler();
+        });
+        
+    }
+    ];
+    
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-    // TODO
+    [self log:error];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     
-    const char *data = [deviceToken bytes];
-    NSMutableString *token = [NSMutableString string];
-
-    for (NSUInteger i = 0; i < [deviceToken length]; i++) {
-        [token appendFormat:@"%02.2hhX", data[i]];
+    [[Courier shared]
+    setAPNSToken:deviceToken
+    onSuccess:^()
+    {
+        // Empty
     }
-    
-    NSLog(@"%@", token);
-    
-    Courier *shared = [Courier shared];
-    
-    [shared
-        setAPNSToken:deviceToken
-        onSuccess:^()
-        {
-            // TODO -- Get log object
-            NSLog(@"YAY!!!");
-        }
-        onFailure:^(NSError *error)
-        {
-            // TODO
-        }
+    onFailure:^(NSError *error)
+    {
+        [self log:error];
+    }
     ];
     
+}
+
+- (void)log: (NSError*)error {
+    NSString *err = [NSString stringWithFormat:@"%@", error];
+    [Courier log:err];
 }
 
 @end
