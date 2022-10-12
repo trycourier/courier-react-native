@@ -60,7 +60,7 @@ int num = 10;
     
     NSDictionary *userInfo = @{ @"the_number" : @(num) };
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TestNotification" object:nil userInfo:userInfo];
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"TestNotification" object:nil userInfo:userInfo];
     
 }
 
@@ -75,6 +75,10 @@ int num = 10;
         if (error != nil) {
             [self log:error];
         }
+        else{
+          [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:message];
+        }
+
         
         // TODO: Need variable exposed for making this settable inside React Native javascript.. tbd on how just yet
         if (@available(iOS 14.0, *)) {
@@ -98,6 +102,8 @@ int num = 10;
         
         if (error != nil) {
             [self log:error];
+        }else{
+          [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:message];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{

@@ -1,4 +1,4 @@
-import { USER_ID, AUTH_KEY, ACCESS_TOKEN } from '@env';
+import { USER_ID, ACCESS_TOKEN } from '@env';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -129,22 +129,15 @@ export default function App() {
       const requestStatus = await CourierPush.requestNotificationPermission();
       showToast(requestStatus);
       handleSignIn();
+      const unsubscribeAddNotificationListener = addNotificationListeners();
+      const unsubscribeDebugListener = CourierPush.debuggerListener();
+      return () => {
+        unsubscribeAddNotificationListener();
+        unsubscribeDebugListener();
+      };
     } catch (e: any) {
       console.log(e);
       showToast(e);
-    }
-    if (Platform.OS === 'android') {
-      try {
-        const unsubscribeAddNotificationListener = addNotificationListeners();
-        const unsubscribeDebugListener = CourierPush.debuggerListener();
-        return () => {
-          unsubscribeAddNotificationListener();
-          unsubscribeDebugListener();
-        };
-      } catch (e: any) {
-        console.log(e);
-        showToast(e);
-      }
     }
   };
 

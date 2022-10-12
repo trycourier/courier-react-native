@@ -4,8 +4,8 @@ import Courier_iOS
 class CourierReactNative: RCTEventEmitter {
 
   private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
-  internal static let CORE_CHANNEL = "courier_flutter_core"
-  internal static let EVENTS_CHANNEL = "courier_flutter_events"
+  internal static let COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
+  internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
 
   private var lastClickedMessage: [AnyHashable: Any]? = nil
 
@@ -13,23 +13,31 @@ class CourierReactNative: RCTEventEmitter {
     super.init()
     Courier.agent = CourierAgent.react_native_ios
     let nc = NotificationCenter.default
-    nc.addObserver(self, selector: #selector(receiveTestNotification), name: Notification.Name(rawValue: "TestNotification"), object: nil)
+    nc.addObserver(self, selector: #selector(pushNotificationClicked), name: Notification.Name(rawValue: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT), object: nil)
+    nc.addObserver(self, selector: #selector(pushNotificationDelivered), name: Notification.Name(rawValue: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT), object: nil)
+
   }
 
+  private func formatandSendData(data: [AnyHashable: Any]?, eventName: String) {
+    if let aps = (data?["aps"])! as? [AnyHashable: Any] {
+      if let alert = aps["alert"] {
+        print("alert value", alert)
+        sendEvent(withName: eventName, body: alert)
+      }
+    }
+  }
 
-  @objc private func receiveTestNotification(notification: Notification) {
-
-//      Courier.requestNotificationPermission { status in
-//
-//      }
-
+  @objc private func pushNotificationClicked(notification: Notification) {
     lastClickedMessage = notification.userInfo
-
-    let number = lastClickedMessage?["the_number"]
-
-    print("\(number)")
-
+    formatandSendData(data: lastClickedMessage, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
   }
+
+  @objc private func pushNotificationDelivered(notification: Notification) {
+    formatandSendData(data: notification.userInfo, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT)
+  }
+
+
+
 
   @objc(signIn: accessToken: withResolver: withRejecter:)
   func signIn(userId: NSString, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
@@ -85,7 +93,7 @@ class CourierReactNative: RCTEventEmitter {
 
   @objc(sendPush: withUserId: withTitle: withBody: withProviders: withResolver: withRejecter:)
   func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-    
+
 //    todo: remove hardcoded isProduction and providers
     Courier.shared.sendPush(
       authKey: authKey as String,
@@ -103,8 +111,15 @@ class CourierReactNative: RCTEventEmitter {
 
   }
 
+  @objc func registerPushNotificationClickedOnKilledState() {
+    if let clickedMessageData = lastClickedMessage {
+      formatandSendData(data: clickedMessageData, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
+    }
+
+  }
+
   override func supportedEvents() -> [String]! {
-    return ["testEvent"]
+    return [CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT, CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT]
   }
 
 }

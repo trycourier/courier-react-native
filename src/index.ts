@@ -4,6 +4,7 @@ import {
   Platform,
   DeviceEventEmitter,
   NativeEventEmitter,
+  EmitterSubscription,
 } from 'react-native';
 export enum CourierProvider {
   FCM = 'FCM',
@@ -26,6 +27,10 @@ const CourierReactNative = NativeModules.CourierReactNative
         },
       }
     );
+
+const courierEventEmitter = new NativeEventEmitter(
+  NativeModules.CourierReactNative
+);
 
 type SignInProps = {
   accessToken: String;
@@ -74,15 +79,28 @@ export function registerPushNotificationListeners<T>({
   onNotificationClicked: (message: T) => void;
   onNotificationDelivered: (message: T) => void;
 }) {
-  const notificationClickedListener = DeviceEventEmitter.addListener(
-    'pushNotificationClicked',
-    onNotificationClicked
-  );
-  const notificationDeliveredListener = DeviceEventEmitter.addListener(
-    'pushNotificationDelivered',
-    onNotificationDelivered
-  );
-
+  let notificationClickedListener: EmitterSubscription;
+  let notificationDeliveredListener: EmitterSubscription;
+  if (Platform.OS === 'android') {
+    notificationClickedListener = DeviceEventEmitter.addListener(
+      'pushNotificationClicked',
+      onNotificationClicked
+    );
+    notificationDeliveredListener = DeviceEventEmitter.addListener(
+      'pushNotificationDelivered',
+      onNotificationDelivered
+    );
+  }
+  if (Platform.OS === 'ios') {
+    notificationClickedListener = courierEventEmitter.addListener(
+      'pushNotificationClicked',
+      onNotificationClicked
+    );
+    notificationDeliveredListener = courierEventEmitter.addListener(
+      'pushNotificationDelivered',
+      onNotificationDelivered
+    );
+  }
   CourierReactNative.registerPushNotificationClickedOnKilledState();
 
   return () => {
@@ -92,8 +110,7 @@ export function registerPushNotificationListeners<T>({
 }
 
 export function debuggerListener() {
-  const eventEmitter = new NativeEventEmitter(NativeModules.CourierReactNative);
-  const eventListener = eventEmitter.addListener(
+  const eventListener = courierEventEmitter.addListener(
     'courierDebugEvent',
     (event) => {
       console.log('\x1b[36m%s\x1b[0m', 'DEBUGGING COURIER', event);

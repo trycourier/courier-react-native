@@ -33,7 +33,7 @@ RCT_EXTERN_METHOD(sendPush: (NSString*)authKey
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-
+RCT_EXTERN_METHOD(registerPushNotificationClickedOnKilledState)
 
 
 
