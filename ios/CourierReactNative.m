@@ -22,6 +22,10 @@ RCT_EXTERN_METHOD(getApnsToken: (RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getNotificationPermissionStatus: (RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(requestNotificationPermission: (RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
 
 
 

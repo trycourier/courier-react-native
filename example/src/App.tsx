@@ -45,6 +45,7 @@ export default function App() {
   const handleSignIn = async () => {
     setIsLoading(true);
     try {
+      console.log({ ACCESS_TOKEN, USER_ID });
       const res = await CourierPush.signIn({
         accessToken: ACCESS_TOKEN,
         userId: USER_ID,
@@ -93,6 +94,7 @@ export default function App() {
   const handleGetFcmToken = async () => {
     try {
       const fcmToken = await CourierPush.getFcmToken();
+      console.log(fcmToken);
       setFcmToken(fcmToken);
     } catch (err: any) {
       console.log(err);
@@ -120,18 +122,21 @@ export default function App() {
   };
 
   const init = async () => {
-    const notificationPermissionStatus =
-      await CourierPush.getNotificationPermissionStatus();
-    console.log('notificationPermissionStatus', notificationPermissionStatus);
-
+    try {
+      const notificationPermissionStatus =
+        await CourierPush.getNotificationPermissionStatus();
+      console.log('notificationPermissionStatus', notificationPermissionStatus);
+      const requestStatus = await CourierPush.requestNotificationPermission();
+      showToast(requestStatus);
+      handleSignIn();
+    } catch (e: any) {
+      console.log(e);
+      showToast(e);
+    }
     if (Platform.OS === 'android') {
       try {
-        const requestStatus = await CourierPush.requestNotificationPermission();
         const unsubscribeAddNotificationListener = addNotificationListeners();
         const unsubscribeDebugListener = CourierPush.debuggerListener();
-        showToast(requestStatus);
-        if (requestStatus === 'denied') return;
-        handleSignIn();
         return () => {
           unsubscribeAddNotificationListener();
           unsubscribeDebugListener();

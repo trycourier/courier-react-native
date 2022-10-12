@@ -49,6 +49,15 @@ class CourierReactNative: RCTEventEmitter {
     }
   }
 
+  @objc(requestNotificationPermission: withRejecter:)
+  func requestNotificationPermission(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    Courier.requestNotificationPermission { status in
+      resolve(status.name)
+    }
+  }
+
+
+
 
   @objc(signOut: withRejecter:)
   func signOut(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
