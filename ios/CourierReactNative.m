@@ -25,6 +25,14 @@ RCT_EXTERN_METHOD(getNotificationPermissionStatus: (RCTPromiseResolveBlock)resol
 RCT_EXTERN_METHOD(requestNotificationPermission: (RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(sendPush: (NSString*)authKey
+                  withUserId:(NSString*)userId
+                  withTitle:(NSString*)title
+                  withBody:(NSString*)body
+                  withProviders:(NSArray*)providers
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
 
 
 

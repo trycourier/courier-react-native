@@ -83,6 +83,26 @@ class CourierReactNative: RCTEventEmitter {
     resolve(Courier.shared.apnsToken)
   }
 
+  @objc(sendPush: withUserId: withTitle: withBody: withProviders: withResolver: withRejecter:)
+  func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    
+//    todo: remove hardcoded isProduction and providers
+    Courier.shared.sendPush(
+      authKey: authKey as String,
+      userId: userId as String,
+      title: title as String,
+      message: body as String,
+      isProduction: false,
+      providers: ["apn"],
+      onSuccess: { requestId in
+        resolve(requestId)
+      },
+      onFailure: { error in
+        reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+      })
+
+  }
+
   override func supportedEvents() -> [String]! {
     return ["testEvent"]
   }

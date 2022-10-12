@@ -78,7 +78,7 @@ export default function App() {
   const handleSendPush = async () => {
     try {
       const res = await CourierPush.sendPush({
-        authKey: AUTH_KEY,
+        authKey: ACCESS_TOKEN,
         userId: USER_ID,
         title: 'This is a title',
         body: 'This is a body',
@@ -192,14 +192,7 @@ export default function App() {
       )}
       {isSignedIn && (
         <>
-          <Button
-            title="Send Push"
-            onPress={() => {
-              if (Platform.OS === 'android') {
-                handleSendPush();
-              }
-            }}
-          />
+          <Button title="Send Push" onPress={handleSendPush} />
         </>
       )}
       <Button title="Get Fcm Token" onPress={handleGetFcmToken} />
