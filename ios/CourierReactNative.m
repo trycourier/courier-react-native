@@ -19,6 +19,10 @@ RCT_EXTERN_METHOD(getFcmToken: (RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getApnsToken: (RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getNotificationPermissionStatus: (RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+
 
 
 + (BOOL)requiresMainQueueSetup

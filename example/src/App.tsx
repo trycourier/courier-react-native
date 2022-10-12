@@ -120,15 +120,13 @@ export default function App() {
   };
 
   const init = async () => {
+    const notificationPermissionStatus =
+      await CourierPush.getNotificationPermissionStatus();
+    console.log('notificationPermissionStatus', notificationPermissionStatus);
+
     if (Platform.OS === 'android') {
       try {
         const requestStatus = await CourierPush.requestNotificationPermission();
-        const notificationPermissionStatus =
-          await CourierPush.getNotificationPermissionStatus();
-        console.log(
-          'notificationPermissionStatus',
-          notificationPermissionStatus
-        );
         const unsubscribeAddNotificationListener = addNotificationListeners();
         const unsubscribeDebugListener = CourierPush.debuggerListener();
         showToast(requestStatus);

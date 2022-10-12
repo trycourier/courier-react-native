@@ -110,15 +110,11 @@ export async function setDebugMode(isDebugging: boolean) {
   };
 }
 
-export function requestNotificationPermission(): Promise<
-  'authorized' | 'denied'
-> {
+export function requestNotificationPermission(): Promise<string> {
   return CourierReactNative.requestNotificationPermission();
 }
 
-export function getNotificationPermissionStatus(): Promise<
-  'authorized' | 'denied'
-> {
+export function getNotificationPermissionStatus(): Promise<string> {
   return CourierReactNative.getNotificationPermissionStatus();
 }
 
