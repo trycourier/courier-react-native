@@ -5,7 +5,7 @@
 //  Created by Fahad Amin on 10/12/22.
 //
 
-import Courier
+import Courier_iOS
 
 class NotificationService: CourierNotificationServiceExtension {
 
