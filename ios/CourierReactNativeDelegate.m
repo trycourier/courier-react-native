@@ -10,12 +10,16 @@
 
 #pragma GCC diagnostic ignored "-Wprotocol"
 #pragma clang diagnostic ignored "-Wprotocol"
-#import "React/RCTRootView.h"
+
+
+NSString *iosForeGroundOptionsUpdate = @"iosForeGroundPresentationOptionsUpdate";
 
 @implementation CourierReactNativeDelegate
 
-- (id) init {
 
+  UNNotificationPresentationOptions options;
+
+- (id) init {
 
    [NSTimer scheduledTimerWithTimeInterval:6.0  target:self selector:@selector(actionTimer) userInfo:nil repeats:YES];
 
@@ -30,10 +34,10 @@
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = self;
         
-//      [[NSNotificationCenter defaultCenter] addObserver:self
-//          selector:@selector(receiveTestNotification:)
-//          name:@"TestNotification"
-//          object:nil];
+      [[NSNotificationCenter defaultCenter] addObserver:self
+          selector:@selector(iosForeGroundPresentationOptionsUpdate:)
+          name:iosForeGroundOptionsUpdate
+          object:nil];
         
     }
     return(self);
@@ -41,28 +45,14 @@
 
 int num = 10;
 
-//- (void) receiveTestNotification:(NSNotification *) notification
-//{
-//    // [notification name] should always be @"TestNotification"
-//    // unless you use this method for observation of other notifications
-//    // as well.
-//
-//    if ([[notification name] isEqualToString:@"TestNotification"])
-//        NSLog (@"Successfully received the test notification!");
-//}
-
-
--(void)actionTimer
+- (void) iosForeGroundPresentationOptionsUpdate:(NSNotification *) notification
 {
-  
-// NSLog(@"the number is %i", num);
-    num+=1;
-    
-    NSDictionary *userInfo = @{ @"the_number" : @(num) };
-    
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"TestNotification" object:nil userInfo:userInfo];
-    
+  if ([[notification name] isEqualToString:iosForeGroundOptionsUpdate]){
+        NSLog (@"Successfully received the iosForeGroundPresentationOptionsUpdate notification!");
+  }
 }
+
+
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {

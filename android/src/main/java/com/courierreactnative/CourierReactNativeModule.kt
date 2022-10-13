@@ -100,7 +100,6 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
         }
       }
     }
-    println("normalizedProvidersList: $normalizedProviders")
 
     Courier.shared.sendPush(
       authKey = authKey,

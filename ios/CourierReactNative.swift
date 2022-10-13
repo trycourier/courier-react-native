@@ -6,8 +6,11 @@ class CourierReactNative: RCTEventEmitter {
   private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
   internal static let COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
   internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
+  static let COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS = "iosForeGroundPresentationOptionsUpdate"
 
   private var lastClickedMessage: [AnyHashable: Any]? = nil
+  private var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+
 
   override init() {
     super.init()
@@ -117,16 +120,15 @@ class CourierReactNative: RCTEventEmitter {
     if let clickedMessageData = lastClickedMessage {
       formatandSendData(data: clickedMessageData, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
     }
-
   }
   
-  private var foregroundPresentationOptions: UNNotificationPresentationOptions = []
   
   @objc(iOSForegroundPresentationOptions:)
   func iOSForegroundPresentationOptions(params:NSDictionary){
         if let options = params["options"] as? [String] {
         foregroundPresentationOptions = []
         options.forEach { option in
+            print("foregroundOption \(option)")
             switch option {
             case "sound": foregroundPresentationOptions.insert(.sound)
             case "badge": foregroundPresentationOptions.insert(.badge)
@@ -135,7 +137,10 @@ class CourierReactNative: RCTEventEmitter {
             default: break
             }
         }
+          NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": options])
     }
+
+
   }
 
   override func supportedEvents() -> [String]! {
