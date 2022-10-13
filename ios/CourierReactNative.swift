@@ -122,29 +122,25 @@ class CourierReactNative: RCTEventEmitter {
   }
 
 
-  @objc(iOSForegroundPresentationOptions:)
-  func iOSForegroundPresentationOptions(params: NSDictionary) {
-    var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+    @objc(iOSForegroundPresentationOptions:)
+    func iOSForegroundPresentationOptions(params: NSDictionary) {
+      
+        var foregroundPresentationOptions: UNNotificationPresentationOptions = []
     
-    if let options = params["options"] as? [String] {
-      options.forEach { option in
-        switch option {
-        case "sound": foregroundPresentationOptions.insert(.sound)
-          print("foregroundOption sound \(option)")
-        case "badge": foregroundPresentationOptions.insert(.badge)
-
-          print("foregroundOption badge \(option)")
-        case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
-          print("foregroundOption list \(option)")
-
-        case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
-          print("foregroundOption banner \(option)")
-
-        default: break
+        if let options = params["options"] as? [String] {
+            options.forEach { option in
+                switch option {
+                case "sound": foregroundPresentationOptions.insert(.sound)
+                case "badge": foregroundPresentationOptions.insert(.badge)
+                case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+                case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+                default: break
+                }
+            }
         }
-      }
-   }
-      NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": foregroundPresentationOptions])
+      
+        let rawValue = foregroundPresentationOptions.rawValue
+        NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": rawValue])
  
 
   }

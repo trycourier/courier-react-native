@@ -17,6 +17,8 @@
 NSString *iosForeGroundOptionsUpdate = @"iosForeGroundPresentationOptionsUpdate";
 UNNotificationPresentationOptions preferences;
 
+NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNone;
+
 - (id) init {
     self = [super init];
     if (self) {
@@ -42,13 +44,11 @@ int num = 10;
 
 - (void) iosForeGroundOptionsUpdateNotification:(NSNotification *) notification
 {
-  if ([[notification name] isEqualToString:iosForeGroundOptionsUpdate]){
-    NSDictionary *userInfo = notification.userInfo;
-    if([userInfo objectForKey:@"options"]){
-      preferences =  (UNNotificationPresentationOptions) userInfo[@"options"];
-
+    if ([[notification name] isEqualToString:iosForeGroundOptionsUpdate])
+    {
+        NSDictionary *userInfo = notification.userInfo;
+        notificationPresentationOptions = ((NSNumber *) [userInfo objectForKey:@"options"]).unsignedIntegerValue;
     }
-  }
 }
 
 
@@ -67,14 +67,7 @@ int num = 10;
           [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:message];
         }
 
-        
-        // TODO: Need variable exposed for making this settable inside React Native javascript.. tbd on how just yet
-//        if (@available(iOS 14.0, *)) {
-//            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge);
-//        } else {
-//            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge);
-//        }
-      completionHandler(preferences);
+        completionHandler(notificationPresentationOptions);
         
     }
     ];
