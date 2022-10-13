@@ -9,7 +9,6 @@ class CourierReactNative: RCTEventEmitter {
   static let COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS = "iosForeGroundPresentationOptionsUpdate"
 
   private var lastClickedMessage: [AnyHashable: Any]? = nil
-  private var foregroundPresentationOptions: UNNotificationPresentationOptions = []
 
 
   override init() {
@@ -97,10 +96,10 @@ class CourierReactNative: RCTEventEmitter {
   @objc(sendPush: withUserId: withTitle: withBody: withProviders: withResolver: withRejecter:)
   func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
     guard let courierProviders = providers as? [String] else {
-        reject("No provider supported", CourierReactNative.COURIER_ERROR_TAG, nil)
+      reject("No provider supported", CourierReactNative.COURIER_ERROR_TAG, nil)
       return
     }
-   
+
     Courier.shared.sendPush(
       authKey: authKey as String,
       userId: userId as String,
@@ -121,25 +120,32 @@ class CourierReactNative: RCTEventEmitter {
       formatandSendData(data: clickedMessageData, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
     }
   }
-  
-  
-  @objc(iOSForegroundPresentationOptions:)
-  func iOSForegroundPresentationOptions(params:NSDictionary){
-        if let options = params["options"] as? [String] {
-        foregroundPresentationOptions = []
-        options.forEach { option in
-            print("foregroundOption \(option)")
-            switch option {
-            case "sound": foregroundPresentationOptions.insert(.sound)
-            case "badge": foregroundPresentationOptions.insert(.badge)
-            case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
-            case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
-            default: break
-            }
-        }
-          NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": options])
-    }
 
+
+  @objc(iOSForegroundPresentationOptions:)
+  func iOSForegroundPresentationOptions(params: NSDictionary) {
+    var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+    
+    if let options = params["options"] as? [String] {
+      options.forEach { option in
+        switch option {
+        case "sound": foregroundPresentationOptions.insert(.sound)
+          print("foregroundOption sound \(option)")
+        case "badge": foregroundPresentationOptions.insert(.badge)
+
+          print("foregroundOption badge \(option)")
+        case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+          print("foregroundOption list \(option)")
+
+        case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+          print("foregroundOption banner \(option)")
+
+        default: break
+        }
+      }
+   }
+      NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": foregroundPresentationOptions])
+ 
 
   }
 

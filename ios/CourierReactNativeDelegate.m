@@ -15,12 +15,9 @@
 @implementation CourierReactNativeDelegate
 
 NSString *iosForeGroundOptionsUpdate = @"iosForeGroundPresentationOptionsUpdate";
+UNNotificationPresentationOptions preferences;
 
 - (id) init {
-
-
-   [NSTimer scheduledTimerWithTimeInterval:6.0  target:self selector:@selector(actionTimer) userInfo:nil repeats:YES];
-
     self = [super init];
     if (self) {
         
@@ -45,26 +42,15 @@ int num = 10;
 
 - (void) iosForeGroundOptionsUpdateNotification:(NSNotification *) notification
 {
-    // [notification name] should always be @"TestNotification"
-    // unless you use this method for observation of other notifications
-    // as well.
+  if ([[notification name] isEqualToString:iosForeGroundOptionsUpdate]){
+    NSDictionary *userInfo = notification.userInfo;
+    if([userInfo objectForKey:@"options"]){
+      preferences =  (UNNotificationPresentationOptions) userInfo[@"options"];
 
-    if ([[notification name] isEqualToString:iosForeGroundOptionsUpdate])
-        NSLog (@"Successfully received the test notification!");
+    }
+  }
 }
 
-
--(void)actionTimer
-{
-  
-// NSLog(@"the number is %i", num);
-    num+=1;
-    
-    NSDictionary *userInfo = @{ @"the_number" : @(num) };
-    
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"TestNotification" object:nil userInfo:userInfo];
-    
-}
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
@@ -83,11 +69,12 @@ int num = 10;
 
         
         // TODO: Need variable exposed for making this settable inside React Native javascript.. tbd on how just yet
-        if (@available(iOS 14.0, *)) {
-            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge);
-        } else {
-            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge);
-        }
+//        if (@available(iOS 14.0, *)) {
+//            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge);
+//        } else {
+//            completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBadge);
+//        }
+      completionHandler(preferences);
         
     }
     ];
