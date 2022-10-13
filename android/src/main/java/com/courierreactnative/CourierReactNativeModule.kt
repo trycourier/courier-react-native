@@ -92,17 +92,22 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     promise: Promise
   ) {
 
-    val courierProviders = providers.toArrayList().map { providerValue ->
-      val value = providerValue as String
-      return@map CourierProvider.valueOf(value)
+    val normalizedProviders: MutableList<CourierProvider> = mutableListOf();
+    for (provider in providers.toArrayList()) {
+      CourierProvider.values().forEach {
+        if (it.value == provider) {
+          normalizedProviders.add(it);
+        }
+      }
     }
+    println("normalizedProvidersList: $normalizedProviders")
 
     Courier.shared.sendPush(
       authKey = authKey,
       userId = userId,
       title = title,
       body = body,
-      providers = courierProviders,
+      providers = normalizedProviders,
       onSuccess = {
         val successMessage = "**************** Push sent**************"
         println(successMessage)

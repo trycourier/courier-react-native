@@ -7,8 +7,8 @@ import {
   EmitterSubscription,
 } from 'react-native';
 export enum CourierProvider {
-  FCM = 'FCM',
-  APNS = 'APNS',
+  FCM = 'firebase-fcm',
+  APNS = 'apn',
 }
 
 const LINKING_ERROR =
@@ -133,6 +133,15 @@ export function requestNotificationPermission(): Promise<string> {
 
 export function getNotificationPermissionStatus(): Promise<string> {
   return CourierReactNative.getNotificationPermissionStatus();
+}
+
+export function iOSForegroundPresentationOptions(params: {
+  options: ('sound' | 'badge' | 'list' | 'banner')[];
+}) {
+  const normalizedParams = new Set(params.options);
+  return CourierReactNative.iOSForegroundPresentationOptions({
+    options: Array.from(normalizedParams),
+  });
 }
 
 export function getApnsToken(): Promise<string | undefined> {

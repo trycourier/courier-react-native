@@ -34,6 +34,7 @@ RCT_EXTERN_METHOD(sendPush: (NSString*)authKey
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(registerPushNotificationClickedOnKilledState)
+RCT_EXTERN_METHOD(iOSForegroundPresentationOptions: (NSDictionary*) params)
 
 
 

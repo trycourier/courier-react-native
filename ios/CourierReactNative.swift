@@ -93,22 +93,24 @@ class CourierReactNative: RCTEventEmitter {
 
   @objc(sendPush: withUserId: withTitle: withBody: withProviders: withResolver: withRejecter:)
   func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-
-//    todo: remove hardcoded isProduction and providers
+    guard let courierProviders = providers as? [String] else {
+        reject("No provider supported", CourierReactNative.COURIER_ERROR_TAG, nil)
+      return
+    }
+   
     Courier.shared.sendPush(
       authKey: authKey as String,
       userId: userId as String,
       title: title as String,
       message: body as String,
       isProduction: false,
-      providers: ["apn"],
+      providers: courierProviders,
       onSuccess: { requestId in
         resolve(requestId)
       },
       onFailure: { error in
         reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
       })
-
   }
 
   @objc func registerPushNotificationClickedOnKilledState() {
@@ -117,11 +119,28 @@ class CourierReactNative: RCTEventEmitter {
     }
 
   }
+  
+  private var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+  
+  @objc(iOSForegroundPresentationOptions:)
+  func iOSForegroundPresentationOptions(params:NSDictionary){
+        if let options = params["options"] as? [String] {
+        foregroundPresentationOptions = []
+        options.forEach { option in
+            switch option {
+            case "sound": foregroundPresentationOptions.insert(.sound)
+            case "badge": foregroundPresentationOptions.insert(.badge)
+            case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+            case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+            default: break
+            }
+        }
+    }
+  }
 
   override func supportedEvents() -> [String]! {
     return [CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT, CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT]
   }
-
 }
 
 

@@ -82,7 +82,11 @@ export default function App() {
         userId: USER_ID,
         title: 'This is a title',
         body: 'This is a body',
-        providers: [CourierPush.CourierProvider.FCM],
+        providers: [
+          Platform.OS === 'ios'
+            ? CourierPush.CourierProvider.APNS
+            : CourierPush.CourierProvider.FCM,
+        ],
         isProduction: false,
       });
       showToast(res);
@@ -146,6 +150,12 @@ export default function App() {
     (async () => {
       unsubscribe = await init();
     })();
+
+    if (Platform.OS === 'ios') {
+      CourierPush.iOSForegroundPresentationOptions({
+        options: ['sound', 'badge', 'list', 'banner'],
+      });
+    }
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
