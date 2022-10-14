@@ -198,6 +198,7 @@
 				4A072F5328F71FD80067DE0D /* Sources */,
 				4A072F5428F71FD80067DE0D /* Frameworks */,
 				4A072F5528F71FD80067DE0D /* Resources */,
+				0413510F401877C7FE568144 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -293,6 +294,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		0413510F401877C7FE568144 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B280D59ED0DA052F42D7982C /* [CP] Check Pods Manifest.lock */ = {
