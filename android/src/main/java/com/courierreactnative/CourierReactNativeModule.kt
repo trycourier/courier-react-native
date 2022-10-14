@@ -89,6 +89,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     title: String,
     body: String,
     providers: ReadableArray,
+    isProduction: Boolean,
     promise: Promise
   ) {
 
@@ -107,6 +108,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
       title = title,
       body = body,
       providers = normalizedProviders,
+      isProduction = isProduction,
       onSuccess = {
         val successMessage = "**************** Push sent**************"
         println(successMessage)

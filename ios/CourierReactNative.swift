@@ -93,19 +93,20 @@ class CourierReactNative: RCTEventEmitter {
     resolve(Courier.shared.apnsToken)
   }
 
-  @objc(sendPush: withUserId: withTitle: withBody: withProviders: withResolver: withRejecter:)
-  func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+  @objc(sendPush: withUserId: withTitle: withBody: withProviders: withIsProduction: withResolver: withRejecter:)
+  func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, isProduction: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
     guard let courierProviders = providers as? [String] else {
       reject("No provider supported", CourierReactNative.COURIER_ERROR_TAG, nil)
       return
     }
+
 
     Courier.shared.sendPush(
       authKey: authKey as String,
       userId: userId as String,
       title: title as String,
       message: body as String,
-      isProduction: false,
+      isProduction: isProduction,
       providers: courierProviders,
       onSuccess: { requestId in
         resolve(requestId)
@@ -122,26 +123,26 @@ class CourierReactNative: RCTEventEmitter {
   }
 
 
-    @objc(iOSForegroundPresentationOptions:)
-    func iOSForegroundPresentationOptions(params: NSDictionary) {
-      
-        var foregroundPresentationOptions: UNNotificationPresentationOptions = []
-    
-        if let options = params["options"] as? [String] {
-            options.forEach { option in
-                switch option {
-                case "sound": foregroundPresentationOptions.insert(.sound)
-                case "badge": foregroundPresentationOptions.insert(.badge)
-                case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
-                case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
-                default: break
-                }
-            }
+  @objc(iOSForegroundPresentationOptions:)
+  func iOSForegroundPresentationOptions(params: NSDictionary) {
+
+    var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+
+    if let options = params["options"] as? [String] {
+      options.forEach { option in
+        switch option {
+        case "sound": foregroundPresentationOptions.insert(.sound)
+        case "badge": foregroundPresentationOptions.insert(.badge)
+        case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+        case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+        default: break
         }
-      
-        let rawValue = foregroundPresentationOptions.rawValue
-        NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": rawValue])
- 
+      }
+    }
+
+    let rawValue = foregroundPresentationOptions.rawValue
+    NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": rawValue])
+
 
   }
 

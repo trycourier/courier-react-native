@@ -30,6 +30,7 @@ RCT_EXTERN_METHOD(sendPush: (NSString*)authKey
                   withTitle:(NSString*)title
                   withBody:(NSString*)body
                   withProviders:(NSArray*)providers
+                  withIsProduction:(BOOL)isProduction
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 

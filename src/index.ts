@@ -68,8 +68,14 @@ export function sendPush({
   providers,
   isProduction,
 }: SendPushProps): Promise<string> {
-  console.log(`Setup isProduction: ${isProduction}`);
-  return CourierReactNative.sendPush(authKey, userId, title, body, providers);
+  return CourierReactNative.sendPush(
+    authKey,
+    userId,
+    title,
+    body,
+    providers,
+    isProduction
+  );
 }
 
 export function registerPushNotificationListeners<T>({

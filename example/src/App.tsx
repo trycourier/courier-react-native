@@ -87,7 +87,7 @@ export default function App() {
             ? CourierPush.CourierProvider.APNS
             : CourierPush.CourierProvider.FCM,
         ],
-        isProduction: false,
+        isProduction: !__DEV__,
       });
       showToast(res);
     } catch (err: any) {
