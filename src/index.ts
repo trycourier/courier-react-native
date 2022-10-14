@@ -158,3 +158,7 @@ export function getApnsToken(): Promise<string | undefined> {
   }
   return CourierReactNative.getApnsToken();
 }
+
+export function setFcmToken(token: string): Promise<string> {
+  return CourierReactNative.setFcmToken(token);
+}

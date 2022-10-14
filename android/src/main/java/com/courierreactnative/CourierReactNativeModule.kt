@@ -64,6 +64,15 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun setFcmToken(token: String, promise: Promise) {
+    Courier.shared.setFCMToken(token, onSuccess = {
+      promise.resolve("Successfully set fcm token")
+    }, onFailure = { e ->
+      promise.reject(COURIER_ERROR_TAG, e)
+    })
+  }
+
+  @ReactMethod
   fun getUserId(promise: Promise) {
     try {
       promise.resolve(Courier.shared.userId)

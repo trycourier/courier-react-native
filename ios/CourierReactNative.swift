@@ -88,6 +88,16 @@ class CourierReactNative: RCTEventEmitter {
     resolve(Courier.shared.fcmToken)
   }
 
+  @objc(setFcmToken: withResolver: withRejecter:)
+  func setFcmToken(token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    Courier.shared.setFCMToken(token as String, onSuccess: {
+      resolve("Successfully set fcm token")
+    }, onFailure: { error in
+        reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+      })
+    
+  }
+
   @objc(getApnsToken: withRejecter:)
   func getApnsToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
     resolve(Courier.shared.apnsToken)
@@ -143,8 +153,9 @@ class CourierReactNative: RCTEventEmitter {
     let rawValue = foregroundPresentationOptions.rawValue
     NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": rawValue])
 
-
   }
+
+
 
   override func supportedEvents() -> [String]! {
     return [CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT, CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT]
