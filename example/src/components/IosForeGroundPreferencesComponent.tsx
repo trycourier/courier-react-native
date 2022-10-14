@@ -28,7 +28,7 @@ const IosForeGroundPreferencesComponent = () => {
     let updatedIosNotificationPreferences: IosForeGroundNotificationPreferencesType[];
     if (iosNotificationPreferences.includes(option)) {
       updatedIosNotificationPreferences = iosNotificationPreferences.filter(
-        (item) => item === option
+        (item) => item !== option
       );
     } else {
       updatedIosNotificationPreferences = [
@@ -46,11 +46,10 @@ const IosForeGroundPreferencesComponent = () => {
   return (
     <View style={styles.overAll}>
       {allIOSPreferences.map((item) => (
-        <View style={styles.boxContainer}>
+        <View style={styles.boxContainer} key={item}>
           <BouncyCheckbox
-            key={item}
             text={item}
-            isChecked={!iosNotificationPreferences.includes(item)}
+            isChecked={iosNotificationPreferences.includes(item)}
             onPress={() => handleIosPreferencesNotificationCheckbox(item)}
             textStyle={styles.textStyle}
           />
