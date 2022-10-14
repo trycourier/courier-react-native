@@ -12,6 +12,7 @@ import {
 
 import * as CourierPush from '@trycourier/courier-react-native';
 import { Token, Button } from './components';
+import IosForeGroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
 
 type NotificationType = {
   body: string;
@@ -151,11 +152,6 @@ export default function App() {
       unsubscribe = await init();
     })();
 
-    if (Platform.OS === 'ios') {
-      CourierPush.iOSForegroundPresentationOptions({
-        options: ['sound', 'badge', 'list', 'banner'],
-      });
-    }
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
@@ -168,23 +164,24 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Button
-        title="Start Debugging"
-        onPress={() => {
-          if (Platform.OS === 'android') {
-            CourierPush.setDebugMode(true);
-          }
-        }}
-      />
-      <Button
-        title="Stop Debugging"
-        onPress={() => {
-          if (Platform.OS === 'android') {
-            CourierPush.setDebugMode(false);
-          }
-        }}
-      />
-
+      <View style={{ flexDirection: 'row' }}>
+        <Button
+          title="Start Debugging"
+          onPress={() => {
+            if (Platform.OS === 'android') {
+              CourierPush.setDebugMode(true);
+            }
+          }}
+        />
+        <Button
+          title="Stop Debugging"
+          onPress={() => {
+            if (Platform.OS === 'android') {
+              CourierPush.setDebugMode(false);
+            }
+          }}
+        />
+      </View>
       <Text style={styles.signInStatus}>
         {isSignedIn ? 'Signed In' : 'Not Signed In'}
       </Text>
@@ -196,6 +193,7 @@ export default function App() {
       {isSignedIn && (
         <>
           <Button title="Send Push" onPress={handleSendPush} />
+          <IosForeGroundPreferencesComponent />
         </>
       )}
       <Button title="Get Fcm Token" onPress={handleGetFcmToken} />

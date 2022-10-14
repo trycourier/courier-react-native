@@ -14,6 +14,7 @@
   "dependencies": {
     "react": "17.0.2",
     "react-native": "0.68.2",
+    "react-native-bouncy-checkbox": "^3.0.5",
     "react-native-dotenv": "^3.3.1"
   },
   "devDependencies": {
