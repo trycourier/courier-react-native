@@ -214,15 +214,15 @@ extension NSDictionary {
         var foregroundPresentationOptions: UNNotificationPresentationOptions = []
 
         if let options = self["options"] as? [String] {
-          options.forEach { option in
-            switch option {
-            case "sound": foregroundPresentationOptions.insert(.sound)
-            case "badge": foregroundPresentationOptions.insert(.badge)
-            case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
-            case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
-            default: break
+            options.forEach { option in
+                switch option {
+                case "sound": foregroundPresentationOptions.insert(.sound)
+                case "badge": foregroundPresentationOptions.insert(.badge)
+                case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+                case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+                default: break
+                }
             }
-          }
         }
 
         return foregroundPresentationOptions
@@ -233,15 +233,15 @@ extension NSDictionary {
 
 extension UNAuthorizationStatus {
 
-  var name: String {
-    switch (self) {
-    case .notDetermined: return "notDetermined"
-    case .denied: return "denied"
-    case .authorized: return "authorized"
-    case .provisional: return "provisional"
-    case .ephemeral: return "ephemeral"
-    @unknown default: return "unknown"
+    var name: String {
+        switch (self) {
+        case .notDetermined: return "notDetermined"
+        case .denied: return "denied"
+        case .authorized: return "authorized"
+        case .provisional: return "provisional"
+        case .ephemeral: return "ephemeral"
+        @unknown default: return "unknown"
+        }
     }
-  }
 
 }
