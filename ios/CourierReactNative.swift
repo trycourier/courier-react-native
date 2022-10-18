@@ -3,165 +3,233 @@ import Courier_iOS
 @objc(CourierReactNative)
 class CourierReactNative: RCTEventEmitter {
 
-  private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
-  internal static let COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
-  internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
-  static let COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS = "iosForeGroundPresentationOptionsUpdate"
+    private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
+    internal static let COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
+    internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
 
-  private var lastClickedMessage: [AnyHashable: Any]? = nil
-
-
-  override init() {
-    super.init()
-    Courier.agent = CourierAgent.react_native_ios
-    let nc = NotificationCenter.default
-    nc.addObserver(self, selector: #selector(pushNotificationClicked), name: Notification.Name(rawValue: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT), object: nil)
-    nc.addObserver(self, selector: #selector(pushNotificationDelivered), name: Notification.Name(rawValue: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT), object: nil)
-
-  }
-
-  private func formatandSendData(data: [AnyHashable: Any]?, eventName: String) {
-    if let aps = (data?["aps"])! as? [AnyHashable: Any] {
-      if let alert = aps["alert"] {
-        print("alert value", alert)
-        sendEvent(withName: eventName, body: alert)
-      }
-    }
-  }
-
-  @objc private func pushNotificationClicked(notification: Notification) {
-    lastClickedMessage = notification.userInfo
-    formatandSendData(data: lastClickedMessage, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
-  }
-
-  @objc private func pushNotificationDelivered(notification: Notification) {
-    formatandSendData(data: notification.userInfo, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT)
-  }
-
-
-
-
-  @objc(signIn: accessToken: withResolver: withRejecter:)
-  func signIn(userId: NSString, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    Courier.shared.signIn(accessToken: accessToken as String, userId: userId as String, onSuccess: {
-      let successMessage = "**************** Credentials are set **************"
-      resolve(successMessage)
-    }, onFailure: { error in
-        reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
-      })
-  }
-
-
-  @objc(getNotificationPermissionStatus: withRejecter:)
-  func getNotificationPermissionStatus(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    Courier.getNotificationPermissionStatus { status in
-      resolve(status.name)
-    }
-  }
-
-  @objc(requestNotificationPermission: withRejecter:)
-  func requestNotificationPermission(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    Courier.requestNotificationPermission { status in
-      resolve(status.name)
-    }
-  }
-
-
-
-
-  @objc(signOut: withRejecter:)
-  func signOut(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    Courier.shared.signOut(onSuccess: {
-      resolve("Signout successful")
-    }, onFailure: { error in
-        reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
-      })
-  }
-
-  @objc(getUserId: withRejecter:)
-  func getUserId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    resolve(Courier.shared.userId)
-  }
-
-  @objc(getFcmToken: withRejecter:)
-  func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    resolve(Courier.shared.fcmToken)
-  }
-
-  @objc(setFcmToken: withResolver: withRejecter:)
-  func setFcmToken(token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-    Courier.shared.setFCMToken(token as String, onSuccess: {
-      resolve("Successfully set fcm token")
-    }, onFailure: { error in
-        reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
-      })
-    
-  }
-
-  @objc(getApnsToken: withRejecter:)
-  func getApnsToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    resolve(Courier.shared.apnsToken)
-  }
-
-  @objc(sendPush: withUserId: withTitle: withBody: withProviders: withIsProduction: withResolver: withRejecter:)
-  func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, isProduction: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-    guard let courierProviders = providers as? [String] else {
-      reject("No provider supported", CourierReactNative.COURIER_ERROR_TAG, nil)
-      return
-    }
-
-
-    Courier.shared.sendPush(
-      authKey: authKey as String,
-      userId: userId as String,
-      title: title as String,
-      message: body as String,
-      isProduction: isProduction,
-      providers: courierProviders,
-      onSuccess: { requestId in
-        resolve(requestId)
-      },
-      onFailure: { error in
-        reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
-      })
-  }
-
-  @objc func registerPushNotificationClickedOnKilledState() {
-    if let clickedMessageData = lastClickedMessage {
-      formatandSendData(data: clickedMessageData, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
-    }
-  }
-
-
-  @objc(iOSForegroundPresentationOptions:)
-  func iOSForegroundPresentationOptions(params: NSDictionary) {
-
-    var foregroundPresentationOptions: UNNotificationPresentationOptions = []
-
-    if let options = params["options"] as? [String] {
-      options.forEach { option in
-        switch option {
-        case "sound": foregroundPresentationOptions.insert(.sound)
-        case "badge": foregroundPresentationOptions.insert(.badge)
-        case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
-        case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
-        default: break
+    private var lastClickedMessage: [AnyHashable: Any]? = nil
+    private var notificationCenter: NotificationCenter {
+        get {
+            return NotificationCenter.default
         }
-      }
     }
 
-    let rawValue = foregroundPresentationOptions.rawValue
-    NotificationCenter.default.post(name: Notification.Name(CourierReactNative.COURIER_IOS_FOREGROUND_PRESENTATION_OPTIONS), object: nil, userInfo: ["options": rawValue])
+    override init() {
+        super.init()
+        
+        // Set the user agent
+        // Used to know the platform performing requests
+        Courier.agent = CourierAgent.react_native_ios
+        
+        // Attach the listeners
+        attachObservers()
+        
+    }
+    
+    private func attachObservers() {
+        
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(pushNotificationClicked),
+            name: Notification.Name(rawValue: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT),
+            object: nil
+        )
+        
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(pushNotificationDelivered),
+            name: Notification.Name(rawValue: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT),
+            object: nil
+        )
+        
+    }
 
-  }
+    @objc private func pushNotificationClicked(notification: Notification) {
+        
+        lastClickedMessage = notification.userInfo
+        sendEvent(
+            withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+            body: lastClickedMessage
+        )
+        
+    }
 
+    @objc private func pushNotificationDelivered(notification: Notification) {
+      
+        sendEvent(
+            withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT,
+            body: notification.userInfo
+        )
+      
+    }
+    
+    @objc func registerPushNotificationClickedOnKilledState() {
+        
+        if let message = lastClickedMessage {
+            sendEvent(
+                withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+                body: message
+            )
+        }
+        
+    }
 
+    @objc(signIn: accessToken: withResolver: withRejecter:)
+    func signIn(userId: NSString, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+      
+        Courier.shared.signIn(
+            accessToken: accessToken as String,
+            userId: userId as String,
+            onSuccess: {
+                resolve(nil)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+            }
+        )
+      
+    }
 
-  override func supportedEvents() -> [String]! {
-    return [CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT, CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT]
-  }
+    @objc(getNotificationPermissionStatus: withRejecter:)
+    func getNotificationPermissionStatus(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.getNotificationPermissionStatus { status in
+            resolve(status.name)
+        }
+        
+    }
+
+    @objc(requestNotificationPermission: withRejecter:)
+    func requestNotificationPermission(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.requestNotificationPermission { status in
+            resolve(status.name)
+        }
+        
+    }
+
+    @objc(signOut: withRejecter:)
+    func signOut(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.shared.signOut(
+            onSuccess: {
+                resolve(nil)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
+
+    @objc(getUserId: withRejecter:)
+    func getUserId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        let userId = Courier.shared.userId
+        resolve(userId)
+        
+    }
+
+    @objc(getFcmToken: withRejecter:)
+    func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        let token = Courier.shared.fcmToken
+        resolve(token)
+        
+    }
+
+    @objc(setFcmToken: withResolver: withRejecter:)
+    func setFcmToken(token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        Courier.shared.setFCMToken(
+            token as String,
+            onSuccess: {
+                resolve(nil)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+            }
+        )
+    
+    }
+
+    @objc(getApnsToken: withRejecter:)
+    func getApnsToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        let token = Courier.shared.apnsToken
+        resolve(token)
+        
+    }
+
+    @objc(sendPush: withUserId: withTitle: withBody: withProviders: withIsProduction: withResolver: withRejecter:)
+    func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, isProduction: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        guard let courierProviders = providers as? [String] else {
+            reject("No provider supported", CourierReactNative.COURIER_ERROR_TAG, nil)
+            return
+        }
+
+        Courier.shared.sendPush(
+            authKey: authKey as String,
+            userId: userId as String,
+            title: title as String,
+            message: body as String,
+            isProduction: isProduction,
+            providers: courierProviders,
+            onSuccess: { requestId in
+                resolve(requestId)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
+
+    @objc(iOSForegroundPresentationOptions:)
+    func iOSForegroundPresentationOptions(params: NSDictionary) {
+        
+        let rawValue = params.toPresentationOptions().rawValue
+        NotificationCenter.default.post(
+            name: Notification.Name("iosForegroundNotificationPresentationOptions"),
+            object: nil,
+            userInfo: ["options": rawValue]
+        )
+        
+    }
+
+    override func supportedEvents() -> [String]! {
+        return [
+            CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+            CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT
+        ]
+    }
+    
 }
 
+extension NSDictionary {
+    
+    func toPresentationOptions() -> UNNotificationPresentationOptions {
+        
+        var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+
+        if let options = self["options"] as? [String] {
+          options.forEach { option in
+            switch option {
+            case "sound": foregroundPresentationOptions.insert(.sound)
+            case "badge": foregroundPresentationOptions.insert(.badge)
+            case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+            case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+            default: break
+            }
+          }
+        }
+
+        return foregroundPresentationOptions
+        
+    }
+    
+}
 
 extension UNAuthorizationStatus {
 
