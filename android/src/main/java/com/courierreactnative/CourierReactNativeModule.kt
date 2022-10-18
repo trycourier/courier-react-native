@@ -1,7 +1,6 @@
 package com.courierreactnative
 
 import android.content.Intent
-import android.util.Log
 import com.courier.android.*
 import com.courier.android.models.CourierAgent
 import com.courier.android.models.CourierProvider
@@ -11,44 +10,46 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
 
 
-class CourierReactNativeModule(reactContext: ReactApplicationContext) :
-  ReactContextBaseJavaModule(reactContext) {
+class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
   companion object {
-    private const val COURIER_ERROR_TAG = "Courier Android SDK Error";
-    private const val COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked";
-    private const val COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent";
+    private const val COURIER_MODULE_NAME = "CourierReactNative"
+    private const val COURIER_ERROR_TAG = "Courier Android SDK Error"
+    private const val COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
   }
 
-
   init {
-    Courier.initialize(reactContext);
+
+    // Initialize the SDK
+    // Needed to ensure all shared preferences get synced
+    Courier.initialize(reactContext)
+
+    // User Agent is used to ensure we know the SDK
+    // the requests come from
     Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
+
     Courier.shared.logListener = { data ->
-      sendEvent<String>(reactContext, COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, data)
+      sendEvent(reactContext, COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, data)
     }
 
   }
 
   override fun getName(): String {
-    return "CourierReactNative"
+    return COURIER_MODULE_NAME
   }
 
+  private val reactActivity: ReactActivity?
+    get() = currentActivity as? ReactActivity
 
   @ReactMethod
   fun signIn(userId: String, accessToken: String, promise: Promise) {
-
-    Log.d("CourierModule", "setCredential invoked \n userId: $userId  \naccessToken: $accessToken")
     Courier.shared.signIn(
       accessToken = accessToken,
       userId = userId,
       onSuccess = {
-        val successMessage = "**************** Credentials are set **************"
-        println(successMessage)
-        promise.resolve(successMessage)
+        promise.resolve(null)
       },
       onFailure = { e ->
-        println("************* error message ************ $e")
         promise.reject(COURIER_ERROR_TAG, e)
       }
     )
@@ -57,38 +58,46 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun getFcmToken(promise: Promise) {
     try {
-      promise.resolve(Courier.shared.fcmToken)
+      val token = Courier.shared.fcmToken
+      promise.resolve(token)
     } catch (e: Exception) {
-      promise.reject(COURIER_ERROR_TAG, e);
+      promise.reject(COURIER_ERROR_TAG, e)
     }
   }
 
   @ReactMethod
   fun setFcmToken(token: String, promise: Promise) {
-    Courier.shared.setFCMToken(token, onSuccess = {
-      promise.resolve("Successfully set fcm token")
-    }, onFailure = { e ->
-      promise.reject(COURIER_ERROR_TAG, e)
-    })
+    Courier.shared.setFCMToken(
+      token,
+      onSuccess = {
+        promise.resolve(null)
+      },
+      onFailure = { e ->
+        promise.reject(COURIER_ERROR_TAG, e)
+      }
+    )
   }
 
   @ReactMethod
   fun getUserId(promise: Promise) {
     try {
-      promise.resolve(Courier.shared.userId)
+      val userId = Courier.shared.userId
+      promise.resolve(userId)
     } catch (e: Exception) {
-      promise.reject(COURIER_ERROR_TAG, e);
+      promise.reject(COURIER_ERROR_TAG, e)
     }
   }
 
   @ReactMethod
   fun signOut(promise: Promise) {
-    Courier.shared.signOut(onSuccess = {
-      promise.resolve("Signout successful")
-    }, onFailure = { e ->
-      println("************* error message ************ $e")
-      promise.reject(COURIER_ERROR_TAG, e)
-    })
+    Courier.shared.signOut(
+      onSuccess = {
+        promise.resolve(null)
+      },
+      onFailure = { e ->
+        promise.reject(COURIER_ERROR_TAG, e)
+      }
+    )
   }
 
   @ReactMethod
@@ -101,30 +110,17 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     isProduction: Boolean,
     promise: Promise
   ) {
-
-    val normalizedProviders: MutableList<CourierProvider> = mutableListOf();
-    for (provider in providers.toArrayList()) {
-      CourierProvider.values().forEach {
-        if (it.value == provider) {
-          normalizedProviders.add(it);
-        }
-      }
-    }
-
     Courier.shared.sendPush(
       authKey = authKey,
       userId = userId,
       title = title,
       body = body,
-      providers = normalizedProviders,
+      providers = providers.toCourierProviders(),
       isProduction = isProduction,
-      onSuccess = {
-        val successMessage = "**************** Push sent**************"
-        println(successMessage)
-        promise.resolve(successMessage)
+      onSuccess = { messageId ->
+        promise.resolve(messageId)
       },
       onFailure = { e ->
-        println("************* push sending failed ************ $e")
         promise.reject(COURIER_ERROR_TAG, e)
       }
     )
@@ -133,10 +129,9 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun requestNotificationPermission(promise: Promise) {
     try {
-      val reactActivity = currentActivity as? ReactActivity
       reactActivity?.requestNotificationPermission { isGranted ->
-        val status = if (isGranted) "authorized" else "denied"
-        promise.resolve(status)
+        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
+        promise.resolve(status.value)
       }
     } catch (e: Exception) {
       promise.reject(COURIER_ERROR_TAG, e)
@@ -146,10 +141,9 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun getNotificationPermissionStatus(promise: Promise) {
     try {
-      val reactActivity = currentActivity as? ReactActivity
       reactActivity?.getNotificationPermissionStatus { isGranted ->
-        val status = if (isGranted) "authorized" else "denied"
-        promise.resolve(status)
+        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
+        promise.resolve(status.value)
       }
     } catch (e: Exception) {
       promise.reject(COURIER_ERROR_TAG, e)
@@ -158,9 +152,8 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun registerPushNotificationClickedOnKilledState() {
-    val reactActivity = currentActivity as? ReactActivity
-    if (reactActivity != null) {
-      checkIntentForPushNotificationClick(reactActivity.intent)
+    reactActivity?.let { activity ->
+      checkIntentForPushNotificationClick(activity.intent)
     }
   }
 
@@ -177,27 +170,37 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) :
     }
     sendEvent<WritableMap>(
       reactApplicationContext,
-      COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+      CourierReactNativeActivity.PUSH_CLICKED_EVENT,
       convertedMap
     )
   }
 
-
   @ReactMethod
   fun setDebugMode(isDebugging: Boolean, promise: Promise) {
     try {
-      Courier.shared.isDebugging = isDebugging;
+      Courier.shared.isDebugging = isDebugging
       promise.resolve(Courier.shared.isDebugging)
     } catch (e: Exception) {
       promise.reject(COURIER_ERROR_TAG, e)
     }
-
   }
 
   private fun <T> sendEvent(reactContext: ReactContext, eventName: String, params: T) {
     reactContext
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       .emit(eventName, params)
+  }
+
+  private fun ReadableArray.toCourierProviders(): List<CourierProvider> {
+    val providers: MutableList<CourierProvider> = mutableListOf()
+    for (provider in toArrayList()) {
+      CourierProvider.values().forEach {
+        if (it.value == provider) {
+          providers.add(it)
+        }
+      }
+    }
+    return providers
   }
 
 }
