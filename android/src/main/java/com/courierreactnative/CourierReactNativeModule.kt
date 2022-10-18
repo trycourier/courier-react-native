@@ -8,6 +8,7 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONObject
 
 
 class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -16,6 +17,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     private const val COURIER_MODULE_NAME = "CourierReactNative"
     private const val COURIER_ERROR_TAG = "Courier Android SDK Error"
     private const val COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
+    private  const val COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
   }
 
   init {
@@ -164,14 +166,10 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   }
 
   private fun postPushNotificationClicked(message: RemoteMessage) {
-    val convertedMap = Arguments.createMap()
-    message.data.forEach { entry ->
-      convertedMap.putString(entry.key, entry.value);
-    }
-    sendEvent<WritableMap>(
+    sendEvent(
       reactApplicationContext,
-      CourierReactNativeActivity.PUSH_CLICKED_EVENT,
-      convertedMap
+      COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+      JSONObject(message.pushNotification).toString()
     )
   }
 
@@ -185,7 +183,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     }
   }
 
-  private fun <T> sendEvent(reactContext: ReactContext, eventName: String, params: T) {
+  private fun sendEvent(reactContext: ReactContext, eventName: String, params: String) {
     reactContext
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       .emit(eventName, params)

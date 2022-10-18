@@ -1,5 +1,5 @@
 import { View, Platform, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
 import * as CourierPush from '@trycourier/courier-react-native';
@@ -41,6 +41,15 @@ const IosForeGroundPreferencesComponent = () => {
     });
     setIosNotificationPreferences(updatedIosNotificationPreferences);
   };
+
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      CourierPush.iOSForegroundPresentationOptions({
+        options: iosNotificationPreferences,
+      });
+    }
+    // eslint-disable-next-line
+  }, []);
 
   if (Platform.OS !== 'ios') return null;
   return (

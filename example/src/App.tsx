@@ -17,16 +17,17 @@ import IosForeGroundPreferencesComponent from './components/IosForeGroundPrefere
 type NotificationType = {
   body: string;
   title: string;
-  trackingUrl: string;
 };
 
 const addNotificationListeners = () =>
-  CourierPush.registerPushNotificationListeners<NotificationType>({
-    onNotificationClicked: (notification) => {
+  CourierPush.registerPushNotificationListeners({
+    onNotificationClicked: (notification: NotificationType) => {
       console.log('clicked', notification);
-      showToast(`notification clicked  \n ${notification.title}`);
+      if (notification?.title) {
+        showToast(`notification clicked  \n ${notification.title}`);
+      }
     },
-    onNotificationDelivered: (notification) => {
+    onNotificationDelivered: (notification: NotificationType) => {
       console.log('delivered', notification);
       showToast(`notification delivered \n ${notification.title}`);
     },
@@ -47,11 +48,11 @@ export default function App() {
     setIsLoading(true);
     try {
       console.log({ ACCESS_TOKEN, USER_ID });
-      const res = await CourierPush.signIn({
+      await CourierPush.signIn({
         accessToken: ACCESS_TOKEN,
         userId: USER_ID,
       });
-      showToast(res);
+      showToast('credentials are set');
       setIsSignedIn(true);
     } catch (e) {
       console.log(e);

@@ -3,14 +3,14 @@ package com.courierreactnative
 import android.content.Intent
 import android.os.Bundle
 import com.courier.android.Courier
+import com.courier.android.pushNotification
 import com.courier.android.trackPushNotificationClick
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactRootView
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONObject
 
 open class CourierReactNativeActivity : ReactActivity() {
 
@@ -47,10 +47,10 @@ open class CourierReactNativeActivity : ReactActivity() {
 
   }
 
-  private fun sendEvent(eventName: String, params: WritableMap) {
-    reactInstanceManager.currentReactContext?.let { context ->
-      context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)?.emit(eventName, params)
-    }
+  private fun sendEvent(eventName: String, params: String) {
+    val reactContext = reactInstanceManager.currentReactContext;
+    reactContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      ?.emit(eventName, params)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,19 +77,12 @@ open class CourierReactNativeActivity : ReactActivity() {
     }
   }
 
-  private fun mapToWritableMap(mappedData: Map<String, String>): WritableMap {
-    val convertedMap = Arguments.createMap()
-    mappedData.forEach { entry ->
-      convertedMap.putString(entry.key, entry.value);
-    }
-    return convertedMap
-  }
 
   private fun postPushNotificationDelivered(message: RemoteMessage) {
-    sendEvent(PUSH_DELIVERED_EVENT, mapToWritableMap(message.data))
+      sendEvent(PUSH_DELIVERED_EVENT, JSONObject(message.pushNotification).toString())
   }
 
   private fun postPushNotificationClicked(message: RemoteMessage) {
-    sendEvent(PUSH_CLICKED_EVENT, mapToWritableMap(message.data));
+    sendEvent(PUSH_CLICKED_EVENT ,JSONObject(message.pushNotification).toString());
   }
 }
