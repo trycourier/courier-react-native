@@ -150,33 +150,41 @@ export function sendPush({
  *```
  * @returns  function that can be used to unsubscribe from registered listeners
  */
-export function registerPushNotificationListeners<T>({
+export function registerPushNotificationListeners({
   onNotificationClicked,
   onNotificationDelivered,
 }: {
-  onNotificationClicked: (message: T) => void;
-  onNotificationDelivered: (message: T) => void;
+  onNotificationClicked: (message: any) => void;
+  onNotificationDelivered: (message: any) => void;
 }) {
   let notificationClickedListener: EmitterSubscription;
   let notificationDeliveredListener: EmitterSubscription;
   if (Platform.OS === 'android') {
     notificationClickedListener = DeviceEventEmitter.addListener(
       'pushNotificationClicked',
-      onNotificationClicked
+      (e: any) => {
+        onNotificationClicked(JSON.parse(e));
+      }
     );
     notificationDeliveredListener = DeviceEventEmitter.addListener(
       'pushNotificationDelivered',
-      onNotificationDelivered
+      (e: any) => {
+        onNotificationDelivered(JSON.parse(e));
+      }
     );
   }
   if (Platform.OS === 'ios') {
     notificationClickedListener = courierEventEmitter.addListener(
       'pushNotificationClicked',
-      onNotificationClicked
+      (e: any) => {
+        onNotificationClicked(JSON.parse(e));
+      }
     );
     notificationDeliveredListener = courierEventEmitter.addListener(
       'pushNotificationDelivered',
-      onNotificationDelivered
+      (e: any) => {
+        onNotificationDelivered(JSON.parse(e));
+      }
     );
   }
   CourierReactNative.registerPushNotificationClickedOnKilledState();

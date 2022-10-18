@@ -20,14 +20,15 @@ type NotificationType = {
 };
 
 const addNotificationListeners = () =>
-  CourierPush.registerPushNotificationListeners<NotificationType>({
-    onNotificationClicked: (notification) => {
-      console.log('clicked', notification);
-      // showToast(`notification clicked  \n ${notification.title}`);
+  CourierPush.registerPushNotificationListeners({
+    onNotificationClicked: (notification: NotificationType) => {
+      if (notification?.title) {
+        showToast(`notification clicked  \n ${notification.title}`);
+      }
     },
-    onNotificationDelivered: (notification) => {
+    onNotificationDelivered: (notification: NotificationType) => {
       console.log('delivered', notification);
-      // showToast(`notification delivered \n ${notification.title}`);
+      showToast(`notification delivered \n ${notification.title}`);
     },
   });
 
