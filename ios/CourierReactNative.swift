@@ -43,34 +43,49 @@ class CourierReactNative: RCTEventEmitter {
         )
         
     }
+    
+    private func sendMessage(name: String, message: [AnyHashable: Any]?) {
+        
+        guard let message = message else {
+            return
+        }
+     
+        do {
+            sendEvent(
+                withName: name,
+                body: try message.toString()
+            )
+        } catch {
+            Courier.log(String(describing: error))
+        }
+        
+    }
 
     @objc private func pushNotificationClicked(notification: Notification) {
         
         lastClickedMessage = notification.userInfo
-        sendEvent(
-            withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
-            body: lastClickedMessage
+        sendMessage(
+            name: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+            message: lastClickedMessage
         )
         
     }
 
     @objc private func pushNotificationDelivered(notification: Notification) {
-      
-        sendEvent(
-            withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT,
-            body: notification.userInfo
+        
+        sendMessage(
+            name: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT,
+            message: notification.userInfo
         )
-      
+        
     }
     
     @objc func registerPushNotificationClickedOnKilledState() {
         
-        if let message = lastClickedMessage {
-            sendEvent(
-                withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
-                body: message
-            )
-        }
+        sendMessage(
+            name: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+            message: lastClickedMessage
+        )
         
     }
 
@@ -203,6 +218,16 @@ class CourierReactNative: RCTEventEmitter {
             CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
             CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT
         ]
+    }
+    
+}
+
+extension [AnyHashable: Any] {
+    
+    func toString() throws -> String {
+        let json = try JSONSerialization.data(withJSONObject: self)
+        let str = String(data: json, encoding: .utf8)
+        return str ?? "Invalid JSON"
     }
     
 }
