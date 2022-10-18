@@ -7,10 +7,8 @@
 
 @import Courier_iOS;
 #import "CourierReactNativeDelegate.h"
-
 #pragma GCC diagnostic ignored "-Wprotocol"
 #pragma clang diagnostic ignored "-Wprotocol"
-#import "React/RCTRootView.h"
 
 @implementation CourierReactNativeDelegate
 
