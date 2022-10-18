@@ -12,17 +12,21 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
 
-public open class CourierReactNativeActivity : ReactActivity() {
+open class CourierReactNativeActivity : ReactActivity() {
+
+  companion object {
+    private const val COMPONENT_NAME = "main"
+    internal const val PUSH_CLICKED_EVENT = "pushNotificationClicked"
+    internal const val PUSH_DELIVERED_EVENT = "pushNotificationDelivered"
+  }
+
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
    * rendering of the component.
    */
   override fun getMainComponentName(): String? {
-    return "main"
+    return COMPONENT_NAME
   }
-
-  //  TODO: send event to react-native side
-
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. There the RootView is created and
@@ -32,26 +36,22 @@ public open class CourierReactNativeActivity : ReactActivity() {
     return MainActivityDelegate(this, mainComponentName)
   }
 
-  class MainActivityDelegate(activity: ReactActivity?, mainComponentName: String?) :
-    ReactActivityDelegate(activity, mainComponentName) {
+  class MainActivityDelegate(activity: ReactActivity?, mainComponentName: String?) : ReactActivityDelegate(activity, mainComponentName) {
+
     override fun createRootView(): ReactRootView {
       val reactRootView = ReactRootView(context)
       // If you opted-in for the New Architecture, we enable the Fabric Renderer.
       reactRootView.setIsFabric(false)
       return reactRootView
     }
+
   }
 
   private fun sendEvent(eventName: String, params: WritableMap) {
-    val reactContext = getReactInstanceManager().getCurrentReactContext();
-    println("rctContext " + reactContext);
-    if (reactContext != null) {
-      reactContext
-        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-        .emit(eventName, params)
+    reactInstanceManager.currentReactContext?.let { context ->
+      context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)?.emit(eventName, params)
     }
   }
-
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -63,6 +63,7 @@ public open class CourierReactNativeActivity : ReactActivity() {
     Courier.getLastDeliveredMessage { message ->
       postPushNotificationDelivered(message)
     }
+
   }
 
   override fun onNewIntent(intent: Intent?) {
@@ -85,10 +86,10 @@ public open class CourierReactNativeActivity : ReactActivity() {
   }
 
   private fun postPushNotificationDelivered(message: RemoteMessage) {
-    sendEvent("pushNotificationDelivered", mapToWritableMap(message.data))
+    sendEvent(PUSH_DELIVERED_EVENT, mapToWritableMap(message.data))
   }
 
   private fun postPushNotificationClicked(message: RemoteMessage) {
-    sendEvent("pushNotificationClicked", mapToWritableMap(message.data));
+    sendEvent(PUSH_CLICKED_EVENT, mapToWritableMap(message.data));
   }
 }
