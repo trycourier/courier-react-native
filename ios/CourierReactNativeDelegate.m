@@ -87,7 +87,7 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
             [self log:error];
         } else {
             NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:message];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{

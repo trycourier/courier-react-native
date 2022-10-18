@@ -163,13 +163,21 @@ export function registerPushNotificationListeners({
     notificationClickedListener = DeviceEventEmitter.addListener(
       'pushNotificationClicked',
       (e: any) => {
-        onNotificationClicked(JSON.parse(e));
+        try {
+          onNotificationClicked(JSON.parse(e));
+        } catch (e) {
+          onNotificationClicked(e);
+        }
       }
     );
     notificationDeliveredListener = DeviceEventEmitter.addListener(
       'pushNotificationDelivered',
       (e: any) => {
-        onNotificationDelivered(JSON.parse(e));
+        try {
+          onNotificationDelivered(JSON.parse(e));
+        } catch (e) {
+          onNotificationDelivered(e);
+        }
       }
     );
   }
@@ -177,13 +185,21 @@ export function registerPushNotificationListeners({
     notificationClickedListener = courierEventEmitter.addListener(
       'pushNotificationClicked',
       (e: any) => {
-        onNotificationClicked(e);
+        try {
+          onNotificationClicked(JSON.parse(e));
+        } catch (e) {
+          onNotificationClicked(e);
+        }
       }
     );
     notificationDeliveredListener = courierEventEmitter.addListener(
       'pushNotificationDelivered',
       (e: any) => {
-        onNotificationDelivered(e);
+        try {
+          onNotificationDelivered(JSON.parse(e));
+        } catch (e) {
+          onNotificationClicked(e);
+        }
       }
     );
   }
