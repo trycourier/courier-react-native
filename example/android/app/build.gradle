@@ -263,14 +263,9 @@ android {
 dependencies {
   implementation fileTree(dir: "libs", include: ["*.jar"])
 
-  //  firebase dependencies
-  implementation platform('com.google.firebase:firebase-bom:30.4.1')
-  implementation 'com.google.firebase:firebase-analytics-ktx'
-  implementation 'com.google.firebase:firebase-messaging-ktx'
-
-  //  courier dependency
-  implementation 'com.github.trycourier:courier-android:1.0.17'
-
+  // Courier & Firebase
+  implementation 'com.github.trycourier:courier-android:1.0.19'
+  implementation 'com.google.firebase:firebase-messaging-ktx:23.1.0'
 
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"  // From node_modules
