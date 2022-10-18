@@ -1,6 +1,6 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-use_modular_headers!
+# use_modular_headers!
 
 #platform :ios, '11.0'
 
@@ -10,6 +10,17 @@ ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 
 target 'CourierReactNativeExample' do
   config = use_native_modules!
+	# Add the Firebase pod for Google Analytics
+	# pod 'FirebaseAnalytics'
+
+	# For Analytics without IDFA collection capability, use this pod instead
+	# pod ‘Firebase/AnalyticsWithoutAdIdSupport’
+
+	# Add the pods for any other Firebase products you want to use in your app
+	# For example, to use Firebase Authentication and Cloud Firestore
+	# pod 'FirebaseAuth'
+	# pod 'FirebaseFirestore'
+
 
   # Flags change depending on the env values.
   flags = get_default_flags()
@@ -40,13 +51,3 @@ target 'CourierService' do
   pod 'Courier-iOS'
 end
 
-# Add the Firebase pod for Google Analytics
-pod 'FirebaseAnalytics'
-
-# For Analytics without IDFA collection capability, use this pod instead
-# pod ‘Firebase/AnalyticsWithoutAdIdSupport’
-
-# Add the pods for any other Firebase products you want to use in your app
-# For example, to use Firebase Authentication and Cloud Firestore
-pod 'FirebaseAuth'
-pod 'FirebaseFirestore'

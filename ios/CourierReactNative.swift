@@ -20,22 +20,15 @@ class CourierReactNative: RCTEventEmitter {
 
   }
 
-  private func formatandSendData(data: [AnyHashable: Any]?, eventName: String) {
-    if let aps = (data?["aps"])! as? [AnyHashable: Any] {
-      if let alert = aps["alert"] {
-        print("alert value", alert)
-        sendEvent(withName: eventName, body: alert)
-      }
-    }
-  }
+
 
   @objc private func pushNotificationClicked(notification: Notification) {
     lastClickedMessage = notification.userInfo
-    formatandSendData(data: lastClickedMessage, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
+   sendEvent(withName:CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT , body: notification.userInfo)
   }
 
   @objc private func pushNotificationDelivered(notification: Notification) {
-    formatandSendData(data: notification.userInfo, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT)
+    sendEvent(withName:CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT , body: notification.userInfo)
   }
 
 
@@ -128,7 +121,7 @@ class CourierReactNative: RCTEventEmitter {
 
   @objc func registerPushNotificationClickedOnKilledState() {
     if let clickedMessageData = lastClickedMessage {
-      formatandSendData(data: clickedMessageData, eventName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT)
+      sendEvent(withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT, body: clickedMessageData)
     }
   }
 

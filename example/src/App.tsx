@@ -17,18 +17,17 @@ import IosForeGroundPreferencesComponent from './components/IosForeGroundPrefere
 type NotificationType = {
   body: string;
   title: string;
-  trackingUrl: string;
 };
 
 const addNotificationListeners = () =>
   CourierPush.registerPushNotificationListeners<NotificationType>({
     onNotificationClicked: (notification) => {
       console.log('clicked', notification);
-      showToast(`notification clicked  \n ${notification.title}`);
+      // showToast(`notification clicked  \n ${notification.title}`);
     },
     onNotificationDelivered: (notification) => {
       console.log('delivered', notification);
-      showToast(`notification delivered \n ${notification.title}`);
+      // showToast(`notification delivered \n ${notification.title}`);
     },
   });
 
