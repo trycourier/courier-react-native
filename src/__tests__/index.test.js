@@ -9,6 +9,7 @@ import {
   CURRENT_USER_ID,
   CURRENT_APNS_TOKEN,
   SIGN_OUT_VALUE,
+  SET_FCM_TOKEN_VALUE,
 } from '../__mocks__/native-module-bridge';
 
 const {
@@ -19,6 +20,7 @@ const {
   getUserId,
   getApnsToken,
   signOut,
+  setFcmToken,
 } = NativeModules.CourierReactNative;
 
 beforeEach(() => {
@@ -112,7 +114,18 @@ describe('native module singOut function', () => {
     Courier.signOut();
     expect(signOut).toBeCalledWith();
   });
-  it(`Should reeturn ${SIGN_OUT_VALUE}`, () => {
+  it(`Should return ${SIGN_OUT_VALUE}`, () => {
     expect(Courier.signOut()).toBe(SIGN_OUT_VALUE);
+  });
+});
+
+describe('native module setFcmToken function', () => {
+  const fcmToken = 'dummyFcmToken';
+  it('Should call setFcmToken function', () => {
+    Courier.setFcmToken(fcmToken);
+    expect(setFcmToken).toBeCalledWith(fcmToken);
+  });
+  it(`Should return ${SIGN_OUT_VALUE}`, () => {
+    expect(Courier.setFcmToken()).toBe(SET_FCM_TOKEN_VALUE);
   });
 });
