@@ -21,6 +21,7 @@ const {
   getApnsToken,
   signOut,
   setFcmToken,
+  iOSForegroundPresentationOptions,
 } = NativeModules.CourierReactNative;
 
 beforeEach(() => {
@@ -127,5 +128,27 @@ describe('native module setFcmToken function', () => {
   });
   it(`Should return ${SIGN_OUT_VALUE}`, () => {
     expect(Courier.setFcmToken()).toBe(SET_FCM_TOKEN_VALUE);
+  });
+});
+
+describe('native module iOSForegroundPresentationOptions', () => {
+  const foreGroundOptions = { options: ['badge', 'list'] };
+  it('should not call iOSForegroundPresentationOptions', () => {
+    setPlatform('android');
+    Courier.iOSForegroundPresentationOptions(foreGroundOptions);
+    expect(iOSForegroundPresentationOptions).not.toBeCalled();
+  });
+
+  it('should call iOSForegroundPresentationOptions', () => {
+    setPlatform('ios');
+    Courier.iOSForegroundPresentationOptions(foreGroundOptions);
+    expect(iOSForegroundPresentationOptions).toBeCalledWith(foreGroundOptions);
+  });
+
+  it('should not return anything', () => {
+    setPlatform('ios');
+    expect(
+      Courier.iOSForegroundPresentationOptions(foreGroundOptions)
+    ).toBeUndefined();
   });
 });

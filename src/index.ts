@@ -268,7 +268,7 @@ export function iOSForegroundPresentationOptions({
 }): void {
   if (Platform.OS === 'ios') {
     const normalizedParams = new Set(options);
-    return CourierReactNative.iOSForegroundPresentationOptions({
+    CourierReactNative.iOSForegroundPresentationOptions({
       options: Array.from(normalizedParams),
     });
   }

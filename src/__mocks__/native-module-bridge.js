@@ -7,6 +7,8 @@ export const SET_FCM_TOKEN_VALUE = 'setFCMToken';
 export const CURRENT_USER_ID = 'currentUserID';
 export const CURRENT_APNS_TOKEN = 'CURRENT_APNS_TOKEN';
 export const SIGN_OUT_VALUE = 'SIGN_OUT_VALUE';
+export const IOS_FOREGROUND_PRESENTATION_OPTIONS =
+  'IOS_FOREGROUND_PRESENTATION_OPTIONS';
 
 NativeModules.CourierReactNative = {
   signIn: jest.fn().mockReturnValue(SIGN_IN_RETURN_VALUE),
@@ -21,6 +23,7 @@ NativeModules.CourierReactNative = {
   getApnsToken: jest.fn().mockReturnValue(CURRENT_APNS_TOKEN),
   signOut: jest.fn().mockReturnValue(SIGN_OUT_VALUE),
   setFcmToken: jest.fn().mockReturnValue(SET_FCM_TOKEN_VALUE),
+  iOSForegroundPresentationOptions: jest.fn(),
 };
 
 export const setPlatform = (os) => {
