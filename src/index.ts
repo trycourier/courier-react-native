@@ -11,6 +11,9 @@ export enum CourierProvider {
   APNS = 'apn',
 }
 
+const PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
+const PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered';
+
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
@@ -150,6 +153,17 @@ export function sendPush({
  *```
  * @returns  function that can be used to unsubscribe from registered listeners
  */
+
+const tryCatchAndHandleNotification =
+  (callback: (message: any) => void) => (event: any) => {
+    try {
+      const parsedData = JSON.parse(event);
+      callback(parsedData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 export function registerPushNotificationListeners({
   onNotificationClicked,
   onNotificationDelivered,
@@ -161,46 +175,22 @@ export function registerPushNotificationListeners({
   let notificationDeliveredListener: EmitterSubscription;
   if (Platform.OS === 'android') {
     notificationClickedListener = DeviceEventEmitter.addListener(
-      'pushNotificationClicked',
-      (e: any) => {
-        try {
-          onNotificationClicked(JSON.parse(e));
-        } catch (e) {
-          onNotificationClicked(e);
-        }
-      }
+      PUSH_NOTIFICATION_CLICKED,
+      tryCatchAndHandleNotification(onNotificationClicked)
     );
     notificationDeliveredListener = DeviceEventEmitter.addListener(
-      'pushNotificationDelivered',
-      (e: any) => {
-        try {
-          onNotificationDelivered(JSON.parse(e));
-        } catch (e) {
-          onNotificationDelivered(e);
-        }
-      }
+      PUSH_NOTIFICATION_DELIVERED,
+      tryCatchAndHandleNotification(onNotificationDelivered)
     );
   }
   if (Platform.OS === 'ios') {
     notificationClickedListener = courierEventEmitter.addListener(
-      'pushNotificationClicked',
-      (e: any) => {
-        try {
-          onNotificationClicked(JSON.parse(e));
-        } catch (e) {
-          onNotificationClicked(e);
-        }
-      }
+      PUSH_NOTIFICATION_CLICKED,
+      tryCatchAndHandleNotification(onNotificationClicked)
     );
     notificationDeliveredListener = courierEventEmitter.addListener(
-      'pushNotificationDelivered',
-      (e: any) => {
-        try {
-          onNotificationDelivered(JSON.parse(e));
-        } catch (e) {
-          onNotificationClicked(e);
-        }
-      }
+      PUSH_NOTIFICATION_DELIVERED,
+      tryCatchAndHandleNotification(onNotificationDelivered)
     );
   }
   CourierReactNative.registerPushNotificationClickedOnKilledState();
