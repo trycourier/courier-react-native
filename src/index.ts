@@ -6,6 +6,7 @@ import {
   NativeEventEmitter,
   EmitterSubscription,
 } from 'react-native';
+
 export enum CourierProvider {
   FCM = 'firebase-fcm',
   APNS = 'apn',

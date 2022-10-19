@@ -81,6 +81,9 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
+    ],
+    "setupFiles": [
+      "./src/__mocks__/native-module-bridge.js"
     ]
   },
   "commitlint": {
