@@ -48,9 +48,10 @@ class Courier {
     try {
       await Promise.all([
         this.isDebugging(__DEV__),
+        this.attachDebugListener(),
         this.iOSForegroundPresentationOptions({
           options: ['sound', 'badge', 'list', 'banner']
-        })
+        }),
       ])
     } catch (error) {
       console.log(error)
@@ -64,6 +65,16 @@ class Courier {
   */
   public isDebugging(isDebugging: boolean): Promise<boolean> {
     return CourierReactNativeModules.setDebugMode(isDebugging)
+  }
+
+  /**
+   * Subscribes to debugging events from the native sdk
+   */
+  private attachDebugListener() {
+    const eventListener = CourierEventEmitter.addListener('courierDebugEvent', (event) => {
+      console.log('\x1b[36m%s\x1b[0m', 'COURIER DEBUGGING', event)
+    })
+    return eventListener.remove
   }
 
   /**
@@ -191,104 +202,92 @@ class Courier {
 
   }
 
+  /**
+   * @example 
+   *```
+    const unsubPushListeners = () => {
+      return Courier.registerPushNotificationListeners<YOUR_NOTIFICATION_TYPE>({
+        onPushNotificationClicked: (push) => {
+          ...
+        },
+        onPushNotificationDelivered: (push) => {
+          ...
+        },
+      })
+    }
+
+    // To unsubscribe the listeners
+    unsubPushListeners()
+  *```
+  * @returns  function that can be used to unsubscribe from registered listeners
+  */
+  public registerPushNotificationListeners(
+    { onPushNotificationClicked, onPushNotificationDelivered, }: 
+    { onPushNotificationClicked: (push: any) => void, onPushNotificationDelivered: (push: any) => void }
+    ) {
+
+    let notificationClickedListener: EmitterSubscription
+    let notificationDeliveredListener: EmitterSubscription
+
+    // Android
+    if (Platform.OS === 'android') {
+
+      notificationClickedListener = DeviceEventEmitter.addListener('pushNotificationClicked', (event: any) => {
+          try {
+            onPushNotificationClicked(JSON.parse(event))
+          } catch (error) {
+            console.log(error)
+          }
+        }
+      )
+
+      notificationDeliveredListener = DeviceEventEmitter.addListener('pushNotificationDelivered', (event: any) => {
+          try {
+            onPushNotificationDelivered(JSON.parse(event))
+          } catch (error) {
+            console.log(error)
+          }
+        }
+      )
+
+    }
+
+    // iOS
+    if (Platform.OS === 'ios') {
+
+      notificationClickedListener = CourierEventEmitter.addListener('pushNotificationClicked', (event: any) => {
+          try {
+            onPushNotificationClicked(JSON.parse(event))
+          } catch (error) {
+            console.log(error)
+          }
+        }
+      )
+
+      notificationDeliveredListener = CourierEventEmitter.addListener('pushNotificationDelivered', (event: any) => {
+          try {
+            onPushNotificationDelivered(JSON.parse(event))
+          } catch (error) {
+            console.log(error)
+          }
+        }
+      )
+
+    }
+    
+    // When listener is registered
+    // Attempt to fetch the last message that was clicked
+    // This is needed for when the app is killed and the 
+    // user launched the app by clicking on a notifications
+    CourierReactNativeModules.registerPushNotificationClickedOnKilledState()
+
+    return () => {
+      notificationClickedListener.remove()
+      notificationDeliveredListener.remove()
+    }
+
+  }
+
 }
 
 export default new Courier()
-
-/**
- * @example 
- *```
-	const addNotificationListeners = () =>
-  registerPushNotificationListeners<NotificationType>({
-    onNotificationClicked: (notification) => {
-				...
-    },
-    onNotificationDelivered: (notification) => {
-				...
-    },
-  });
-	const unsubscribeAddNotificationListener = addNotificationListeners();
-	unsubscribeAddNotificationListener()
- *```
- * @returns  function that can be used to unsubscribe from registered listeners
- */
-export function registerPushNotificationListeners({
-  onNotificationClicked,
-  onNotificationDelivered,
-}: {
-  onNotificationClicked: (message: any) => void;
-  onNotificationDelivered: (message: any) => void;
-}) {
-  let notificationClickedListener: EmitterSubscription;
-  let notificationDeliveredListener: EmitterSubscription;
-  if (Platform.OS === 'android') {
-    notificationClickedListener = DeviceEventEmitter.addListener(
-      'pushNotificationClicked',
-      (event: any) => {
-        try {
-          onNotificationClicked(JSON.parse(event));
-        } catch (error) {
-          console.log(error)
-        }
-      }
-    );
-    notificationDeliveredListener = DeviceEventEmitter.addListener(
-      'pushNotificationDelivered',
-      (e: any) => {
-        try {
-          onNotificationDelivered(JSON.parse(e));
-        } catch (e) {
-          onNotificationDelivered(e);
-        }
-      }
-    );
-  }
-  if (Platform.OS === 'ios') {
-    notificationClickedListener = CourierEventEmitter.addListener(
-      'pushNotificationClicked',
-      (e: any) => {
-        try {
-          onNotificationClicked(JSON.parse(e));
-        } catch (e) {
-          onNotificationClicked(e);
-        }
-      }
-    );
-    notificationDeliveredListener = CourierEventEmitter.addListener(
-      'pushNotificationDelivered',
-      (e: any) => {
-        try {
-          onNotificationDelivered(JSON.parse(e));
-        } catch (e) {
-          onNotificationClicked(e);
-        }
-      }
-    );
-  }
-  CourierReactNativeModules.registerPushNotificationClickedOnKilledState();
-
-  return () => {
-    notificationClickedListener.remove();
-    notificationDeliveredListener.remove();
-  };
-}
-
-/**
- * subscribes to native courier logs
- * @example
- * ```
- * const unsubscribeDebugListener = debuggerListener();
- * unsubscribeDebugListener
- * ```
- * @returns function which can be used to unsubscribe from debug log
- *
- */
-export function debuggerListener() {
-  const eventListener = CourierEventEmitter.addListener(
-    'courierDebugEvent',
-    (event) => {
-      console.log('\x1b[36m%s\x1b[0m', 'DEBUGGING COURIER', event);
-    }
-  );
-  return eventListener.remove;
-}

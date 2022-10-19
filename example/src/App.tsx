@@ -10,24 +10,22 @@ import {
   Alert,
 } from 'react-native';
 
-import * as CourierOld from '@trycourier/courier-react-native';
-import Courier from '@trycourier/courier-react-native';
+import Courier, { CourierProvider } from '@trycourier/courier-react-native';
 import { Token, Button } from './components';
 import IosForeGroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
 
-const addNotificationListeners = () =>
-  CourierOld.registerPushNotificationListeners({
-    onNotificationClicked: (push) => {
-      console.log('clicked', push);
-      if (push?.title) {
-        showToast(`notification clicked  \n ${push.title}`);
-      }
+const unsubPushListeners = () => {
+
+  return Courier.registerPushNotificationListeners({
+    onPushNotificationClicked(push) {
+      showToast(`Push Clicked\n${JSON.stringify(push)}`);
     },
-    onNotificationDelivered: (push) => {
-      console.log('delivered', push);
-      showToast(`notification delivered \n ${push.title}`);
+    onPushNotificationDelivered(push) {
+      showToast(`Push Delivered\n${JSON.stringify(push)}`);
     },
-  });
+  })
+
+}
 
 const showToast = (toastMessage: string) => {
   Alert.alert(toastMessage);
@@ -87,8 +85,8 @@ export default function App() {
         body: 'This is a body',
         providers: [
           Platform.OS === 'ios'
-            ? CourierOld.CourierProvider.APNS
-            : CourierOld.CourierProvider.FCM,
+            ? CourierProvider.APNS
+            : CourierProvider.FCM,
         ],
         isProduction: !__DEV__,
       });
@@ -134,11 +132,10 @@ export default function App() {
       console.log('notificationPermissionStatus', status);
       const requestStatus = await Courier.requestNotificationPermission();
       // showToast(requestStatus);
-      handleSignIn();
-      const unsubscribeAddNotificationListener = addNotificationListeners();
+      // handleSignIn();
       // const unsubscribeDebugListener = CourierOld.debuggerListener();
       return () => {
-        unsubscribeAddNotificationListener();
+        unsubPushListeners();
         // unsubscribeDebugListener();
       };
     } catch (e: any) {
