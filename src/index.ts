@@ -5,19 +5,15 @@ import {
   DeviceEventEmitter,
   NativeEventEmitter,
   EmitterSubscription,
-} from 'react-native';
-export enum CourierProvider {
-  FCM = 'firebase-fcm',
-  APNS = 'apn',
-}
+} from 'react-native'
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n';
+  '- You are not using Expo managed workflow\n'
 
-const CourierReactNative = NativeModules.CourierReactNative
+const CourierReactNativeModules = NativeModules.CourierReactNative
   ? NativeModules.CourierReactNative
   : new Proxy(
       {},
@@ -26,112 +22,178 @@ const CourierReactNative = NativeModules.CourierReactNative
           throw new Error(LINKING_ERROR);
         },
       }
-    );
+    )
 
-const courierEventEmitter = new NativeEventEmitter(
+const CourierEventEmitter = new NativeEventEmitter(
   NativeModules.CourierReactNative
-);
+)
 
-type SignInProps = {
-  accessToken: String;
-  userId: string;
-};
-
-/**
- * signs user in, persists signin in between sessions
- * @example
- * ```
- *    const res = await signIn({
-        accessToken: ACCESS_TOKEN,
-        userId: USER_ID,
-      });
- * ```
- * @param param0 Object{accessToken, userId}
- * @returns promise
- */
-export function signIn({ accessToken, userId }: SignInProps): Promise<string> {
-  return CourierReactNative.signIn(userId, accessToken);
+export enum CourierProvider {
+  FCM = 'firebase-fcm',
+  APNS = 'apn',
 }
 
-/**
- * @example
- * ```
- * const fcmToken = await getFcmToken();
- * ```
- * @returns Promise with string or undefined depending on available fcm token
- */
-export function getFcmToken(): Promise<string | undefined> {
-  return CourierReactNative.getFcmToken();
+class Courier {
+
+  public constructor() {
+
+    // Sets the initial SDK values
+    // Defaults to React Native level debugging
+    // and will show all foreground notification styles in iOS
+    this.setDefaults()
+
+  }
+
+  private async setDefaults() {
+    try {
+      await Promise.all([
+        this.isDebugging(__DEV__),
+        this.iOSForegroundPresentationOptions({
+          options: ['sound', 'badge', 'list', 'banner']
+        })
+      ])
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  /**
+   * Tells native Courier SDKs to show or hide logs.
+   * Defaults to the React __DEV__ mode
+   * @example await Courier.isDebugging(true)
+  */
+  public isDebugging(isDebugging: boolean): Promise<boolean> {
+    return CourierReactNativeModules.setDebugMode(isDebugging)
+  }
+
+  /**
+   * Returns the current user id stored in local native storage
+   * @example const userId = await Courier.userId
+   */
+  get userId(): Promise<string | undefined> {
+    return CourierReactNativeModules.getUserId()
+  }
+
+  /**
+   * Signs user in and persists signin in between sessions
+   * using native level storage apis
+   * 
+   * @example
+   * ```
+   *await Courier.signIn({
+      accessToken: YOUR_COURIER_GENERATED_JWT,
+      userId: YOUR_USER_ID,
+    })
+  * ```
+  * Your access token should be generated using this endpoint
+  * that is requested from your backend
+  * https://www.courier.com/docs/reference/auth/issue-token/
+  */
+  public signIn({ accessToken, userId } : { accessToken: string, userId: string }): Promise<void> {
+    return CourierReactNativeModules.signIn(userId, accessToken)
+  }
+
+  /**
+   * Logs user out of native level user storage.
+   * This will clear the userId, accessToken, and apns / fcm tokens and
+   * delete the matching devices apns / fcm tokens for the user in Courier token management
+   * @example await Courier.signOut()
+   */
+  public signOut(): Promise<void> {
+    return CourierReactNativeModules.signOut()
+  }
+
+  /**
+   * Sets the current Apple Push Notification Service (APNS) token
+   * using Courier token management apis
+   * @example const apnsToken = await Courier.apnsToken
+   */
+   get apnsToken(): Promise<string | undefined> {
+    if (Platform.OS !== 'ios') return Promise.resolve(undefined)
+    return CourierReactNativeModules.getApnsToken()
+  }
+
+  /**
+   * Sets the current Firebase Cloud Messaging (FCM) token
+   * using Courier token management apis
+   * @example const fcmToken = await Courier.fcmToken
+   */
+  get fcmToken(): Promise<string | undefined> {
+    return CourierReactNativeModules.getFcmToken()
+  }
+
+  /**
+   * Sets the current Firebase Cloud Messaging (FCM) token
+   * using Courier token management apis
+   * @example await setFcmToken('asdf...asdf')
+   */
+  public setFcmToken(token: string): Promise<void> {
+    return CourierReactNativeModules.setFcmToken(token)
+  }
+
+  /**
+   * Hits the Courier /send endpoint and sends a test push notification
+   * @example
+   * ```
+   *const messageId = await sendPush({
+      authKey: YOUR_AUTH_KEY_THAT_SHOULD_NOT_STAY_IN_YOUR_PRODUCTION_APP,
+      userId: USER_ID,
+      title: 'This is a title',
+      body: 'This is a body',
+      providers: [CourierProvider.APNS, CourierProvider.FCM],
+      isProduction: false, // true is production apns, false is sandbox apns
+    });
+  * ```
+  * @returns promise
+  */
+  public sendPush(
+    { authKey, userId, title, body, providers, isProduction }: 
+    { authKey: string, userId: string, title?: string, body?: string, providers: CourierProvider[], isProduction: boolean }): Promise<string> {
+    return CourierReactNativeModules.sendPush(authKey, userId, title, body, providers, isProduction)
+  }
+
+  /**
+   * Gets notification permission status at a system level.
+   * @example const permissionStatus = await Courier.getNotificationPermissionStatus()
+   */
+   get notificationPermissionStatus(): Promise<string> {
+    return CourierReactNativeModules.getNotificationPermissionStatus()
+  }
+
+  /**
+   * Requests notification permission status at a system level.
+   * Returns the string associated with the permission status.
+   * Will return the current status and will not present a popup 
+   * if the user has already been asked for permission.
+   * @example const permissionStatus = await Courier.requestNotificationPermission()
+   */
+  public requestNotificationPermission(): Promise<string> {
+    return CourierReactNativeModules.requestNotificationPermission()
+  }
+
+  /**
+   * Sets the push notification presentation style when the app is in the foreground
+   * This does not affect how the notification is shown when the app is killed or in the background states
+   * 
+   * Defaults to sound, badge, list and/or banner.
+   * 
+   * @example iOSForegroundPresentationOptions({options: ['sound']});
+   */
+  public iOSForegroundPresentationOptions({ options }: { options: ('sound' | 'badge' | 'list' | 'banner')[]}): Promise<void> {
+
+    // Only works on iOS
+    if (Platform.OS !== 'ios') return Promise.resolve()
+
+    const normalizedParams = Array.from(new Set(options))
+    return CourierReactNativeModules.iOSForegroundPresentationOptions({
+      options: normalizedParams
+    })
+
+  }
+
 }
 
-/**
- * @example
- * ```
- * const userId = await getUserId();
- * ```
- * @returns Promise with string or undefined depending on available userId
- */
-export function getUserId(): Promise<string | undefined> {
-  return CourierReactNative.getUserId();
-}
-
-/**
- * loggs user out and remove all stored user credentials
- * @example
- * ```
- *   const res = await signOut();
- * ```
- * @returns Promise
- */
-export function signOut(): Promise<string> {
-  return CourierReactNative.signOut();
-}
-
-type SendPushProps = {
-  authKey: string;
-  userId: string;
-  title?: string;
-  body?: string;
-  providers: (CourierProvider.FCM | CourierProvider.APNS)[];
-  isProduction: boolean;
-};
-
-/**
- * can be used to test pus notification while development
- * @example
- * ```
- *      const res = await sendPush({
-        authKey: ACCESS_TOKEN,
-        userId: USER_ID,
-        title: 'This is a title',
-        body: 'This is a body',
-        providers: [
-          Platform.OS === 'ios'
-            ? CourierProvider.APNS
-            : CourierProvider.FCM,
-        ],
-        isProduction: !__DEV__,
-      });
- * ```
- * @returns promise
- */
-export function sendPush({
-  authKey,
-  userId,
-  title,
-  body,
-  providers,
-  isProduction,
-}: SendPushProps): Promise<string> {
-  return CourierReactNative.sendPush(
-    authKey,
-    userId,
-    title,
-    body,
-    providers,
-    isProduction
-  );
-}
+export default new Courier()
 
 /**
  * @example 
@@ -162,11 +224,11 @@ export function registerPushNotificationListeners({
   if (Platform.OS === 'android') {
     notificationClickedListener = DeviceEventEmitter.addListener(
       'pushNotificationClicked',
-      (e: any) => {
+      (event: any) => {
         try {
-          onNotificationClicked(JSON.parse(e));
-        } catch (e) {
-          onNotificationClicked(e);
+          onNotificationClicked(JSON.parse(event));
+        } catch (error) {
+          console.log(error)
         }
       }
     );
@@ -182,7 +244,7 @@ export function registerPushNotificationListeners({
     );
   }
   if (Platform.OS === 'ios') {
-    notificationClickedListener = courierEventEmitter.addListener(
+    notificationClickedListener = CourierEventEmitter.addListener(
       'pushNotificationClicked',
       (e: any) => {
         try {
@@ -192,7 +254,7 @@ export function registerPushNotificationListeners({
         }
       }
     );
-    notificationDeliveredListener = courierEventEmitter.addListener(
+    notificationDeliveredListener = CourierEventEmitter.addListener(
       'pushNotificationDelivered',
       (e: any) => {
         try {
@@ -203,7 +265,7 @@ export function registerPushNotificationListeners({
       }
     );
   }
-  CourierReactNative.registerPushNotificationClickedOnKilledState();
+  CourierReactNativeModules.registerPushNotificationClickedOnKilledState();
 
   return () => {
     notificationClickedListener.remove();
@@ -222,89 +284,11 @@ export function registerPushNotificationListeners({
  *
  */
 export function debuggerListener() {
-  const eventListener = courierEventEmitter.addListener(
+  const eventListener = CourierEventEmitter.addListener(
     'courierDebugEvent',
     (event) => {
       console.log('\x1b[36m%s\x1b[0m', 'DEBUGGING COURIER', event);
     }
   );
   return eventListener.remove;
-}
-
-/**
- * can be used to listen to native debug logs
- * @example
- * ```
- *setDebugMode(true);
- * ```
- * @returns promise with isDebugging status
- */
-export async function setDebugMode(isDebugging: boolean) {
-  return {
-    status: (await CourierReactNative.setDebugMode(
-      __DEV__ ? isDebugging : false
-    )) as boolean,
-  };
-}
-
-/**
- * @example await requestNotificationPermission
- * requests notification permission
- * can be called anywhere in the app
- * @returns promise with notification permission status
- */
-export function requestNotificationPermission(): Promise<string> {
-  return CourierReactNative.requestNotificationPermission();
-}
-
-/**
- * @example const notificationStatus = await getNotificationPermissionStatus()
- * @returns promise with notification status
- */
-export function getNotificationPermissionStatus(): Promise<string> {
-  return CourierReactNative.getNotificationPermissionStatus();
-}
-
-/**
- * @example iOSForegroundPresentationOptions({options: ['sound']})
- * takes an array of strings and sets foreground notification for ios
- * @param {} {options:['sound', 'badge' , 'list' ,'banner']}
- */
-export function iOSForegroundPresentationOptions({
-  options,
-}: {
-  options: ('sound' | 'badge' | 'list' | 'banner')[];
-}): void {
-  if (Platform.OS === 'ios') {
-    const normalizedParams = new Set(options);
-    return CourierReactNative.iOSForegroundPresentationOptions({
-      options: Array.from(normalizedParams),
-    });
-  }
-}
-
-/**
- * @example
- * ```
- * const currentApnsToken = await getApnsToken();
- * ```
- * @returns returns promise with string or undefined for ios
- */
-export function getApnsToken(): Promise<string | undefined> {
-  if (Platform.OS === 'android') {
-    return Promise.reject(
-      'This function is not available for android platform'
-    );
-  }
-  return CourierReactNative.getApnsToken();
-}
-
-/**
- * @example
- * await setFcmToken('token')
- * sets fcm token for both ios and android
- * @returns returns promise with string.
- */
-export function setFcmToken(token: string): Promise<string> {
-  return CourierReactNative.setFcmToken(token);
 }

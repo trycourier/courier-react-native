@@ -59,18 +59,16 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     
     [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventDelivered completionHandler:^(NSError *error)
     {
-        
         if (error != nil) {
             [self log:error];
-        } else {
-            NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:pushNotification];
         }
-
-        completionHandler(notificationPresentationOptions);
-        
     }
     ];
+    
+    NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:pushNotification];
+    
+    completionHandler(notificationPresentationOptions);
     
 }
 
@@ -82,20 +80,18 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     
     [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventClicked completionHandler:^(NSError *error)
     {
-        
         if (error != nil) {
             [self log:error];
-        } else {
-            NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
         }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler();
-        });
-        
     }
     ];
+    
+    NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        completionHandler();
+    });
     
 }
 

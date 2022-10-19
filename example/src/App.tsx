@@ -10,26 +10,22 @@ import {
   Alert,
 } from 'react-native';
 
-import * as CourierPush from '@trycourier/courier-react-native';
+import * as CourierOld from '@trycourier/courier-react-native';
+import Courier from '@trycourier/courier-react-native';
 import { Token, Button } from './components';
 import IosForeGroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
 
-type NotificationType = {
-  body: string;
-  title: string;
-};
-
 const addNotificationListeners = () =>
-  CourierPush.registerPushNotificationListeners({
-    onNotificationClicked: (notification: NotificationType) => {
-      console.log('clicked', notification);
-      if (notification?.title) {
-        showToast(`notification clicked  \n ${notification.title}`);
+  CourierOld.registerPushNotificationListeners({
+    onNotificationClicked: (push) => {
+      console.log('clicked', push);
+      if (push?.title) {
+        showToast(`notification clicked  \n ${push.title}`);
       }
     },
-    onNotificationDelivered: (notification: NotificationType) => {
-      console.log('delivered', notification);
-      showToast(`notification delivered \n ${notification.title}`);
+    onNotificationDelivered: (push) => {
+      console.log('delivered', push);
+      showToast(`notification delivered \n ${push.title}`);
     },
   });
 
@@ -47,12 +43,18 @@ export default function App() {
   const handleSignIn = async () => {
     setIsLoading(true);
     try {
+
+      console.log(await Courier.userId)
       console.log({ ACCESS_TOKEN, USER_ID });
-      await CourierPush.signIn({
+
+      await Courier.signIn({
         accessToken: ACCESS_TOKEN,
         userId: USER_ID,
       });
-      showToast('credentials are set');
+
+      console.log(await Courier.userId)
+
+      // showToast('credentials are set');
       setIsSignedIn(true);
     } catch (e) {
       console.log(e);
@@ -64,8 +66,7 @@ export default function App() {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      const res = await CourierPush.signOut();
-      showToast(res);
+      await Courier.signOut();
       setIsSignedIn(false);
       setFcmToken('');
       setSignedInUserId('');
@@ -79,15 +80,15 @@ export default function App() {
 
   const handleSendPush = async () => {
     try {
-      const res = await CourierPush.sendPush({
+      const res = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
         userId: USER_ID,
         title: 'This is a title',
         body: 'This is a body',
         providers: [
           Platform.OS === 'ios'
-            ? CourierPush.CourierProvider.APNS
-            : CourierPush.CourierProvider.FCM,
+            ? CourierOld.CourierProvider.APNS
+            : CourierOld.CourierProvider.FCM,
         ],
         isProduction: !__DEV__,
       });
@@ -99,7 +100,7 @@ export default function App() {
 
   const handleGetFcmToken = async () => {
     try {
-      const fcmToken = await CourierPush.getFcmToken();
+      const fcmToken = await Courier.fcmToken;
       console.log(fcmToken);
       setFcmToken(fcmToken);
     } catch (err: any) {
@@ -109,7 +110,7 @@ export default function App() {
 
   const handleGetUserId = async () => {
     try {
-      const userId = await CourierPush.getUserId();
+      const userId = await Courier.userId;
       setSignedInUserId(userId);
     } catch (err: any) {
       console.log(err);
@@ -119,7 +120,7 @@ export default function App() {
   const handleApnsToken = async () => {
     if (Platform.OS === 'ios') {
       try {
-        const currentApnsToken = await CourierPush.getApnsToken();
+        const currentApnsToken = await Courier.apnsToken;
         setApnsToken(currentApnsToken);
       } catch (err: any) {
         console.log(err);
@@ -129,17 +130,16 @@ export default function App() {
 
   const init = async () => {
     try {
-      const notificationPermissionStatus =
-        await CourierPush.getNotificationPermissionStatus();
-      console.log('notificationPermissionStatus', notificationPermissionStatus);
-      const requestStatus = await CourierPush.requestNotificationPermission();
-      showToast(requestStatus);
+      const status = await Courier.notificationPermissionStatus;
+      console.log('notificationPermissionStatus', status);
+      const requestStatus = await Courier.requestNotificationPermission();
+      // showToast(requestStatus);
       handleSignIn();
       const unsubscribeAddNotificationListener = addNotificationListeners();
-      const unsubscribeDebugListener = CourierPush.debuggerListener();
+      // const unsubscribeDebugListener = CourierOld.debuggerListener();
       return () => {
         unsubscribeAddNotificationListener();
-        unsubscribeDebugListener();
+        // unsubscribeDebugListener();
       };
     } catch (e: any) {
       console.log(e);
@@ -169,17 +169,13 @@ export default function App() {
         <Button
           title="Start Debugging"
           onPress={() => {
-            if (Platform.OS === 'android') {
-              CourierPush.setDebugMode(true);
-            }
+            Courier.isDebugging(true);
           }}
         />
         <Button
           title="Stop Debugging"
           onPress={() => {
-            if (Platform.OS === 'android') {
-              CourierPush.setDebugMode(false);
-            }
+            Courier.isDebugging(false);
           }}
         />
       </View>
