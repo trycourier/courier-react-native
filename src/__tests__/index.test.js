@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules } from 'react-native';
 import * as Courier from '../index';
 import {
   setPlatform,
@@ -6,6 +6,8 @@ import {
   NOTIFICATION_PERMISSION_RETURN_VALUE,
   NOTIFICATION_PERMISSION_STATUS,
   FCM_TOKEN_VALUE,
+  CURRENT_USER_ID,
+  CURRENT_APNS_TOKEN,
 } from '../__mocks__/native-module-bridge';
 
 const {
@@ -13,6 +15,8 @@ const {
   requestNotificationPermission,
   getNotificationPermissionStatus,
   getFcmToken,
+  getUserId,
+  getApnsToken,
 } = NativeModules.CourierReactNative;
 
 describe('native module signIn function', () => {
@@ -64,5 +68,35 @@ describe('native module getFcmToken function', () => {
 
   it(`Should return ${FCM_TOKEN_VALUE}`, () => {
     expect(Courier.getFcmToken()).toBe(FCM_TOKEN_VALUE);
+  });
+});
+
+describe('native module getUserId function', () => {
+  it('Should call getUserId function', () => {
+    Courier.getUserId();
+    expect(getUserId).toBeCalledWith();
+  });
+
+  it(`Should return ${CURRENT_USER_ID}`, () => {
+    expect(Courier.getUserId()).toBe(CURRENT_USER_ID);
+  });
+});
+
+describe('native module  getApnsToken function', () => {
+  it('Should not call getApnsToken  function', () => {
+    setPlatform('android');
+    Courier.getApnsToken();
+    expect(getApnsToken).not.toBeCalled();
+  });
+
+  it('Should call getApnsToken  function', () => {
+    setPlatform('ios');
+    Courier.getApnsToken();
+    expect(getApnsToken).toBeCalledWith();
+  });
+
+  it(`Should return ${CURRENT_APNS_TOKEN}`, () => {
+    setPlatform('ios');
+    expect(Courier.getApnsToken()).toBe(CURRENT_APNS_TOKEN);
   });
 });

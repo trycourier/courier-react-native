@@ -67,3 +67,4 @@ android/keystores/debug.keystore
 lib/
 google-services.json
 .env
+coverage
