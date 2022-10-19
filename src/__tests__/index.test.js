@@ -31,17 +31,16 @@ beforeEach(() => {
 describe('native module signIn function', () => {
   const userId = 'userId';
   const token = 'token';
-  it('Should call CourierReactNative signIn function', () => {
-    Courier.signIn({
+  it('Should call CourierReactNative signIn function', async () => {
+    await Courier.signIn({
       userId,
       accessToken: token,
     });
     expect(signIn).toBeCalledWith(userId, token);
   });
-  it(`Should return  ${SIGN_IN_RETURN_VALUE}`, () => {
-    expect(Courier.signIn({ userId, accessToken: token })).toBe(
-      SIGN_IN_RETURN_VALUE
-    );
+  it(`Should return  ${SIGN_IN_RETURN_VALUE}`, async () => {
+    const singInResult = await Courier.signIn({ userId, accessToken: token });
+    expect(singInResult).toBe(SIGN_IN_RETURN_VALUE);
   });
 });
 
