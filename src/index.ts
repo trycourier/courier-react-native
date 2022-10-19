@@ -5,13 +5,13 @@ import {
   DeviceEventEmitter,
   NativeEventEmitter,
   EmitterSubscription,
-} from 'react-native'
+} from 'react-native';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n'
+  '- You are not using Expo managed workflow\n';
 
 const CourierReactNativeModules = NativeModules.CourierReactNative
   ? NativeModules.CourierReactNative
@@ -22,11 +22,11 @@ const CourierReactNativeModules = NativeModules.CourierReactNative
           throw new Error(LINKING_ERROR);
         },
       }
-    )
+    );
 
 const CourierEventEmitter = new NativeEventEmitter(
   NativeModules.CourierReactNative
-)
+);
 
 export enum CourierProvider {
   FCM = 'firebase-fcm',
@@ -35,13 +35,14 @@ export enum CourierProvider {
 
 class Courier {
 
-  public constructor() {
+  readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked'
+  readonly PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered'
 
+  public constructor() {
     // Sets the initial SDK values
     // Defaults to React Native level debugging
     // and will show all foreground notification styles in iOS
-    this.setDefaults()
-
+    this.setDefaults();
   }
 
   private async setDefaults() {
@@ -49,11 +50,11 @@ class Courier {
       await Promise.all([
         this.setIsDebugging(__DEV__),
         this.iOSForegroundPresentationOptions({
-          options: ['sound', 'badge', 'list', 'banner']
+          options: ['sound', 'badge', 'list', 'banner'],
         }),
-      ])
+      ]);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -98,7 +99,7 @@ class Courier {
    * @example const userId = await Courier.userId
    */
   get userId(): Promise<string | undefined> {
-    return CourierReactNativeModules.getUserId()
+    return CourierReactNativeModules.getUserId();
   }
 
   /**
@@ -111,13 +112,19 @@ class Courier {
       accessToken: YOUR_COURIER_GENERATED_JWT,
       userId: YOUR_USER_ID,
     })
-  * ```
-  * Your access token should be generated using this endpoint
-  * that is requested from your backend
-  * https://www.courier.com/docs/reference/auth/issue-token/
-  */
-  public signIn({ accessToken, userId } : { accessToken: string, userId: string }): Promise<void> {
-    return CourierReactNativeModules.signIn(userId, accessToken)
+   * ```
+   * Your access token should be generated using this endpoint
+   * that is requested from your backend
+   * https://www.courier.com/docs/reference/auth/issue-token/
+   */
+  public signIn({
+    accessToken,
+    userId,
+  }: {
+    accessToken: string;
+    userId: string;
+  }): Promise<void> {
+    return CourierReactNativeModules.signIn(userId, accessToken);
   }
 
   /**
@@ -127,7 +134,7 @@ class Courier {
    * @example await Courier.signOut()
    */
   public signOut(): Promise<void> {
-    return CourierReactNativeModules.signOut()
+    return CourierReactNativeModules.signOut();
   }
 
   /**
@@ -135,9 +142,9 @@ class Courier {
    * using Courier token management apis
    * @example const apnsToken = await Courier.apnsToken
    */
-   get apnsToken(): Promise<string | undefined> {
-    if (Platform.OS !== 'ios') return Promise.resolve(undefined)
-    return CourierReactNativeModules.getApnsToken()
+  get apnsToken(): Promise<string | undefined> {
+    if (Platform.OS !== 'ios') return Promise.resolve(undefined);
+    return CourierReactNativeModules.getApnsToken();
   }
 
   /**
@@ -146,7 +153,7 @@ class Courier {
    * @example const fcmToken = await Courier.fcmToken
    */
   get fcmToken(): Promise<string | undefined> {
-    return CourierReactNativeModules.getFcmToken()
+    return CourierReactNativeModules.getFcmToken();
   }
 
   /**
@@ -155,7 +162,7 @@ class Courier {
    * @example await setFcmToken('asdf...asdf')
    */
   public setFcmToken(token: string): Promise<void> {
-    return CourierReactNativeModules.setFcmToken(token)
+    return CourierReactNativeModules.setFcmToken(token);
   }
 
   /**
@@ -173,49 +180,70 @@ class Courier {
   * ```
   * @returns promise
   */
-  public sendPush(
-    { authKey, userId, title, body, providers, isProduction }: 
-    { authKey: string, userId: string, title?: string, body?: string, providers: CourierProvider[], isProduction: boolean }): Promise<string> {
-    return CourierReactNativeModules.sendPush(authKey, userId, title, body, providers, isProduction)
+  public sendPush({
+    authKey,
+    userId,
+    title,
+    body,
+    providers,
+    isProduction,
+  }: {
+    authKey: string;
+    userId: string;
+    title?: string;
+    body?: string;
+    providers: CourierProvider[];
+    isProduction: boolean;
+  }): Promise<string> {
+    return CourierReactNativeModules.sendPush(
+      authKey,
+      userId,
+      title,
+      body,
+      providers,
+      isProduction
+    );
   }
 
   /**
    * Gets notification permission status at a system level.
    * @example const permissionStatus = await Courier.getNotificationPermissionStatus()
    */
-   get notificationPermissionStatus(): Promise<string> {
-    return CourierReactNativeModules.getNotificationPermissionStatus()
+  get notificationPermissionStatus(): Promise<string> {
+    return CourierReactNativeModules.getNotificationPermissionStatus();
   }
 
   /**
    * Requests notification permission status at a system level.
    * Returns the string associated with the permission status.
-   * Will return the current status and will not present a popup 
+   * Will return the current status and will not present a popup
    * if the user has already been asked for permission.
    * @example const permissionStatus = await Courier.requestNotificationPermission()
    */
   public requestNotificationPermission(): Promise<string> {
-    return CourierReactNativeModules.requestNotificationPermission()
+    return CourierReactNativeModules.requestNotificationPermission();
   }
 
   /**
    * Sets the push notification presentation style when the app is in the foreground
    * This does not affect how the notification is shown when the app is killed or in the background states
-   * 
+   *
    * Defaults to sound, badge, list and/or banner.
-   * 
+   *
    * @example iOSForegroundPresentationOptions({options: ['sound']});
    */
-  public iOSForegroundPresentationOptions({ options }: { options: ('sound' | 'badge' | 'list' | 'banner')[]}): Promise<void> {
-
+  public iOSForegroundPresentationOptions({
+    options,
+  }: {
+    options: ('sound' | 'badge' | 'list' | 'banner')[];
+  }): Promise<void> {
     // Only works on iOS
-    if (Platform.OS !== 'ios') return Promise.resolve()
+    if (Platform.OS !== 'ios') return Promise.resolve();
 
-    const normalizedParams = Array.from(new Set(options))
+    const normalizedParams = Array.from(new Set(options));
     return CourierReactNativeModules.iOSForegroundPresentationOptions({
-      options: normalizedParams
-    })
-
+      options: normalizedParams,
+    });
   }
 
   /**
@@ -237,73 +265,77 @@ class Courier {
   *```
   * @returns  function that can be used to unsubscribe from registered listeners
   */
-  public registerPushNotificationListeners(
-    { onPushNotificationClicked, onPushNotificationDelivered, }: 
-    { onPushNotificationClicked: (push: any) => void, onPushNotificationDelivered: (push: any) => void }
-    ) {
-
-    let notificationClickedListener: EmitterSubscription
-    let notificationDeliveredListener: EmitterSubscription
+  public registerPushNotificationListeners({
+    onPushNotificationClicked,
+    onPushNotificationDelivered,
+  }: {
+    onPushNotificationClicked: (push: any) => void;
+    onPushNotificationDelivered: (push: any) => void;
+  }) {
+    let notificationClickedListener: EmitterSubscription;
+    let notificationDeliveredListener: EmitterSubscription;
 
     // Android
     if (Platform.OS === 'android') {
-
-      notificationClickedListener = DeviceEventEmitter.addListener('pushNotificationClicked', (event: any) => {
+      notificationClickedListener = DeviceEventEmitter.addListener(
+        this.PUSH_NOTIFICATION_CLICKED,
+        (event: any) => {
           try {
-            onPushNotificationClicked(JSON.parse(event))
+            onPushNotificationClicked(JSON.parse(event));
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         }
-      )
+      );
 
-      notificationDeliveredListener = DeviceEventEmitter.addListener('pushNotificationDelivered', (event: any) => {
+      notificationDeliveredListener = DeviceEventEmitter.addListener(
+        this.PUSH_NOTIFICATION_DELIVERED,
+        (event: any) => {
           try {
-            onPushNotificationDelivered(JSON.parse(event))
+            onPushNotificationDelivered(JSON.parse(event));
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         }
-      )
-
+      );
     }
 
     // iOS
     if (Platform.OS === 'ios') {
-
-      notificationClickedListener = CourierEventEmitter.addListener('pushNotificationClicked', (event: any) => {
+      notificationClickedListener = CourierEventEmitter.addListener(
+        this.PUSH_NOTIFICATION_CLICKED,
+        (event: any) => {
           try {
-            onPushNotificationClicked(JSON.parse(event))
+            onPushNotificationClicked(JSON.parse(event));
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         }
-      )
+      );
 
-      notificationDeliveredListener = CourierEventEmitter.addListener('pushNotificationDelivered', (event: any) => {
+      notificationDeliveredListener = CourierEventEmitter.addListener(
+        this.PUSH_NOTIFICATION_DELIVERED,
+        (event: any) => {
           try {
-            onPushNotificationDelivered(JSON.parse(event))
+            onPushNotificationDelivered(JSON.parse(event));
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         }
-      )
-
+      );
     }
-    
+
     // When listener is registered
     // Attempt to fetch the last message that was clicked
-    // This is needed for when the app is killed and the 
+    // This is needed for when the app is killed and the
     // user launched the app by clicking on a notifications
-    CourierReactNativeModules.registerPushNotificationClickedOnKilledState()
+    CourierReactNativeModules.registerPushNotificationClickedOnKilledState();
 
     return () => {
-      notificationClickedListener.remove()
-      notificationDeliveredListener.remove()
-    }
-
+      notificationClickedListener.remove();
+      notificationDeliveredListener.remove();
+    };
   }
-
 }
 
-export default new Courier()
+export default new Courier();
