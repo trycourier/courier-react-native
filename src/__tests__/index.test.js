@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
-import * as Courier from '../index';
+import Courier from '../index';
 import {
   setPlatform,
   SIGN_IN_RETURN_VALUE,
@@ -25,7 +25,7 @@ const {
 } = NativeModules.CourierReactNative;
 
 beforeEach(() => {
-  setPlatform('');
+  setPlatform('android');
 });
 
 describe('native module signIn function', () => {
@@ -58,11 +58,11 @@ describe('native module requestNotificationPermission', () => {
 
 describe('native module getNotificationPermissionStatus function', () => {
   it('Should call getNotificationPermissionStatus function', () => {
-    Courier.getNotificationPermissionStatus();
+    Courier.notificationPermissionStatus;
     expect(getNotificationPermissionStatus).toBeCalledWith();
   });
   it(`Should return ${NOTIFICATION_PERMISSION_STATUS}`, () => {
-    expect(Courier.getNotificationPermissionStatus()).toBe(
+    expect(Courier.notificationPermissionStatus).toBe(
       NOTIFICATION_PERMISSION_STATUS
     );
   });
@@ -70,42 +70,42 @@ describe('native module getNotificationPermissionStatus function', () => {
 
 describe('native module getFcmToken function', () => {
   it('Should call getFcmToken function', () => {
-    Courier.getFcmToken();
+    Courier.fcmToken;
     expect(getFcmToken).toBeCalledWith();
   });
 
   it(`Should return ${FCM_TOKEN_VALUE}`, () => {
-    expect(Courier.getFcmToken()).toBe(FCM_TOKEN_VALUE);
+    expect(Courier.fcmToken).toBe(FCM_TOKEN_VALUE);
   });
 });
 
 describe('native module getUserId function', () => {
   it('Should call getUserId function', () => {
-    Courier.getUserId();
+    Courier.userId;
     expect(getUserId).toBeCalledWith();
   });
 
   it(`Should return ${CURRENT_USER_ID}`, () => {
-    expect(Courier.getUserId()).toBe(CURRENT_USER_ID);
+    expect(Courier.userId).toBe(CURRENT_USER_ID);
   });
 });
 
 describe('native module  getApnsToken function', () => {
   it('Should not call getApnsToken  function', () => {
     setPlatform('android');
-    Courier.getApnsToken();
+    Courier.apnsToken;
     expect(getApnsToken).not.toBeCalled();
   });
 
   it('Should call getApnsToken  function', () => {
     setPlatform('ios');
-    Courier.getApnsToken();
+    Courier.apnsToken;
     expect(getApnsToken).toBeCalledWith();
   });
 
   it(`Should return ${CURRENT_APNS_TOKEN}`, () => {
     setPlatform('ios');
-    expect(Courier.getApnsToken()).toBe(CURRENT_APNS_TOKEN);
+    expect(Courier.apnsToken).toBe(CURRENT_APNS_TOKEN);
   });
 });
 

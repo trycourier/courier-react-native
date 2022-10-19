@@ -1,8 +1,7 @@
 import { View, Platform, StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
-
-import * as CourierPush from '@trycourier/courier-react-native';
+import Courier from '@trycourier/courier-react-native';
 
 export type IosForeGroundNotificationPreferencesType =
   | 'sound'
@@ -36,20 +35,11 @@ const IosForeGroundPreferencesComponent = () => {
         option,
       ];
     }
-    CourierPush.iOSForegroundPresentationOptions({
+    Courier.iOSForegroundPresentationOptions({
       options: updatedIosNotificationPreferences,
     });
     setIosNotificationPreferences(updatedIosNotificationPreferences);
   };
-
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      CourierPush.iOSForegroundPresentationOptions({
-        options: iosNotificationPreferences,
-      });
-    }
-    // eslint-disable-next-line
-  }, []);
 
   if (Platform.OS !== 'ios') return null;
   return (

@@ -40,8 +40,11 @@ open class CourierReactNativeActivity : ReactActivity() {
 
     override fun createRootView(): ReactRootView {
       val reactRootView = ReactRootView(context)
+
       // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+      // TODO: This should come from a constructor with BuildConfig.isExperimental
       reactRootView.setIsFabric(false)
+
       return reactRootView
     }
 
@@ -83,6 +86,6 @@ open class CourierReactNativeActivity : ReactActivity() {
   }
 
   private fun postPushNotificationClicked(message: RemoteMessage) {
-    sendEvent(PUSH_CLICKED_EVENT ,JSONObject(message.pushNotification).toString());
+    sendEvent(PUSH_CLICKED_EVENT, JSONObject(message.pushNotification).toString());
   }
 }
