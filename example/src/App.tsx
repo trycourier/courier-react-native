@@ -8,140 +8,148 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  Button,
 } from 'react-native';
 
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
-import { Token, Button } from './components';
-import IosForeGroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
+import IosForegroundPreferencesComponent from './components/IosForegroundPreferencesComponent';
 
-const unsubPushListeners = () => {
-
-  return Courier.registerPushNotificationListeners({
-    onPushNotificationClicked(push) {
-      showToast(`Push Clicked\n${JSON.stringify(push)}`);
-    },
-    onPushNotificationDelivered(push) {
-      showToast(`Push Delivered\n${JSON.stringify(push)}`);
-    },
-  })
-
-}
-
-const showToast = (toastMessage: string) => {
-  Alert.alert(toastMessage);
+const showToast = (message: string) => {
+  Alert.alert(message);
 };
 
 export default function App() {
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
-  const [fcmToken, setFcmToken] = useState<string | undefined>('');
-  const [signedInUserId, setSignedInUserId] = useState<string | undefined>('');
-  const [apnsToken, setApnsToken] = useState<string | undefined>('');
+  const [courierUserId, setCourierUserId] = useState<string | undefined>();
+  const [isDebugging, setIsDebugging] = useState<boolean>(__DEV__);
 
   const handleSignIn = async () => {
-    setIsLoading(true);
+
     try {
 
-      console.log(await Courier.userId)
-      console.log({ ACCESS_TOKEN, USER_ID });
+      setIsLoading(true);
 
       await Courier.signIn({
         accessToken: ACCESS_TOKEN,
         userId: USER_ID,
       });
 
-      console.log(await Courier.userId)
+      const userId = await Courier.userId;
+      setCourierUserId(userId);
 
-      // showToast('credentials are set');
-      setIsSignedIn(true);
     } catch (e) {
       console.log(e);
     } finally {
       setIsLoading(false);
     }
+
   };
 
   const handleSignOut = async () => {
-    setIsLoading(true);
+
     try {
+
+      setIsLoading(true);
+
       await Courier.signOut();
-      setIsSignedIn(false);
-      setFcmToken('');
-      setSignedInUserId('');
-      setApnsToken('');
-    } catch (err: any) {
-      console.log(err);
+
+      setCourierUserId(undefined);
+
+    } catch (e) {
+      console.log(e);
     } finally {
       setIsLoading(false);
     }
+
   };
 
   const handleSendPush = async () => {
+
+    setIsLoading(true);
+
     try {
-      const res = await Courier.sendPush({
+
+      const providers = [ Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM ]
+
+      const messageId = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
         userId: USER_ID,
         title: 'This is a title',
         body: 'This is a body',
-        providers: [
-          Platform.OS === 'ios'
-            ? CourierProvider.APNS
-            : CourierProvider.FCM,
-        ],
+        providers: providers,
         isProduction: !__DEV__,
       });
-      showToast(res);
-    } catch (err: any) {
-      showToast(err);
+
+      showToast(`Message sent. Message id: ${messageId}`);
+
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
     }
+
   };
 
   const handleGetFcmToken = async () => {
     try {
-      const fcmToken = await Courier.fcmToken;
-      console.log(fcmToken);
-      setFcmToken(fcmToken);
-    } catch (err: any) {
-      console.log(err);
-    }
-  };
-
-  const handleGetUserId = async () => {
-    try {
-      const userId = await Courier.userId;
-      setSignedInUserId(userId);
-    } catch (err: any) {
-      console.log(err);
+      const token = await Courier.fcmToken;
+      showToast(`FCM Token: ${token}`);
+      console.log(token);
+    } catch (e) {
+      console.log(e);
     }
   };
 
   const handleApnsToken = async () => {
-    if (Platform.OS === 'ios') {
-      try {
-        const currentApnsToken = await Courier.apnsToken;
-        setApnsToken(currentApnsToken);
-      } catch (err: any) {
-        console.log(err);
-      }
+    try {
+      const token = await Courier.apnsToken;
+      showToast(`APNS Token: ${token}`);
+      console.log(token);
+    } catch (e) {
+      console.log(e);
     }
   };
 
   const init = async () => {
+
     try {
-      const status = await Courier.notificationPermissionStatus;
-      console.log('notificationPermissionStatus', status);
+
+      setIsLoading(true);
+
+      const unsubscribeNotificationListeners = Courier.registerPushNotificationListeners({
+        onPushNotificationClicked(push) {
+          showToast(`Push Clicked\n${JSON.stringify(push)}`);
+        },
+        onPushNotificationDelivered(push) {
+          showToast(`Push Delivered\n${JSON.stringify(push)}`);
+        },
+      });
+
+      const userId = await Courier.userId;
+      setCourierUserId(userId);
+
+      const isDebugging = Courier.isDebugging;
+      setIsDebugging(isDebugging);
+
+      setIsLoading(false);
+
+      const getStatus = await Courier.notificationPermissionStatus;
+      console.log('Get notification status:', getStatus);
+
       const requestStatus = await Courier.requestNotificationPermission();
-      // showToast(requestStatus);
-      // handleSignIn();
-      // const unsubscribeDebugListener = CourierOld.debuggerListener();
+      console.log('Request notification permission:', requestStatus);
+
       return () => {
-        unsubPushListeners();
-        // unsubscribeDebugListener();
+        unsubscribeNotificationListeners();
       };
-    } catch (e: any) {
+
+    } catch (e) {
       console.log(e);
-      showToast(e);
+    } finally {
+      setIsLoading(false);
     }
+
   };
 
   useEffect(() => {
@@ -149,76 +157,88 @@ export default function App() {
     (async () => {
       unsubscribe = await init();
     })();
-
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
   }, []);
 
-  if (isLoading)
-    return (
-      <View style={styles.container}>{isLoading && <ActivityIndicator />}</View>
-    );
+  function buildDebugging() {
 
-  return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: 'row' }}>
-        <Button
-          title="Start Debugging"
-          onPress={() => {
-            Courier.isDebugging(true);
-          }}
+    async function toggleDebugging() {
+      const debugging = await Courier.setIsDebugging(!isDebugging)
+      setIsDebugging(debugging)
+    }
+
+    if (isDebugging) {
+      return <Button
+        title="Stop Debugging"
+        onPress={() => toggleDebugging()}
+      />
+    } else {
+      return <Button
+        title="Start Debugging"
+        onPress={() => toggleDebugging()}
         />
-        <Button
-          title="Stop Debugging"
-          onPress={() => {
-            Courier.isDebugging(false);
-          }}
-        />
-      </View>
-      <Text style={styles.signInStatus}>
-        {isSignedIn ? 'Signed In' : 'Not Signed In'}
-      </Text>
-      {isSignedIn ? (
-        <Button title="Sign out" onPress={handleSignOut} />
-      ) : (
-        <Button title="Sign in" onPress={handleSignIn} />
-      )}
-      {isSignedIn && (
-        <>
+    }
+
+  }
+
+  function buildContent() {
+
+    if (isLoading) {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+
+    if (courierUserId) {
+      return (
+        <View style={styles.container}>
+          <Text>{`Current User Id: ${courierUserId}`}</Text>
+          <Button title="Sign Out" onPress={handleSignOut} />
+          <View style={styles.divider} />
+          <IosForegroundPreferencesComponent />
           <Button title="Send Push" onPress={handleSendPush} />
-          <IosForeGroundPreferencesComponent />
-        </>
-      )}
-      <Button title="Get Fcm Token" onPress={handleGetFcmToken} />
-      <Button title="Get User Id" onPress={handleGetUserId} />
-      {Platform.OS === 'ios' && (
-        <Button title="Get APNS token" onPress={handleApnsToken} />
-      )}
-      <Token title="fcm Token" token={fcmToken} />
-      <Token title="User Id" token={signedInUserId} />
-      {Platform.OS === 'ios' && <Token title="Apns Token" token={apnsToken} />}
-    </View>
-  );
+          <View style={styles.divider} />
+          <Button title="See FCM Token" onPress={handleGetFcmToken} />
+          <Button title="See APNS token" onPress={handleApnsToken} />
+          {buildDebugging()}
+        </View>
+      )
+    }
+
+    return (
+      <View style={styles.container}>
+        <Text>{'No User is signed into Courier'}</Text>
+        <Button title="Sign In" onPress={handleSignIn} />
+        <View style={styles.divider} />
+        <Button title="See FCM Token" onPress={handleGetFcmToken} />
+        <Button title="See APNS token" onPress={handleApnsToken} />
+        <View style={styles.divider} />
+        {buildDebugging()}
+      </View>
+    )
+
+  }
+
+  return buildContent();
+
 }
 
 const styles = StyleSheet.create({
-  signInStatus: {
-    backgroundColor: 'black',
-    color: 'white',
-  },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 24
   },
-  buttonStyle: {
-    padding: 12,
-    backgroundColor: '#008CBA',
-    borderRadius: 4,
-    margin: 12,
-  },
-  buttonTextStyle: {
-    color: 'white',
-  },
+  divider: {
+    height: 1,
+    width: '100%',
+    marginTop: 16,
+    marginBottom: 16,
+    backgroundColor: 'lightgray'
+  }
 });

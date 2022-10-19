@@ -47,8 +47,7 @@ class Courier {
   private async setDefaults() {
     try {
       await Promise.all([
-        this.isDebugging(__DEV__),
-        this.attachDebugListener(),
+        this.setIsDebugging(__DEV__),
         this.iOSForegroundPresentationOptions({
           options: ['sound', 'badge', 'list', 'banner']
         }),
@@ -58,23 +57,40 @@ class Courier {
     }
   }
 
+  private _isDebugging = false
+  private debugListener: EmitterSubscription | undefined
+
   /**
    * Tells native Courier SDKs to show or hide logs.
    * Defaults to the React __DEV__ mode
-   * @example await Courier.isDebugging(true)
+   * @example Courier.setIsDebugging(true)
   */
-  public isDebugging(isDebugging: boolean): Promise<boolean> {
-    return CourierReactNativeModules.setDebugMode(isDebugging)
+  public async setIsDebugging(isDebugging: boolean): Promise<boolean> {
+
+    // TODO: REMOVE THIS WHEN DEBUGGING WORKS ON IOS
+    if (Platform.OS === 'ios') {
+      this._isDebugging = isDebugging
+      return this._isDebugging
+    }
+
+    this._isDebugging = await CourierReactNativeModules.setDebugMode(isDebugging)
+
+    // Remove the existing listener if needed
+    this.debugListener?.remove()
+
+    // Set a new listener
+    if (this._isDebugging) {
+      this.debugListener = CourierEventEmitter.addListener('courierDebugEvent', (event) => {
+        console.log('\x1b[36m%s\x1b[0m', 'COURIER', event)
+      })
+    }
+
+    return this._isDebugging
+
   }
 
-  /**
-   * Subscribes to debugging events from the native sdk
-   */
-  private attachDebugListener() {
-    const eventListener = CourierEventEmitter.addListener('courierDebugEvent', (event) => {
-      console.log('\x1b[36m%s\x1b[0m', 'COURIER DEBUGGING', event)
-    })
-    return eventListener.remove
+  get isDebugging(): boolean {
+    return this._isDebugging
   }
 
   /**

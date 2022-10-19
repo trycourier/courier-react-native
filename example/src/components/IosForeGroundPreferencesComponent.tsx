@@ -1,15 +1,15 @@
-import { View, Platform, StyleSheet } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { View, Platform, StyleSheet, Text } from 'react-native';
+import React, { useState } from 'react';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import Courier from '@trycourier/courier-react-native';
 
-export type IosForeGroundNotificationPreferencesType =
+export type IosForegroundNotificationPreferencesType =
   | 'sound'
   | 'badge'
   | 'list'
   | 'banner';
 
-const allIOSPreferences: IosForeGroundNotificationPreferencesType[] = [
+const allIOSPreferences: IosForegroundNotificationPreferencesType[] = [
   'sound',
   'list',
   'badge',
@@ -18,13 +18,13 @@ const allIOSPreferences: IosForeGroundNotificationPreferencesType[] = [
 
 const IosForeGroundPreferencesComponent = () => {
   const [iosNotificationPreferences, setIosNotificationPreferences] = useState<
-    IosForeGroundNotificationPreferencesType[]
+    IosForegroundNotificationPreferencesType[]
   >(['badge', 'banner', 'list', 'sound']);
 
   const handleIosPreferencesNotificationCheckbox = (
-    option: IosForeGroundNotificationPreferencesType
+    option: IosForegroundNotificationPreferencesType
   ) => {
-    let updatedIosNotificationPreferences: IosForeGroundNotificationPreferencesType[];
+    let updatedIosNotificationPreferences: IosForegroundNotificationPreferencesType[];
     if (iosNotificationPreferences.includes(option)) {
       updatedIosNotificationPreferences = iosNotificationPreferences.filter(
         (item) => item !== option
@@ -42,33 +42,33 @@ const IosForeGroundPreferencesComponent = () => {
   };
 
   if (Platform.OS !== 'ios') return null;
+
   return (
     <View style={styles.overAll}>
+      <Text>{'iOS Foreground Notification Presentation Styles'}</Text>
       {allIOSPreferences.map((item) => (
         <View style={styles.boxContainer} key={item}>
           <BouncyCheckbox
             text={item}
             isChecked={iosNotificationPreferences.includes(item)}
             onPress={() => handleIosPreferencesNotificationCheckbox(item)}
-            textStyle={styles.textStyle}
           />
         </View>
       ))}
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
   overAll: {
-    flexDirection: 'row',
-    backgroundColor: 'black',
+    flexDirection: 'column',
     justifyContent: 'center',
     flexWrap: 'wrap',
   },
   boxContainer: {
     margin: 8,
   },
-  textStyle: { color: 'white' },
 });
 
 export default IosForeGroundPreferencesComponent;
