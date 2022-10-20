@@ -1,4 +1,4 @@
-import { View, Platform, StyleSheet, Text } from 'react-native';
+import { View, Platform, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import Courier from '@trycourier/courier-react-native';

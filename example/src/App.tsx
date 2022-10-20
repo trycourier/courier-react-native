@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   ActivityIndicator,
   Platform,
   Alert,
@@ -12,8 +11,8 @@ import {
 } from 'react-native';
 
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
-import IosForegroundPreferencesComponent from './components/IosForegroundPreferencesComponent';
 import DarkModeText from './components/DarkModeText';
+import IosForegroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
 
 const showToast = (message: string) => {
   Alert.alert(message);
