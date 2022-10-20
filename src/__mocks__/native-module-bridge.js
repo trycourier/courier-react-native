@@ -34,3 +34,5 @@ NativeModules.CourierReactNative = {
 export const setPlatform = (os) => {
   Platform.OS = os;
 };
+
+__DEV__ = true;

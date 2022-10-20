@@ -203,7 +203,7 @@ describe('native module sendPush', () => {
   });
 });
 
-describe('native module is Debugging', () => {
+describe('native module setDebugMode', () => {
   it('should call setDebugMode', async () => {
     await Courier.setIsDebugging(isDebugging);
     expect(setDebugMode).toBeCalledWith(isDebugging);
@@ -225,5 +225,18 @@ describe('native module is Debugging', () => {
     await Courier.setIsDebugging(!isDebugging);
     eventEmitter.emit(COURIER_DEBUG_EVENT, COURIER_DEBUG_LOG);
     expect(console.log.mock.calls[0]).toBeUndefined();
+  });
+});
+
+describe('native module isDebugging', () => {
+  it(`should retun isDebugging ${isDebugging}`, async () => {
+    await Courier.setIsDebugging(isDebugging);
+    const currentlyDebugging = await Courier.isDebugging;
+    expect(currentlyDebugging).toBe(isDebugging);
+  });
+  it(`should retun isDebugging ${!isDebugging}`, async () => {
+    await Courier.setIsDebugging(!isDebugging);
+    const currentlyDebugging = await Courier.isDebugging;
+    expect(currentlyDebugging).toBe(!isDebugging);
   });
 });
