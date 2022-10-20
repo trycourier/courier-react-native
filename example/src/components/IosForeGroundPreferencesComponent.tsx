@@ -2,6 +2,7 @@ import { View, Platform, StyleSheet, Text } from 'react-native';
 import React, { useState } from 'react';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import Courier from '@trycourier/courier-react-native';
+import DarkModeText from './DarkModeText';
 
 export type IosForegroundNotificationPreferencesType =
   | 'sound'
@@ -45,7 +46,7 @@ const IosForeGroundPreferencesComponent = () => {
 
   return (
     <View style={styles.overAll}>
-      <Text>{'iOS Foreground Notification Presentation Styles'}</Text>
+      <DarkModeText text={'iOS Foreground Notification Presentation Styles'} />
       {allIOSPreferences.map((item) => (
         <View style={styles.boxContainer} key={item}>
           <BouncyCheckbox

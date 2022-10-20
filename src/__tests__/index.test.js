@@ -131,7 +131,9 @@ describe('native module setFcmToken function', () => {
 });
 
 describe('native module iOSForegroundPresentationOptions', () => {
+
   const foreGroundOptions = { options: ['badge', 'list'] };
+
   it('should not call iOSForegroundPresentationOptions', () => {
     setPlatform('android');
     Courier.iOSForegroundPresentationOptions(foreGroundOptions);
@@ -150,4 +152,5 @@ describe('native module iOSForegroundPresentationOptions', () => {
       Courier.iOSForegroundPresentationOptions(foreGroundOptions)
     ).toBeUndefined();
   });
+  
 });

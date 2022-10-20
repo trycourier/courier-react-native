@@ -13,6 +13,7 @@ import {
 
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
 import IosForegroundPreferencesComponent from './components/IosForegroundPreferencesComponent';
+import DarkModeText from './components/DarkModeText';
 
 const showToast = (message: string) => {
   Alert.alert(message);
@@ -66,8 +67,6 @@ export default function App() {
 
   const handleSendPush = async () => {
 
-    setIsLoading(true);
-
     try {
 
       const providers = [ Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM ]
@@ -85,8 +84,6 @@ export default function App() {
 
     } catch (e) {
       console.log(e);
-    } finally {
-      setIsLoading(false);
     }
 
   };
@@ -196,7 +193,7 @@ export default function App() {
     if (courierUserId) {
       return (
         <View style={styles.container}>
-          <Text>{`Current User Id: ${courierUserId}`}</Text>
+          <DarkModeText text={`Current User Id: ${courierUserId}`} />
           <Button title="Sign Out" onPress={handleSignOut} />
           <View style={styles.divider} />
           <IosForegroundPreferencesComponent />
@@ -211,7 +208,7 @@ export default function App() {
 
     return (
       <View style={styles.container}>
-        <Text>{'No User is signed into Courier'}</Text>
+        <DarkModeText text={'No User is signed into Courier'} />
         <Button title="Sign In" onPress={handleSignIn} />
         <View style={styles.divider} />
         <Button title="See FCM Token" onPress={handleGetFcmToken} />
@@ -240,5 +237,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 16,
     backgroundColor: 'lightgray'
+  },
+  textDark: {
+    color: 'white'
+  },
+  textLight: {
+    color: 'dark'
   }
 });
