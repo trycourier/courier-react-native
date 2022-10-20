@@ -1,4 +1,8 @@
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import {
+  NativeModules,
+  NativeEventEmitter,
+  DeviceEventEmitter,
+} from 'react-native';
 import Courier, { CourierProvider } from '../index';
 
 import {
@@ -26,6 +30,7 @@ const {
   iOSForegroundPresentationOptions,
   sendPush,
   setDebugMode,
+  registerPushNotificationClickedOnKilledState,
 } = NativeModules.CourierReactNative;
 
 const userId = 'userId';
@@ -38,6 +43,8 @@ const isProduction = false;
 const isDebugging = true;
 const COURIER_DEBUG_EVENT = 'courierDebugEvent';
 const COURIER_DEBUG_LOG = 'test log';
+const PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
+const PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered';
 
 beforeEach(() => {
   setPlatform('android');
@@ -238,5 +245,129 @@ describe('native module isDebugging', () => {
     await Courier.setIsDebugging(!isDebugging);
     const currentlyDebugging = await Courier.isDebugging;
     expect(currentlyDebugging).toBe(!isDebugging);
+  });
+});
+
+describe('test registerPushNotificationListeners', () => {
+  it(`should call native module registerPushNotificationClickedOnKilledState`, () => {
+    Courier.registerPushNotificationListeners({
+      onPushNotificationClicked: jest.fn(),
+      onPushNotificationDelivered: jest.fn(),
+    });
+    expect(registerPushNotificationClickedOnKilledState).toBeCalledWith();
+  });
+  it('Should handle notification events for android', () => {
+    const clickNotificaitonfn = jest.fn();
+    const deliverNotificationfn = jest.fn();
+    const testJson = { test: 'test' };
+    Courier.registerPushNotificationListeners({
+      onPushNotificationClicked: clickNotificaitonfn,
+      onPushNotificationDelivered: deliverNotificationfn,
+    });
+
+    const eventEmitter = new NativeEventEmitter();
+    eventEmitter.emit(PUSH_NOTIFICATION_DELIVERED, JSON.stringify(testJson));
+    expect(deliverNotificationfn).toBeCalledWith(testJson);
+    eventEmitter.emit(PUSH_NOTIFICATION_CLICKED, JSON.stringify(testJson));
+    expect(clickNotificaitonfn).toBeCalledWith(testJson);
+  });
+
+  it('Should throw  error in handle notification events for android', () => {
+    const clickNotificaitonfn = jest.fn();
+    const deliverNotificationfn = jest.fn();
+    const parsingErrorMessage = 'Unexpected token o in JSON at position 1';
+    const testJson = { test: 'test' };
+    Courier.registerPushNotificationListeners({
+      onPushNotificationClicked: clickNotificaitonfn,
+      onPushNotificationDelivered: deliverNotificationfn,
+    });
+    console.log = jest.fn();
+
+    const eventEmitter = new NativeEventEmitter();
+    eventEmitter.emit(PUSH_NOTIFICATION_DELIVERED, testJson);
+    expect(console.log.mock.calls[0][0].message).toBe(parsingErrorMessage);
+    eventEmitter.emit(PUSH_NOTIFICATION_CLICKED, testJson);
+    expect(console.log.mock.calls[1][0].message).toBe(parsingErrorMessage);
+  });
+
+  it('Should handle notification events for ios', () => {
+    setPlatform('ios');
+    const clickNotificaitonfn = jest.fn();
+    const deliverNotificationfn = jest.fn();
+    const testJson = { test: 'test' };
+    Courier.registerPushNotificationListeners({
+      onPushNotificationClicked: clickNotificaitonfn,
+      onPushNotificationDelivered: deliverNotificationfn,
+    });
+
+    DeviceEventEmitter.emit(
+      PUSH_NOTIFICATION_DELIVERED,
+      JSON.stringify(testJson)
+    );
+    expect(deliverNotificationfn).toBeCalledWith(testJson);
+    DeviceEventEmitter.emit(
+      PUSH_NOTIFICATION_CLICKED,
+      JSON.stringify(testJson)
+    );
+    expect(clickNotificaitonfn).toBeCalledWith(testJson);
+  });
+
+  it('Should throw  error in handle notification events for ios', () => {
+    setPlatform('ios');
+    const clickNotificaitonfn = jest.fn();
+    const deliverNotificationfn = jest.fn();
+    const parsingErrorMessage = 'Unexpected token o in JSON at position 1';
+    const testJson = { test: 'test' };
+    Courier.registerPushNotificationListeners({
+      onPushNotificationClicked: clickNotificaitonfn,
+      onPushNotificationDelivered: deliverNotificationfn,
+    });
+    console.log = jest.fn();
+
+    DeviceEventEmitter.emit(PUSH_NOTIFICATION_DELIVERED, testJson);
+    expect(console.log.mock.calls[0][0].message).toBe(parsingErrorMessage);
+    DeviceEventEmitter.emit(PUSH_NOTIFICATION_CLICKED, testJson);
+    expect(console.log.mock.calls[1][0].message).toBe(parsingErrorMessage);
+  });
+
+  it('should check for cancel subscription in android', () => {
+    const clickNotificaitonfn = jest.fn();
+    const deliverNotificationfn = jest.fn();
+    const testJson = { test: 'test' };
+    const unsubscribe = Courier.registerPushNotificationListeners({
+      onPushNotificationClicked: clickNotificaitonfn,
+      onPushNotificationDelivered: deliverNotificationfn,
+    });
+
+    unsubscribe();
+
+    const eventEmitter = new NativeEventEmitter();
+    eventEmitter.emit(PUSH_NOTIFICATION_DELIVERED, JSON.stringify(testJson));
+    expect(deliverNotificationfn).not.toBeCalled();
+    eventEmitter.emit(PUSH_NOTIFICATION_CLICKED, JSON.stringify(testJson));
+    expect(clickNotificaitonfn).not.toBeCalled();
+  });
+
+  it('should check for cancel subscription in ios', () => {
+    const clickNotificaitonfn = jest.fn();
+    const deliverNotificationfn = jest.fn();
+    const testJson = { test: 'test' };
+    const unsubscribe = Courier.registerPushNotificationListeners({
+      onPushNotificationClicked: clickNotificaitonfn,
+      onPushNotificationDelivered: deliverNotificationfn,
+    });
+
+    unsubscribe();
+
+    DeviceEventEmitter.emit(
+      PUSH_NOTIFICATION_DELIVERED,
+      JSON.stringify(testJson)
+    );
+    expect(deliverNotificationfn).not.toBeCalled();
+    DeviceEventEmitter.emit(
+      PUSH_NOTIFICATION_CLICKED,
+      JSON.stringify(testJson)
+    );
+    expect(clickNotificaitonfn).not.toBeCalled();
   });
 });
