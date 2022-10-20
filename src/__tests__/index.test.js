@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import Courier, { CourierProvider } from '../index';
 
 import {
@@ -36,6 +36,8 @@ const body = 'this is dummy body';
 const providers = [CourierProvider.APNS, CourierProvider.FCM];
 const isProduction = false;
 const isDebugging = true;
+const COURIER_DEBUG_EVENT = 'courierDebugEvent';
+const COURIER_DEBUG_LOG = 'test log';
 
 beforeEach(() => {
   setPlatform('android');
@@ -210,10 +212,18 @@ describe('native module is Debugging', () => {
     const currentDebuggingStatus = await Courier.setIsDebugging(isDebugging);
     expect(currentDebuggingStatus).toBe(isDebugging);
   });
-  it(`should call addEventListener`, async () => {
-    // const mockAddListener = jest.fn();
-    // todo: listen to NativeEvent
-    const currentDebuggingStatus = await Courier.setIsDebugging(isDebugging);
-    expect(currentDebuggingStatus).toBe(isDebugging);
+  it(`should catch ${COURIER_DEBUG_EVENT}`, async () => {
+    const eventEmitter = new NativeEventEmitter();
+    console.log = jest.fn();
+    await Courier.setIsDebugging(isDebugging);
+    eventEmitter.emit(COURIER_DEBUG_EVENT, COURIER_DEBUG_LOG);
+    expect(console.log.mock.calls[0][2]).toBe(COURIER_DEBUG_LOG);
+  });
+  it(`should not catch ${COURIER_DEBUG_EVENT}`, async () => {
+    const eventEmitter = new NativeEventEmitter();
+    console.log = jest.fn();
+    await Courier.setIsDebugging(!isDebugging);
+    eventEmitter.emit(COURIER_DEBUG_EVENT, COURIER_DEBUG_LOG);
+    expect(console.log.mock.calls[0]).toBeUndefined();
   });
 });
