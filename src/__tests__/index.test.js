@@ -1,5 +1,5 @@
-import { NativeModules } from 'react-native';
-import Courier from '../index';
+import { NativeModules, Platform } from 'react-native';
+import Courier, { CourierProvider } from '../index';
 import {
   setPlatform,
   SIGN_IN_RETURN_VALUE,
@@ -10,6 +10,7 @@ import {
   CURRENT_APNS_TOKEN,
   SIGN_OUT_VALUE,
   SET_FCM_TOKEN_VALUE,
+  SEND_PUSH_NOTIFICATION_STATUS,
 } from '../__mocks__/native-module-bridge';
 
 const {
@@ -22,15 +23,26 @@ const {
   signOut,
   setFcmToken,
   iOSForegroundPresentationOptions,
+  sendPush,
 } = NativeModules.CourierReactNative;
+
+const userId = 'userId';
+const token = 'token';
+const title = 'this is dummy title';
+const subTitle = 'this is dummy subTitle';
+const body = 'this is dummy body';
+const providers = [CourierProvider.APNS, CourierProvider.FCM];
+const isProduction = false;
 
 beforeEach(() => {
   setPlatform('android');
 });
 
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('native module signIn function', () => {
-  const userId = 'userId';
-  const token = 'token';
   it('Should call CourierReactNative signIn function', async () => {
     await Courier.signIn({
       userId,
@@ -131,7 +143,6 @@ describe('native module setFcmToken function', () => {
 });
 
 describe('native module iOSForegroundPresentationOptions', () => {
-
   const foreGroundOptions = { options: ['badge', 'list'] };
 
   it('should not call iOSForegroundPresentationOptions', () => {
@@ -152,5 +163,37 @@ describe('native module iOSForegroundPresentationOptions', () => {
       Courier.iOSForegroundPresentationOptions(foreGroundOptions)
     ).toBeUndefined();
   });
-  
+});
+
+describe('native module sendPush', () => {
+  it('Should call sendPush', async () => {
+    await Courier.sendPush({
+      userId,
+      authKey: token,
+      title,
+      body,
+      providers,
+      isProduction,
+    });
+    expect(sendPush).toBeCalledWith(
+      token,
+      userId,
+      title,
+      body,
+      providers,
+      isProduction
+    );
+  });
+
+  it(`Should return ${SEND_PUSH_NOTIFICATION_STATUS}`, async () => {
+    const res = await Courier.sendPush({
+      userId,
+      authKey: token,
+      title,
+      body,
+      providers,
+      isProduction,
+    });
+    expect(res).toBe(SEND_PUSH_NOTIFICATION_STATUS);
+  });
 });

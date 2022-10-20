@@ -9,6 +9,7 @@ export const CURRENT_APNS_TOKEN = 'CURRENT_APNS_TOKEN';
 export const SIGN_OUT_VALUE = 'SIGN_OUT_VALUE';
 export const IOS_FOREGROUND_PRESENTATION_OPTIONS =
   'IOS_FOREGROUND_PRESENTATION_OPTIONS';
+export const SEND_PUSH_NOTIFICATION_STATUS = 'SEND_PUSH_NOTIFICATION_STATUS';
 
 NativeModules.CourierReactNative = {
   signIn: jest.fn().mockReturnValue(SIGN_IN_RETURN_VALUE),
@@ -24,6 +25,9 @@ NativeModules.CourierReactNative = {
   signOut: jest.fn().mockReturnValue(SIGN_OUT_VALUE),
   setFcmToken: jest.fn().mockReturnValue(SET_FCM_TOKEN_VALUE),
   iOSForegroundPresentationOptions: jest.fn(),
+  sendPush: jest
+    .fn()
+    .mockImplementation((a) => Promise.resolve(SEND_PUSH_NOTIFICATION_STATUS)),
 };
 
 export const setPlatform = (os) => {
