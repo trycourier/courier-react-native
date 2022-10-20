@@ -1,5 +1,6 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules } from 'react-native';
 import Courier, { CourierProvider } from '../index';
+
 import {
   setPlatform,
   SIGN_IN_RETURN_VALUE,
@@ -24,6 +25,7 @@ const {
   setFcmToken,
   iOSForegroundPresentationOptions,
   sendPush,
+  setDebugMode,
 } = NativeModules.CourierReactNative;
 
 const userId = 'userId';
@@ -33,6 +35,7 @@ const subTitle = 'this is dummy subTitle';
 const body = 'this is dummy body';
 const providers = [CourierProvider.APNS, CourierProvider.FCM];
 const isProduction = false;
+const isDebugging = true;
 
 beforeEach(() => {
   setPlatform('android');
@@ -195,5 +198,22 @@ describe('native module sendPush', () => {
       isProduction,
     });
     expect(res).toBe(SEND_PUSH_NOTIFICATION_STATUS);
+  });
+});
+
+describe('native module is Debugging', () => {
+  it('should call setDebugMode', async () => {
+    await Courier.setIsDebugging(isDebugging);
+    expect(setDebugMode).toBeCalledWith(isDebugging);
+  });
+  it(`should return ${isDebugging}`, async () => {
+    const currentDebuggingStatus = await Courier.setIsDebugging(isDebugging);
+    expect(currentDebuggingStatus).toBe(isDebugging);
+  });
+  it(`should call addEventListener`, async () => {
+    // const mockAddListener = jest.fn();
+    // todo: listen to NativeEvent
+    const currentDebuggingStatus = await Courier.setIsDebugging(isDebugging);
+    expect(currentDebuggingStatus).toBe(isDebugging);
   });
 });

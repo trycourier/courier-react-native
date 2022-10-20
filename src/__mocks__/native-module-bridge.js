@@ -28,6 +28,7 @@ NativeModules.CourierReactNative = {
   sendPush: jest
     .fn()
     .mockImplementation((a) => Promise.resolve(SEND_PUSH_NOTIFICATION_STATUS)),
+  setDebugMode: jest.fn().mockImplementation((a) => Promise.resolve(a)),
 };
 
 export const setPlatform = (os) => {
