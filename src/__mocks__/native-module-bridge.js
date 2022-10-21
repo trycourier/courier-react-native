@@ -11,20 +11,25 @@ export const IOS_FOREGROUND_PRESENTATION_OPTIONS =
   'IOS_FOREGROUND_PRESENTATION_OPTIONS';
 export const SEND_PUSH_NOTIFICATION_STATUS = 'SEND_PUSH_NOTIFICATION_STATUS';
 
+const mockFunctionReturningPromise = (str) =>
+  jest.fn().mockImplementation(() => Promise.resolve(str));
+
 NativeModules.CourierReactNative = {
-  signIn: jest.fn().mockReturnValue(SIGN_IN_RETURN_VALUE),
-  requestNotificationPermission: jest
-    .fn()
-    .mockReturnValue(NOTIFICATION_PERMISSION_RETURN_VALUE),
-  getNotificationPermissionStatus: jest
-    .fn()
-    .mockReturnValue(NOTIFICATION_PERMISSION_STATUS),
-  getFcmToken: jest.fn().mockReturnValue(FCM_TOKEN_VALUE),
-  getUserId: jest.fn().mockReturnValue(CURRENT_USER_ID),
-  getApnsToken: jest.fn().mockReturnValue(CURRENT_APNS_TOKEN),
-  signOut: jest.fn().mockReturnValue(SIGN_OUT_VALUE),
-  setFcmToken: jest.fn().mockReturnValue(SET_FCM_TOKEN_VALUE),
-  iOSForegroundPresentationOptions: jest.fn(),
+  signIn: mockFunctionReturningPromise(SIGN_IN_RETURN_VALUE),
+  requestNotificationPermission: mockFunctionReturningPromise(
+    NOTIFICATION_PERMISSION_RETURN_VALUE
+  ),
+  getNotificationPermissionStatus: mockFunctionReturningPromise(
+    NOTIFICATION_PERMISSION_STATUS
+  ),
+  getFcmToken: mockFunctionReturningPromise(FCM_TOKEN_VALUE),
+  getUserId: mockFunctionReturningPromise(CURRENT_USER_ID),
+  getApnsToken: mockFunctionReturningPromise(CURRENT_APNS_TOKEN),
+  signOut: mockFunctionReturningPromise(SIGN_OUT_VALUE),
+  setFcmToken: mockFunctionReturningPromise(SET_FCM_TOKEN_VALUE),
+  iOSForegroundPresentationOptions: mockFunctionReturningPromise(
+    IOS_FOREGROUND_PRESENTATION_OPTIONS
+  ),
   sendPush: jest
     .fn()
     .mockImplementation((a) => Promise.resolve(SEND_PUSH_NOTIFICATION_STATUS)),

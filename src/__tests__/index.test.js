@@ -16,6 +16,7 @@ import {
   SIGN_OUT_VALUE,
   SET_FCM_TOKEN_VALUE,
   SEND_PUSH_NOTIFICATION_STATUS,
+  IOS_FOREGROUND_PRESENTATION_OPTIONS,
 } from '../__mocks__/native-module-bridge';
 
 const {
@@ -69,111 +70,116 @@ describe('native module signIn function', () => {
 });
 
 describe('native module requestNotificationPermission', () => {
-  it('Should call requestNotificationPermission function', () => {
-    Courier.requestNotificationPermission();
+  it('Should call requestNotificationPermission function', async () => {
+    await Courier.requestNotificationPermission();
     expect(requestNotificationPermission).toBeCalledWith();
   });
-  it(`should return ${NOTIFICATION_PERMISSION_RETURN_VALUE}`, () => {
-    expect(Courier.requestNotificationPermission()).toBe(
-      NOTIFICATION_PERMISSION_RETURN_VALUE
-    );
+  it(`should return ${NOTIFICATION_PERMISSION_RETURN_VALUE}`, async () => {
+    const permission = await Courier.requestNotificationPermission();
+    expect(permission).toBe(NOTIFICATION_PERMISSION_RETURN_VALUE);
   });
 });
 
 describe('native module getNotificationPermissionStatus function', () => {
-  it('Should call getNotificationPermissionStatus function', () => {
-    Courier.notificationPermissionStatus;
+  it('Should call getNotificationPermissionStatus function', async () => {
+    await Courier.notificationPermissionStatus;
     expect(getNotificationPermissionStatus).toBeCalledWith();
   });
-  it(`Should return ${NOTIFICATION_PERMISSION_STATUS}`, () => {
-    expect(Courier.notificationPermissionStatus).toBe(
-      NOTIFICATION_PERMISSION_STATUS
-    );
+  it(`Should return ${NOTIFICATION_PERMISSION_STATUS}`, async () => {
+    const permissionStatus = await Courier.notificationPermissionStatus;
+    expect(permissionStatus).toBe(NOTIFICATION_PERMISSION_STATUS);
   });
 });
 
 describe('native module getFcmToken function', () => {
-  it('Should call getFcmToken function', () => {
-    Courier.fcmToken;
+  it('Should call getFcmToken function', async () => {
+    await Courier.fcmToken;
     expect(getFcmToken).toBeCalledWith();
   });
 
-  it(`Should return ${FCM_TOKEN_VALUE}`, () => {
-    expect(Courier.fcmToken).toBe(FCM_TOKEN_VALUE);
+  it(`Should return ${FCM_TOKEN_VALUE}`, async () => {
+    const token = await Courier.fcmToken;
+    expect(token).toBe(FCM_TOKEN_VALUE);
   });
 });
 
 describe('native module getUserId function', () => {
-  it('Should call getUserId function', () => {
-    Courier.userId;
+  it('Should call getUserId function', async () => {
+    await Courier.userId;
     expect(getUserId).toBeCalledWith();
   });
 
-  it(`Should return ${CURRENT_USER_ID}`, () => {
-    expect(Courier.userId).toBe(CURRENT_USER_ID);
+  it(`Should return ${CURRENT_USER_ID}`, async () => {
+    const currentUserId = await Courier.userId;
+    expect(currentUserId).toBe(CURRENT_USER_ID);
   });
 });
 
 describe('native module  getApnsToken function', () => {
-  it('Should not call getApnsToken  function', () => {
+  it('Should not call getApnsToken  function', async () => {
     setPlatform('android');
-    Courier.apnsToken;
+    await Courier.apnsToken;
     expect(getApnsToken).not.toBeCalled();
   });
 
-  it('Should call getApnsToken  function', () => {
+  it('Should call getApnsToken  function', async () => {
     setPlatform('ios');
-    Courier.apnsToken;
+    await Courier.apnsToken;
     expect(getApnsToken).toBeCalledWith();
   });
 
-  it(`Should return ${CURRENT_APNS_TOKEN}`, () => {
+  it(`Should return ${CURRENT_APNS_TOKEN}`, async () => {
     setPlatform('ios');
-    expect(Courier.apnsToken).toBe(CURRENT_APNS_TOKEN);
+    const currentApnsToken = await Courier.apnsToken;
+    expect(currentApnsToken).toBe(CURRENT_APNS_TOKEN);
   });
 });
 
 describe('native module singOut function', () => {
-  it('Should call signOut function', () => {
-    Courier.signOut();
+  it('Should call signOut function', async () => {
+    await Courier.signOut();
     expect(signOut).toBeCalledWith();
   });
-  it(`Should return ${SIGN_OUT_VALUE}`, () => {
-    expect(Courier.signOut()).toBe(SIGN_OUT_VALUE);
+  it(`Should return ${SIGN_OUT_VALUE}`, async () => {
+    const signOutValue = await Courier.signOut();
+    expect(signOutValue).toBe(SIGN_OUT_VALUE);
   });
 });
 
 describe('native module setFcmToken function', () => {
   const fcmToken = 'dummyFcmToken';
-  it('Should call setFcmToken function', () => {
-    Courier.setFcmToken(fcmToken);
+  it('Should call setFcmToken function', async () => {
+    await Courier.setFcmToken(fcmToken);
     expect(setFcmToken).toBeCalledWith(fcmToken);
   });
-  it(`Should return ${SIGN_OUT_VALUE}`, () => {
-    expect(Courier.setFcmToken()).toBe(SET_FCM_TOKEN_VALUE);
+  it(`Should return ${SET_FCM_TOKEN_VALUE}`, async () => {
+    const setFcmTokenValue = await Courier.setFcmToken();
+    expect(setFcmTokenValue).toBe(SET_FCM_TOKEN_VALUE);
   });
 });
 
 describe('native module iOSForegroundPresentationOptions', () => {
   const foreGroundOptions = { options: ['badge', 'list'] };
 
-  it('should not call iOSForegroundPresentationOptions', () => {
+  it('should not call iOSForegroundPresentationOptions', async () => {
     setPlatform('android');
-    Courier.iOSForegroundPresentationOptions(foreGroundOptions);
+    await Courier.iOSForegroundPresentationOptions(foreGroundOptions);
     expect(iOSForegroundPresentationOptions).not.toBeCalled();
   });
 
-  it('should call iOSForegroundPresentationOptions', () => {
+  it('should call iOSForegroundPresentationOptions', async () => {
     setPlatform('ios');
-    Courier.iOSForegroundPresentationOptions(foreGroundOptions);
+    await Courier.iOSForegroundPresentationOptions(foreGroundOptions);
     expect(iOSForegroundPresentationOptions).toBeCalledWith(foreGroundOptions);
   });
 
-  it('should not return anything', () => {
+  it('should not return anything', async () => {
     setPlatform('ios');
-    expect(
-      Courier.iOSForegroundPresentationOptions(foreGroundOptions)
-    ).toBeUndefined();
+    const iOSForegroundPresentationOptionsResult =
+      await Courier.iOSForegroundPresentationOptions(foreGroundOptions);
+    expect(iOSForegroundPresentationOptionsResult).toBe(
+      IOS_FOREGROUND_PRESENTATION_OPTIONS
+    );
   });
 });
 
@@ -231,7 +237,7 @@ describe('native module setDebugMode', () => {
     console.log = jest.fn();
     await Courier.setIsDebugging(!isDebugging);
     eventEmitter.emit(COURIER_DEBUG_EVENT, COURIER_DEBUG_LOG);
-    expect(console.log.mock.calls[0]).toBeUndefined();
+    expect(console.log).not.toBeCalled();
   });
 });
 
