@@ -51,13 +51,15 @@ open class CourierReactNativeActivity : ReactActivity() {
   }
 
   private fun sendEvent(eventName: String, params: String) {
-    val reactContext = reactInstanceManager.currentReactContext;
+    val reactContext = reactInstanceManager.currentReactContext
     reactContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
       ?.emit(eventName, params)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    Courier.initialize(this)
 
     // See if there is a pending click event
     checkIntentForPushNotificationClick(intent)
@@ -82,7 +84,7 @@ open class CourierReactNativeActivity : ReactActivity() {
 
 
   private fun postPushNotificationDelivered(message: RemoteMessage) {
-      sendEvent(PUSH_DELIVERED_EVENT, JSONObject(message.pushNotification).toString())
+    sendEvent(PUSH_DELIVERED_EVENT, JSONObject(message.pushNotification).toString())
   }
 
   private fun postPushNotificationClicked(message: RemoteMessage) {

@@ -17,15 +17,10 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     private const val COURIER_MODULE_NAME = "CourierReactNative"
     private const val COURIER_ERROR_TAG = "Courier Android SDK Error"
     private const val COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
-    private  const val COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
+    private const val COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
   }
 
   init {
-
-    // Initialize the SDK
-    // Needed to ensure all shared preferences get synced
-    Courier.initialize(reactContext)
-
     // User Agent is used to ensure we know the SDK
     // the requests come from
     Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
