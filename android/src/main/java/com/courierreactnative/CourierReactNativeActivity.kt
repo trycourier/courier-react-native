@@ -12,7 +12,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 
-open class CourierReactNativeActivity : ReactActivity() {
+open class CourierReactNativeActivity(private val isNewArchitectureEnabled: Boolean) : ReactActivity() {
 
   companion object {
     private const val COMPONENT_NAME = "main"
@@ -33,17 +33,16 @@ open class CourierReactNativeActivity : ReactActivity() {
    * you can specify the rendered you wish to use (Fabric or the older renderer).
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate {
-    return MainActivityDelegate(this, mainComponentName)
+    return MainActivityDelegate(this, mainComponentName, isNewArchitectureEnabled)
   }
 
-  class MainActivityDelegate(activity: ReactActivity?, mainComponentName: String?) : ReactActivityDelegate(activity, mainComponentName) {
+  class MainActivityDelegate(activity: ReactActivity?, mainComponentName: String?, private val isNewArchitectureEnabled: Boolean) : ReactActivityDelegate(activity, mainComponentName) {
 
     override fun createRootView(): ReactRootView {
       val reactRootView = ReactRootView(context)
 
       // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-      // TODO: This should come from a constructor with BuildConfig.isExperimental
-      reactRootView.setIsFabric(false)
+      reactRootView.setIsFabric(isNewArchitectureEnabled)
 
       return reactRootView
     }
@@ -52,8 +51,7 @@ open class CourierReactNativeActivity : ReactActivity() {
 
   private fun sendEvent(eventName: String, params: String) {
     val reactContext = reactInstanceManager.currentReactContext
-    reactContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-      ?.emit(eventName, params)
+    reactContext?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)?.emit(eventName, params)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
