@@ -34,9 +34,8 @@ export enum CourierProvider {
 }
 
 class Courier {
-
-  readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked'
-  readonly PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered'
+  readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
+  readonly PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered';
 
   public constructor() {
     // Sets the initial SDK values
@@ -58,40 +57,43 @@ class Courier {
     }
   }
 
-  private _isDebugging = false
-  private debugListener: EmitterSubscription | undefined
+  private _isDebugging = false;
+  private debugListener: EmitterSubscription | undefined;
 
   /**
    * Tells native Courier SDKs to show or hide logs.
    * Defaults to the React __DEV__ mode
    * @example Courier.setIsDebugging(true)
-  */
+   */
   public async setIsDebugging(isDebugging: boolean): Promise<boolean> {
-
     // TODO: REMOVE THIS WHEN DEBUGGING WORKS ON IOS
+
+    this._isDebugging = await CourierReactNativeModules.setDebugMode(
+      isDebugging
+    );
+    this.debugListener?.remove();
     if (Platform.OS === 'ios') {
-      this._isDebugging = isDebugging
-      return this._isDebugging
+      this._isDebugging = isDebugging;
+      return this._isDebugging;
     }
 
-    this._isDebugging = await CourierReactNativeModules.setDebugMode(isDebugging)
-
     // Remove the existing listener if needed
-    this.debugListener?.remove()
 
     // Set a new listener
     if (this._isDebugging) {
-      this.debugListener = CourierEventEmitter.addListener('courierDebugEvent', (event) => {
-        console.log('\x1b[36m%s\x1b[0m', 'COURIER', event)
-      })
+      this.debugListener = CourierEventEmitter.addListener(
+        'courierDebugEvent',
+        (event) => {
+          console.log('\x1b[36m%s\x1b[0m', 'COURIER', event);
+        }
+      );
     }
 
-    return this._isDebugging
-
+    return this._isDebugging;
   }
 
   get isDebugging(): boolean {
-    return this._isDebugging
+    return this._isDebugging;
   }
 
   /**

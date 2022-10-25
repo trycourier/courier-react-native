@@ -40,7 +40,9 @@ RCT_EXTERN_METHOD(sendPush: (NSString*)authKey
 
 RCT_EXTERN_METHOD(registerPushNotificationClickedOnKilledState)
 RCT_EXTERN_METHOD(iOSForegroundPresentationOptions: (NSDictionary*) params)
-
+RCT_EXTERN_METHOD(setDebugMode: (BOOL)isDebugging
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 
 + (BOOL)requiresMainQueueSetup

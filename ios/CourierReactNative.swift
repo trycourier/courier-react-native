@@ -212,6 +212,13 @@ class CourierReactNative: RCTEventEmitter {
         )
         
     }
+    
+    @objc(setDebugMode: withResolver: withRejecter:)
+    func setDebugMode(isDebugging: Bool,resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
+        Courier.shared.isDebugging = isDebugging
+        print("setIsDebugging", isDebugging);
+        resolve(Courier.shared.isDebugging)
+    }
 
     override func supportedEvents() -> [String]! {
         return [

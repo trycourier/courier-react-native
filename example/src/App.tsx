@@ -19,15 +19,12 @@ const showToast = (message: string) => {
 };
 
 export default function App() {
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [courierUserId, setCourierUserId] = useState<string | undefined>();
   const [isDebugging, setIsDebugging] = useState<boolean>(__DEV__);
 
   const handleSignIn = async () => {
-
     try {
-
       setIsLoading(true);
 
       await Courier.signIn({
@@ -37,38 +34,34 @@ export default function App() {
 
       const userId = await Courier.userId;
       setCourierUserId(userId);
-
     } catch (e) {
       console.log(e);
     } finally {
       setIsLoading(false);
     }
-
   };
 
   const handleSignOut = async () => {
-
     try {
-
       setIsLoading(true);
 
       await Courier.signOut();
+      const fcmToken = await Courier.fcmToken;
+      console.log('fcmToken', fcmToken);
 
       setCourierUserId(undefined);
-
     } catch (e) {
       console.log(e);
     } finally {
       setIsLoading(false);
     }
-
   };
 
   const handleSendPush = async () => {
-
     try {
-
-      const providers = [ Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM ]
+      const providers = [
+        Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM,
+      ];
 
       const messageId = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
@@ -80,11 +73,9 @@ export default function App() {
       });
 
       showToast(`Message sent. Message id: ${messageId}`);
-
     } catch (e) {
       console.log(e);
     }
-
   };
 
   const handleGetFcmToken = async () => {
@@ -108,19 +99,18 @@ export default function App() {
   };
 
   const init = async () => {
-
     try {
-
       setIsLoading(true);
 
-      const unsubscribeNotificationListeners = Courier.registerPushNotificationListeners({
-        onPushNotificationClicked(push) {
-          showToast(`Push Clicked\n${JSON.stringify(push)}`);
-        },
-        onPushNotificationDelivered(push) {
-          showToast(`Push Delivered\n${JSON.stringify(push)}`);
-        },
-      });
+      const unsubscribeNotificationListeners =
+        Courier.registerPushNotificationListeners({
+          onPushNotificationClicked(push) {
+            showToast(`Push Clicked\n${JSON.stringify(push)}`);
+          },
+          onPushNotificationDelivered(push) {
+            showToast(`Push Delivered\n${JSON.stringify(push)}`);
+          },
+        });
 
       const userId = await Courier.userId;
       setCourierUserId(userId);
@@ -139,13 +129,11 @@ export default function App() {
       return () => {
         unsubscribeNotificationListeners();
       };
-
     } catch (e) {
       console.log(e);
     } finally {
       setIsLoading(false);
     }
-
   };
 
   useEffect(() => {
@@ -159,28 +147,23 @@ export default function App() {
   }, []);
 
   function buildDebugging() {
-
     async function toggleDebugging() {
-      const debugging = await Courier.setIsDebugging(!isDebugging)
-      setIsDebugging(debugging)
+      const debugging = await Courier.setIsDebugging(!isDebugging);
+      setIsDebugging(debugging);
     }
 
     if (isDebugging) {
-      return <Button
-        title="Stop Debugging"
-        onPress={() => toggleDebugging()}
-      />
+      return (
+        <Button title="Stop Debugging" onPress={() => toggleDebugging()} />
+      );
     } else {
-      return <Button
-        title="Start Debugging"
-        onPress={() => toggleDebugging()}
-        />
+      return (
+        <Button title="Start Debugging" onPress={() => toggleDebugging()} />
+      );
     }
-
   }
 
   function buildContent() {
-
     if (isLoading) {
       return (
         <View style={styles.container}>
@@ -202,7 +185,7 @@ export default function App() {
           <Button title="See APNS token" onPress={handleApnsToken} />
           {buildDebugging()}
         </View>
-      )
+      );
     }
 
     return (
@@ -215,12 +198,10 @@ export default function App() {
         <View style={styles.divider} />
         {buildDebugging()}
       </View>
-    )
-
+    );
   }
 
   return buildContent();
-
 }
 
 const styles = StyleSheet.create({
@@ -228,19 +209,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24
+    padding: 24,
   },
   divider: {
     height: 1,
     width: '100%',
     marginTop: 16,
     marginBottom: 16,
-    backgroundColor: 'lightgray'
+    backgroundColor: 'lightgray',
   },
   textDark: {
-    color: 'white'
+    color: 'white',
   },
   textLight: {
-    color: 'dark'
-  }
+    color: 'dark',
+  },
 });
