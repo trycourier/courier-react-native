@@ -6,6 +6,7 @@ class CourierReactNative: RCTEventEmitter {
     private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
     internal static let COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
     internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
+    private static let COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
 
     private var lastClickedMessage: [AnyHashable: Any]? = nil
     private var notificationCenter: NotificationCenter {
@@ -23,6 +24,11 @@ class CourierReactNative: RCTEventEmitter {
         
         // Attach the listeners
         attachObservers()
+        
+        // Send notification to react native side
+        Courier.shared.logListener = {log in
+            self.sendEvent(withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, body: log)
+        }
         
     }
     
@@ -223,7 +229,8 @@ class CourierReactNative: RCTEventEmitter {
     override func supportedEvents() -> [String]! {
         return [
             CourierReactNative.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
-            CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT
+            CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT,
+            CourierReactNative.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT
         ]
     }
     

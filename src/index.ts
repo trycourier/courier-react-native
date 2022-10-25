@@ -66,18 +66,12 @@ class Courier {
    * @example Courier.setIsDebugging(true)
    */
   public async setIsDebugging(isDebugging: boolean): Promise<boolean> {
-    // TODO: REMOVE THIS WHEN DEBUGGING WORKS ON IOS
-
     this._isDebugging = await CourierReactNativeModules.setDebugMode(
       isDebugging
     );
-    this.debugListener?.remove();
-    if (Platform.OS === 'ios') {
-      this._isDebugging = isDebugging;
-      return this._isDebugging;
-    }
 
     // Remove the existing listener if needed
+    this.debugListener?.remove();
 
     // Set a new listener
     if (this._isDebugging) {
