@@ -12,7 +12,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 
-open class CourierReactNativeActivity(private val isNewArchitectureEnabled: Boolean) : ReactActivity() {
+open class CourierReactNativeActivity(private val isNewArchitectureEnabled: Boolean = false) : ReactActivity() {
 
   companion object {
     private const val COMPONENT_NAME = "main"
@@ -39,12 +39,11 @@ open class CourierReactNativeActivity(private val isNewArchitectureEnabled: Bool
   class MainActivityDelegate(activity: ReactActivity?, mainComponentName: String?, private val isNewArchitectureEnabled: Boolean) : ReactActivityDelegate(activity, mainComponentName) {
 
     override fun createRootView(): ReactRootView {
-      val reactRootView = ReactRootView(context)
+      return ReactRootView(context).apply {
 
-      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-      reactRootView.setIsFabric(isNewArchitectureEnabled)
-
-      return reactRootView
+        // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+        setIsFabric(isNewArchitectureEnabled)
+      }
     }
 
   }
