@@ -1,5 +1,5 @@
 {
-  "name": "courier-react-native",
+  "name": "@trycourier/courier-react-native",
   "version": "0.1.0",
   "description": "test",
   "main": "lib/commonjs/index",
@@ -33,7 +33,9 @@
     "prepare": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn install && yarn example pods"
+    "bootstrap": "yarn example && yarn install && yarn example pods",
+    "linkPackage": "yarn link && yarn example link @trycourier/courier-react-native && yarn example setupEnv",
+    "setup": "sh setup.sh"
   },
   "keywords": [
     "react-native",

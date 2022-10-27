@@ -1,10 +1,11 @@
 package com.courierreactnativeexample;
 
+import com.courierreactnative.CourierReactNativeActivity;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 
-public class MainActivity extends ReactActivity {
+public class MainActivity extends CourierReactNativeActivity {
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule

@@ -135,6 +135,10 @@ dependencies {
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 // From node_modules
+
+  // Courier Core SDK
+  api 'com.github.trycourier:courier-android:1.0.23'
+
 }
 
 if (isNewArchitectureEnabled()) {

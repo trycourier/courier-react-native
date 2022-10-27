@@ -1,21 +1,26 @@
 {
-  "name": "CourierReactNativeExample",
+  "name": "@trycourier/courier-react-native-example",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "pods": "pod-install --quiet"
+    "pods": "pod-install --quiet",
+    "setupEnv": "if [[ ! -e .env ]] ; then cp .env.sample .env ; fi "
   },
   "dependencies": {
     "react": "18.1.0",
-    "react-native": "0.70.4"
+    "react-native": "0.70.4",
+    "react-native-bouncy-checkbox": "^3.0.5",
+    "react-native-dotenv": "^3.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
-    "metro-react-native-babel-preset": "0.72.3",
-    "babel-plugin-module-resolver": "^4.1.0"
+    "@react-native-community/cli-platform-android": "^9.2.1",
+    "@types/react-native-dotenv": "^0.2.0",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "metro-react-native-babel-preset": "0.72.3"
   }
 }
