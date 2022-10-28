@@ -1,6 +1,6 @@
 //
 //  CourierReactNativeDelegate.h
-//  trycourier-courier-react-native
+//  courier-react-native
 //
 //  Created by Michael Miller on 10/7/22.
 //

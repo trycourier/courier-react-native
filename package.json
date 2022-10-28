@@ -13,7 +13,7 @@
     "android",
     "ios",
     "cpp",
-    "trycourier-courier-react-native.podspec",
+    "courier-react-native.podspec",
     "!lib/typescript/example",
     "!android/build",
     "!ios/build",
