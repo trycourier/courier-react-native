@@ -1,6 +1,5 @@
 package com.courier.reactnative;
 
-
 import com.courierreactnative.CourierReactNativeActivity;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -27,8 +26,7 @@ public class MainActivity extends CourierReactNativeActivity {
     return new MainActivityDelegate(this, getMainComponentName());
   }
 
-  public static class MainActivityDelegate extends ReactActivityDelegate implements com.courier.reactnative.MainActivityDelegate {
-
+  public static class MainActivityDelegate extends ReactActivityDelegate {
     public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
       super(activity, mainComponentName);
     }
@@ -41,13 +39,5 @@ public class MainActivity extends CourierReactNativeActivity {
       return reactRootView;
     }
 
-    @Override
-    public boolean isConcurrentRootEnabled() {
-      // If you opted-in for the New Architecture, we enable Concurrent Root (i.e. React 18).
-      // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
-      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
-    }
-
   }
-
 }

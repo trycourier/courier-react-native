@@ -20,6 +20,8 @@ open class CourierReactNativeActivity : ReactActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
+    // Starts the Courier SDK
+    // Used to ensure shared preferences works properly
     Courier.initialize(this)
 
     // See if there is a pending click event
@@ -56,4 +58,5 @@ open class CourierReactNativeActivity : ReactActivity() {
   private fun postPushNotificationClicked(message: RemoteMessage) {
     sendEvent(PUSH_CLICKED_EVENT, JSONObject(message.pushNotification).toString())
   }
+
 }
