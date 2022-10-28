@@ -136,7 +136,7 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
   // Courier
-  api 'com.github.trycourier:courier-android:1.0.21'
+  api 'com.github.trycourier:courier-android:1.0.27'
 
   // Import the BoM for the Firebase platform
   implementation platform('com.google.firebase:firebase-bom:30.3.1')
