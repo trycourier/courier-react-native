@@ -19,6 +19,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   }
 
   init {
+
     // User Agent is used to ensure we know the SDK
     // the requests come from
     Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID

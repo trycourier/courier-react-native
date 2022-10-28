@@ -137,7 +137,7 @@ dependencies {
 // From node_modules
 
   // Courier Core SDK
-  api 'com.github.trycourier:courier-android:1.0.23'
+  api 'com.github.trycourier:courier-android:1.0.27'
 
 }
 
