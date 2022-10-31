@@ -1,6 +1,8 @@
 # Courier React Native Overview
 
 ```ts
+import Courier, { CourierProvider } from '@trycourier/courier-react-native'
+
 await Courier.setIsDebugging(true);
 
 const userId = await Courier.userId;
