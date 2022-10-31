@@ -332,38 +332,38 @@ console.log(requestedNotificationPermission);
 
 // This is how iOS will show the notification when the app is in the foreground
 // Passing [] will not present anything
-// `Courier.onPushNotificationDelivered` will still get called
+// `onPushNotificationDelivered` will still get called
 await Courier.iOSForegroundPresentationOptions({
   options: ['badge', 'banner', 'list', 'sound'],
 });
 
 
-// the function returns an unsubscribe function
-// call the function to stop listening to notifications
+// This function returns an unsubscribe function
+// Call `unsibscribe();` to stop listening to notifications
 // Recommended to call the function while component mounts and unsubscribe when the component unmounts
 const unsubscribe = Courier.registerPushNotificationListeners({
 
   // Will be called if the app is in the foreground and a push notification arrives
   onPushNotificationClicked(push) {
-    ...
+    console.log(push.title)
   },
 
   // Will be called when a user clicks a push notification
   onPushNotificationDelivered(push) {
-    ...
+    console.log(push.title)
   }
   
 });
 
 // Sends a test push
-const messageId = await Courier.sendPush(
-    authKey: 'your_courier_auth_key_that_should_only_be_used_for_testing',
-    userId: 'example_user',
-    title: 'Chirp Chrip!',
-    body: 'Hello from Courier 🐣',
-    isProduction: false, // This only affects APNS pushes. false == sandbox / true == production
-    providers: [CourierProvider.APNS, CourierProvider.FCM],
-);
+const messageId = await Courier.sendPush({
+  authKey: 'your_courier_auth_key_that_should_only_be_used_for_testing',
+  userId: 'example_user',
+  title: 'Chirp Chrip!',
+  body: 'Hello from Courier 🐣',
+  isProduction: false, // This only affects APNS pushes. false == sandbox / true == production
+  providers: [CourierProvider.APNS, CourierProvider.FCM],
+});
 ```
 
 &emsp;
