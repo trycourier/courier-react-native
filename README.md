@@ -258,8 +258,8 @@ public class YourNotificationService extends CourierService {
 
 To get push notification to appear in your app, add support for the provider you would like to use:
 
-- [`APNS (Apple Push Notification Service)`](https://www.courier.com/docs/guides/providers/push/apple-push-notification)
-- [`FCM (Firebase Cloud Messaging)`](https://www.courier.com/docs/guides/providers/push/firebase-fcm/)
+- [`APNS (Apple Push Notification Service)`](https://app.courier.com/channels/apn)
+- [`FCM (Firebase Cloud Messaging)`](https://app.courier.com/channels/firebase-fcm)
 
 &emsp;
 
