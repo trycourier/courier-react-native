@@ -178,8 +178,8 @@ buildscript {
 5. Add this following line to the top of your `/android/app/build.gradle` file:
 
 ```groovy
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services' // Add this line
+apply plugin: "com.android.application"
+apply plugin: "com.google.gms.google-services" // Add this line
 ```
 
 6. Run Gradle Sync
