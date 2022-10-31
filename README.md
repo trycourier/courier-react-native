@@ -134,7 +134,7 @@ end
 
 > If you don't need push notification support on Android, you can skip this step.
 
-> The following steps use part of the steps showing in this tutorial: [`React Native Firebase`](https://rnfirebase.io/#2-android-setup)
+> This SDK depends on part of the setup shown here: [`React Native Firebase — Android Setup`](https://rnfirebase.io/#2-android-setup)
 
 
 https://user-images.githubusercontent.com/6370613/198111372-09a29aba-6507-4cf7-a59d-87e8df2ba492.mov
