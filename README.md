@@ -260,6 +260,7 @@ To get push notification to appear in your app, add support for the provider you
 
 - [`APNS (Apple Push Notification Service)`](https://app.courier.com/channels/apn)
 - [`FCM (Firebase Cloud Messaging)`](https://app.courier.com/channels/firebase-fcm)
+- [`FCM (Firebase Cloud Messaging) TEST`]([URL](https://app.courier.com/channels/firebase-fcm)){:target="_blank"}
 
 &emsp;
 
