@@ -100,9 +100,17 @@ https://user-images.githubusercontent.com/6370613/198094477-40f22b1e-b3ad-4029-9
 
 1. From your project's root directory, run: `cd ios && pod update`
 2. Open your iOS project and increase the min SDK target to iOS 13.0+
-3. Change your `AppDelegate` to extend the `CourierReactNativeDelegate`
-   - This automatically syncs APNS tokens to Courier
+3. Change your `AppDelegate.h` to use the snippet below:
+   - This automatically syncs APNS tokens to Courier token management
    - Allows the React Native SDK to handle when push notifications are delivered and clicked
+
+```objective-c
+#import <courier-react-native/CourierReactNativeDelegate.h>
+
+@interface AppDelegate : CourierReactNativeDelegate
+@end
+```
+
 4. Enable the "Push Notifications" capability
 
 ### **Add the Notification Service Extension (Recommended)**
