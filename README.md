@@ -133,6 +133,9 @@ end
 ## **3. Android Setup**
 
 > If you don't need push notification support on Android, you can skip this step.
+> 
+> The following steps use part of the steps showing in this tutorial: [`React Native Firebase`](https://rnfirebase.io/#2-android-setup)
+
 
 https://user-images.githubusercontent.com/6370613/198111372-09a29aba-6507-4cf7-a59d-87e8df2ba492.mov
 
@@ -164,9 +167,7 @@ buildscript {
 }
 ```
 
-Steps 4 and 5 are based on the following tutorial: [`React Native Firebase`](https://rnfirebase.io/#2-android-setup)
-
-4. Add the `google-services` dependency to your `yourApp/android/build.gradle` file:
+4. Add the `google-services` dependency to your `yourApp/android/build.gradle` file: 
 
 ```groovy
 buildscript {
