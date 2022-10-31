@@ -282,7 +282,7 @@ await Courier.signIn({
   userId: userId,
 });
 
-await Courier.shared.signOut();
+await Courier.signOut();
 ```
 
 If you followed the steps above:
