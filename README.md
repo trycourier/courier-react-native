@@ -322,17 +322,17 @@ FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
 Courier allows you to send a push notification directly from the SDK to a user id. No tokens juggling or backend needed!
 
 ```typescript
-const notificationPermission = await Courier.notificationPermissionStatus;;
-print(notificationPermission);
+const notificationPermission = await Courier.notificationPermissionStatus;
+console.log(notificationPermission);
 
 // Notification permissions must be `authorized` on iOS to receive pushes
 
 const requestedNotificationPermission = await Courier.requestNotificationPermission();
-print(requestedNotificationPermission);
+console.log(requestedNotificationPermission);
 
 // This is how iOS will show the notification when the app is in the foreground
 // Passing [] will not present anything
-// `Courier.shared.onPushNotificationDelivered` will still get called
+// `Courier.onPushNotificationDelivered` will still get called
 await Courier.iOSForegroundPresentationOptions({
   options: ['badge', 'banner', 'list', 'sound'],
 });
@@ -351,12 +351,13 @@ const unsubscribe = Courier.registerPushNotificationListeners({
   // Will be called when a user clicks a push notification
   onPushNotificationDelivered(push) {
     ...
-  },
+  }
+  
 });
 
 // Sends a test push
-const messageId = await Courier.shared.sendPush(
-    authKey: 'a_courier_auth_key_that_should_only_be_used_for_testing',
+const messageId = await Courier.sendPush(
+    authKey: 'your_courier_auth_key_that_should_only_be_used_for_testing',
     userId: 'example_user',
     title: 'Chirp Chrip!',
     body: 'Hello from Courier 🐣',
@@ -386,8 +387,7 @@ curl --request POST \
   }'
 ```
 
-Or generate one here:
-[`Issue Courier Access Token`](https://www.courier.com/docs/reference/auth/issue-token/)
+Or generate one here: [`Issue Courier Access Token`](https://www.courier.com/docs/reference/auth/issue-token/)
 
 > This request to issue a token should likely exist in a separate endpoint served on your backend.
 
@@ -398,4 +398,4 @@ Or generate one here:
 We want to make this the best SDK for managing notifications! Have an idea or feedback about our SDKs? Here are some links to contact us:
 
 - [Courier Feedback](https://feedback.courier.com/)
-- [Courier React native Issues](https://github.com/trycourier/courier-react-native/issues)
+- [Courier React Native Issues](https://github.com/trycourier/courier-react-native/issues)
