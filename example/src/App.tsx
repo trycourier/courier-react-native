@@ -1,6 +1,9 @@
 import { USER_ID, ACCESS_TOKEN } from '@env';
 import React, { useState, useEffect } from 'react';
 
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/messaging';
+
 import {
   StyleSheet,
   View,
@@ -59,9 +62,11 @@ export default function App() {
 
   const handleSendPush = async () => {
     try {
-      const providers = [
-        Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM,
-      ];
+      const providers =
+        Platform.OS === 'ios'
+          ? // ? [CourierProvider.APNS, CourierProvider.FCM]
+            [CourierProvider.FCM]
+          : [CourierProvider.FCM];
 
       const messageId = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
@@ -140,6 +145,13 @@ export default function App() {
     let unsubscribe: (() => void) | undefined;
     (async () => {
       unsubscribe = await init();
+    })();
+    (async () => {
+      if (Platform.OS === 'ios') {
+        const token = await firebase.messaging().getToken();
+        console.log('fcm token', token);
+        await Courier.setFcmToken(token);
+      }
     })();
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();

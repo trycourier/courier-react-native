@@ -1,4 +1,4 @@
-#import <courier-react-native/CourierReactNativeDelegate.h>
+#import <CourierReactNativeDelegate.h>
 
 @interface AppDelegate : CourierReactNativeDelegate
 @end

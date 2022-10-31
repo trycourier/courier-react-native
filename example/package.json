@@ -12,6 +12,8 @@
     "setupEnv": "if [[ ! -e .env ]] ; then cp .env.sample .env ; fi "
   },
   "dependencies": {
+    "@react-native-firebase/app": "^16.4.0",
+    "@react-native-firebase/messaging": "^16.4.0",
     "react": "17.0.2",
     "react-native": "0.68.2",
     "react-native-bouncy-checkbox": "^3.0.5",
