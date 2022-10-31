@@ -1,7 +1,7 @@
 # Courier React Native Overview
 
 ```ts
-await Courier.setIsDebugging(!isDebugging);
+await Courier.setIsDebugging(true);
 
 const userId = await Courier.userId;
 
@@ -17,8 +17,7 @@ await Courier.iOSForegroundPresentationOptions({
 });
 
 const currentPermissionStatus = await Courier.notificationPermissionStatus;
-const requestNotificationPermission =
-  await Courier.requestNotificationPermission();
+const requestNotificationPermission = await Courier.requestNotificationPermission();
 
 await Courier.shared.setFcmToken('asdf...');
 
@@ -64,17 +63,12 @@ const messageId = await Courier.sendPush({
 
 > Link to [`Example App`](https://github.com/trycourier/courier-react-native/tree/master/example)
 
-- [Courier React Native Overview](#courier-react-native-overview)
-- [Requirements & Support](#requirements--support)
-- [**Installation**](#installation)
-  - [**1. Install the package**](#1-install-the-package)
-  - [**2. iOS Setup**](#2-ios-setup)
-    - [**Add the Notification Service Extension (Recommended)**](#add-the-notification-service-extension-recommended)
-  - [**3. Android Setup**](#3-android-setup)
-  - [**4. Configure Push Provider**](#4-configure-push-provider)
-  - [**5. Managing User State**](#5-managing-user-state)
-  - [**Going to Production**](#going-to-production)
-  - [**Share feedback with Courier**](#share-feedback-with-courier)
+1. [`Install the package`](#1-install-the-package)
+2. [`iOS Setup`](#2-ios-setup)
+3. [`Android Setup`](#3-android-setup)
+4. [`Configure Push Provider`](#4-configure-push-provider)
+5. [`Managing User State`](#5-managing-user-state)
+6. [`Going to Production`](#going-to-production)
 
 &emsp;
 
@@ -128,7 +122,6 @@ https://user-images.githubusercontent.com/6370613/198336479-45aeec9e-0c94-4c29-b
 
 ```
 target 'CourierService' do
-  use_frameworks!
   pod 'Courier-iOS'
 end
 ```
