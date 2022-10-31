@@ -137,37 +137,46 @@ end
 https://user-images.githubusercontent.com/6370613/198111372-09a29aba-6507-4cf7-a59d-87e8df2ba492.mov
 
 1. Open Android project
-2. Add support for Jitpack to `android/build.gradle`
-   - This is needed because the Courier Android SDK is hosted using Jitpack
-   - Maven support will be coming later
+2. Make sure your `yourApp/android/build.gradle` file support Jitpack:
 
-```gradle
+```groovy
 allprojects {
     repositories {
-        google()
-        mavenCentral()
-        maven { url 'https://jitpack.io' } // Add this line
+        ..
+        maven { url 'https://www.jitpack.io' } // This line is needed
     }
 }
 ```
 
-3. Update your `app/build.gradle` to support the min and compile SDKs
-   - `minSdkVersion 21`
-   - `compileSdkVersion 33`
+3. Update your `yourApp/android/build.gradle` to support the following SDK versions
+  - This is needed to support newer version of the Android Notification APIs
+
+```groovy
+buildscript {
+    ext {
+        buildToolsVersion = "32.0.0"
+        minSdkVersion = 21
+        compileSdkVersion = 32
+        targetSdkVersion = 32
+        ..
+    }
+    ..
+}
+```
+
 4. Run Gradle sync
-5. add the `google-services` plugin as a dependency inside of your `/android/build.gradle` file:
+5. Add the `google-services` dependency to your `yourApp/android/build.gradle` file:
 
 ```groovy
 buildscript {
   dependencies {
-    // ... other dependencies
-    classpath 'com.google.gms:google-services:4.3.14'
-    // Add me --- /\
+    ..
+    classpath 'com.google.gms:google-services:4.3.14' // <- Add this line
   }
 }
 ```
 
-6. execute the plugin by adding the following to your `/android/app/build.gradle` file:
+6. Add this following line to the top of your `/android/app/build.gradle` file:
 
 ```groovy
 apply plugin: 'com.android.application'
@@ -186,10 +195,19 @@ import com.courier.android.notifications.RemoteMessageExtensionsKt;
 import com.courier.android.service.CourierService;
 import com.google.firebase.messaging.RemoteMessage;
 
+// This is safe. `CourierService` will automatically handle token refreshes.
+@SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class YourNotificationService extends CourierService {
   @Override
   public void showNotification(@NonNull RemoteMessage message) {
     super.showNotification(message);
+
+    // TODO: This is where you will customize the notification that is shown to your users
+    // The function below is used to get started quickly.
+    // You likely do not want to use `message.presentNotification(...)`
+    // For React Native, you likely do not want to change RemoteMessageExtensionsKt.presentNotification.handlingClass
+    // More information on how to customize an Android notification here:
+    // https://developer.android.com/develop/ui/views/notifications/build-notification
 
     RemoteMessageExtensionsKt.presentNotification(
       message,
@@ -198,6 +216,7 @@ public class YourNotificationService extends CourierService {
       android.R.drawable.ic_dialog_info,
       "Notification Service"
     );
+    
   }
 }
 ```
