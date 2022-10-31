@@ -277,10 +277,10 @@ Place these functions where you normally manage your user's state:
 ```dart
 // Saves accessToken and userId to native level local storage
 // This will persist between app sessions
-await Courier.shared.signIn(
-    accessToken: accessToken,
-    userId: userId,
-);
+await Courier.signIn({
+  accessToken: accessToken,
+  userId: userId,
+});
 
 await Courier.shared.signOut();
 ```
