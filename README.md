@@ -133,7 +133,7 @@ end
 ## **3. Android Setup**
 
 > If you don't need push notification support on Android, you can skip this step.
-> 
+
 > The following steps use part of the steps showing in this tutorial: [`React Native Firebase`](https://rnfirebase.io/#2-android-setup)
 
 
