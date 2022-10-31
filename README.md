@@ -189,7 +189,7 @@ apply plugin: "com.google.gms.google-services" // Add this line
 7. Change your `MainActivity` to extend the `CourierReactNativeActivity`
    - This allows Courier to handle when push notifications are delivered and clicked
 8. Setup a new Notification Service by creating a new file and pasting the code below in it
-   - This allows you to present a notification to your user when a new notification arrives
+   - This allows you to present a notification to your user when a new notification arrives and will automatically sync new fcm tokens to Courier token management
 
 ```java
 import androidx.annotation.NonNull;
