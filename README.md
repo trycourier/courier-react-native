@@ -54,7 +54,7 @@ const messageId = await Courier.sendPush({
 | Push Provider                            | Supported Platforms |
 | :--------------------------------------- | ------------------: |
 | `APNS (Apple Push Notification Service)` |               `iOS` |
-| `FCM (Firebase Cloud Messaging)`         |    `iOS`, `Android` |
+| `FCM (Firebase Cloud Messaging)`         |           `Android` |
 
 > Most of this SDK depends on a Courier account: [`Create a Courier account here`](https://app.courier.com/signup)
 
@@ -67,14 +67,14 @@ const messageId = await Courier.sendPush({
 - [Courier React Native Overview](#courier-react-native-overview)
 - [Requirements & Support](#requirements--support)
 - [**Installation**](#installation)
-	- [**1. Install the package**](#1-install-the-package)
-	- [**2. iOS Setup**](#2-ios-setup)
-		- [**Add the Notification Service Extension (Recommended)**](#add-the-notification-service-extension-recommended)
-	- [**3. Android Setup**](#3-android-setup)
-	- [**4. Configure Push Provider**](#4-configure-push-provider)
-	- [**5. Managing User State**](#5-managing-user-state)
-	- [**Going to Production**](#going-to-production)
-	- [**Share feedback with Courier**](#share-feedback-with-courier)
+  - [**1. Install the package**](#1-install-the-package)
+  - [**2. iOS Setup**](#2-ios-setup)
+    - [**Add the Notification Service Extension (Recommended)**](#add-the-notification-service-extension-recommended)
+  - [**3. Android Setup**](#3-android-setup)
+  - [**4. Configure Push Provider**](#4-configure-push-provider)
+  - [**5. Managing User State**](#5-managing-user-state)
+  - [**Going to Production**](#going-to-production)
+  - [**Share feedback with Courier**](#share-feedback-with-courier)
 
 &emsp;
 
