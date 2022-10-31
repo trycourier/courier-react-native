@@ -164,7 +164,7 @@ buildscript {
 }
 ```
 
-> Steps 4 and 5 are based on the following tutorial: [`React Native Firebase`](https://rnfirebase.io/#2-android-setup)
+Steps 4 and 5 are based on the following tutorial: [`React Native Firebase`](https://rnfirebase.io/#2-android-setup)
 
 4. Add the `google-services` dependency to your `yourApp/android/build.gradle` file:
 
