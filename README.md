@@ -149,7 +149,7 @@ allprojects {
 ```
 
 3. Update your `yourApp/android/build.gradle` to support the following SDK versions
-  - This is needed to support newer version of the Android Notification APIs
+    - This is needed to support newer version of the Android Notification APIs
 
 ```groovy
 buildscript {
