@@ -171,7 +171,7 @@ buildscript {
 buildscript {
   dependencies {
     ..
-    classpath 'com.google.gms:google-services:4.3.14' // <- Add this line
+    classpath 'com.google.gms:google-services:4.3.14' // Add this line
   }
 }
 ```
@@ -180,7 +180,7 @@ buildscript {
 
 ```groovy
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services' // <- Add this line
+apply plugin: 'com.google.gms.google-services' // Add this line
 ```
 
 7. Change your `MainActivity` to extend the `CourierReactNativeActivity`
