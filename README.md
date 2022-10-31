@@ -164,25 +164,25 @@ buildscript {
 }
 ```
 
-4. Run Gradle sync
-5. Add the `google-services` dependency to your `yourApp/android/build.gradle` file:
+4. Add the `google-services` dependency to your `yourApp/android/build.gradle` file:
 
 ```groovy
 buildscript {
   dependencies {
     ..
-    classpath 'com.google.gms:google-services:4.3.14' // Add this line
+    classpath("com.google.gms:google-services:4.3.14") // Add this line
   }
 }
 ```
 
-6. Add this following line to the top of your `/android/app/build.gradle` file:
+5. Add this following line to the top of your `/android/app/build.gradle` file:
 
 ```groovy
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services' // Add this line
 ```
 
+6. Run Gradle Sync
 7. Change your `MainActivity` to extend the `CourierReactNativeActivity`
    - This allows Courier to handle when push notifications are delivered and clicked
 8. Setup a new Notification Service by creating a new file and pasting the code below in it
