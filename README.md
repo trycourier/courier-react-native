@@ -19,7 +19,7 @@ await Courier.iOSForegroundPresentationOptions({
 const currentPermissionStatus = await Courier.notificationPermissionStatus;
 const requestNotificationPermission = await Courier.requestNotificationPermission();
 
-await Courier.shared.setFcmToken('asdf...');
+await Courier.setFcmToken('asdf...');
 
 const fcmToken = await Courier.fcmToken;
 const apnsToken = await Courier.apnsToken;
