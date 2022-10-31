@@ -98,9 +98,17 @@ yarn add @trycourier/courier-react-native
 
 https://user-images.githubusercontent.com/6370613/198094477-40f22b1e-b3ad-4029-9120-0eee22de02e0.mov
 
-1. From your project's root directory, run: `cd ios && pod update`
-2. Open your iOS project and increase the min SDK target to iOS 13.0+
-3. Change your `AppDelegate.h` to use the snippet below:
+1. Open your iOS project and increase the min SDK target to iOS 13.0+
+2. Open your `Podfile` and increase the platform:
+
+```
+..
+platform :ios, '13'
+..
+```
+
+3. From your React Native project's root directory, run: `cd ios && pod update`
+4. In Xcode, change your `AppDelegate.h` to use the snippet below:
    - This automatically syncs APNS tokens to Courier token management
    - Allows the React Native SDK to handle when push notifications are delivered and clicked
 
