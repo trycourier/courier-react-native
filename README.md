@@ -98,6 +98,8 @@ yarn add @trycourier/courier-react-native
 
 https://user-images.githubusercontent.com/6370613/199279392-1b376929-4a03-4acd-9d00-d170085d9791.mov
 
+### Written Tutorial 👇
+
 1. Open your iOS project and increase the min SDK target to iOS 13.0+
 2. Open your `Podfile` and increase the platform:
 
@@ -127,6 +129,8 @@ To make sure Courier can track when a notification is delivered to the device, y
 
 https://user-images.githubusercontent.com/6370613/199331562-5d16e02f-2878-4f60-bbe2-075ae119c6bc.mov
 
+### Written Tutorial 👇
+
 1. Download and Unzip the Courier Notification Service Extension: [`CourierNotificationServiceTemplate.zip`](https://github.com/trycourier/courier-notification-service-extension-template/archive/refs/heads/main.zip)
 2. Open the folder in terminal and run `sh make_template.sh`
    - This will create the Notification Service Extension on your mac to save you time
@@ -153,6 +157,8 @@ end
 > If you don't need push notification support on Android, you can skip this step.
 
 https://user-images.githubusercontent.com/6370613/199335432-aa52028a-f7ae-48bb-abec-427795baa6f4.mov
+
+### Written Tutorial 👇
 
 1. Open Android project
 2. Register your app in Firebase and download your `google-services.json` file
@@ -207,6 +213,8 @@ apply plugin: "com.google.gms.google-services" // Add this line
 ### **Update Activity and Register Service**
 
 https://user-images.githubusercontent.com/6370613/199335233-0880209b-5aec-4584-9726-eaa1077bf80d.mov
+
+### Written Tutorial 👇
 
 1. Change your `MainActivity` to extend the `CourierReactNativeActivity`
    - This allows Courier to handle when push notifications are delivered and clicked
