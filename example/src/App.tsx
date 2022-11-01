@@ -62,18 +62,13 @@ export default function App() {
 
   const handleSendPush = async () => {
     try {
-      const providers =
-        Platform.OS === 'ios'
-          ? // ? [CourierProvider.APNS, CourierProvider.FCM]
-            [CourierProvider.FCM]
-          : [CourierProvider.FCM];
 
       const messageId = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
         userId: USER_ID,
         title: 'This is a title',
         body: 'This is a body',
-        providers: providers,
+        providers: [CourierProvider.FCM],
         isProduction: !__DEV__,
       });
 
@@ -147,11 +142,21 @@ export default function App() {
       unsubscribe = await init();
     })();
     (async () => {
+
       if (Platform.OS === 'ios') {
+
+        // Handle token refresh
+        firebase.messaging().onTokenRefresh((token) => {
+          Courier.setFcmToken(token);
+        })
+        
+        // Fetch the latest token and send to Courier
         const token = await firebase.messaging().getToken();
         console.log('fcm token', token);
         await Courier.setFcmToken(token);
+
       }
+
     })();
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
