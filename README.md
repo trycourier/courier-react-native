@@ -204,11 +204,13 @@ apply plugin: "com.google.gms.google-services" // Add this line
 
 6. Run Gradle Sync
 
+### **Update Activity and Register Service**
+
 https://user-images.githubusercontent.com/6370613/199335233-0880209b-5aec-4584-9726-eaa1077bf80d.mov
 
-7. Change your `MainActivity` to extend the `CourierReactNativeActivity`
+1. Change your `MainActivity` to extend the `CourierReactNativeActivity`
    - This allows Courier to handle when push notifications are delivered and clicked
-8. Setup a new Notification Service by creating a new java file and paste the code below in it
+2. Setup a new Notification Service by creating a new java file and paste the code below in it
    - This allows you to present a notification to your user when a new notification arrives and will automatically sync new fcm tokens to Courier token management
 
 ```java
@@ -248,7 +250,7 @@ public class YourExampleService extends CourierService {
 }
 ```
 
-9. Add the Notification Service entry in your `AndroidManifest.xml` file
+3. Add the Notification Service entry in your `AndroidManifest.xml` file
 
 ```xml
 <manifest>
