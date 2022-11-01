@@ -144,7 +144,7 @@ target 'CourierService' do
 end
 ```
 
-1. From the root of your React Native app, run: `cd ios && pod install`
+8. From the root of your React Native app, run: `cd ios && pod install`
 
 &emsp;
 
