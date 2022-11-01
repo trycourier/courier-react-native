@@ -155,7 +155,9 @@ end
 https://user-images.githubusercontent.com/6370613/198111372-09a29aba-6507-4cf7-a59d-87e8df2ba492.mov
 
 1. Open Android project
-2. Make sure your `yourApp/android/build.gradle` file supports Jitpack:
+2. Register your app in firebase
+3. copy `google-services.json` in `Project/yourApp/app`
+4. Make sure your `yourApp/android/build.gradle` file supports Jitpack:
 
 ```groovy
 allprojects {
@@ -207,6 +209,8 @@ apply plugin: "com.google.gms.google-services" // Add this line
    - This allows you to present a notification to your user when a new notification arrives and will automatically sync new fcm tokens to Courier token management
 
 ```java
+// Your project import
+
 import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import com.courier.android.notifications.RemoteMessageExtensionsKt;
@@ -253,7 +257,7 @@ public class YourExampleService extends CourierService {
 
         // Add this 👇
         <service
-            android:name=".YourNotificationService"
+            android:name=".YourExampleService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
