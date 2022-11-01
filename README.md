@@ -47,21 +47,11 @@ const messageId = await Courier.sendPush({
 
 # Requirements & Support
 
-| Operating System | Minimum SDK | Compile Target SDK |
-| :--------------- | ----------: | -----------------: |
-| `iOS`            |        `13` |                  — |
-| `Android`        |        `21` |               `32` |
 
-| Supported Courier Features               | Supported Platforms |
-| :--------------------------------------- | ------------------: |
-| `Push Notifications`                     |    `iOS`, `Android` |
-| `Inbox`                                  |   Not Supported Yet |
-| `Toasts`                                 |   Not Supported Yet |
-
-| Supported Push Notification Providers    | Supported Platforms |
-| :--------------------------------------- | ------------------: |
-| `APNS (Apple Push Notification Service)` |               `iOS` |
-| `FCM (Firebase Cloud Messaging)`         |           `Android` |
+| Operating System | Min SDK | Compile SDK | Firebase Cloud Messaging | Apple Push Notification Service | Expo | OneSignal | Courier Inbox | Courier Toast |
+| :-- |     --: |         --: |                      --: |                             --: |  --: |       --: |           --: |           --: |
+| `iOS` |  `13` |           — |                       ❌ |                               ✅ |   ❌ |         ❌ |            ❌ |            ❌ |
+| `Android` | `21` |     `32` |                       ✅ |                               ✅ |   ❌ |         ❌ |            ❌ |            ❌ |
 
 > Most of this SDK depends on a Courier account: [`Create a Courier account here`](https://app.courier.com/signup)
 
