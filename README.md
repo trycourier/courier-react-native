@@ -152,11 +152,11 @@ end
 
 > If you don't need push notification support on Android, you can skip this step.
 
-https://user-images.githubusercontent.com/6370613/198111372-09a29aba-6507-4cf7-a59d-87e8df2ba492.mov
+https://user-images.githubusercontent.com/6370613/199335432-aa52028a-f7ae-48bb-abec-427795baa6f4.mov
 
 1. Open Android project
-2. Register your app in firebase
-3. copy `google-services.json` in `Project/yourApp/app`
+2. Register your app in Firebase and download your `google-services.json` file
+3. Add the `google-services.json` file to your `yourApp/app/src` directory
 4. Make sure your `yourApp/android/build.gradle` file supports Jitpack:
 
 ```groovy
@@ -203,6 +203,9 @@ apply plugin: "com.google.gms.google-services" // Add this line
 ```
 
 6. Run Gradle Sync
+
+https://user-images.githubusercontent.com/6370613/199335233-0880209b-5aec-4584-9726-eaa1077bf80d.mov
+
 7. Change your `MainActivity` to extend the `CourierReactNativeActivity`
    - This allows Courier to handle when push notifications are delivered and clicked
 8. Setup a new Notification Service by creating a new java file and paste the code below in it
@@ -245,7 +248,7 @@ public class YourExampleService extends CourierService {
 }
 ```
 
-7. Add the Notification Service entry in your `AndroidManifest.xml` file
+9. Add the Notification Service entry in your `AndroidManifest.xml` file
 
 ```xml
 <manifest>
