@@ -96,7 +96,7 @@ yarn add @trycourier/courier-react-native
 
 > If you don't need push notification support on iOS, you can skip this step.
 
-https://user-images.githubusercontent.com/6370613/198094477-40f22b1e-b3ad-4029-9120-0eee22de02e0.mov
+https://user-images.githubusercontent.com/6370613/199279392-1b376929-4a03-4acd-9d00-d170085d9791.mov
 
 1. Open your iOS project and increase the min SDK target to iOS 13.0+
 2. Open your `Podfile` and increase the platform:
