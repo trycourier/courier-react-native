@@ -52,7 +52,13 @@ const messageId = await Courier.sendPush({
 | `iOS`            |        `13` |                  — |
 | `Android`        |        `21` |               `32` |
 
-| Push Provider                            | Supported Platforms |
+| Supported Courier Features               | Supported Platforms |
+| :--------------------------------------- | ------------------: |
+| `Push Notifications`                     |    `iOS`, `Android` |
+| `Inbox`                                  |   Not Supported Yet |
+| `Toasts`                                 |   Not Supported Yet |
+
+| Supported Push Notification Providers    | Supported Platforms |
 | :--------------------------------------- | ------------------: |
 | `APNS (Apple Push Notification Service)` |               `iOS` |
 | `FCM (Firebase Cloud Messaging)`         |           `Android` |
