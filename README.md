@@ -51,7 +51,7 @@ const messageId = await Courier.sendPush({
 | Operating System | Min SDK | Compile SDK | Firebase Cloud Messaging | Apple Push Notification Service | Expo | OneSignal | Courier Inbox | Courier Toast |
 | :-- |     --: |         --: |                      --: |                             --: |  --: |       --: |           --: |           --: |
 | `iOS` |  `13` |           — |                       ❌ |                               ✅ |   ❌ |         ❌ |            ❌ |            ❌ |
-| `Android` | `21` |     `32` |                       ✅ |                               ✅ |   ❌ |         ❌ |            ❌ |            ❌ |
+| `Android` | `21` |     `32` |                       ✅ |                               ❌ |   ❌ |         ❌ |            ❌ |            ❌ |
 
 > Most of this SDK depends on a Courier account: [`Create a Courier account here`](https://app.courier.com/signup)
 
