@@ -7,8 +7,9 @@ class CourierReactNative: RCTEventEmitter {
     internal static let COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
     internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
     private static let COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
-    var isDebugListenerRegistered = false
-
+    
+    private var isDebugListenerRegistered = false
+    
     private var lastClickedMessage: [AnyHashable: Any]? = nil
     private var notificationCenter: NotificationCenter {
         get {
@@ -216,17 +217,19 @@ class CourierReactNative: RCTEventEmitter {
     }
     
     @objc(setDebugMode: withResolver: withRejecter:)
-    func setDebugMode(isDebugging: Bool,resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock){
-        if(isDebugging && !isDebugListenerRegistered){
-            // Send notification to react native side
-            Courier.shared.logListener = {log in
+    func setDebugMode(isDebugging: Bool,resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        // Send notification to react native side
+        if (isDebugging && !isDebugListenerRegistered) {
+            isDebugListenerRegistered = true
+            Courier.shared.logListener = { log in
                 self.sendEvent(withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, body: log)
             }
-            isDebugListenerRegistered = true;
         }
+        
         Courier.shared.isDebugging = isDebugging
-        print("setIsDebugging", isDebugging);
         resolve(Courier.shared.isDebugging)
+        
     }
 
     override func supportedEvents() -> [String]! {
