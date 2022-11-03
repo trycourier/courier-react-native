@@ -184,13 +184,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
       .emit(eventName, params)
   }
 
-  // Required for rn built in EventEmitter Calls.
   @ReactMethod
   fun addListener(eventName: String?) {
+    // Empty
   }
 
   @ReactMethod
   fun removeListeners(count: Int?) {
+    // Empty
   }
 
   private fun ReadableArray.toCourierProviders(): List<CourierProvider> {
