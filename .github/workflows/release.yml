@@ -21,5 +21,6 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
+          always-auth: true
+      - run: yarn
       - run: npm publish
