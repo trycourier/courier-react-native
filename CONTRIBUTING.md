@@ -79,12 +79,10 @@ check if your device is available under adb devices, run:
 adb devices
 ```
 
-## Pushing to NPM
+## Publishing a release
 
-Pushing to NPM requires manually running the command on your local machine. You must be an admin to perform this command.
-
-If you are an admin, you can run:
+Due to 2FA requirements, releases must be published manually using the following script:
 
 ```sh
-npm publish
+sh release.sh
 ```
