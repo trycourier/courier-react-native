@@ -16,15 +16,3 @@ jobs:
           bump_version_scheme: patch
           tag_prefix: ""
           release_name: "<RELEASE_VERSION>"
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16.x'
-          registry-url: 'https://registry.npmjs.org'
-          always-auth: true
-      - run: yarn
-      - uses: mmarchini-oss/npm-otp-publish@v0
-        with:
-          npm_token: ${{ secrets.NPM_TOKEN }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_actor: ${{ github.actor }}

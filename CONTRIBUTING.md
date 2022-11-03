@@ -78,3 +78,13 @@ check if your device is available under adb devices, run:
 ```sh
 adb devices
 ```
+
+## Pushing to NPM
+
+Pushing to NPM requires manually running the command on your local machine. You must be an admin to perform this command.
+
+If you are an admin, you can run:
+
+```sh
+npm publish
+```
