@@ -45,6 +45,8 @@ const messageId = await Courier.sendPush({
 });
 ```
 
+&emsp;
+
 # Requirements & Support
 
 
@@ -56,6 +58,8 @@ const messageId = await Courier.sendPush({
 > Most of this SDK depends on a Courier account: [`Create a Courier account here`](https://app.courier.com/signup)
 
 > Testing push notifications requires a physical device. Simulators will not work.
+
+&emsp;
 
 # **Installation**
 
