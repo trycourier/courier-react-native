@@ -23,4 +23,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
       - run: yarn
-      - run: npm publish
+      - uses: mmarchini-oss/npm-otp-publish@v0
+        with:
+          npm_token: ${{ secrets.NPM_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_actor: ${{ github.actor }}
