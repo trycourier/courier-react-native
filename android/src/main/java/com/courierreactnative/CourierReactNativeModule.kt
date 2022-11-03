@@ -184,6 +184,16 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
       .emit(eventName, params)
   }
 
+  @ReactMethod
+  fun addListener(eventName: String?) {
+    // Empty
+  }
+
+  @ReactMethod
+  fun removeListeners(count: Int?) {
+    // Empty
+  }
+
   private fun ReadableArray.toCourierProviders(): List<CourierProvider> {
     val providers: MutableList<CourierProvider> = mutableListOf()
     for (provider in toArrayList()) {
