@@ -48,7 +48,6 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@arkweid/lefthook": "^0.7.7",
     "@babel/eslint-parser": "^7.18.2",
     "@commitlint/config-conventional": "^17.0.2",
     "@react-native-community/eslint-config": "^3.2.0",
@@ -58,6 +57,7 @@
     "@types/react-native": "0.68.0",
     "@typescript-eslint/parser": "^5.42.1",
     "commitlint": "^17.0.2",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.27.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -66,6 +66,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.10",
     "jest": "^28.1.1",
+    "lefthook": "^1.2.0",
     "pod-install": "^0.1.0",
     "prettier": "^2.7.1",
     "react": "17.0.2",
@@ -134,5 +135,13 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "commitizen": "^4.2.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

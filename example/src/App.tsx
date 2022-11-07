@@ -155,6 +155,9 @@ export default function App() {
     } finally {
       setIsLoading(false);
     }
+    return () => {
+      // dummy empty function
+    };
   };
 
   useEffect(() => {
