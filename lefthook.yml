@@ -11,7 +11,7 @@ pre-commit:
       run: npx eslint {staged_files}
     prettier:
       glob: '*.{js,ts,jsx,tsx}'
-      run: npx prettier --check {staged_files}
+      run: npx prettier --write {staged_files}
 
 prepare-commit-msg:
   commands:
