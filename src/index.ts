@@ -1,4 +1,5 @@
-/* eslint-disable */
+/* eslint no-underscore-dangle: 0 */
+/* eslint class-methods-use-this: 0 */
 import {
   NativeModules,
   Platform,
@@ -8,10 +9,10 @@ import {
 } from 'react-native';
 
 const LINKING_ERROR =
-  `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n';
+  `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n${Platform.select(
+    { ios: "- You have run 'pod install'\n", default: '' }
+  )}- You rebuilt the app after installing the package\n` +
+  `- You are not using Expo managed workflow\n`;
 
 const CourierReactNativeModules = NativeModules.CourierReactNative
   ? NativeModules.CourierReactNative
@@ -35,6 +36,7 @@ export enum CourierProvider {
 
 class Courier {
   readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
+
   readonly PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered';
 
   public constructor() {
@@ -58,6 +60,7 @@ class Courier {
   }
 
   private _isDebugging = false;
+
   private debugListener: EmitterSubscription | undefined;
 
   /**
@@ -265,8 +268,8 @@ class Courier {
     onPushNotificationClicked,
     onPushNotificationDelivered,
   }: {
-    onPushNotificationClicked: (push: any) => void;
-    onPushNotificationDelivered: (push: any) => void;
+    onPushNotificationClicked: (_push: any) => void;
+    onPushNotificationDelivered: (_push: any) => void;
   }) {
     let notificationClickedListener: EmitterSubscription;
     let notificationDeliveredListener: EmitterSubscription;

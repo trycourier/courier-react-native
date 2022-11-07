@@ -1,17 +1,5 @@
-import React from "react";
-import { StyleSheet, Text, useColorScheme } from "react-native";
-
-const DarkModeText = (props: { text: string }) => {
-
-  const colorScheme = useColorScheme();
-  
-  return (
-    <Text style={colorScheme === 'dark' ? styles.dark : styles.light}>
-      {props.text}
-    </Text>
-  );
-  
-};
+import React from 'react';
+import { StyleSheet, Text, useColorScheme } from 'react-native';
 
 const styles = StyleSheet.create({
   light: {
@@ -21,5 +9,15 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
+
+function DarkModeText({ text }: { text: string }) {
+  const colorScheme = useColorScheme();
+
+  return (
+    <Text style={colorScheme === 'dark' ? styles.dark : styles.light}>
+      {text}
+    </Text>
+  );
+}
 
 export default DarkModeText;

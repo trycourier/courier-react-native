@@ -4,6 +4,17 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import Courier from '@trycourier/courier-react-native';
 import DarkModeText from './DarkModeText';
 
+const styles = StyleSheet.create({
+  overAll: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+  },
+  boxContainer: {
+    margin: 8,
+  },
+});
+
 export type IosForegroundNotificationPreferencesType =
   | 'sound'
   | 'badge'
@@ -17,7 +28,7 @@ const allIOSPreferences: IosForegroundNotificationPreferencesType[] = [
   'banner',
 ];
 
-const IosForeGroundPreferencesComponent = () => {
+function IosForeGroundPreferencesComponent() {
   const [iosNotificationPreferences, setIosNotificationPreferences] = useState<
     IosForegroundNotificationPreferencesType[]
   >(['badge', 'banner', 'list', 'sound']);
@@ -46,7 +57,7 @@ const IosForeGroundPreferencesComponent = () => {
 
   return (
     <View style={styles.overAll}>
-      <DarkModeText text={'iOS Foreground Notification Presentation Styles'} />
+      <DarkModeText text="iOS Foreground Notification Presentation Styles" />
       {allIOSPreferences.map((item) => (
         <View style={styles.boxContainer} key={item}>
           <BouncyCheckbox
@@ -58,18 +69,6 @@ const IosForeGroundPreferencesComponent = () => {
       ))}
     </View>
   );
-  
-};
-
-const styles = StyleSheet.create({
-  overAll: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-  },
-  boxContainer: {
-    margin: 8,
-  },
-});
+}
 
 export default IosForeGroundPreferencesComponent;
