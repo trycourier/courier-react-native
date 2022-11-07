@@ -14,6 +14,28 @@ import Courier, { CourierProvider } from '@trycourier/courier-react-native';
 import DarkModeText from './components/DarkModeText';
 import IosForegroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  divider: {
+    height: 1,
+    width: '100%',
+    marginTop: 16,
+    marginBottom: 16,
+    backgroundColor: 'lightgray',
+  },
+  textDark: {
+    color: 'white',
+  },
+  textLight: {
+    color: 'dark',
+  },
+});
+
 const showToast = (message: string) => {
   Alert.alert(message);
 };
@@ -68,7 +90,7 @@ export default function App() {
         userId: USER_ID,
         title: 'This is a title',
         body: 'This is a body',
-        providers: providers,
+        providers,
         isProduction: !__DEV__,
       });
 
@@ -115,8 +137,7 @@ export default function App() {
       const userId = await Courier.userId;
       setCourierUserId(userId);
 
-      const isDebugging = Courier.isDebugging;
-      setIsDebugging(isDebugging);
+      setIsDebugging(Courier.isDebugging);
 
       setIsLoading(false);
 
@@ -156,11 +177,8 @@ export default function App() {
       return (
         <Button title="Stop Debugging" onPress={() => toggleDebugging()} />
       );
-    } else {
-      return (
-        <Button title="Start Debugging" onPress={() => toggleDebugging()} />
-      );
     }
+    return <Button title="Start Debugging" onPress={() => toggleDebugging()} />;
   }
 
   function buildContent() {
@@ -190,7 +208,7 @@ export default function App() {
 
     return (
       <View style={styles.container}>
-        <DarkModeText text={'No User is signed into Courier'} />
+        <DarkModeText text="No User is signed into Courier" />
         <Button title="Sign In" onPress={handleSignIn} />
         <View style={styles.divider} />
         <Button title="See FCM Token" onPress={handleGetFcmToken} />
@@ -203,25 +221,3 @@ export default function App() {
 
   return buildContent();
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  divider: {
-    height: 1,
-    width: '100%',
-    marginTop: 16,
-    marginBottom: 16,
-    backgroundColor: 'lightgray',
-  },
-  textDark: {
-    color: 'white',
-  },
-  textLight: {
-    color: 'dark',
-  },
-});

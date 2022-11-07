@@ -37,7 +37,6 @@ const {
 const userId = 'userId';
 const token = 'token';
 const title = 'this is dummy title';
-const subTitle = 'this is dummy subTitle';
 const body = 'this is dummy body';
 const providers = [CourierProvider.APNS, CourierProvider.FCM];
 const isProduction = false;
@@ -98,8 +97,8 @@ describe('native module getFcmToken function', () => {
   });
 
   it(`Should return ${FCM_TOKEN_VALUE}`, async () => {
-    const token = await Courier.fcmToken;
-    expect(token).toBe(FCM_TOKEN_VALUE);
+    const currentToken = await Courier.fcmToken;
+    expect(currentToken).toBe(FCM_TOKEN_VALUE);
   });
 });
 

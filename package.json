@@ -51,23 +51,28 @@
     "@arkweid/lefthook": "^0.7.7",
     "@babel/eslint-parser": "^7.18.2",
     "@commitlint/config-conventional": "^17.0.2",
-    "@react-native-community/eslint-config": "^3.0.2",
+    "@react-native-community/eslint-config": "^3.2.0",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
     "@types/react": "~17.0.21",
     "@types/react-native": "0.68.0",
+    "@typescript-eslint/parser": "^5.42.1",
     "commitlint": "^17.0.2",
-    "eslint": "^8.4.1",
+    "eslint": "^8.27.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.10",
     "jest": "^28.1.1",
     "pod-install": "^0.1.0",
-    "prettier": "^2.0.5",
+    "prettier": "^2.7.1",
     "react": "17.0.2",
     "react-native": "0.68.2",
     "react-native-builder-bob": "^0.18.3",
     "release-it": "^15.0.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.8.4"
   },
   "resolutions": {
     "@types/react": "17.0.21"
@@ -108,37 +113,14 @@
       }
     }
   },
-  "eslintConfig": {
-    "root": true,
-    "parser": "@babel/eslint-parser",
-    "extends": [
-      "@react-native-community",
-      "prettier"
-    ],
-    "rules": {
-      "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false
-        }
-      ]
-    }
-  },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "**/babel.config.**",
+    "**/metro.config.**",
+    "**/react-native.config.**",
+    "**/scripts/**"
   ],
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
-  },
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",

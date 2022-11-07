@@ -1,4 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
+
 export const SIGN_IN_RETURN_VALUE = 'signIn successFul';
 export const NOTIFICATION_PERMISSION_RETURN_VALUE = 'authorized';
 export const NOTIFICATION_PERMISSION_STATUS = 'undetermined';
@@ -32,7 +33,7 @@ NativeModules.CourierReactNative = {
   ),
   sendPush: jest
     .fn()
-    .mockImplementation((a) => Promise.resolve(SEND_PUSH_NOTIFICATION_STATUS)),
+    .mockImplementation((_a) => Promise.resolve(SEND_PUSH_NOTIFICATION_STATUS)),
   setDebugMode: jest.fn().mockImplementation((a) => Promise.resolve(a)),
   registerPushNotificationClickedOnKilledState: jest.fn(),
 };
