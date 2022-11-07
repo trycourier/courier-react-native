@@ -36,6 +36,8 @@ NativeModules.CourierReactNative = {
     .mockImplementation((_a) => Promise.resolve(SEND_PUSH_NOTIFICATION_STATUS)),
   setDebugMode: jest.fn().mockImplementation((a) => Promise.resolve(a)),
   registerPushNotificationClickedOnKilledState: jest.fn(),
+  addListener: jest.fn(),
+  removeListeners: jest.fn(),
 };
 
 export const setPlatform = (os) => {
