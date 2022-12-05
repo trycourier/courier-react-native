@@ -68,3 +68,4 @@ lib/
 google-services.json
 .env
 coverage
+GoogleService-Info.plist
