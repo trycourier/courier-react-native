@@ -106,7 +106,7 @@ export default function App() {
   };
 
   const handleSendPush = async () => {
-    const messageProviders = selectedProviders.join('and');
+    const messageProviders = selectedProviders.join(' and ');
     try {
       const messageId = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
