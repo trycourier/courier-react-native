@@ -11,8 +11,10 @@ import {
 } from 'react-native';
 
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import DarkModeText from './components/DarkModeText';
 import IosForegroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
+import { allProvidersEnumMappedValues } from './utils/constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,6 +36,15 @@ const styles = StyleSheet.create({
   textLight: {
     color: 'dark',
   },
+  providersContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  providerCheckbox: {
+    margin: 8,
+    alignSelf: 'flex-start',
+  },
 });
 
 const showToast = (message: string) => {
@@ -44,6 +55,21 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [courierUserId, setCourierUserId] = useState<string | undefined>();
   const [isDebugging, setIsDebugging] = useState<boolean>(__DEV__);
+  const [selectedProviders, setSelectedProviders] = useState<CourierProvider[]>(
+    []
+  );
+
+  const handleProviderChange = (selectedProvider: CourierProvider) => {
+    let updatedSelectedProviders: CourierProvider[] = [];
+    if (selectedProviders.includes(selectedProvider)) {
+      updatedSelectedProviders = selectedProviders.filter(
+        (provider) => provider !== selectedProvider
+      );
+    } else {
+      updatedSelectedProviders = [...selectedProviders, selectedProvider];
+    }
+    setSelectedProviders(updatedSelectedProviders);
+  };
 
   const handleSignIn = async () => {
     try {
@@ -80,17 +106,14 @@ export default function App() {
   };
 
   const handleSendPush = async () => {
+    const messageProviders = selectedProviders.join('and');
     try {
-      const providers = [
-        Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM,
-      ];
-
       const messageId = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
         userId: USER_ID,
-        title: 'This is a title',
-        body: 'This is a body',
-        providers,
+        title: `Hey ${USER_ID}`,
+        body: `This is a test push sent through ${messageProviders}`,
+        providers: selectedProviders,
         isProduction: !__DEV__,
       });
 
@@ -161,6 +184,12 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (Platform.OS === 'ios') {
+      setSelectedProviders([CourierProvider.APNS]);
+    } else {
+      setSelectedProviders([CourierProvider.FCM]);
+    }
+
     let unsubscribe: (() => void) | undefined;
     (async () => {
       unsubscribe = await init();
@@ -198,9 +227,32 @@ export default function App() {
         <View style={styles.container}>
           <DarkModeText text={`Current User Id: ${courierUserId}`} />
           <Button title="Sign Out" onPress={handleSignOut} />
+          {Platform.OS === 'ios' && (
+            <>
+              <View style={styles.divider} />
+              <IosForegroundPreferencesComponent />
+            </>
+          )}
           <View style={styles.divider} />
-          <IosForegroundPreferencesComponent />
-          <Button title="Send Push" onPress={handleSendPush} />
+          <View style={styles.providersContainer}>
+            <DarkModeText text="Select Providers" />
+            {allProvidersEnumMappedValues.map((provider) => (
+              <View style={styles.providerCheckbox} key={provider.value}>
+                <BouncyCheckbox
+                  text={provider.name}
+                  isChecked={selectedProviders.includes(provider.value)}
+                  onPress={() => {
+                    handleProviderChange(provider.value);
+                  }}
+                />
+              </View>
+            ))}
+          </View>
+          <Button
+            title="Send Push"
+            onPress={handleSendPush}
+            disabled={selectedProviders.length === 0}
+          />
           <View style={styles.divider} />
           <Button title="See FCM Token" onPress={handleGetFcmToken} />
           <Button title="See APNS token" onPress={handleApnsToken} />
