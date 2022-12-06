@@ -6,6 +6,11 @@ gh auth login
 PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
 echo $PACKAGE_VERSION
 
+# Bump the version
+git add .
+git commit -m "Bump"
+git push
+
 # Add the tag
 git tag $PACKAGE_VERSION
 git push --tags
