@@ -14,6 +14,7 @@
 		411AE1611544DDFEA5AA69E9 /* libPods-CourierService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B457B43780DB2169A210BDF /* libPods-CourierService.a */; };
 		4A072F5A28F71FD80067DE0D /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A072F5928F71FD80067DE0D /* NotificationService.swift */; };
 		4A072F5E28F71FD80067DE0D /* CourierService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4A072F5728F71FD80067DE0D /* CourierService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		67D6581B293E8AE700AEA919 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 67D6581A293E8AE700AEA919 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -60,6 +61,7 @@
 		4B457B43780DB2169A210BDF /* libPods-CourierService.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierService.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5709B34CF0A7D63546082F79 /* Pods-CourierReactNativeExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample.release.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-CourierReactNativeExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierReactNativeExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		67D6581A293E8AE700AEA919 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CourierReactNativeExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9F8637B98936A813811F7A2A /* Pods-CourierService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierService.release.xcconfig"; path = "Target Support Files/Pods-CourierService/Pods-CourierService.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -88,6 +90,7 @@
 		13B07FAE1A68108700A75B9A /* CourierReactNativeExample */ = {
 			isa = PBXGroup;
 			children = (
+				67D6581A293E8AE700AEA919 /* GoogleService-Info.plist */,
 				4AC7137C28ECC99F00C31B3C /* CourierReactNativeExample.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -251,6 +254,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				67D6581B293E8AE700AEA919 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
