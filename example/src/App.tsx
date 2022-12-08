@@ -1,4 +1,4 @@
-import { USER_ID, ACCESS_TOKEN } from '@env';
+import { ACCESS_TOKEN } from '@env';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -13,6 +13,7 @@ import {
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
 import DarkModeText from './components/DarkModeText';
 import IosForegroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
+import UserInputModal from './components/UserInputModal';
 
 const styles = StyleSheet.create({
   container: {
@@ -44,18 +45,23 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [courierUserId, setCourierUserId] = useState<string | undefined>();
   const [isDebugging, setIsDebugging] = useState<boolean>(__DEV__);
+  const [isUserInputModalOpen, setIsUserInputModalOpen] = useState(false);
+  const showUserInputModal = () => setIsUserInputModalOpen(true);
+  const hideUserInputModal = () => setIsUserInputModalOpen(false);
 
-  const handleSignIn = async () => {
+  const handleSignIn = async ({ userId: signInUserId }: { userId: string }) => {
+    if (!signInUserId) return;
     try {
       setIsLoading(true);
 
       await Courier.signIn({
         accessToken: ACCESS_TOKEN,
-        userId: USER_ID,
+        userId: signInUserId,
       });
 
       const userId = await Courier.userId;
       setCourierUserId(userId);
+      hideUserInputModal();
     } catch (e) {
       console.log(e);
     } finally {
@@ -85,16 +91,19 @@ export default function App() {
         Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM,
       ];
 
-      const messageId = await Courier.sendPush({
-        authKey: ACCESS_TOKEN,
-        userId: USER_ID,
-        title: 'This is a title',
-        body: 'This is a body',
-        providers,
-        isProduction: !__DEV__,
-      });
+      const userId = await Courier.userId;
+      if (userId) {
+        const messageId = await Courier.sendPush({
+          authKey: ACCESS_TOKEN,
+          userId,
+          title: 'This is a title',
+          body: 'This is a body',
+          providers,
+          isProduction: !__DEV__,
+        });
 
-      showToast(`Message sent. Message id: ${messageId}`);
+        showToast(`Message sent. Message id: ${messageId}`);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -210,15 +219,23 @@ export default function App() {
     }
 
     return (
-      <View style={styles.container}>
-        <DarkModeText text="No User is signed into Courier" />
-        <Button title="Sign In" onPress={handleSignIn} />
-        <View style={styles.divider} />
-        <Button title="See FCM Token" onPress={handleGetFcmToken} />
-        <Button title="See APNS token" onPress={handleApnsToken} />
-        <View style={styles.divider} />
-        {buildDebugging()}
-      </View>
+      <>
+        <UserInputModal
+          open={isUserInputModalOpen}
+          onClose={hideUserInputModal}
+          onOkay={handleSignIn}
+        />
+
+        <View style={styles.container}>
+          <DarkModeText text="No User is signed into Courier" />
+          <Button title="Sign In" onPress={showUserInputModal} />
+          <View style={styles.divider} />
+          <Button title="See FCM Token" onPress={handleGetFcmToken} />
+          <Button title="See APNS token" onPress={handleApnsToken} />
+          <View style={styles.divider} />
+          {buildDebugging()}
+        </View>
+      </>
     );
   }
 
