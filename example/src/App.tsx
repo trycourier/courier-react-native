@@ -11,10 +11,9 @@ import {
 } from 'react-native';
 
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
-import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import DarkModeText from './components/DarkModeText';
-import IosForegroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
-import { allProvidersEnumMappedValues } from './utils/constants';
+import { allIOSPresentationOptions, allProviders } from './utils/constants';
+import List, { ListItem } from './components/List';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,23 +51,49 @@ const showToast = (message: string) => {
 };
 
 export default function App() {
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [courierUserId, setCourierUserId] = useState<string | undefined>();
   const [isDebugging, setIsDebugging] = useState<boolean>(__DEV__);
-  const [selectedProviders, setSelectedProviders] = useState<CourierProvider[]>(
-    []
-  );
+  const [selectedProviders, setSelectedProviders] = useState<ListItem[]>(allProviders);
+  const [selectedIosPreferences, setSelectedIosPreferences] = useState<ListItem[]>(allIOSPresentationOptions);
 
-  const handleProviderChange = (selectedProvider: CourierProvider) => {
-    let updatedSelectedProviders: CourierProvider[] = [];
+  const handleProviderChange = (selectedProvider: ListItem) => {
+
+    let updatedItems: ListItem[] = [];
+
     if (selectedProviders.includes(selectedProvider)) {
-      updatedSelectedProviders = selectedProviders.filter(
+      updatedItems = selectedProviders.filter(
         (provider) => provider !== selectedProvider
       );
     } else {
-      updatedSelectedProviders = [...selectedProviders, selectedProvider];
+      updatedItems = [...selectedProviders, selectedProvider];
     }
-    setSelectedProviders(updatedSelectedProviders);
+
+    setSelectedProviders(updatedItems);
+
+  };
+
+  const handleIosPreferenceChange = (selectedPreference: ListItem) => {
+
+    let updatedItems: ListItem[] = [];
+
+    if (selectedIosPreferences.includes(selectedPreference)) {
+      updatedItems = selectedIosPreferences.filter(
+        (provider) => provider !== selectedPreference
+      );
+    } else {
+      updatedItems = [...selectedIosPreferences, selectedPreference];
+    }
+
+    // Tell Courier to change the presentation options
+    // This can be awaited, but we are skipping it here
+    Courier.iOSForegroundPresentationOptions({
+      options: updatedItems.map(item => item.value),
+    });
+
+    setSelectedIosPreferences(updatedItems);
+
   };
 
   const handleSignIn = async () => {
@@ -92,11 +117,7 @@ export default function App() {
   const handleSignOut = async () => {
     try {
       setIsLoading(true);
-
       await Courier.signOut();
-      const fcmToken = await Courier.fcmToken;
-      console.log('fcmToken', fcmToken);
-
       setCourierUserId(undefined);
     } catch (e) {
       console.log(e);
@@ -106,14 +127,13 @@ export default function App() {
   };
 
   const handleSendPush = async () => {
-    const messageProviders = selectedProviders.join(' and ');
     try {
       const messageId = await Courier.sendPush({
         authKey: ACCESS_TOKEN,
         userId: USER_ID,
         title: `Hey ${USER_ID}`,
-        body: `This is a test push sent through ${messageProviders}`,
-        providers: selectedProviders,
+        body: `This is a test push sent to ${selectedProviders.map(provider => provider.name).join(' and ')}`,
+        providers: selectedProviders.map(provider => provider.value),
         isProduction: !__DEV__,
       });
 
@@ -184,19 +204,26 @@ export default function App() {
   };
 
   useEffect(() => {
+
     if (Platform.OS === 'ios') {
-      setSelectedProviders([CourierProvider.APNS]);
+      setSelectedProviders(allProviders.filter(item => {
+        return item.value === CourierProvider.APNS
+      }));
     } else {
-      setSelectedProviders([CourierProvider.FCM]);
+      setSelectedProviders(allProviders.filter(item => {
+        return item.value === CourierProvider.FCM
+      }));;
     }
 
     let unsubscribe: (() => void) | undefined;
     (async () => {
       unsubscribe = await init();
     })();
+
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
+
   }, []);
 
   function buildDebugging() {
@@ -214,6 +241,7 @@ export default function App() {
   }
 
   function buildContent() {
+
     if (isLoading) {
       return (
         <View style={styles.container}>
@@ -230,24 +258,21 @@ export default function App() {
           {Platform.OS === 'ios' && (
             <>
               <View style={styles.divider} />
-              <IosForegroundPreferencesComponent />
+              <List 
+                title='iOS Foreground Notification Presentation Styles'
+                items={allIOSPresentationOptions}
+                selectedItems={selectedIosPreferences}
+                onItemClick={handleIosPreferenceChange}
+              />
             </>
           )}
           <View style={styles.divider} />
-          <View style={styles.providersContainer}>
-            <DarkModeText text="Select Providers" />
-            {allProvidersEnumMappedValues.map((provider) => (
-              <View style={styles.providerCheckbox} key={provider.value}>
-                <BouncyCheckbox
-                  text={provider.name}
-                  isChecked={selectedProviders.includes(provider.value)}
-                  onPress={() => {
-                    handleProviderChange(provider.value);
-                  }}
-                />
-              </View>
-            ))}
-          </View>
+          <List 
+            title='Providers'
+            items={allProviders}
+            selectedItems={selectedProviders}
+            onItemClick={handleProviderChange}
+          />
           <Button
             title="Send Push"
             onPress={handleSendPush}
