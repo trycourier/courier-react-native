@@ -1,7 +1,7 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
-import DarkModeText from "./DarkModeText";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import DarkModeText from './DarkModeText';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,12 +16,21 @@ const styles = StyleSheet.create({
 });
 
 export interface ListItem {
-  name: string,
-  value: any
+  name: string;
+  value: any;
 }
 
-function List({ title, items, selectedItems, onItemClick }: { title: string, items: ListItem[], selectedItems: ListItem[], onItemClick: (item: ListItem) => void }) {
-
+function List({
+  title,
+  items,
+  selectedItems,
+  onItemClick,
+}: {
+  title: string;
+  items: ListItem[];
+  selectedItems: ListItem[];
+  onItemClick: (item: ListItem) => void;
+}) {
   return (
     <View style={styles.container}>
       <DarkModeText text={title} />
@@ -36,7 +45,6 @@ function List({ title, items, selectedItems, onItemClick }: { title: string, ite
       ))}
     </View>
   );
-
 }
 
 export default List;

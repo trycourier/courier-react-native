@@ -51,15 +51,16 @@ const showToast = (message: string) => {
 };
 
 export default function App() {
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [courierUserId, setCourierUserId] = useState<string | undefined>();
   const [isDebugging, setIsDebugging] = useState<boolean>(__DEV__);
-  const [selectedProviders, setSelectedProviders] = useState<ListItem[]>(allProviders);
-  const [selectedIosPreferences, setSelectedIosPreferences] = useState<ListItem[]>(allIOSPresentationOptions);
+  const [selectedProviders, setSelectedProviders] =
+    useState<ListItem[]>(allProviders);
+  const [selectedIosPreferences, setSelectedIosPreferences] = useState<
+    ListItem[]
+  >(allIOSPresentationOptions);
 
   const handleProviderChange = (selectedProvider: ListItem) => {
-
     let updatedItems: ListItem[] = [];
 
     if (selectedProviders.includes(selectedProvider)) {
@@ -71,11 +72,9 @@ export default function App() {
     }
 
     setSelectedProviders(updatedItems);
-
   };
 
   const handleIosPreferenceChange = (selectedPreference: ListItem) => {
-
     let updatedItems: ListItem[] = [];
 
     if (selectedIosPreferences.includes(selectedPreference)) {
@@ -89,11 +88,10 @@ export default function App() {
     // Tell Courier to change the presentation options
     // This can be awaited, but we are skipping it here
     Courier.iOSForegroundPresentationOptions({
-      options: updatedItems.map(item => item.value),
+      options: updatedItems.map((item) => item.value),
     });
 
     setSelectedIosPreferences(updatedItems);
-
   };
 
   const handleSignIn = async () => {
@@ -132,8 +130,10 @@ export default function App() {
         authKey: ACCESS_TOKEN,
         userId: USER_ID,
         title: `Hey ${USER_ID}`,
-        body: `This is a test push sent to ${selectedProviders.map(provider => provider.name).join(' and ')}`,
-        providers: selectedProviders.map(provider => provider.value),
+        body: `This is a test push sent to ${selectedProviders
+          .map((provider) => provider.name)
+          .join(' and ')}`,
+        providers: selectedProviders.map((provider) => provider.value),
         isProduction: !__DEV__,
       });
 
@@ -204,15 +204,18 @@ export default function App() {
   };
 
   useEffect(() => {
-
     if (Platform.OS === 'ios') {
-      setSelectedProviders(allProviders.filter(item => {
-        return item.value === CourierProvider.APNS
-      }));
+      setSelectedProviders(
+        allProviders.filter((item) => {
+          return item.value === CourierProvider.APNS;
+        })
+      );
     } else {
-      setSelectedProviders(allProviders.filter(item => {
-        return item.value === CourierProvider.FCM
-      }));;
+      setSelectedProviders(
+        allProviders.filter((item) => {
+          return item.value === CourierProvider.FCM;
+        })
+      );
     }
 
     let unsubscribe: (() => void) | undefined;
@@ -223,7 +226,6 @@ export default function App() {
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
-
   }, []);
 
   function buildDebugging() {
@@ -241,7 +243,6 @@ export default function App() {
   }
 
   function buildContent() {
-
     if (isLoading) {
       return (
         <View style={styles.container}>
@@ -258,8 +259,8 @@ export default function App() {
           {Platform.OS === 'ios' && (
             <>
               <View style={styles.divider} />
-              <List 
-                title='iOS Foreground Notification Presentation Styles'
+              <List
+                title="iOS Foreground Notification Presentation Styles"
                 items={allIOSPresentationOptions}
                 selectedItems={selectedIosPreferences}
                 onItemClick={handleIosPreferenceChange}
@@ -267,8 +268,8 @@ export default function App() {
             </>
           )}
           <View style={styles.divider} />
-          <List 
-            title='Providers'
+          <List
+            title="Providers"
             items={allProviders}
             selectedItems={selectedProviders}
             onItemClick={handleProviderChange}
