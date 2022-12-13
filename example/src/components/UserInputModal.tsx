@@ -92,10 +92,7 @@ function UserInputModal({ open, onClose, onOkay }: PropType) {
             <View style={styles.cancelButtonStyle}>
               <Button title="Cancel" onPress={onClose} />
             </View>
-            <Button
-              title="Sign In"
-              onPress={() => onOkay({ userId })}
-            />
+            <Button title="Sign In" onPress={() => onOkay({ userId })} />
           </View>
         </View>
       </View>
