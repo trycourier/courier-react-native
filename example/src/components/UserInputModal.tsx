@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     borderColor: '#101010',
     borderWidth: 1,
     paddingHorizontal: 10,
+    color: '#101010',
   },
   labelStyle: { fontWeight: '500', fontSize: 16 },
   inputContainer: {
