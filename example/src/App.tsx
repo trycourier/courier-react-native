@@ -12,8 +12,9 @@ import {
 
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
 import DarkModeText from './components/DarkModeText';
-import IosForegroundPreferencesComponent from './components/IosForeGroundPreferencesComponent';
 import UserInputModal from './components/UserInputModal';
+import { allIOSPresentationOptions, allProviders } from './utils/constants';
+import List, { ListItem } from './components/List';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +36,15 @@ const styles = StyleSheet.create({
   textLight: {
     color: 'dark',
   },
+  providersContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  providerCheckbox: {
+    margin: 8,
+    alignSelf: 'flex-start',
+  },
 });
 
 const showToast = (message: string) => {
@@ -48,6 +58,45 @@ export default function App() {
   const [isUserInputModalOpen, setIsUserInputModalOpen] = useState(false);
   const showUserInputModal = () => setIsUserInputModalOpen(true);
   const hideUserInputModal = () => setIsUserInputModalOpen(false);
+  const [selectedProviders, setSelectedProviders] =
+    useState<ListItem[]>(allProviders);
+  const [selectedIosPreferences, setSelectedIosPreferences] = useState<
+    ListItem[]
+  >(allIOSPresentationOptions);
+
+  const handleProviderChange = (selectedProvider: ListItem) => {
+    let updatedItems: ListItem[] = [];
+
+    if (selectedProviders.includes(selectedProvider)) {
+      updatedItems = selectedProviders.filter(
+        (provider) => provider !== selectedProvider
+      );
+    } else {
+      updatedItems = [...selectedProviders, selectedProvider];
+    }
+
+    setSelectedProviders(updatedItems);
+  };
+
+  const handleIosPreferenceChange = (selectedPreference: ListItem) => {
+    let updatedItems: ListItem[] = [];
+
+    if (selectedIosPreferences.includes(selectedPreference)) {
+      updatedItems = selectedIosPreferences.filter(
+        (provider) => provider !== selectedPreference
+      );
+    } else {
+      updatedItems = [...selectedIosPreferences, selectedPreference];
+    }
+
+    // Tell Courier to change the presentation options
+    // This can be awaited, but we are skipping it here
+    Courier.iOSForegroundPresentationOptions({
+      options: updatedItems.map((item) => item.value),
+    });
+
+    setSelectedIosPreferences(updatedItems);
+  };
 
   const handleSignIn = async ({ userId: signInUserId }: { userId: string }) => {
     if (!signInUserId) return;
@@ -72,11 +121,7 @@ export default function App() {
   const handleSignOut = async () => {
     try {
       setIsLoading(true);
-
       await Courier.signOut();
-      const fcmToken = await Courier.fcmToken;
-      console.log('fcmToken', fcmToken);
-
       setCourierUserId(undefined);
     } catch (e) {
       console.log(e);
@@ -87,18 +132,15 @@ export default function App() {
 
   const handleSendPush = async () => {
     try {
-      const providers = [
-        Platform.OS === 'ios' ? CourierProvider.APNS : CourierProvider.FCM,
-      ];
-
-      const userId = await Courier.userId;
-      if (userId) {
+      if (courierUserId) {
         const messageId = await Courier.sendPush({
           authKey: ACCESS_TOKEN,
-          userId,
-          title: 'This is a title',
-          body: 'This is a body',
-          providers,
+          userId: courierUserId,
+          title: `Hey ${courierUserId}`,
+          body: `This is a test push sent to ${selectedProviders
+            .map((provider) => provider.name)
+            .join(' and ')}`,
+          providers: selectedProviders.map((provider) => provider.value),
           isProduction: !__DEV__,
         });
 
@@ -170,10 +212,25 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (Platform.OS === 'ios') {
+      setSelectedProviders(
+        allProviders.filter((item) => {
+          return item.value === CourierProvider.APNS;
+        })
+      );
+    } else {
+      setSelectedProviders(
+        allProviders.filter((item) => {
+          return item.value === CourierProvider.FCM;
+        })
+      );
+    }
+
     let unsubscribe: (() => void) | undefined;
     (async () => {
       unsubscribe = await init();
     })();
+
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
@@ -207,9 +264,29 @@ export default function App() {
         <View style={styles.container}>
           <DarkModeText text={`Current User Id: ${courierUserId}`} />
           <Button title="Sign Out" onPress={handleSignOut} />
+          {Platform.OS === 'ios' && (
+            <>
+              <View style={styles.divider} />
+              <List
+                title="iOS Foreground Notification Presentation Styles"
+                items={allIOSPresentationOptions}
+                selectedItems={selectedIosPreferences}
+                onItemClick={handleIosPreferenceChange}
+              />
+            </>
+          )}
           <View style={styles.divider} />
-          <IosForegroundPreferencesComponent />
-          <Button title="Send Push" onPress={handleSendPush} />
+          <List
+            title="Providers"
+            items={allProviders}
+            selectedItems={selectedProviders}
+            onItemClick={handleProviderChange}
+          />
+          <Button
+            title="Send Push"
+            onPress={handleSendPush}
+            disabled={selectedProviders.length === 0}
+          />
           <View style={styles.divider} />
           <Button title="See FCM Token" onPress={handleGetFcmToken} />
           <Button title="See APNS token" onPress={handleApnsToken} />
