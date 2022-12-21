@@ -26,6 +26,9 @@ class CourierReactNative: RCTEventEmitter {
         
         // Attach the listeners
         attachObservers()
+        
+        // Reset Debugger
+        resetDebugger()
                 
     }
     
@@ -44,6 +47,13 @@ class CourierReactNative: RCTEventEmitter {
             name: Notification.Name(rawValue: CourierReactNative.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT),
             object: nil
         )
+        
+    }
+    
+    private func resetDebugger(){
+        
+        isDebugListenerRegistered = false
+        Courier.shared.isDebugging = false
         
     }
     
