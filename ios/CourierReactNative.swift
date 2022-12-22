@@ -8,7 +8,7 @@ class CourierReactNative: RCTEventEmitter {
     internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
     private static let COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
     
-    private var isDebugListenerRegistered = false
+    private var hasListeners = false
     
     private var lastClickedMessage: [AnyHashable: Any]? = nil
     private var notificationCenter: NotificationCenter {
@@ -24,12 +24,27 @@ class CourierReactNative: RCTEventEmitter {
         // Used to know the platform performing requests
         Courier.agent = CourierAgent.react_native_ios
         
-        // Reset Debugger
-        Courier.shared.isDebugging = false
-        
         // Attach the listeners
         attachObservers()
                 
+    }
+    
+    override func startObserving() {
+
+        hasListeners = true
+
+        // setup listeners
+        Courier.shared.logListener = { log in
+            self.sendEvent(withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, body: log)
+        }
+
+    }
+
+    override func stopObserving() {
+
+        hasListeners = false
+        // perform actions after listener is removed
+        
     }
     
     private func attachObservers() {
@@ -221,15 +236,7 @@ class CourierReactNative: RCTEventEmitter {
     
     @objc(setDebugMode: withResolver: withRejecter:)
     func setDebugMode(isDebugging: Bool,resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
-        // Send notification to react native side
-        if (isDebugging && !isDebugListenerRegistered) {
-            isDebugListenerRegistered = true
-            Courier.shared.logListener = { log in
-                self.sendEvent(withName: CourierReactNative.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, body: log)
-            }
-        }
-        
+
         Courier.shared.isDebugging = isDebugging
         resolve(Courier.shared.isDebugging)
         

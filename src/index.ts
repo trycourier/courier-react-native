@@ -69,15 +69,12 @@ class Courier {
    * @example Courier.setIsDebugging(true)
    */
   public async setIsDebugging(isDebugging: boolean): Promise<boolean> {
-    this._isDebugging = await CourierReactNativeModules.setDebugMode(
-      isDebugging
-    );
-
     // Remove the existing listener if needed
     this.debugListener?.remove();
 
     // Set a new listener
-    if (this._isDebugging) {
+    // listener needs to be registered first to catch the event
+    if (isDebugging) {
       this.debugListener = CourierEventEmitter.addListener(
         'courierDebugEvent',
         (event) => {
@@ -85,6 +82,10 @@ class Courier {
         }
       );
     }
+
+    this._isDebugging = await CourierReactNativeModules.setDebugMode(
+      isDebugging
+    );
 
     return this._isDebugging;
   }
