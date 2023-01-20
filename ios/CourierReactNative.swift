@@ -197,8 +197,8 @@ class CourierReactNative: RCTEventEmitter {
         
     }
 
-    @objc(sendPush: withUserId: withTitle: withBody: withProviders: withIsProduction: withResolver: withRejecter:)
-    func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, isProduction: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    @objc(sendPush: withUserId: withTitle: withBody: withProviders: withResolver: withRejecter:)
+    func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
         guard let courierProviders = providers as? [String] else {
             reject("No provider supported", CourierReactNative.COURIER_ERROR_TAG, nil)
@@ -210,7 +210,6 @@ class CourierReactNative: RCTEventEmitter {
             userId: userId as String,
             title: title as String,
             message: body as String,
-            isProduction: isProduction,
             providers: courierProviders,
             onSuccess: { requestId in
                 resolve(requestId)

@@ -39,7 +39,6 @@ const token = 'token';
 const title = 'this is dummy title';
 const body = 'this is dummy body';
 const providers = [CourierProvider.APNS, CourierProvider.FCM];
-const isProduction = false;
 const isDebugging = true;
 const COURIER_DEBUG_EVENT = 'courierDebugEvent';
 const COURIER_DEBUG_LOG = 'test log';
@@ -190,16 +189,8 @@ describe('native module sendPush', () => {
       title,
       body,
       providers,
-      isProduction,
     });
-    expect(sendPush).toBeCalledWith(
-      token,
-      userId,
-      title,
-      body,
-      providers,
-      isProduction
-    );
+    expect(sendPush).toBeCalledWith(token, userId, title, body, providers);
   });
 
   it(`Should return ${SEND_PUSH_NOTIFICATION_STATUS}`, async () => {
@@ -209,7 +200,6 @@ describe('native module sendPush', () => {
       title,
       body,
       providers,
-      isProduction,
     });
     expect(res).toBe(SEND_PUSH_NOTIFICATION_STATUS);
   });

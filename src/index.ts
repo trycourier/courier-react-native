@@ -175,7 +175,6 @@ class Courier {
       title: 'This is a title',
       body: 'This is a body',
       providers: [CourierProvider.APNS, CourierProvider.FCM],
-      isProduction: false, // true is production apns, false is sandbox apns
     });
   * ```
   * @returns promise
@@ -186,22 +185,19 @@ class Courier {
     title,
     body,
     providers,
-    isProduction,
   }: {
     authKey: string;
     userId: string;
     title?: string;
     body?: string;
     providers: CourierProvider[];
-    isProduction: boolean;
   }): Promise<string> {
     return CourierReactNativeModules.sendPush(
       authKey,
       userId,
       title,
       body,
-      providers,
-      isProduction
+      providers
     );
   }
 

@@ -1,7 +1,7 @@
 # Courier React Native Overview
 
 ```ts
-import Courier, { CourierProvider } from '@trycourier/courier-react-native'
+import Courier, { CourierProvider } from '@trycourier/courier-react-native';
 
 await Courier.setIsDebugging(true);
 
@@ -19,7 +19,8 @@ await Courier.iOSForegroundPresentationOptions({
 });
 
 const currentPermissionStatus = await Courier.notificationPermissionStatus;
-const requestNotificationPermission = await Courier.requestNotificationPermission();
+const requestNotificationPermission =
+  await Courier.requestNotificationPermission();
 
 await Courier.setFcmToken('asdf...');
 
@@ -40,7 +41,6 @@ const messageId = await Courier.sendPush({
   userId: 'example_user_id',
   title: 'Hey! 👋',
   body: 'Courier is awesome!!',
-  isProduction: false,
   providers: [CourierProvider.APNS, CourierProvider.FCM],
 });
 ```
@@ -49,11 +49,10 @@ const messageId = await Courier.sendPush({
 
 # Requirements & Support
 
-
 | Operating System | Min SDK | Compile SDK | Firebase Cloud Messaging | Apple Push Notification Service | Expo | OneSignal | Courier Inbox | Courier Toast |
-| :-- |     --: |         --: |                      --: |                             --: |  --: |       --: |           --: |           --: |
-| `iOS` |  `13` |           — |                       ❌ |                               ✅ |   ❌ |         ❌ |            ❌ |            ❌ |
-| `Android` | `21` |     `32` |                       ✅ |                               ❌ |   ❌ |         ❌ |            ❌ |            ❌ |
+| :--------------- | ------: | ----------: | -----------------------: | ------------------------------: | ---: | --------: | ------------: | ------------: |
+| `iOS`            |    `13` |           — |                       ❌ |                              ✅ |   ❌ |        ❌ |            ❌ |            ❌ |
+| `Android`        |    `21` |        `32` |                       ✅ |                              ❌ |   ❌ |        ❌ |            ❌ |            ❌ |
 
 > Most of this SDK depends on a Courier account: [`Create a Courier account here`](https://app.courier.com/signup)
 
@@ -175,7 +174,7 @@ allprojects {
 ```
 
 3. Update your `yourApp/android/build.gradle` to support the following SDK versions
-    - This is needed to support newer Android Notification APIs
+   - This is needed to support newer Android Notification APIs
 
 ```groovy
 buildscript {
@@ -190,7 +189,7 @@ buildscript {
 }
 ```
 
-4. Add the `google-services` dependency to your `yourApp/android/build.gradle` file: 
+4. Add the `google-services` dependency to your `yourApp/android/build.gradle` file:
 
 ```groovy
 buildscript {
@@ -233,7 +232,7 @@ import com.google.firebase.messaging.RemoteMessage;
 // This is safe. `CourierService` will automatically handle token refreshes.
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class YourExampleService extends CourierService {
-    
+
     @Override
     public void showNotification(@NonNull RemoteMessage message) {
         super.showNotification(message);
@@ -254,7 +253,7 @@ public class YourExampleService extends CourierService {
         );
 
     }
-    
+
 }
 ```
 
@@ -357,7 +356,8 @@ console.log(notificationPermission);
 
 // Notification permissions must be `authorized` on iOS to receive pushes
 
-const requestedNotificationPermission = await Courier.requestNotificationPermission();
+const requestedNotificationPermission =
+  await Courier.requestNotificationPermission();
 console.log(requestedNotificationPermission);
 
 // This is how iOS will show the notification when the app is in the foreground
@@ -367,22 +367,19 @@ await Courier.iOSForegroundPresentationOptions({
   options: ['badge', 'banner', 'list', 'sound'],
 });
 
-
 // This function returns an unsubscribe function
 // Call `unsibscribe();` to stop listening to notifications
 // Recommended to call the function while component mounts and unsubscribe when the component unmounts
 const unsubscribe = Courier.registerPushNotificationListeners({
-
   // Will be called if the app is in the foreground and a push notification arrives
   onPushNotificationClicked(push) {
-    console.log(push.title)
+    console.log(push.title);
   },
 
   // Will be called when a user clicks a push notification
   onPushNotificationDelivered(push) {
-    console.log(push.title)
-  }
-  
+    console.log(push.title);
+  },
 });
 
 // Sends a test push
@@ -391,7 +388,6 @@ const messageId = await Courier.sendPush({
   userId: 'example_user',
   title: 'Chirp Chrip!',
   body: 'Hello from Courier 🐣',
-  isProduction: false, // This only affects APNS pushes. false == sandbox / true == production
   providers: [CourierProvider.APNS, CourierProvider.FCM],
 });
 ```

@@ -141,7 +141,6 @@ export default function App() {
             .map((provider) => provider.name)
             .join(' and ')}`,
           providers: selectedProviders.map((provider) => provider.value),
-          isProduction: !__DEV__,
         });
 
         showToast(`Message sent. Message id: ${messageId}`);
