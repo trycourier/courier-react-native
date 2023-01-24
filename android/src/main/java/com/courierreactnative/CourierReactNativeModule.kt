@@ -104,7 +104,6 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     title: String,
     body: String,
     providers: ReadableArray,
-    isProduction: Boolean,
     promise: Promise
   ) {
     Courier.shared.sendPush(
@@ -113,7 +112,6 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
       title = title,
       body = body,
       providers = providers.toCourierProviders(),
-      isProduction = isProduction,
       onSuccess = { messageId ->
         promise.resolve(messageId)
       },
