@@ -1,6 +1,6 @@
 {
   "name": "@trycourier/courier-react-native",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
