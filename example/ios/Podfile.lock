@@ -1,9 +1,9 @@
 PODS:
   - boost (1.76.0)
   - CocoaAsyncSocket (7.6.5)
-  - Courier-iOS (1.1.1)
-  - courier-react-native (1.0.6):
-    - Courier-iOS (= 1.1.1)
+  - Courier-iOS (1.1.2)
+  - courier-react-native (1.0.8):
+    - Courier-iOS (= 1.1.2)
     - React-Core
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.68.2)
@@ -527,8 +527,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  Courier-iOS: a547b7b2f31ef1f819c2901e31cd1065d40bf4a7
-  courier-react-native: beb080f6c1e6b9f32fdc4f7a382345ca66f42ddb
+  Courier-iOS: 1a375faaf398beb5fb0947643f1907980776aa4b
+  courier-react-native: 7d4e8e1cbe9a54be9d5cb0fd40f3234b6d849b7e
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
   FBLazyVector: a7a655862f6b09625d11c772296b01cd5164b648
   FBReactNativeSpec: 81ce99032d5b586fddd6a38d450f8595f7e04be4
