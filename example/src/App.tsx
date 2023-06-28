@@ -99,12 +99,10 @@ export default function App() {
   };
 
   const handleSignIn = async (userId: string) => {
-
-    console.log('New user id')
-    console.log(userId)
+    console.log('New user id');
+    console.log(userId);
 
     try {
-
       setIsLoading(true);
 
       await Courier.signIn({
@@ -116,7 +114,6 @@ export default function App() {
       const newUserId = await Courier.userId;
       setCourierUserId(newUserId);
       hideUserInputModal();
-
     } catch (e) {
       console.error(e);
     } finally {
