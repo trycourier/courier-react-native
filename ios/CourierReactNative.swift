@@ -110,19 +110,20 @@ class CourierReactNative: RCTEventEmitter {
         
     }
 
-    @objc(signIn: accessToken: withResolver: withRejecter:)
-    func signIn(userId: NSString, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc(signIn: clientKey: accessToken: withResolver: withRejecter:)
+    func signIn(userId: NSString, clientKey: NSString?, accessToken: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
       
-        Courier.shared.signIn(
-            accessToken: accessToken as String,
-            userId: userId as String,
-            onSuccess: {
-                resolve(nil)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
-            }
-        )
+       Courier.shared.signIn(
+           accessToken: accessToken as String,
+           clientKey: clientKey as? String,
+           userId: userId as String,
+           onSuccess: {
+               resolve(nil)
+           },
+           onFailure: { error in
+               reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+           }
+       )
       
     }
 
@@ -205,19 +206,19 @@ class CourierReactNative: RCTEventEmitter {
             return
         }
 
-        Courier.shared.sendPush(
-            authKey: authKey as String,
-            userId: userId as String,
-            title: title as String,
-            message: body as String,
-            providers: courierProviders,
-            onSuccess: { requestId in
-                resolve(requestId)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
-            }
-        )
+//        Courier.shared.sendPush(
+//            authKey: authKey as String,
+//            userId: userId as String,
+//            title: title as String,
+//            message: body as String,
+//            providers: courierProviders,
+//            onSuccess: { requestId in
+//                resolve(requestId)
+//            },
+//            onFailure: { error in
+//                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
+//            }
+//        )
         
     }
 

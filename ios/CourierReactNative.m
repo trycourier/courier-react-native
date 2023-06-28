@@ -3,6 +3,7 @@
 @interface RCT_EXTERN_MODULE(CourierReactNative, NSObject)
 
 RCT_EXTERN_METHOD(signIn:(NSString*)userId
+                  clientKey:(NSString*)clientKey
                   accessToken:(NSString*)accessToken
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)

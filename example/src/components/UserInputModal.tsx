@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 type PropType = {
   open: boolean;
   onClose: () => void;
-  onOkay: ({ userId }: { userId: string }) => Promise<void>;
+  onOkay: (userId: string) => Promise<void>;
 };
 
 function UserInputModal({ open, onClose, onOkay }: PropType) {
@@ -92,7 +92,7 @@ function UserInputModal({ open, onClose, onOkay }: PropType) {
             <View style={styles.cancelButtonStyle}>
               <Button title="Cancel" onPress={onClose} />
             </View>
-            <Button title="Sign In" onPress={() => onOkay({ userId })} />
+            <Button title="Sign In" onPress={() => onOkay(userId)} />
           </View>
         </View>
       </View>

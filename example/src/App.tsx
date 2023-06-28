@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN } from '@env';
+import { ACCESS_TOKEN, CLIENT_KEY } from '@env';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -98,21 +98,27 @@ export default function App() {
     setSelectedIosPreferences(updatedItems);
   };
 
-  const handleSignIn = async ({ userId: signInUserId }: { userId: string }) => {
-    if (!signInUserId) return;
+  const handleSignIn = async (userId: string) => {
+
+    console.log('New user id')
+    console.log(userId)
+
     try {
+
       setIsLoading(true);
 
       await Courier.signIn({
         accessToken: ACCESS_TOKEN,
-        userId: signInUserId,
+        clientKey: CLIENT_KEY,
+        userId: userId,
       });
 
-      const userId = await Courier.userId;
-      setCourierUserId(userId);
+      const newUserId = await Courier.userId;
+      setCourierUserId(newUserId);
       hideUserInputModal();
+
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setIsLoading(false);
     }
@@ -274,6 +280,10 @@ export default function App() {
               />
             </>
           )}
+
+          {/* TODO Get working */}
+          {/* <CourierInbox style={{flex: 1}} /> */}
+
           <View style={styles.divider} />
           <List
             title="Providers"

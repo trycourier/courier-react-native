@@ -1,6 +1,6 @@
 {
   "name": "@trycourier/courier-react-native",
-  "version": "1.0.9",
+  "version": "2.0.0",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -38,7 +38,7 @@
     "android"
   ],
   "repository": "https://github.com/trycourier/courier-react-native",
-  "author": "FahadAminShovon <shovonfahad991@gmail.com> (https://github.com/FahadAminShovon)",
+  "author": "Mike Miller <mike@courier.com> (https://github.com/mikemilla)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/trycourier/courier-react-native/issues"

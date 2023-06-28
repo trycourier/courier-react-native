@@ -17,7 +17,8 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency 'Courier-iOS', '1.1.2'
+  s.dependency "Courier_iOS", "2.0.3"
+
   s.swift_version = '5.6'
 
   # Don't install the dependencies when we run `pod install` in the old architecture.
@@ -34,4 +35,5 @@ Pod::Spec.new do |s|
     s.dependency "RCTTypeSafety"
     s.dependency "ReactCommon/turbomodule/core"
   end
+
 end

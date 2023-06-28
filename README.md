@@ -139,11 +139,11 @@ https://user-images.githubusercontent.com/6370613/199331562-5d16e02f-2878-4f60-b
 6. Click "Cancel" on the next popup
    - You do NOT need to click "Activate" here. Your Notification Service Extension will still work just fine.
 7. Open your `Podfile` and add the following snippet to the end of your Podfile
-   - This will link the `Courier-iOS` pod to your Notification Service Extension
+   - This will link the `Courier_iOS` pod to your Notification Service Extension
 
 ```
 target 'CourierService' do
-  pod 'Courier-iOS'
+  pod 'Courier_iOS'
 end
 ```
 

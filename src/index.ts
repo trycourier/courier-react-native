@@ -110,6 +110,7 @@ class Courier {
    * ```
    *await Courier.signIn({
       accessToken: YOUR_COURIER_GENERATED_JWT,
+      clientKey: YOUR_CLIENT_KEY,
       userId: YOUR_USER_ID,
     })
    * ```
@@ -119,12 +120,14 @@ class Courier {
    */
   public signIn({
     accessToken,
+    clientKey,
     userId,
   }: {
     accessToken: string;
+    clientKey: string;
     userId: string;
   }): Promise<void> {
-    return CourierReactNativeModules.signIn(userId, accessToken);
+    return CourierReactNativeModules.signIn(userId, clientKey, accessToken);
   }
 
   /**

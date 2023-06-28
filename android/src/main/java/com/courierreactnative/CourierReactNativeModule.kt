@@ -4,6 +4,9 @@ import android.content.Intent
 import com.courier.android.*
 import com.courier.android.models.CourierAgent
 import com.courier.android.models.CourierProvider
+import com.courier.android.modules.*
+import com.courier.android.utils.pushNotification
+import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
@@ -39,9 +42,10 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     get() = currentActivity as? ReactActivity
 
   @ReactMethod
-  fun signIn(userId: String, accessToken: String, promise: Promise) {
+  fun signIn(userId: String, clientKey: String?, accessToken: String, promise: Promise) {
     Courier.shared.signIn(
       accessToken = accessToken,
+      clientKey = clientKey,
       userId = userId,
       onSuccess = {
         promise.resolve(null)
@@ -54,25 +58,33 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
   @ReactMethod
   fun getFcmToken(promise: Promise) {
-    try {
-      val token = Courier.shared.fcmToken
-      promise.resolve(token)
-    } catch (e: Exception) {
-      promise.reject(COURIER_ERROR_TAG, e)
-    }
-  }
-
-  @ReactMethod
-  fun setFcmToken(token: String, promise: Promise) {
-    Courier.shared.setFCMToken(
-      token,
-      onSuccess = {
-        promise.resolve(null)
+    Courier.shared.getFCMToken(
+      onSuccess = { token ->
+        promise.resolve(token)
       },
       onFailure = { e ->
         promise.reject(COURIER_ERROR_TAG, e)
       }
     )
+  }
+
+  @ReactMethod
+  fun setFcmToken(token: String, promise: Promise) {
+
+    token.let { fcmToken ->
+
+      Courier.shared.setFCMToken(
+        fcmToken,
+        onSuccess = {
+          promise.resolve(null)
+        },
+        onFailure = { e ->
+          promise.reject(COURIER_ERROR_TAG, e)
+        }
+      )
+
+    }
+
   }
 
   @ReactMethod
@@ -106,43 +118,43 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     providers: ReadableArray,
     promise: Promise
   ) {
-    Courier.shared.sendPush(
-      authKey = authKey,
-      userId = userId,
-      title = title,
-      body = body,
-      providers = providers.toCourierProviders(),
-      onSuccess = { messageId ->
-        promise.resolve(messageId)
-      },
-      onFailure = { e ->
-        promise.reject(COURIER_ERROR_TAG, e)
-      }
-    )
+//    Courier.shared.sendPush(
+//      authKey = authKey,
+//      userId = userId,
+//      title = title,
+//      body = body,
+//      providers = providers.toCourierProviders(),
+//      onSuccess = { messageId ->
+//        promise.resolve(messageId)
+//      },
+//      onFailure = { e ->
+//        promise.reject(COURIER_ERROR_TAG, e)
+//      }
+//    )
   }
 
   @ReactMethod
   fun requestNotificationPermission(promise: Promise) {
-    try {
-      reactActivity?.requestNotificationPermission { isGranted ->
-        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
-        promise.resolve(status.value)
-      }
-    } catch (e: Exception) {
-      promise.reject(COURIER_ERROR_TAG, e)
-    }
+//    try {
+//      reactActivity?.requestNotificationPermission { isGranted ->
+//        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
+//        promise.resolve(status.value)
+//      }
+//    } catch (e: Exception) {
+//      promise.reject(COURIER_ERROR_TAG, e)
+//    }
   }
 
   @ReactMethod
   fun getNotificationPermissionStatus(promise: Promise) {
-    try {
-      reactActivity?.getNotificationPermissionStatus { isGranted ->
-        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
-        promise.resolve(status.value)
-      }
-    } catch (e: Exception) {
-      promise.reject(COURIER_ERROR_TAG, e)
-    }
+//    try {
+//      reactActivity?.getNotificationPermissionStatus { isGranted ->
+//        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
+//        promise.resolve(status.value)
+//      }
+//    } catch (e: Exception) {
+//      promise.reject(COURIER_ERROR_TAG, e)
+//    }
   }
 
   @ReactMethod

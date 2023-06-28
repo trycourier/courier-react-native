@@ -36,6 +36,9 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
             object:nil
         ];
         
+        [[Courier shared] isUserSignedIn];
+//        [[CourierInbox alloc] init];
+        
     }
     
     return(self);
