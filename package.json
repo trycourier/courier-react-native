@@ -49,15 +49,11 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.18.2",
-    "@commitlint/config-conventional": "^17.0.2",
     "@react-native-community/eslint-config": "^3.2.0",
-    "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
     "@types/react": "~17.0.21",
     "@types/react-native": "0.68.0",
     "@typescript-eslint/parser": "^5.42.1",
-    "commitizen": "^4.2.5",
-    "commitlint": "^17.2.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.27.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -67,13 +63,11 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.10",
     "jest": "^28.1.1",
-    "lefthook": "^1.2.0",
     "pod-install": "^0.1.0",
     "prettier": "^2.7.1",
     "react": "17.0.2",
     "react-native": "0.68.2",
     "react-native-builder-bob": "^0.18.3",
-    "release-it": "^15.0.0",
     "typescript": "^4.8.4"
   },
   "resolutions": {
@@ -92,28 +86,6 @@
     "setupFiles": [
       "./src/__mocks__/native-module-bridge.js"
     ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
   },
   "eslintIgnore": [
     "node_modules/",
@@ -137,10 +109,7 @@
       ]
     ]
   },
-  "dependencies": {},
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+  "dependencies": {
+    "@trycourier/courier-react-native": "^1.0.9"
   }
 }
