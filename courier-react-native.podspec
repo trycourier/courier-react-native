@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "Courier_iOS", "2.0.3"
+  s.dependency "Courier_iOS", "2.0.4"
 
   s.swift_version = '5.6'
 

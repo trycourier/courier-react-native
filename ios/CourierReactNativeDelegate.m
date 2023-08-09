@@ -37,7 +37,6 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
         ];
         
         [[Courier shared] isUserSignedIn];
-//        [[CourierInbox alloc] init];
         
     }
     

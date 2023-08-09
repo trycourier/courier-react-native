@@ -1,18 +1,20 @@
 /* eslint no-underscore-dangle: 0 */
 /* eslint class-methods-use-this: 0 */
+import { Component, ReactNode } from 'react';
 import {
   NativeModules,
   Platform,
   DeviceEventEmitter,
   NativeEventEmitter,
   EmitterSubscription,
+  Text,
 } from 'react-native';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n${Platform.select(
     { ios: "- You have run 'pod install'\n", default: '' }
   )}- You rebuilt the app after installing the package\n` +
-  `- You are not using Expo managed workflow\n`;
+  '- You are not using Expo managed workflow\n';
 
 const CourierReactNativeModules = NativeModules.CourierReactNative
   ? NativeModules.CourierReactNative
@@ -35,8 +37,8 @@ export enum CourierProvider {
 }
 
 class Courier {
-  readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
 
+  readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
   readonly PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered';
 
   public constructor() {
@@ -50,9 +52,7 @@ class Courier {
     try {
       await Promise.all([
         this.setIsDebugging(__DEV__),
-        this.iOSForegroundPresentationOptions({
-          options: ['sound', 'badge', 'list', 'banner'],
-        }),
+        this.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] }),
       ]);
     } catch (error) {
       console.log(error);
@@ -69,18 +69,16 @@ class Courier {
    * @example Courier.setIsDebugging(true)
    */
   public async setIsDebugging(isDebugging: boolean): Promise<boolean> {
+
     // Remove the existing listener if needed
     this.debugListener?.remove();
 
     // Set a new listener
     // listener needs to be registered first to catch the event
     if (isDebugging) {
-      this.debugListener = CourierEventEmitter.addListener(
-        'courierDebugEvent',
-        (event) => {
-          console.log('\x1b[36m%s\x1b[0m', 'COURIER', event);
-        }
-      );
+      this.debugListener = CourierEventEmitter.addListener('courierDebugEvent', (event: any) => {
+        console.log('\x1b[36m%s\x1b[0m', 'COURIER', event);
+      });
     }
 
     this._isDebugging = await CourierReactNativeModules.setDebugMode(
@@ -118,16 +116,8 @@ class Courier {
    * that is requested from your backend
    * https://www.courier.com/docs/reference/auth/issue-token/
    */
-  public signIn({
-    accessToken,
-    clientKey,
-    userId,
-  }: {
-    accessToken: string;
-    clientKey: string;
-    userId: string;
-  }): Promise<void> {
-    return CourierReactNativeModules.signIn(userId, clientKey, accessToken);
+  public signIn(props: { accessToken: string, clientKey: string, userId: string }): Promise<void> {
+    return CourierReactNativeModules.signIn(props.userId, props.clientKey, props.accessToken);
   }
 
   /**
@@ -164,8 +154,8 @@ class Courier {
    * using Courier token management apis
    * @example await setFcmToken('asdf...asdf')
    */
-  public setFcmToken(token: string): Promise<void> {
-    return CourierReactNativeModules.setFcmToken(token);
+  public setFcmToken(props: { token: string }): Promise<void> {
+    return CourierReactNativeModules.setFcmToken(props.token);
   }
 
   /**
@@ -182,26 +172,8 @@ class Courier {
   * ```
   * @returns promise
   */
-  public sendPush({
-    authKey,
-    userId,
-    title,
-    body,
-    providers,
-  }: {
-    authKey: string;
-    userId: string;
-    title?: string;
-    body?: string;
-    providers: CourierProvider[];
-  }): Promise<string> {
-    return CourierReactNativeModules.sendPush(
-      authKey,
-      userId,
-      title,
-      body,
-      providers
-    );
+  public sendPush(props: { authKey: string, userId: string, title?: string, body?: string, providers: CourierProvider[] }): Promise<string> {
+    return CourierReactNativeModules.sendPush(props.authKey, props.userId, props.title, props.body, props.providers);
   }
 
   /**
@@ -231,18 +203,16 @@ class Courier {
    *
    * @example iOSForegroundPresentationOptions({options: ['sound']});
    */
-  public iOSForegroundPresentationOptions({
-    options,
-  }: {
-    options: ('sound' | 'badge' | 'list' | 'banner')[];
-  }): Promise<void> {
+  public iOSForegroundPresentationOptions(props: { options: ('sound' | 'badge' | 'list' | 'banner')[] }): Promise<void> {
+
     // Only works on iOS
     if (Platform.OS !== 'ios') return Promise.resolve();
 
-    const normalizedParams = Array.from(new Set(options));
+    const normalizedParams = Array.from(new Set(props.options));
     return CourierReactNativeModules.iOSForegroundPresentationOptions({
       options: normalizedParams,
     });
+
   }
 
   /**
@@ -264,13 +234,8 @@ class Courier {
   *```
   * @returns  function that can be used to unsubscribe from registered listeners
   */
-  public registerPushNotificationListeners({
-    onPushNotificationClicked,
-    onPushNotificationDelivered,
-  }: {
-    onPushNotificationClicked: (_push: any) => void;
-    onPushNotificationDelivered: (_push: any) => void;
-  }) {
+  public registerPushNotificationListeners(props: { onPushNotificationClicked: (_push: any) => void, onPushNotificationDelivered: (_push: any) => void }) {
+    
     let notificationClickedListener: EmitterSubscription;
     let notificationDeliveredListener: EmitterSubscription;
 
@@ -280,7 +245,7 @@ class Courier {
         this.PUSH_NOTIFICATION_CLICKED,
         (event: any) => {
           try {
-            onPushNotificationClicked(JSON.parse(event));
+            props.onPushNotificationClicked(JSON.parse(event));
           } catch (error) {
             console.log(error);
           }
@@ -291,7 +256,7 @@ class Courier {
         this.PUSH_NOTIFICATION_DELIVERED,
         (event: any) => {
           try {
-            onPushNotificationDelivered(JSON.parse(event));
+            props.onPushNotificationDelivered(JSON.parse(event));
           } catch (error) {
             console.log(error);
           }
@@ -305,7 +270,7 @@ class Courier {
         this.PUSH_NOTIFICATION_CLICKED,
         (event: any) => {
           try {
-            onPushNotificationClicked(JSON.parse(event));
+            props.onPushNotificationClicked(JSON.parse(event));
           } catch (error) {
             console.log(error);
           }
@@ -316,7 +281,7 @@ class Courier {
         this.PUSH_NOTIFICATION_DELIVERED,
         (event: any) => {
           try {
-            onPushNotificationDelivered(JSON.parse(event));
+            props.onPushNotificationDelivered(JSON.parse(event));
           } catch (error) {
             console.log(error);
           }
@@ -334,6 +299,7 @@ class Courier {
       notificationClickedListener.remove();
       notificationDeliveredListener.remove();
     };
+
   }
 }
 

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import Courier, { CourierProvider } from '@trycourier/courier-react-native';
+
 import DarkModeText from './components/DarkModeText';
 import UserInputModal from './components/UserInputModal';
 import { allIOSPresentationOptions, allProviders } from './utils/constants';
@@ -103,6 +104,7 @@ export default function App() {
     console.log(userId);
 
     try {
+
       setIsLoading(true);
 
       await Courier.signIn({
@@ -114,6 +116,7 @@ export default function App() {
       const newUserId = await Courier.userId;
       setCourierUserId(newUserId);
       hideUserInputModal();
+
     } catch (e) {
       console.error(e);
     } finally {
@@ -279,7 +282,7 @@ export default function App() {
           )}
 
           {/* TODO Get working */}
-          {/* <CourierInbox style={{flex: 1}} /> */}
+          <CourierInboxView style={{ flex: 1 }} />
 
           <View style={styles.divider} />
           <List
