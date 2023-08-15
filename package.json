@@ -1,7 +1,7 @@
 {
   "name": "courier-react-native",
   "version": "0.1.0",
-  "description": "Inbox & Push Notifications for iOS",
+  "description": "Inbox & Push Notifications for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -129,7 +129,7 @@
           "quoteProps": "consistent",
           "singleQuote": true,
           "tabWidth": 2,
-          "trailingComma": "es5",
+          "trailingComma": "off",
           "useTabs": false
         }
       ]
