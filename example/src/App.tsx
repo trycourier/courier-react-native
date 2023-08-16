@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import { StyleSheet, View } from 'react-native';
-import Courier, { CourierReactNativeView } from 'courier-react-native';
+import Courier, { CourierInboxView } from 'courier-react-native';
 
 export default function App() {
-  
+
   React.useEffect(() => {
     test();
   }, []);
@@ -18,7 +18,7 @@ export default function App() {
 
     await Courier.signIn({
       accessToken: 'pk_prod_2M1VP0GVFE4M0RQ4ZYFW1DGH3R90',
-      clientKey: 'Something',
+      clientKey: 'YWQxN2M2ZmMtNDU5OS00ZThlLWE4NTktZDQ4YzVlYjkxM2Mx',
       userId: 'mike',
     })
 
@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <CourierReactNativeView color="#32a852" style={styles.box} />
+      <CourierInboxView theme={{ color: "#0C356A", cornerRadius: 0 }} style={styles.box} />
     </View>
   );
 }
@@ -36,12 +36,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+    width: '100%',
+    height: '100%',
   },
 });

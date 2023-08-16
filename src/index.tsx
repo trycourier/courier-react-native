@@ -14,16 +14,16 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-type CourierReactNativeProps = {
-  color: string;
+type CourierInboxViewProps = {
+  theme: { color: string, cornerRadius: number };
   style: ViewStyle;
 };
 
 const ComponentName = 'CourierReactNativeView';
 
-export const CourierReactNativeView =
+export const CourierInboxView =
   UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<CourierReactNativeProps>(ComponentName)
+    ? requireNativeComponent<CourierInboxViewProps>(ComponentName)
     : () => {
         throw new Error(LINKING_ERROR);
       };
