@@ -15,40 +15,47 @@ class CourierReactNativeViewManager: RCTViewManager {
 
 class CourierReactNativeView : UIView {
     
-    @objc var theme: NSDictionary = [:] {
+    @objc var lightTheme: NSDictionary? = [:] {
         didSet {
-            addInbox(theme: theme)
+            refreshInbox()
         }
     }
     
-    private func addInbox(theme: NSDictionary) {
+    @objc var darkTheme: NSDictionary? = [:] {
+        didSet {
+            refreshInbox()
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        refreshInbox()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        refreshInbox()
+    }
+    
+    private func refreshInbox() {
         
         subviews.forEach { $0.removeFromSuperview() }
         
-        let color = theme["color"] as? String ?? ""
-        let cornerRadius = theme["cornerRadius"] as? CGFloat ?? 0
-        
-        // Theme object containing all the styles you want to apply
-        let inboxTheme = CourierInboxTheme(
-            unreadIndicatorBarColor: colorFromHex(color) ?? .systemRed,
-            buttonStyles: CourierInboxButtonStyles(
-                backgroundColor: colorFromHex(color) ?? .systemRed,
-                cornerRadius: cornerRadius
-            )
-        )
-        
         // Create the view
         let courierInbox = CourierInbox(
-            lightTheme: inboxTheme,
-            darkTheme: inboxTheme,
+            lightTheme: dictionaryToTheme(dictionary: lightTheme) ?? .defaultLight,
+            darkTheme: dictionaryToTheme(dictionary: darkTheme) ?? .defaultDark,
             didClickInboxMessageAtIndex: { message, index in
+                // TODO
                 message.isRead ? message.markAsUnread() : message.markAsRead()
                 print(index, message)
             },
             didClickInboxActionForMessageAtIndex: { action, message, index in
+                // TODO
                 print(action, message, index)
             },
             didScrollInbox: { scrollView in
+                // TODO
                 print(scrollView.contentOffset.y)
             }
         )
@@ -67,9 +74,187 @@ class CourierReactNativeView : UIView {
         
     }
     
-    private func colorFromHex(_ hexString: String) -> UIColor? {
+    func dictionaryToTheme(dictionary: NSDictionary?) -> CourierInboxTheme? {
         
-        var hexSanitized = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let dict = dictionary else {
+            return nil
+        }
+        
+        // iOS Theme
+        let iOS = dict["iOS"] as? [String : Any]
+        let messageAnimationStyle = iOS?["messageAnimationStyle"] as? String
+        let cellStyles = iOS?["cellStyles"] as? [String : Any]
+        
+        // Unread
+        let unreadIndicatorBarColor = dict["unreadIndicatorBarColor"] as? String
+        
+        // Loading
+        let loadingIndicatorColor = dict["loadingIndicatorColor"] as? String
+        
+        // Title
+        let titleFont = dict["titleFont"] as? [String : Any]
+        
+        // Time
+        let timeFont = dict["timeFont"] as? [String : Any]
+        
+        // Body
+        let bodyFont = dict["bodyFont"] as? [String : Any]
+        
+        // Detail
+        let detailTitleFont = dict["detailTitleFont"] as? [String : Any]
+        
+        // Detail
+        let buttonStyles = dict["buttonStyles"] as? [String : Any]
+        
+        return CourierInboxTheme(
+            messageAnimationStyle: messageAnimationStyle?.toRowAnimation() ?? .left,
+            unreadIndicatorBarColor: unreadIndicatorBarColor?.toColor(),
+            loadingIndicatorColor: loadingIndicatorColor?.toColor(),
+            titleFont: dictionaryToFont(
+                dictionary: titleFont,
+                defaultFont: UIFont.boldSystemFont(ofSize: UIFont.labelFontSize),
+                defaultColor: .label
+            ),
+            timeFont: dictionaryToFont(
+                dictionary: timeFont,
+                defaultFont: UIFont.systemFont(ofSize: UIFont.labelFontSize),
+                defaultColor: .placeholderText
+            ),
+            bodyFont: dictionaryToFont(
+                dictionary: bodyFont,
+                defaultFont: UIFont.systemFont(ofSize: UIFont.labelFontSize),
+                defaultColor: .label
+            ),
+            detailTitleFont: dictionaryToFont(
+                dictionary: detailTitleFont,
+                defaultFont: UIFont.systemFont(ofSize: UIFont.labelFontSize),
+                defaultColor: .label
+            ),
+            buttonStyles: dictionaryToButtonStyles(
+                dictionary: buttonStyles
+            ),
+            cellStyles: dictionaryToCellStyles(
+                dictionary: cellStyles
+            )
+        )
+        
+    }
+    
+    func dictionaryToFont(dictionary: [String : Any]?, defaultFont: UIFont, defaultColor: UIColor) -> CourierInboxFont {
+        
+        guard let dict = dictionary else {
+            return CourierInboxFont(
+                font: defaultFont,
+                color: defaultColor
+            )
+        }
+        
+        let family = dict["family"] as? String ?? defaultFont.familyName
+        let size = dict["size"] as? CGFloat ?? defaultFont.pointSize
+        let color = dict["color"] as? String
+        
+        return CourierInboxFont(
+            font: UIFont(name: family, size: size) ?? defaultFont,
+            color: color?.toColor() ?? defaultColor
+        )
+        
+    }
+    
+    func dictionaryToButtonStyles(dictionary: [String : Any]?) -> CourierInboxButtonStyles {
+        
+        guard let dict = dictionary else {
+            return CourierInboxButtonStyles()
+        }
+        
+        let font = dict["font"] as? [String : Any]
+        let backgroundColor = dict["backgroundColor"] as? String
+        let cornerRadius = dict["cornerRadius"] as? CGFloat
+        
+        return CourierInboxButtonStyles(
+            font: dictionaryToFont(
+                dictionary: font,
+                defaultFont: UIFont.systemFont(ofSize: UIFont.labelFontSize),
+                defaultColor: .white
+            ),
+            backgroundColor: backgroundColor?.toColor(),
+            cornerRadius: cornerRadius ?? 8
+        )
+        
+    }
+    
+    func dictionaryToCellStyles(dictionary: [String : Any]?) -> CourierInboxCellStyles {
+        
+        guard let dict = dictionary else {
+            return CourierInboxCellStyles()
+        }
+        
+        let separatorStyle = dict["separatorStyle"] as? String
+        let separatorColor = dict["separatorColor"] as? String
+        let selectionStyle = dict["selectionStyle"] as? String
+        
+        let insets = dict["separatorInsets"] as? [String : Any]
+        let top = insets?["top"] as? CGFloat
+        let left = insets?["left"] as? CGFloat
+        let right = insets?["right"] as? CGFloat
+        let bottom = insets?["bottom"] as? CGFloat
+        let separatorInsets = UIEdgeInsets(top: top ?? 0, left: left ?? 0, bottom: bottom ?? 0, right: right ?? 0)
+        
+        return CourierInboxCellStyles(
+            separatorStyle: separatorStyle?.toSeparatorStyle() ?? .singleLine,
+            separatorInsets: separatorInsets,
+            separatorColor: separatorColor?.toColor(),
+            selectionStyle: selectionStyle?.toSelectionStyle() ?? .default
+        )
+        
+    }
+    
+}
+
+internal extension String {
+    
+    func toRowAnimation() -> UITableView.RowAnimation {
+        
+        switch self.lowercased() {
+            case "fade": return .fade
+            case "right": return .right
+            case "left": return .left
+            case "top": return .top
+            case "bottom": return .bottom
+            case "none": return .none
+            case "middle": return .middle
+            case "automatic":
+                if #available(iOS 11.0, *) {
+                    return .automatic
+                } else {
+                    return .fade
+                }
+            default: return .fade
+        }
+        
+    }
+    
+    func toSeparatorStyle() -> UITableViewCell.SeparatorStyle {
+        switch self.lowercased() {
+            case "none": return .none
+            case "singleLine": return .singleLine
+            case "singleLineEtched": return .singleLineEtched
+            default: return .singleLine
+        }
+    }
+    
+    func toSelectionStyle() -> UITableViewCell.SelectionStyle? {
+        switch self.lowercased() {
+            case "none": return .none
+            case "blue": return .blue
+            case "gray": return .gray
+            case "default": return .default
+            default: return .default
+        }
+    }
+    
+    func toColor() -> UIColor? {
+        
+        var hexSanitized = trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
 
         var rgb: UInt64 = 0

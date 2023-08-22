@@ -2,31 +2,16 @@ import {
   NativeModules,
   NativeEventEmitter,
   EmitterSubscription,
-  requireNativeComponent,
-  UIManager,
   Platform,
-  type ViewStyle,
 } from 'react-native';
+
+export { CourierInboxView } from './views/CourierInboxView';
 
 const LINKING_ERROR =
   `The package 'courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
-
-type CourierInboxViewProps = {
-  theme: { color: string, cornerRadius: number };
-  style: ViewStyle;
-};
-
-const ComponentName = 'CourierReactNativeView';
-
-export const CourierInboxView =
-  UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<CourierInboxViewProps>(ComponentName)
-    : () => {
-        throw new Error(LINKING_ERROR);
-      };
 
 const CourierReactNativeModules = NativeModules.CourierReactNativeModule
   ? NativeModules.CourierReactNativeModule
