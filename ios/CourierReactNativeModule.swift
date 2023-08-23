@@ -235,10 +235,54 @@ class CourierReactNativeModule: RCTEventEmitter {
     }
     
     @objc(setDebugMode: withResolver: withRejecter:)
-    func setDebugMode(isDebugging: Bool,resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    func setDebugMode(isDebugging: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
         Courier.shared.isDebugging = isDebugging
         resolve(Courier.shared.isDebugging)
+        
+    }
+    
+    @objc(readMessage: withResolver: withRejecter:)
+    func readMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.shared.readMessage(
+            messageId: messageId as String,
+            onSuccess: {
+                resolve(nil)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
+    
+    @objc(unreadMessage: withResolver: withRejecter:)
+    func unreadMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.shared.unreadMessage(
+            messageId: messageId as String,
+            onSuccess: {
+                resolve(nil)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
+    
+    @objc(readAllInboxMessages: withRejecter:)
+    func readAllInboxMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.shared.readAllInboxMessages(
+            onSuccess: {
+                resolve(nil)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+            }
+        )
         
     }
 

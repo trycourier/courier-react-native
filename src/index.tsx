@@ -113,6 +113,33 @@ class Courier {
   public signIn(props: { accessToken: string, clientKey?: string, userId: string }): Promise<void> {
     return CourierReactNativeModules.signIn(props.accessToken, props.clientKey ?? null, props.userId);
   }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+  public readMessage(props: { messageId: string }): Promise<void> {
+    return CourierReactNativeModules.readMessage(props.messageId);
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+   public unreadMessage(props: { messageId: string }): Promise<void> {
+    return CourierReactNativeModules.unreadMessage(props.messageId);
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+   public readAllInboxMessages(): Promise<void> {
+    return CourierReactNativeModules.readAllInboxMessages();
+  }
   
 }
 

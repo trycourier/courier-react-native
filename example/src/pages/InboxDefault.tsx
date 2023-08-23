@@ -1,7 +1,6 @@
 import Courier, { CourierInboxView } from 'courier-react-native';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import CourierInboxTheme from 'src/models/CourierInboxTheme';
 
 const InboxDefault = () => {
 
@@ -48,7 +47,7 @@ const InboxDefault = () => {
     <View style={styles.container}>
       <CourierInboxView
         onClickInboxMessageAtIndex={(message, index) => {
-          console.log(message)
+          message.read ? Courier.unreadMessage({ messageId: message.messageId }) : Courier.readMessage({ messageId: message.messageId })
         }}
         onClickInboxActionForMessageAtIndex={(action, message, index) => {
           console.log(action)

@@ -147,6 +147,7 @@ const InboxStyled = () => {
         darkTheme={darkTheme}
         onClickInboxMessageAtIndex={(message, index) => {
           console.log(message)
+          message.read ? Courier.unreadMessage({ messageId: message.messageId }) : Courier.readMessage({ messageId: message.messageId })
         }}
         onClickInboxActionForMessageAtIndex={(action, message, index) => {
           console.log(action)
