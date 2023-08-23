@@ -72,9 +72,9 @@ export default function App() {
       cornerRadius: 100
     },
     iOS: {
-      messageAnimationStyle: 'middle',
+      messageAnimationStyle: 'right',
       cellStyles: {
-        separatorStyle: 'singleLine',
+        separatorStyle: 'singleLineEtched',
         separatorInsets: {
           top: 0,
           left: 0,
@@ -95,7 +95,19 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <CourierInboxView lightTheme={lightTheme} style={styles.box} />
+      <CourierInboxView 
+        lightTheme={lightTheme}
+        darkTheme={darkTheme}
+        onClickInboxMessageAtIndex={(message, index) => {
+          console.log(message)
+        }}
+        onClickInboxActionForMessageAtIndex={(action, message, index) => {
+          console.log(action)
+        }}
+        onScrollInbox={(y, x) => {
+          console.log(y)
+        }}
+        style={styles.box} />
     </View>
   );
 }

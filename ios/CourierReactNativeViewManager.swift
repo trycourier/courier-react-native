@@ -27,6 +27,12 @@ class CourierReactNativeView : UIView {
         }
     }
     
+    @objc var onClickInboxMessageAtIndex: RCTBubblingEventBlock? = nil
+    
+    @objc var onClickInboxActionForMessageAtIndex: RCTBubblingEventBlock? = nil
+    
+    @objc var onScrollInbox: RCTBubblingEventBlock? = nil
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         refreshInbox()
@@ -45,18 +51,31 @@ class CourierReactNativeView : UIView {
         let courierInbox = CourierInbox(
             lightTheme: dictionaryToTheme(dictionary: lightTheme) ?? .defaultLight,
             darkTheme: dictionaryToTheme(dictionary: darkTheme) ?? .defaultDark,
-            didClickInboxMessageAtIndex: { message, index in
+            didClickInboxMessageAtIndex: { [weak self] message, index in
+                
                 // TODO
-                message.isRead ? message.markAsUnread() : message.markAsRead()
-                print(index, message)
+//                message.isRead ? message.markAsUnread() : message.markAsRead()
+//                print(index, message)
+                
+                self?.onClickInboxMessageAtIndex?([
+                    "message" : message.toDictionary(),
+                    "index" : index
+                ])
             },
-            didClickInboxActionForMessageAtIndex: { action, message, index in
-                // TODO
-                print(action, message, index)
+            didClickInboxActionForMessageAtIndex: { [weak self] action, message, index in
+                self?.onClickInboxActionForMessageAtIndex?([
+                    "action" : action.toDictionary(),
+                    "message" : message.toDictionary(),
+                    "index" : index
+                ])
             },
-            didScrollInbox: { scrollView in
-                // TODO
-                print(scrollView.contentOffset.y)
+            didScrollInbox: { [weak self] scrollView in
+                self?.onScrollInbox?([
+                    "contentOffset" : [
+                        "y": scrollView.contentOffset.y,
+                        "x": scrollView.contentOffset.x
+                    ]
+                ])
             }
         )
 
@@ -210,6 +229,59 @@ class CourierReactNativeView : UIView {
     
 }
 
+internal extension InboxMessage {
+    
+    @objc func toDictionary() -> NSDictionary {
+        
+        let dictionary: [String: Any?] = [
+            "messageId": messageId,
+            "title": title,
+            "body": body,
+            "preview": preview,
+            "created": created,
+            "actions": actions?.map { $0.toDictionary() },
+            "data": data,
+            "read": isRead,
+            "opened": isOpened,
+            "archived": isArchived
+        ]
+
+        let mutableDictionary = NSMutableDictionary()
+        for (key, value) in dictionary {
+            if let unwrappedValue = value {
+                mutableDictionary[key] = unwrappedValue
+            }
+        }
+
+        return mutableDictionary
+        
+    }
+    
+}
+
+internal extension InboxAction {
+    
+    @objc func toDictionary() -> NSDictionary {
+        
+        let dictionary: [String: Any?] = [
+            "content": content,
+            "href": href,
+            "data": data
+        ]
+
+        let mutableDictionary = NSMutableDictionary()
+        for (key, value) in dictionary {
+            if let unwrappedValue = value {
+                mutableDictionary[key] = unwrappedValue
+            }
+        }
+
+        return mutableDictionary
+        
+    }
+    
+}
+
 internal extension String {
     
     func toRowAnimation() -> UITableView.RowAnimation {
@@ -234,15 +306,18 @@ internal extension String {
     }
     
     func toSeparatorStyle() -> UITableViewCell.SeparatorStyle {
+        
         switch self.lowercased() {
             case "none": return .none
             case "singleLine": return .singleLine
             case "singleLineEtched": return .singleLineEtched
             default: return .singleLine
         }
+        
     }
     
     func toSelectionStyle() -> UITableViewCell.SelectionStyle? {
+        
         switch self.lowercased() {
             case "none": return .none
             case "blue": return .blue
@@ -250,6 +325,7 @@ internal extension String {
             case "default": return .default
             default: return .default
         }
+        
     }
     
     func toColor() -> UIColor? {
