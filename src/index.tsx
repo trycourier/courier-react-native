@@ -4,6 +4,8 @@ import {
   EmitterSubscription,
   Platform,
 } from 'react-native';
+import { CourierInboxListener } from './models/CourierInboxListener';
+import { InboxMessage } from './models/InboxMessage';
 
 export { CourierInboxView } from './views/CourierInboxView';
 
@@ -61,25 +63,22 @@ class Courier {
    * @example Courier.setIsDebugging(true)
    */
   public async setIsDebugging(isDebugging: boolean): Promise<boolean> {
+
     // Remove the existing listener if needed
     this.debugListener?.remove();
 
     // Set a new listener
     // listener needs to be registered first to catch the event
     if (isDebugging) {
-      this.debugListener = CourierEventEmitter.addListener(
-        'courierDebugEvent',
-        (event) => {
-          console.log('\x1b[36m%s\x1b[0m', 'COURIER', event);
-        }
-      );
+      this.debugListener = CourierEventEmitter.addListener('courierDebugEvent', event => {
+        console.log('\x1b[36m%s\x1b[0m', 'COURIER', event);
+      });
     }
 
-    this._isDebugging = await CourierReactNativeModules.setDebugMode(
-      isDebugging
-    );
+    this._isDebugging = await CourierReactNativeModules.setDebugMode(isDebugging);
 
     return this._isDebugging;
+
   }
 
   get isDebugging(): boolean {
@@ -128,7 +127,7 @@ class Courier {
    * @param props 
    * @returns 
    */
-   public unreadMessage(props: { messageId: string }): Promise<void> {
+  public unreadMessage(props: { messageId: string }): Promise<void> {
     return CourierReactNativeModules.unreadMessage(props.messageId);
   }
 
@@ -137,8 +136,50 @@ class Courier {
    * @param props 
    * @returns 
    */
-   public readAllInboxMessages(): Promise<void> {
+  public readAllInboxMessages(): Promise<void> {
     return CourierReactNativeModules.readAllInboxMessages();
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+  public addInboxListener(props: { onInitialLoad: () => void, onError: () => void, onMessagesChanged: (messages: InboxMessage[]) => void }): CourierInboxListener {
+
+    // Create the initial listeners
+    const inboxListener = new CourierInboxListener();
+
+    if (props.onInitialLoad) {
+      inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', event => {
+        props.onInitialLoad!()
+      });
+    }
+
+    if (props.onError) {
+      inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
+        props.onError!()
+      });
+    }
+
+    if (props.onMessagesChanged) {
+      inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
+        console.log('onMessagesChanged')
+        console.log(event)
+        props.onMessagesChanged!(
+          event.messages
+        )
+      });
+    }
+
+    inboxListener.listenerId = CourierReactNativeModules.addInboxListener(null);
+
+    return inboxListener;
+
+  }
+
+  public removeInboxListener(props: { listenerId: string }): string {
+    return CourierReactNativeModules.removeInboxListener(props.listenerId);
   }
   
 }

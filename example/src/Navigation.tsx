@@ -4,6 +4,7 @@ import InboxDefault from './pages/InboxDefault';
 import InboxStyled from './pages/InboxStyled';
 import { Button } from 'react-native';
 import Courier from 'courier-react-native';
+import InboxCustom from './pages/InboxCustom';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,14 +25,10 @@ const Navigation = () => {
       {/* <Tab.Screen name="Auth" component={InboxDefault} /> */}
       <Tab.Screen name="Prebuilt Inbox" component={InboxDefault} options={readAllMessageButton} />
       <Tab.Screen name="Styled Inbox" component={InboxStyled} options={readAllMessageButton} />
-      {/* <Tab.Screen name="Tab4" component={InboxDefault} /> */}
+      <Tab.Screen name="Custom Inbox" component={InboxCustom} options={readAllMessageButton} />
       {/* <Tab.Screen name="Tab5" component={InboxDefault} /> */}
     </Tab.Navigator>
   );
 };
 
 export default Navigation;
-
-function alert(arg0: string): void {
-  throw new Error('Function not implemented.');
-}

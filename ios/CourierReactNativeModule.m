@@ -37,4 +37,12 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  addInboxListener: (NSString*)listenerId
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  removeInboxListener: (NSString*)listenerId
+)
+
 @end

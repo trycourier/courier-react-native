@@ -8,6 +8,14 @@ class CourierReactNativeModule: RCTEventEmitter {
     internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
     private static let COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
     
+    class InboxEvents {
+        internal static let INITIAL_LOADING = "inboxInitialLoad"
+        internal static let ERROR = "inboxError"
+        internal static let MESSAGES_CHANGED = "inboxMessagesChanged"
+    }
+    
+    private var inboxListeners = [String: CourierInboxListener]()
+    
     private var hasListeners = false
     
     private var lastClickedMessage: [AnyHashable: Any]? = nil
@@ -35,7 +43,10 @@ class CourierReactNativeModule: RCTEventEmitter {
 
         // setup listeners
         Courier.shared.logListener = { log in
-            self.sendEvent(withName: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT, body: log)
+            self.sendEvent(
+                withName: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT,
+                body: log
+            )
         }
 
     }
@@ -285,12 +296,72 @@ class CourierReactNativeModule: RCTEventEmitter {
         )
         
     }
+    
+    @objc(addInboxListener:)
+    func addInboxListener(listenerId: NSString?) -> String {
+        
+        let listener = Courier.shared.addInboxListener(
+            onInitialLoad: { [weak self] in
+                self?.sendEvent(
+                    withName: CourierReactNativeModule.InboxEvents.INITIAL_LOADING,
+                    body: nil
+                )
+            },
+            onError: { [weak self] error in
+                self?.sendEvent(
+                    withName: CourierReactNativeModule.InboxEvents.ERROR,
+                    body: String(describing: error)
+                )
+            },
+            onMessagesChanged: { [weak self] messages, unreadMessageCount, totalMessageCount, canPaginate in
+                
+                let json: [String: Any] = [
+                    "messages": messages.map { $0.toDictionary() },
+                    "unreadMessageCount": unreadMessageCount,
+                    "totalMessageCount": totalMessageCount,
+                    "canPaginate": canPaginate
+                ]
+                
+                self?.sendEvent(
+                    withName: CourierReactNativeModule.InboxEvents.MESSAGES_CHANGED,
+                    body: json
+                )
+                
+            }
+        )
+        
+        // Create an id and add the listener to the dictionary
+        let id = UUID().uuidString
+        inboxListeners[id] = listener
+        
+        return id
+        
+    }
+    
+    @objc(removeInboxListener:)
+    func removeInboxListener(listenerId: NSString) -> String {
+        
+        let id = listenerId as String
+        
+        // Remove the listener
+        let listener = inboxListeners[id]
+        listener?.remove()
+        
+        // Remove from dictionary
+        inboxListeners.removeValue(forKey: id)
+        
+        return id
+        
+    }
 
     override func supportedEvents() -> [String]! {
         return [
             CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
             CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT,
-            CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT
+            CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT,
+            CourierReactNativeModule.InboxEvents.INITIAL_LOADING,
+            CourierReactNativeModule.InboxEvents.ERROR,
+            CourierReactNativeModule.InboxEvents.MESSAGES_CHANGED
         ]
     }
     

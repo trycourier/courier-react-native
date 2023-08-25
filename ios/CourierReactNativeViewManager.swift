@@ -52,11 +52,6 @@ class CourierReactNativeView : UIView {
             lightTheme: dictionaryToTheme(dictionary: lightTheme) ?? .defaultLight,
             darkTheme: dictionaryToTheme(dictionary: darkTheme) ?? .defaultDark,
             didClickInboxMessageAtIndex: { [weak self] message, index in
-                
-                // TODO
-//                message.isRead ? message.markAsUnread() : message.markAsRead()
-//                print(index, message)
-                
                 self?.onClickInboxMessageAtIndex?([
                     "message" : message.toDictionary(),
                     "index" : index
