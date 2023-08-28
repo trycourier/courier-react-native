@@ -10,7 +10,7 @@ import { InboxMessage } from './models/InboxMessage';
 export { CourierInboxView } from './views/CourierInboxView';
 
 const LINKING_ERROR =
-  `The package 'courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
+  `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
@@ -145,7 +145,7 @@ class Courier {
    * @param props 
    * @returns 
    */
-  public addInboxListener(props: { onInitialLoad: () => void, onError: () => void, onMessagesChanged: (messages: InboxMessage[]) => void }): CourierInboxListener {
+  public addInboxListener(props: { onInitialLoad?: () => void, onError?: () => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
     // Create the initial listeners
     const inboxListener = new CourierInboxListener();
@@ -165,10 +165,11 @@ class Courier {
 
     if (props.onMessagesChanged) {
       inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
-        console.log('onMessagesChanged')
-        console.log(event)
         props.onMessagesChanged!(
-          event.messages
+          event.messages,
+          event.unreadMessageCount,
+          event.totalMessageCount,
+          event.canPaginate,
         )
       });
     }

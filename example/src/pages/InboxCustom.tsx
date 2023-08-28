@@ -1,6 +1,6 @@
-import Courier from 'courier-react-native';
+import Courier from '@trycourier/courier-react-native';
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
@@ -8,6 +8,7 @@ const InboxCustom = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [messages, setMessages] = useState<InboxMessage[]>([])
+  const [refreshing, setRefreshing] = useState(false);
 
   React.useEffect(() => {
     
@@ -30,6 +31,13 @@ const InboxCustom = () => {
     }
 
   }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }
 
   const ListItem = (props: { message: InboxMessage }) => {
 
@@ -79,6 +87,12 @@ const InboxCustom = () => {
         data={messages}
         keyExtractor={message => message.messageId}
         renderItem={message => <ListItem message={message.item} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     )
 
