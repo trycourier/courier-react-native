@@ -16,9 +16,9 @@ const InboxCustom = () => {
       onInitialLoad: () => {
         setIsLoading(true)
       },
-      onError: () => {
+      onError: (error) => {
         setIsLoading(false)
-        setError('ERROR')
+        setError(error)
       },
       onMessagesChanged: (messages) => {
         setIsLoading(false)
@@ -32,11 +32,14 @@ const InboxCustom = () => {
 
   }, []);
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
+
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    
+    await Courier.refreshInbox();
+
+    setRefreshing(false);
+
   }
 
   const ListItem = (props: { message: InboxMessage }) => {

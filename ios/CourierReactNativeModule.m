@@ -45,4 +45,9 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   removeInboxListener: (NSString*)listenerId
 )
 
+RCT_EXTERN_METHOD(
+  refreshInbox: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
 @end

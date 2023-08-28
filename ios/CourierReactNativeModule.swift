@@ -302,16 +302,20 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         let listener = Courier.shared.addInboxListener(
             onInitialLoad: { [weak self] in
+                
                 self?.sendEvent(
                     withName: CourierReactNativeModule.InboxEvents.INITIAL_LOADING,
                     body: nil
                 )
+                
             },
             onError: { [weak self] error in
+                
                 self?.sendEvent(
                     withName: CourierReactNativeModule.InboxEvents.ERROR,
                     body: String(describing: error)
                 )
+                
             },
             onMessagesChanged: { [weak self] messages, unreadMessageCount, totalMessageCount, canPaginate in
                 
@@ -335,6 +339,15 @@ class CourierReactNativeModule: RCTEventEmitter {
         inboxListeners[id] = listener
         
         return id
+        
+    }
+    
+    @objc(refreshInbox: withRejecter:)
+    func refreshInbox(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.shared.refreshInbox {
+            resolve(nil)
+        }
         
     }
     

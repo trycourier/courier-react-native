@@ -145,7 +145,7 @@ class Courier {
    * @param props 
    * @returns 
    */
-  public addInboxListener(props: { onInitialLoad?: () => void, onError?: () => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
+  public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
     // Create the initial listeners
     const inboxListener = new CourierInboxListener();
@@ -158,8 +158,7 @@ class Courier {
 
     if (props.onError) {
       inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
-        console.log(event)
-        props.onError!()
+        props.onError!(event)
       });
     }
 
@@ -182,6 +181,10 @@ class Courier {
 
   public removeInboxListener(props: { listenerId: string }): string {
     return CourierReactNativeModules.removeInboxListener(props.listenerId);
+  }
+
+  public async refreshInbox(): Promise<void> {
+    return CourierReactNativeModules.refreshInbox();
   }
   
 }
