@@ -12,7 +12,7 @@ const InboxCustom = () => {
 
   React.useEffect(() => {
     
-    const listener = Courier.addInboxListener({
+    const listener = Courier.shared.addInboxListener({
       onInitialLoad: () => {
         setIsLoading(true)
       },
@@ -36,7 +36,7 @@ const InboxCustom = () => {
 
     setRefreshing(true);
     
-    await Courier.refreshInbox();
+    await Courier.shared.refreshInbox();
 
     setRefreshing(false);
 
@@ -64,7 +64,7 @@ const InboxCustom = () => {
 
     function toggleMessage() {
       const messageId = props.message.messageId;
-      isRead ? Courier.unreadMessage({ messageId }) : Courier.readMessage({ messageId });
+      isRead ? Courier.shared.unreadMessage({ messageId }) : Courier.shared.readMessage({ messageId });
     }
 
     return (

@@ -15,7 +15,7 @@ const Navigation = () => {
 
   useEffect(() => {
 
-    const listener = Courier.addInboxListener({
+    const listener = Courier.shared.addInboxListener({
       onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
         console.log(messages.length, unreadMessageCount, totalMessageCount, canPaginate)
         setUnreadCount(unreadMessageCount > 0 ? unreadMessageCount : undefined)
@@ -32,7 +32,7 @@ const Navigation = () => {
     return {
       headerRight: () => (
         <Button
-          onPress={() => Courier.readAllInboxMessages()}
+          onPress={() => Courier.shared.readAllInboxMessages()}
           title="Read All"
         />
       ),

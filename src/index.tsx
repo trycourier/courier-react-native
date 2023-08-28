@@ -4,9 +4,9 @@ import {
   EmitterSubscription,
   Platform,
 } from 'react-native';
+
 import { CourierInboxListener } from './models/CourierInboxListener';
 import { InboxMessage } from './models/InboxMessage';
-
 export { CourierInboxView } from './views/CourierInboxView';
 
 const LINKING_ERROR =
@@ -32,12 +32,27 @@ const CourierEventEmitter = new NativeEventEmitter(
 
 class Courier {
 
+  private static _sharedInstance: Courier;
+  private _isDebugging = false;
+  private debugListener: EmitterSubscription | undefined;
+
   public constructor() {
 
     // Sets the initial SDK values
     // Defaults to React Native level debugging
     // and will show all foreground notification styles in iOS
     this.setDefaults();
+  }
+
+  // Returns the public shared instance
+  public static get shared(): Courier {
+
+    if (!this._sharedInstance) {
+      this._sharedInstance = new Courier();
+    }
+
+    return this._sharedInstance;
+
   }
 
   private async setDefaults() {
@@ -52,10 +67,6 @@ class Courier {
       console.log(error);
     }
   }
-
-  private _isDebugging = false;
-
-  private debugListener: EmitterSubscription | undefined;
 
   /**
    * Tells native Courier SDKs to show or hide logs.
@@ -179,14 +190,24 @@ class Courier {
 
   }
 
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
   public removeInboxListener(props: { listenerId: string }): string {
     return CourierReactNativeModules.removeInboxListener(props.listenerId);
   }
 
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
   public async refreshInbox(): Promise<void> {
     return CourierReactNativeModules.refreshInbox();
   }
   
 }
 
-export default new Courier();
+export default Courier;
