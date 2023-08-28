@@ -151,13 +151,14 @@ class Courier {
     const inboxListener = new CourierInboxListener();
 
     if (props.onInitialLoad) {
-      inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', event => {
+      inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', () => {
         props.onInitialLoad!()
       });
     }
 
     if (props.onError) {
       inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
+        console.log(event)
         props.onError!()
       });
     }
