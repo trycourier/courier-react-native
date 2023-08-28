@@ -12,7 +12,7 @@ export class CourierInboxListener {
 
     // Remove the native inbox listener
     if (this.listenerId) {
-      Courier.removeInboxListener({ listenerId: this.listenerId });
+      Courier.shared.removeInboxListener({ listenerId: this.listenerId });
     }
 
     // Remove the emitters
