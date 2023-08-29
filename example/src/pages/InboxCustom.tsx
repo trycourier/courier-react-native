@@ -1,6 +1,6 @@
 import Courier from '@trycourier/courier-react-native';
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
@@ -8,21 +8,25 @@ const InboxCustom = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [messages, setMessages] = useState<InboxMessage[]>([])
-  const [refreshing, setRefreshing] = useState(false);
+  const [isRefreshing, setRefreshing] = useState(false);
+  const [canPaginate, setCanPaginate] = useState(false);
 
   React.useEffect(() => {
+
+    Courier.shared.setInboxPaginationLimit({ limit: 100 });
     
     const listener = Courier.shared.addInboxListener({
       onInitialLoad: () => {
-        setIsLoading(true)
+        setIsLoading(true);
       },
       onError: (error) => {
-        setIsLoading(false)
-        setError(error)
+        setIsLoading(false);
+        setError(error);
       },
-      onMessagesChanged: (messages) => {
-        setIsLoading(false)
-        setMessages(messages)
+      onMessagesChanged: async (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
+        setCanPaginate(canPaginate);
+        setIsLoading(false);
+        setMessages(messages);
       }
     })
 
@@ -75,6 +79,16 @@ const InboxCustom = () => {
 
   };
 
+  const PaginationItem = () => {
+
+    return (
+      <View style={{ paddingVertical: 20 }}>
+        <ActivityIndicator size="small" />
+      </View>
+    );
+
+  }
+
   function buildContent() {
 
     if (isLoading) {
@@ -92,10 +106,18 @@ const InboxCustom = () => {
         renderItem={message => <ListItem message={message.item} />}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={isRefreshing}
             onRefresh={onRefresh}
           />
         }
+        ListFooterComponent={() => {
+          return canPaginate ? <PaginationItem /> : null
+        }}
+        onEndReached={() => {
+          if (canPaginate) {
+            Courier.shared.fetchNextPageOfMessages()
+          }
+        }}
       />
     )
 

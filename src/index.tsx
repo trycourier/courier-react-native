@@ -56,16 +56,17 @@ class Courier {
   }
 
   private async setDefaults() {
-    try {
-      await Promise.all([
-        this.setIsDebugging(__DEV__),
-        // this.iOSForegroundPresentationOptions({
-        //   options: ['sound', 'badge', 'list', 'banner'],
-        // }),
-      ]);
-    } catch (error) {
-      console.log(error);
-    }
+    this.setIsDebugging(__DEV__);
+    // try {
+    //   await Promise.all([
+    //     this.setIsDebugging(__DEV__),
+    //     // this.iOSForegroundPresentationOptions({
+    //     //   options: ['sound', 'badge', 'list', 'banner'],
+    //     // }),
+    //   ]);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   /**
@@ -73,7 +74,7 @@ class Courier {
    * Defaults to the React __DEV__ mode
    * @example Courier.setIsDebugging(true)
    */
-  public async setIsDebugging(isDebugging: boolean): Promise<boolean> {
+  public setIsDebugging(isDebugging: boolean): boolean {
 
     // Remove the existing listener if needed
     this.debugListener?.remove();
@@ -86,7 +87,9 @@ class Courier {
       });
     }
 
-    this._isDebugging = await CourierReactNativeModules.setDebugMode(isDebugging);
+    CourierReactNativeModules.setDebugMode(isDebugging);
+
+    this._isDebugging = isDebugging
 
     return this._isDebugging;
 
@@ -206,6 +209,24 @@ class Courier {
    */
   public async refreshInbox(): Promise<void> {
     return CourierReactNativeModules.refreshInbox();
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+   public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
+    return CourierReactNativeModules.fetchNextPageOfMessages();
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+   public setInboxPaginationLimit(props: { limit: number }): void {
+    CourierReactNativeModules.setInboxPaginationLimit(props.limit);
   }
   
 }

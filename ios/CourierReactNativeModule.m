@@ -2,6 +2,10 @@
 
 @interface RCT_EXTERN_MODULE(CourierReactNativeModule, NSObject)
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  setDebugMode: (BOOL*)isDebugging
+)
+
 RCT_EXTERN_METHOD(
   signIn: (NSString*)accessToken
   withClientKey: (NSString*)clientKey
@@ -48,6 +52,15 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
 RCT_EXTERN_METHOD(
   refreshInbox: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  fetchNextPageOfMessages: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  setInboxPaginationLimit: (nonnull NSNumber*)limit
 )
 
 @end

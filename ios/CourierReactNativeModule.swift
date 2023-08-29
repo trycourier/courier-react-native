@@ -37,6 +37,12 @@ class CourierReactNativeModule: RCTEventEmitter {
                 
     }
     
+    @objc(setDebugMode:)
+    func setDebugMode(isDebugging: Bool) -> String {
+        Courier.shared.isDebugging = isDebugging
+        return String(describing: Courier.shared.isDebugging)
+    }
+    
     override func startObserving() {
 
         hasListeners = true
@@ -365,6 +371,26 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         return id
         
+    }
+    
+    @objc(fetchNextPageOfMessages: withRejecter:)
+    func fetchNextPageOfMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.shared.fetchNextPageOfMessages(
+            onSuccess: { messages in
+                resolve(messages.map { $0.toDictionary() })
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
+    
+    @objc(setInboxPaginationLimit:)
+    func setInboxPaginationLimit(limit: NSNumber) -> String {
+        Courier.shared.inboxPaginationLimit = limit.intValue
+        return String(describing: limit.intValue)
     }
 
     override func supportedEvents() -> [String]! {

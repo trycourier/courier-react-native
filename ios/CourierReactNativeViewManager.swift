@@ -49,7 +49,9 @@ class CourierReactNativeView : UIView {
         UIView.setAnimationsEnabled(false)
         
         // Remove all previous views
-        subviews.forEach { $0.removeFromSuperview() }
+        subviews.forEach {
+            $0.removeFromSuperview()
+        }
         
         // Create the view
         let courierInbox = CourierInbox(
