@@ -45,6 +45,10 @@ class CourierReactNativeView : UIView {
     
     private func refreshInbox() {
         
+        // Disable animations
+        UIView.setAnimationsEnabled(false)
+        
+        // Remove all previous views
         subviews.forEach { $0.removeFromSuperview() }
         
         // Create the view
@@ -85,6 +89,9 @@ class CourierReactNativeView : UIView {
             courierInbox.leadingAnchor.constraint(equalTo: leadingAnchor),
             courierInbox.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
+        
+        // Enable animations
+        UIView.setAnimationsEnabled(true)
         
     }
     

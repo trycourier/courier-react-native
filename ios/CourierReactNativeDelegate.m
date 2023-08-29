@@ -42,37 +42,6 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     
 }
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-  BOOL enableTM = NO;
-#if RCT_NEW_ARCH_ENABLED
-  enableTM = self.turboModuleEnabled;
-#endif
-  RCTAppSetupPrepareApp(application, enableTM);
-
-  if (!self.bridge) {
-    self.bridge = [self createBridgeWithDelegate:self launchOptions:launchOptions];
-  }
-#if RCT_NEW_ARCH_ENABLED
-  self.bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:self.bridge
-                                                               contextContainer:_contextContainer];
-  self.bridge.surfacePresenter = self.bridgeAdapter.surfacePresenter;
-
-  [self unstable_registerLegacyComponents];
-#endif
-
-  NSDictionary *initProps = [self prepareInitialProps];
-  UIView *rootView = [self createRootViewWithBridge:self.bridge moduleName:self.moduleName initProps:initProps];
-
-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [self createRootViewController];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-
-  return YES;
-}
-
 - (void) notificationPresentationOptionsUpdate:(NSNotification *) notification
 {
     if ([[notification name] isEqualToString:iosForegroundNotificationPresentationOptions])

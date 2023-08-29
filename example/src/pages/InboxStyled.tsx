@@ -147,13 +147,13 @@ const InboxStyled = () => {
         darkTheme={darkTheme}
         onClickInboxMessageAtIndex={(message, index) => {
           console.log(message)
-          message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId })
+          message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
         }}
         onClickInboxActionForMessageAtIndex={(action, message, index) => {
-          console.log(action)
+          console.log(action);
         }}
         onScrollInbox={(y, x) => {
-          console.log(y)
+          console.log(`Inbox scroll offset y: ${y}`);
         }}
         style={styles.box} />
     </View>
