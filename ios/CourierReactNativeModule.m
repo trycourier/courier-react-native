@@ -3,7 +3,7 @@
 @interface RCT_EXTERN_MODULE(CourierReactNativeModule, NSObject)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  setDebugMode: (BOOL*)isDebugging
+  setDebugMode: (BOOL)isDebugging
 )
 
 RCT_EXTERN_METHOD(
@@ -60,7 +60,7 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  setInboxPaginationLimit: (nonnull NSNumber*)limit
+  setInboxPaginationLimit: (double)limit
 )
 
 @end

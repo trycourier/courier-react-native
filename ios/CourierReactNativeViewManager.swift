@@ -15,13 +15,7 @@ class CourierReactNativeViewManager: RCTViewManager {
 
 class CourierReactNativeView : UIView {
     
-    @objc var lightTheme: NSDictionary? = [:] {
-        didSet {
-            refreshInbox()
-        }
-    }
-    
-    @objc var darkTheme: NSDictionary? = [:] {
+    @objc var theme: NSDictionary? = [:] {
         didSet {
             refreshInbox()
         }
@@ -33,16 +27,6 @@ class CourierReactNativeView : UIView {
     
     @objc var onScrollInbox: RCTBubblingEventBlock? = nil
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        refreshInbox()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        refreshInbox()
-    }
-    
     private func refreshInbox() {
         
         // Disable animations
@@ -52,6 +36,9 @@ class CourierReactNativeView : UIView {
         subviews.forEach {
             $0.removeFromSuperview()
         }
+        
+        let lightTheme = theme?["light"] as? NSDictionary
+        let darkTheme = theme?["dark"] as? NSDictionary
         
         // Create the view
         let courierInbox = CourierInbox(

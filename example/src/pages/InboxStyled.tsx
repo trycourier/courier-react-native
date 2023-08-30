@@ -143,8 +143,10 @@ const InboxStyled = () => {
   return (
     <View style={styles.container}>
       <CourierInboxView 
-        lightTheme={lightTheme}
-        darkTheme={darkTheme}
+        theme={{
+          light: lightTheme,
+          dark: darkTheme
+        }}
         onClickInboxMessageAtIndex={(message, index) => {
           console.log(message)
           message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });

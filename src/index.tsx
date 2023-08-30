@@ -8,6 +8,7 @@ import {
 import { CourierInboxListener } from './models/CourierInboxListener';
 import { InboxMessage } from './models/InboxMessage';
 export { CourierInboxView } from './views/CourierInboxView';
+export { CourierInboxProvider, useCourierInbox } from './hooks/useCourierInbox';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +

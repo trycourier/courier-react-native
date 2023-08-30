@@ -325,6 +325,8 @@ class CourierReactNativeModule: RCTEventEmitter {
             },
             onMessagesChanged: { [weak self] messages, unreadMessageCount, totalMessageCount, canPaginate in
                 
+                print(self?.inboxListeners)
+                
                 let json: [String: Any] = [
                     "messages": messages.map { $0.toDictionary() },
                     "unreadMessageCount": unreadMessageCount,
@@ -388,9 +390,9 @@ class CourierReactNativeModule: RCTEventEmitter {
     }
     
     @objc(setInboxPaginationLimit:)
-    func setInboxPaginationLimit(limit: NSNumber) -> String {
-        Courier.shared.inboxPaginationLimit = limit.intValue
-        return String(describing: limit.intValue)
+    func setInboxPaginationLimit(limit: Double) -> String {
+        Courier.shared.inboxPaginationLimit = Int(limit)
+        return String(describing: Courier.shared.inboxPaginationLimit)
     }
 
     override func supportedEvents() -> [String]! {

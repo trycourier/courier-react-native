@@ -1,50 +1,11 @@
-import Courier from '@trycourier/courier-react-native';
-import React, { useState } from 'react';
+import { useCourierInbox } from '@trycourier/courier-react-native';
+import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [messages, setMessages] = useState<InboxMessage[]>([])
-  const [isRefreshing, setRefreshing] = useState(false);
-  const [canPaginate, setCanPaginate] = useState(false);
-
-  React.useEffect(() => {
-
-    Courier.shared.setInboxPaginationLimit({ limit: 100 });
-    
-    const listener = Courier.shared.addInboxListener({
-      onInitialLoad: () => {
-        setIsLoading(true);
-      },
-      onError: (error) => {
-        setIsLoading(false);
-        setError(error);
-      },
-      onMessagesChanged: async (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
-        setCanPaginate(canPaginate);
-        setIsLoading(false);
-        setMessages(messages);
-      }
-    })
-
-    return () => {
-      listener.remove()
-    }
-
-  }, []);
-
-  const onRefresh = async () => {
-
-    setRefreshing(true);
-    
-    await Courier.shared.refreshInbox();
-
-    setRefreshing(false);
-
-  }
+  const inbox = useCourierInbox({ paginationLimit: 100 });
 
   const ListItem = (props: { message: InboxMessage }) => {
 
@@ -68,7 +29,7 @@ const InboxCustom = () => {
 
     function toggleMessage() {
       const messageId = props.message.messageId;
-      isRead ? Courier.shared.unreadMessage({ messageId }) : Courier.shared.readMessage({ messageId });
+      isRead ? inbox.unreadMessage(messageId) : inbox.readMessage(messageId);
     }
 
     return (
@@ -91,31 +52,31 @@ const InboxCustom = () => {
 
   function buildContent() {
 
-    if (isLoading) {
+    if (inbox.isLoading) {
       return <Text>Loading</Text>
     }
 
-    if (error) {
-      return <Text>{error}</Text>
+    if (inbox.error) {
+      return <Text>{inbox.error}</Text>
     }
 
     return (
       <FlatList
-        data={messages}
+        data={inbox.messages}
         keyExtractor={message => message.messageId}
         renderItem={message => <ListItem message={message.item} />}
         refreshControl={
           <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
+            refreshing={inbox.isRefreshing}
+            onRefresh={inbox.refresh}
           />
         }
         ListFooterComponent={() => {
-          return canPaginate ? <PaginationItem /> : null
+          return inbox.canPaginate ? <PaginationItem /> : null
         }}
         onEndReached={() => {
-          if (canPaginate) {
-            Courier.shared.fetchNextPageOfMessages()
+          if (inbox.canPaginate) {
+            inbox.fetchNextPageOfMessages()
           }
         }}
       />

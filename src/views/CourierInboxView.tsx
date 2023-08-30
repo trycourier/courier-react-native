@@ -5,8 +5,10 @@ import { InboxAction } from "src/models/InboxAction";
 import { InboxMessage } from "src/models/InboxMessage";
 
 type CourierInboxViewProps = {
-  lightTheme?: CourierInboxTheme;
-  darkTheme?: CourierInboxTheme;
+  theme?: { 
+    light?: CourierInboxTheme, 
+    dark?: CourierInboxTheme 
+  };
   onClickInboxMessageAtIndex?: (message: InboxMessage, index: number) => void;
   onClickInboxActionForMessageAtIndex?: (action: InboxAction, message: InboxMessage, index: number) => void;
   onScrollInbox?: (offsetY: number, offsetX: number) => void;
@@ -73,8 +75,7 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
 
   return (
     <CourierInbox 
-      lightTheme={props.lightTheme} 
-      darkTheme={props.darkTheme}
+      theme={props.theme ?? { light: undefined, dark: undefined }} 
       onClickInboxMessageAtIndex={onClickInboxMessageAtIndex}
       onClickInboxActionForMessageAtIndex={onClickInboxActionForMessageAtIndex}
       onScrollInbox={onScrollInbox}
