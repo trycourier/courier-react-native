@@ -6,6 +6,10 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   setDebugMode: (BOOL)isDebugging
 )
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  iOSForegroundPresentationOptions: (NSDictionary*)params
+)
+
 RCT_EXTERN_METHOD(
   signIn: (NSString*)accessToken
   withClientKey: (NSString*)clientKey
@@ -21,6 +25,16 @@ RCT_EXTERN_METHOD(
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   getUserId
+)
+
+RCT_EXTERN_METHOD(
+  getNotificationPermissionStatus: (RCTPromiseResolveBlock)resolve
+  withRejecter:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  requestNotificationPermission: (RCTPromiseResolveBlock)resolve
+  withRejecter:(RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(

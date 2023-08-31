@@ -61,7 +61,7 @@ class Courier {
 
   private async setDefaults() {
     this.setIsDebugging(__DEV__);
-    // this.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
+    this.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
   }
 
   /**
@@ -92,6 +92,42 @@ class Courier {
 
   get isDebugging(): boolean {
     return this._isDebugging;
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+  public iOSForegroundPresentationOptions(props: { options: ('sound' | 'badge' | 'list' | 'banner')[] }): string {
+
+    // Only works on iOS
+    if (Platform.OS !== 'ios') return 'unsupported';
+
+    const normalizedParams = Array.from(new Set(props.options));
+    return CourierReactNativeModules.iOSForegroundPresentationOptions({
+      options: normalizedParams,
+    });
+
+  }
+
+  /**
+   * Gets notification permission status at a system level.
+   * @example const permissionStatus = await Courier.getNotificationPermissionStatus()
+   */
+  public getNotificationPermissionStatus(): Promise<string> {
+    return CourierReactNativeModules.getNotificationPermissionStatus();
+  }
+
+  /**
+   * Requests notification permission status at a system level.
+   * Returns the string associated with the permission status.
+   * Will return the current status and will not present a popup
+   * if the user has already been asked for permission.
+   * @example const permissionStatus = await Courier.requestNotificationPermission()
+   */
+  public requestNotificationPermission(): Promise<string> {
+    return CourierReactNativeModules.requestNotificationPermission();
   }
 
   /**

@@ -7,6 +7,10 @@ const Auth = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined)
 
   useEffect(() => {
+
+    Courier.shared.iOSForegroundPresentationOptions({
+      options: ['sound', 'badge', 'list', 'banner'],
+    });
     
     setUserId(Courier.shared.userId);
 
@@ -21,6 +25,12 @@ const Auth = () => {
         clientKey: 'YWQxN2M2ZmMtNDU5OS00ZThlLWE4NTktZDQ4YzVlYjkxM2Mx',
         userId: userId,
       });
+
+      const requestStatus = await Courier.shared.requestNotificationPermission();
+      console.log(requestStatus);
+
+      const getStatus = await Courier.shared.getNotificationPermissionStatus();
+      console.log(getStatus);
 
     } catch (e) {
 
@@ -63,7 +73,7 @@ const Auth = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const inputRef = useRef(null);
+    const inputRef = useRef<any>(null);
 
     const styles = StyleSheet.create({
       button: {
@@ -98,7 +108,7 @@ const Auth = () => {
 
     useEffect(() => {
       if (modalVisible) {
-        inputRef.current.focus(); // Focus the input field when modal opens
+        inputRef.current.focus();
       }
     }, [modalVisible]);
   

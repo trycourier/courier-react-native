@@ -127,7 +127,6 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
-    // TODO
     @objc(getNotificationPermissionStatus: withRejecter:)
     func getNotificationPermissionStatus(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
@@ -137,7 +136,6 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
-    // TODO
     @objc(requestNotificationPermission: withRejecter:)
     func requestNotificationPermission(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
@@ -182,6 +180,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         return Courier.shared.userId
     }
 
+    // TODO:
     @objc(getFcmToken: withRejecter:)
     func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
@@ -190,6 +189,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
+    // TODO:
     @objc(setFcmToken: withResolver: withRejecter:)
     func setFcmToken(token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
@@ -205,6 +205,7 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     }
 
+    // TODO:
     @objc(getApnsToken: withRejecter:)
     func getApnsToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
@@ -213,32 +214,8 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
-    @objc(sendPush: withUserId: withTitle: withBody: withProviders: withResolver: withRejecter:)
-    func sendPush(authKey: NSString, userId: NSString, title: NSString, body: NSString, providers: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
-        guard let courierProviders = providers as? [String] else {
-            reject("No provider supported", CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            return
-        }
-
-//        Courier.shared.sendPush(
-//            authKey: authKey as String,
-//            userId: userId as String,
-//            title: title as String,
-//            message: body as String,
-//            providers: courierProviders,
-//            onSuccess: { requestId in
-//                resolve(requestId)
-//            },
-//            onFailure: { error in
-//                reject(String(describing: error), CourierReactNative.COURIER_ERROR_TAG, nil)
-//            }
-//        )
-        
-    }
-
     @objc(iOSForegroundPresentationOptions:)
-    func iOSForegroundPresentationOptions(params: NSDictionary) {
+    func iOSForegroundPresentationOptions(params: NSDictionary) -> String {
         
         let rawValue = params.toPresentationOptions().rawValue
         NotificationCenter.default.post(
@@ -247,13 +224,7 @@ class CourierReactNativeModule: RCTEventEmitter {
             userInfo: ["options": rawValue]
         )
         
-    }
-    
-    @objc(setDebugMode: withResolver: withRejecter:)
-    func setDebugMode(isDebugging: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-
-        Courier.shared.isDebugging = isDebugging
-        resolve(Courier.shared.isDebugging)
+        return String(describing: rawValue)
         
     }
     
