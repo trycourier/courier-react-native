@@ -4,9 +4,19 @@ import Courier_iOS
 class CourierReactNativeModule: RCTEventEmitter {
 
     private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
-    internal static let COURIER_PUSH_NOTIFICATION_CLICKED_EVENT = "pushNotificationClicked"
-    internal static let COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT = "pushNotificationDelivered"
-    private static let COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT = "courierDebugEvent"
+    
+    class LogEvents {
+        internal static let DEBUG_LOG_EVENT = "courierDebugEvent"
+    }
+    
+    class AuthEvents {
+        internal static let USER_CHANGED = "courierAuthUserChanged"
+    }
+    
+    class PushEvents {
+        internal static let CLICKED_EVENT = "pushNotificationClicked"
+        internal static let DELIVERED_EVENT = "pushNotificationDelivered"
+    }
     
     class InboxEvents {
         internal static let INITIAL_LOADING = "inboxInitialLoad"
@@ -14,6 +24,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         internal static let MESSAGES_CHANGED = "inboxMessagesChanged"
     }
     
+    private var authListeners = [String: CourierAuthenticationListener]()
     private var inboxListeners = [String: CourierInboxListener]()
     
     private var hasListeners = false
@@ -44,7 +55,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         // setup listeners
         Courier.shared.logListener = { log in
             self.sendEvent(
-                withName: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT,
+                withName: CourierReactNativeModule.LogEvents.DEBUG_LOG_EVENT,
                 body: log
             )
         }
@@ -63,14 +74,14 @@ class CourierReactNativeModule: RCTEventEmitter {
         notificationCenter.addObserver(
             self,
             selector: #selector(pushNotificationClicked),
-            name: Notification.Name(rawValue: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT),
+            name: Notification.Name(rawValue: CourierReactNativeModule.PushEvents.CLICKED_EVENT),
             object: nil
         )
         
         notificationCenter.addObserver(
             self,
             selector: #selector(pushNotificationDelivered),
-            name: Notification.Name(rawValue: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT),
+            name: Notification.Name(rawValue: CourierReactNativeModule.PushEvents.DELIVERED_EVENT),
             object: nil
         )
         
@@ -103,7 +114,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         lastClickedMessage = notification.userInfo
         sendMessage(
-            name: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+            name: CourierReactNativeModule.PushEvents.CLICKED_EVENT,
             message: lastClickedMessage
         )
         
@@ -112,7 +123,7 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc private func pushNotificationDelivered(notification: Notification) {
         
         sendMessage(
-            name: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT,
+            name: CourierReactNativeModule.PushEvents.DELIVERED_EVENT,
             message: notification.userInfo
         )
         
@@ -120,7 +131,7 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     @objc func registerPushNotificationClickedOnKilledState() -> String {
         
-        let event = CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT
+        let event = CourierReactNativeModule.PushEvents.CLICKED_EVENT
         
         sendMessage(
             name: event,
@@ -184,16 +195,41 @@ class CourierReactNativeModule: RCTEventEmitter {
         return Courier.shared.userId
     }
 
-    // TODO:
-    @objc(getFcmToken: withRejecter:)
-    func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc func addAuthenticationListener() -> String {
         
-        let token = Courier.shared.fcmToken
-        resolve(token)
+        let listener = Courier.shared.addAuthenticationListener { [weak self] userId in
+            
+            self?.sendEvent(
+                withName: CourierReactNativeModule.AuthEvents.USER_CHANGED,
+                body: userId
+            )
+            
+        }
+        
+        // Create an id and add the listener to the dictionary
+        let id = UUID().uuidString
+        authListeners[id] = listener
+        
+        return id
+        
+    }
+    
+    @objc(removeAuthenticationListener:)
+    func removeAuthenticationListener(listenerId: NSString) -> String {
+        
+        let id = listenerId as String
+        
+        // Remove the listener
+        let listener = authListeners[id]
+        listener?.remove()
+        
+        // Remove from dictionary
+        authListeners.removeValue(forKey: id)
+        
+        return id
         
     }
 
-    // TODO:
     @objc(setFcmToken: withResolver: withRejecter:)
     func setFcmToken(token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
@@ -208,14 +244,13 @@ class CourierReactNativeModule: RCTEventEmitter {
         )
     
     }
+    
+    @objc func getFcmToken() -> String? {
+        return Courier.shared.fcmToken
+    }
 
-    // TODO:
-    @objc(getApnsToken: withRejecter:)
-    func getApnsToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        let token = Courier.shared.apnsToken
-        resolve(token)
-        
+    @objc func getApnsToken() -> String? {
+        return Courier.shared.apnsToken
     }
 
     @objc(iOSForegroundPresentationOptions:)
@@ -320,15 +355,6 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
-    @objc(refreshInbox: withRejecter:)
-    func refreshInbox(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        Courier.shared.refreshInbox {
-            resolve(nil)
-        }
-        
-    }
-    
     @objc(removeInboxListener:)
     func removeInboxListener(listenerId: NSString) -> String {
         
@@ -342,6 +368,15 @@ class CourierReactNativeModule: RCTEventEmitter {
         inboxListeners.removeValue(forKey: id)
         
         return id
+        
+    }
+    
+    @objc(refreshInbox: withRejecter:)
+    func refreshInbox(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Courier.shared.refreshInbox {
+            resolve(nil)
+        }
         
     }
     
@@ -367,9 +402,10 @@ class CourierReactNativeModule: RCTEventEmitter {
 
     override func supportedEvents() -> [String]! {
         return [
-            CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
-            CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DELIVERED_EVENT,
-            CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_DEBUG_LOG_EVENT,
+            CourierReactNativeModule.LogEvents.DEBUG_LOG_EVENT,
+            CourierReactNativeModule.AuthEvents.USER_CHANGED,
+            CourierReactNativeModule.PushEvents.CLICKED_EVENT,
+            CourierReactNativeModule.PushEvents.DELIVERED_EVENT,
             CourierReactNativeModule.InboxEvents.INITIAL_LOADING,
             CourierReactNativeModule.InboxEvents.ERROR,
             CourierReactNativeModule.InboxEvents.MESSAGES_CHANGED

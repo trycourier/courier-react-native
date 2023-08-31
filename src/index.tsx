@@ -9,13 +9,15 @@ import {
 // Imports
 import { CourierInboxListener } from './models/CourierInboxListener';
 import { CourierPushListener } from './models/CourierPushListener';
+import { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
 import { InboxMessage } from './models/InboxMessage';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
-export { CourierInboxProvider, useCourierInbox } from './hooks/useCourierInbox';
+export { CourierProvider, useCourier } from './hooks/useCourier';
 export { CourierInboxListener } from './models/CourierInboxListener';
 export { CourierPushListener } from './models/CourierPushListener';
+export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
@@ -116,6 +118,34 @@ class Courier {
       options: normalizedParams,
     });
 
+  }
+
+  /**
+   * Sets the current Apple Push Notification Service (APNS) token
+   * using Courier token management apis
+   * @example const apnsToken = await Courier.apnsToken
+   */
+   get apnsToken(): string | undefined {
+    if (Platform.OS !== 'ios') return undefined;
+    return CourierReactNativeModules.getApnsToken();
+  }
+
+  /**
+   * Sets the current Firebase Cloud Messaging (FCM) token
+   * using Courier token management apis
+   * @example const fcmToken = await Courier.fcmToken
+   */
+  get fcmToken(): string | undefined {
+    return CourierReactNativeModules.getFcmToken();
+  }
+
+  /**
+   * Sets the current Firebase Cloud Messaging (FCM) token
+   * using Courier token management apis
+   * @example await setFcmToken('asdf...asdf')
+   */
+  public setFcmToken(props: { token: string }): Promise<void> {
+    return CourierReactNativeModules.setFcmToken(props.token);
   }
 
   /**
@@ -239,6 +269,34 @@ class Courier {
    */
    public signOut(): Promise<void> {
     return CourierReactNativeModules.signOut();
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+   public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
+
+    const authListener = new CourierAuthenticationListener();
+
+    authListener.onUserChanged = CourierEventEmitter.addListener('courierAuthUserChanged', event => {
+      props.onUserChanged(event)
+    });
+
+    authListener.listenerId = CourierReactNativeModules.addAuthenticationListener();
+
+    return authListener;
+
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
+  public removeAuthenticationListener(props: { listenerId: string }): string {
+    return CourierReactNativeModules.removeAuthenticationListener(props.listenerId);
   }
 
   /**

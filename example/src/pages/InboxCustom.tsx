@@ -1,11 +1,15 @@
-import { useCourierInbox } from '@trycourier/courier-react-native';
+import { useCourier } from '@trycourier/courier-react-native';
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
 
-  const inbox = useCourierInbox({ paginationLimit: 100 });
+  const courier = useCourier({ 
+    inbox: {
+      paginationLimit: 100
+    }
+  });
 
   const ListItem = (props: { message: InboxMessage }) => {
 
@@ -29,7 +33,7 @@ const InboxCustom = () => {
 
     function toggleMessage() {
       const messageId = props.message.messageId;
-      isRead ? inbox.unreadMessage(messageId) : inbox.readMessage(messageId);
+      isRead ? courier.inbox?.unreadMessage(messageId) : courier.inbox?.readMessage(messageId);
     }
 
     return (
@@ -52,31 +56,31 @@ const InboxCustom = () => {
 
   function buildContent() {
 
-    if (inbox.isLoading) {
+    if (courier.inbox?.isLoading) {
       return <Text>Loading</Text>
     }
 
-    if (inbox.error) {
-      return <Text>{inbox.error}</Text>
+    if (courier.inbox?.error) {
+      return <Text>{courier.inbox?.error}</Text>
     }
 
     return (
       <FlatList
-        data={inbox.messages}
+        data={courier.inbox?.messages}
         keyExtractor={message => message.messageId}
         renderItem={message => <ListItem message={message.item} />}
         refreshControl={
           <RefreshControl
-            refreshing={inbox.isRefreshing}
-            onRefresh={inbox.refresh}
+            refreshing={courier.inbox?.isRefreshing ?? false}
+            onRefresh={courier.inbox?.refresh}
           />
         }
         ListFooterComponent={() => {
-          return inbox.canPaginate ? <PaginationItem /> : null
+          return courier.inbox?.canPaginate ? <PaginationItem /> : null
         }}
         onEndReached={() => {
-          if (inbox.canPaginate) {
-            inbox.fetchNextPageOfMessages()
+          if (courier.inbox?.canPaginate) {
+            courier.inbox?.fetchNextPageOfMessages()
           }
         }}
       />

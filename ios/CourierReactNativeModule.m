@@ -27,14 +27,36 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   getUserId
 )
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  addAuthenticationListener
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  removeAuthenticationListener: (NSString*)listenerId
+)
+
 RCT_EXTERN_METHOD(
   getNotificationPermissionStatus: (RCTPromiseResolveBlock)resolve
-  withRejecter:(RCTPromiseRejectBlock)reject
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
   requestNotificationPermission: (RCTPromiseResolveBlock)resolve
-  withRejecter:(RCTPromiseRejectBlock)reject
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getApnsToken
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getFcmToken
+)
+
+RCT_EXTERN_METHOD(
+  setFcmToken: (NSString*)token
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(

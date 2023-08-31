@@ -1,61 +1,43 @@
-import Courier from "@trycourier/courier-react-native";
+import Courier, { useCourier } from "@trycourier/courier-react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const Auth = () => {
 
-  const [userId, setUserId] = useState<string | undefined>(undefined)
+  const { auth, push } = useCourier();
 
   useEffect(() => {
 
     Courier.shared.iOSForegroundPresentationOptions({
       options: ['sound', 'badge', 'list', 'banner'],
     });
-    
-    setUserId(Courier.shared.userId);
 
   }, []);
 
   async function signIn(userId: string) {
 
     try {
-
-      await Courier.shared.signIn({
+      
+      await auth?.signIn({
         accessToken: 'pk_prod_MVPCX80QWXMJ1HQMTZNBFE4ZQYJS',
         clientKey: 'MWVmNzI3ZDUtZDk2NS00OGU1LThjMjQtMDgwMjlkYjM1YWYx',
         userId: userId,
-      });
+      })
 
-      const requestStatus = await Courier.shared.requestNotificationPermission();
+      const requestStatus = await push?.requestNotificationPermission();
       console.log('Request Notification Status: ' + requestStatus);
-
-      const getStatus = await Courier.shared.getNotificationPermissionStatus();
-      console.log('Get Notification Status: ' + getStatus);
+      console.log('Get Notification Status: ' + push?.notificationPermissionStatus);
 
     } catch (e) {
 
       console.error(e);
 
     }
-
-    setUserId(Courier.shared.userId);
 
   }
 
   async function signOut() {
-
-    try {
-
-      await Courier.shared.signOut();
-
-    } catch (e) {
-
-      console.error(e);
-
-    }
-
-    setUserId(Courier.shared.userId);
-
+    await auth?.signOut();
   }
 
   const styles = StyleSheet.create({
@@ -114,7 +96,7 @@ const Auth = () => {
   
     const handleButtonPress = () => {
 
-      if (userId) {
+      if (auth?.userId) {
         signOut();
       } else {
         setModalVisible(true);
@@ -163,8 +145,18 @@ const Auth = () => {
   
   return (
     <View style={styles.container}>
-      {userId && <Text style={styles.text}>{userId}</Text>}
-      <AuthButton buttonText={userId ? 'Sign Out' : 'Sign In'} />
+
+      {auth?.isLoading && (
+        <ActivityIndicator size="small" />
+      )}
+
+      {!auth?.isLoading && (
+        <>
+          {auth?.userId && <Text style={styles.text}>{auth?.userId}</Text>}
+          <AuthButton buttonText={auth?.userId ? 'Sign Out' : 'Sign In'} />
+        </>
+      )}
+
     </View>
   );
 

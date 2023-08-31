@@ -1,36 +1,18 @@
 import { NavigationContainer } from '@react-navigation/native';
-import Courier, { CourierInboxProvider } from '@trycourier/courier-react-native';
-import React, { useEffect } from 'react';
-import { Alert } from 'react-native';
+import { CourierProvider } from '@trycourier/courier-react-native';
+import React from 'react';
 import Navigation from './Navigation';
 
 export default function App() {
 
-  useEffect(() => {
-
-    const listener = Courier.shared.addPushNotificationListener({
-      onPushNotificationClicked: (push) => {
-        Alert.alert(`Push Clicked\n${JSON.stringify(push)}`);
-      },
-      onPushNotificationDelivered: (push) => {
-        Alert.alert(`Push Delivered\n${JSON.stringify(push)}`);
-      },
-    });
-
-    return () => {
-      listener.remove()
-    }
-
-  }, []);
-
-  // IMPORTANT: Please add `CourierInboxProvider` if you want to access inbox events
+  // IMPORTANT: Please add `CourierProvider` if you want to access realtime Courier events
 
   return (
-    <CourierInboxProvider> 
+    <CourierProvider listeners={['auth', 'push', 'inbox']}> 
       <NavigationContainer>
         <Navigation />
       </NavigationContainer>
-    </CourierInboxProvider>
+    </CourierProvider>
   );
 
 }
