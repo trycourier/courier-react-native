@@ -15,7 +15,18 @@ const Navigation = () => {
 
   const inbox = useCourierInbox({ paginationLimit: 100 });
 
-  const options = (icon: 'bell'): BottomTabNavigationOptions => {
+  const inboxOptions = (): BottomTabNavigationOptions => {
+
+    const badgeCount = () => {
+
+      if (inbox.error) {
+        return undefined
+      }
+
+      return inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined
+
+    }
+
     return {
       headerRight: () => (
         <Button
@@ -23,7 +34,15 @@ const Navigation = () => {
           title="Read All"
         />
       ),
-      tabBarBadge: inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined,
+      tabBarBadge: badgeCount(),
+      tabBarIcon: ({ color, size }) => (
+        <MaterialCommunityIcons name={'bell'} color={color} size={size} />
+      )
+    }
+  }
+
+  const icon = (icon: string): BottomTabNavigationOptions => {
+    return {
       tabBarIcon: ({ color, size }) => (
         <MaterialCommunityIcons name={icon} color={color} size={size} />
       )
@@ -32,11 +51,11 @@ const Navigation = () => {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Auth" component={Auth} />
-      <Tab.Screen name="Prebuilt Inbox" component={InboxDefault} options={options('bell')} />
-      <Tab.Screen name="Styled Inbox" component={InboxStyled} options={options('bell')} />
-      <Tab.Screen name="Custom Inbox" component={InboxCustom} options={options('bell')} />
-      <Tab.Screen name="Tab5" component={Send} />
+      <Tab.Screen name="Auth" component={Auth} options={icon('account-circle')} />
+      <Tab.Screen name="Prebuilt Inbox" component={InboxDefault} options={inboxOptions()} />
+      <Tab.Screen name="Styled Inbox" component={InboxStyled} options={inboxOptions()} />
+      <Tab.Screen name="Custom Inbox" component={InboxCustom} options={inboxOptions()} />
+      <Tab.Screen name="Send" component={Send} options={icon('send-circle')} />
     </Tab.Navigator>
   );
 };

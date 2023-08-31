@@ -35,15 +35,6 @@ export const CourierInboxProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   useEffect(() => {
 
-    console.log('MESSAGES UPDATED');
-    console.log(messages.length);
-
-  }, [messages]);
-
-  useEffect(() => {
-
-    console.log('INBOX START')
-
     inboxListener?.remove()
 
     inboxListener = Courier.shared.addInboxListener({
@@ -86,7 +77,15 @@ export const CourierInboxProvider: React.FC<{ children: ReactNode }> = ({ childr
   };
 
   const readAllMessages = () => {
+
+    // Skip if no user is found
+    if (!Courier.shared.userId) {
+      return Promise.resolve();
+    }
+
+    // Read the messages
     return Courier.shared.readAllInboxMessages();
+
   };
 
   const readMessage = (messageId: string) => {

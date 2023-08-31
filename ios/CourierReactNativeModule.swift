@@ -37,12 +37,6 @@ class CourierReactNativeModule: RCTEventEmitter {
                 
     }
     
-    @objc(setDebugMode:)
-    func setDebugMode(isDebugging: Bool) -> String {
-        Courier.shared.isDebugging = isDebugging
-        return String(describing: Courier.shared.isDebugging)
-    }
-    
     override func startObserving() {
 
         hasListeners = true
@@ -80,6 +74,12 @@ class CourierReactNativeModule: RCTEventEmitter {
             object: nil
         )
         
+    }
+    
+    @objc(setDebugMode:)
+    func setDebugMode(isDebugging: Bool) -> String {
+        Courier.shared.isDebugging = isDebugging
+        return String(describing: Courier.shared.isDebugging)
     }
     
     private func sendMessage(name: String, message: [AnyHashable: Any]?) {
@@ -127,6 +127,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
+    // TODO
     @objc(getNotificationPermissionStatus: withRejecter:)
     func getNotificationPermissionStatus(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
@@ -136,6 +137,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
+    // TODO
     @objc(requestNotificationPermission: withRejecter:)
     func requestNotificationPermission(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
@@ -176,8 +178,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
-    @objc
-    func getUserId() -> String? {
+    @objc func getUserId() -> String? {
         return Courier.shared.userId
     }
 
@@ -300,8 +301,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
-    @objc(addInboxListener:)
-    func addInboxListener(listenerId: NSString?) -> String {
+    @objc func addInboxListener() -> String {
         
         let listener = Courier.shared.addInboxListener(
             onInitialLoad: { [weak self] in

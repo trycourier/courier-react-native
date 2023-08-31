@@ -127,6 +127,15 @@ class Courier {
    * @param props 
    * @returns 
    */
+   public signOut(): Promise<void> {
+    return CourierReactNativeModules.signOut();
+  }
+
+  /**
+   * TODO
+   * @param props 
+   * @returns 
+   */
   public readMessage(props: { messageId: string }): Promise<void> {
     return CourierReactNativeModules.readMessage(props.messageId);
   }
@@ -182,7 +191,7 @@ class Courier {
       });
     }
 
-    inboxListener.listenerId = CourierReactNativeModules.addInboxListener(null);
+    inboxListener.listenerId = CourierReactNativeModules.addInboxListener();
 
     return inboxListener;
 

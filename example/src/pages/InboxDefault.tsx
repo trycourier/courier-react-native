@@ -4,35 +4,6 @@ import { View, StyleSheet } from 'react-native';
 
 const InboxDefault = () => {
 
-  React.useEffect(() => {
-    test();
-  }, []);
-
-  async function test() {
-
-    console.log('Initial User: ' + Courier.shared.userId);
-
-    const isDebugging = Courier.shared.isDebugging;
-    console.log(isDebugging);
-
-    try {
-
-      await Courier.shared.signIn({
-        accessToken: 'pk_prod_2M1VP0GVFE4M0RQ4ZYFW1DGH3R90',
-        clientKey: 'YWQxN2M2ZmMtNDU5OS00ZThlLWE4NTktZDQ4YzVlYjkxM2Mx',
-        userId: 'mike',
-      })
-
-    } catch (e) {
-
-      console.error(e)
-
-    }
-
-    console.log('Current User: ' + Courier.shared.userId);
-
-  }
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,

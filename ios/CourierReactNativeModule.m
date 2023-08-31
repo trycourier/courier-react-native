@@ -41,7 +41,7 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  addInboxListener: (NSString*)listenerId
+  addInboxListener
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
