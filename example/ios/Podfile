@@ -61,3 +61,7 @@ target 'CourierReactNativeExample' do
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
+
+target 'CourierService' do
+  pod 'Courier_iOS'
+end

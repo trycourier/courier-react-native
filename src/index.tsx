@@ -6,11 +6,16 @@ import {
   DeviceEventEmitter,
 } from 'react-native';
 
+// Imports
 import { CourierInboxListener } from './models/CourierInboxListener';
 import { CourierPushListener } from './models/CourierPushListener';
 import { InboxMessage } from './models/InboxMessage';
+
+// Exports
 export { CourierInboxView } from './views/CourierInboxView';
 export { CourierInboxProvider, useCourierInbox } from './hooks/useCourierInbox';
+export { CourierInboxListener } from './models/CourierInboxListener';
+export { CourierPushListener } from './models/CourierPushListener';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
@@ -134,21 +139,7 @@ class Courier {
 
   /**
    * @example 
-   *```
-    const unsubPushListeners = () => {
-      return Courier.registerPushNotificationListeners<YOUR_NOTIFICATION_TYPE>({
-        onPushNotificationClicked: (push) => {
-          ...
-        },
-        onPushNotificationDelivered: (push) => {
-          ...
-        },
-      })
-    }
-
-    // To unsubscribe the listeners
-    unsubPushListeners()
-  *```
+  TODO
   * @returns  function that can be used to unsubscribe from registered listeners
   */
   public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
