@@ -11,7 +11,7 @@ const InboxStyled = () => {
 
   async function test() {
 
-    console.log('Initial User: ' + await Courier.shared.userId);
+    console.log('Initial User: ' + Courier.shared.userId);
 
     const isDebugging = Courier.shared.isDebugging;
     console.log(isDebugging);
@@ -30,7 +30,7 @@ const InboxStyled = () => {
 
     }
 
-    console.log('Current User: ' + await Courier.shared.userId);
+    console.log('Current User: ' + Courier.shared.userId);
 
   }
 

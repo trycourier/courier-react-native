@@ -1,3 +1,4 @@
+import Courier from "@trycourier/courier-react-native";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -5,6 +6,8 @@ const Auth = () => {
 
   useEffect(() => {
     
+    console.log('Initial User: ' + Courier.shared.userId);
+
   }, []);
 
   const styles = StyleSheet.create({

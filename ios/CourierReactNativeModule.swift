@@ -176,12 +176,9 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
-    @objc(getUserId: withRejecter:)
-    func getUserId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        let userId = Courier.shared.userId
-        resolve(userId)
-        
+    @objc
+    func getUserId() -> String? {
+        return Courier.shared.userId
     }
 
     @objc(getFcmToken: withRejecter:)
@@ -324,8 +321,6 @@ class CourierReactNativeModule: RCTEventEmitter {
                 
             },
             onMessagesChanged: { [weak self] messages, unreadMessageCount, totalMessageCount, canPaginate in
-                
-                print(self?.inboxListeners)
                 
                 let json: [String: Any] = [
                     "messages": messages.map { $0.toDictionary() },

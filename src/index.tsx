@@ -33,6 +33,9 @@ const CourierEventEmitter = new NativeEventEmitter(
 
 class Courier {
 
+  readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
+  readonly PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered';
+
   private static _sharedInstance: Courier;
   private _isDebugging = false;
   private debugListener: EmitterSubscription | undefined;
@@ -58,16 +61,7 @@ class Courier {
 
   private async setDefaults() {
     this.setIsDebugging(__DEV__);
-    // try {
-    //   await Promise.all([
-    //     this.setIsDebugging(__DEV__),
-    //     // this.iOSForegroundPresentationOptions({
-    //     //   options: ['sound', 'badge', 'list', 'banner'],
-    //     // }),
-    //   ]);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    // this.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
   }
 
   /**
@@ -104,8 +98,8 @@ class Courier {
    * Returns the current user id stored in local native storage
    * @example const userId = await Courier.userId
    */
-  get userId(): Promise<string | undefined> {
-    return CourierReactNativeModules.getUserId();
+  get userId(): string | undefined {
+    return CourierReactNativeModules.getUserId() ?? undefined
   }
 
   /**

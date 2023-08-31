@@ -19,9 +19,8 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(
-  getUserId: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getUserId
 )
 
 RCT_EXTERN_METHOD(
