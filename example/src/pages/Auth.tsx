@@ -27,10 +27,10 @@ const Auth = () => {
       });
 
       const requestStatus = await Courier.shared.requestNotificationPermission();
-      console.log(requestStatus);
+      console.log('Request Notification Status: ' + requestStatus);
 
       const getStatus = await Courier.shared.getNotificationPermissionStatus();
-      console.log(getStatus);
+      console.log('Get Notification Status: ' + getStatus);
 
     } catch (e) {
 

@@ -118,12 +118,16 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
-    @objc func registerPushNotificationClickedOnKilledState() {
+    @objc func registerPushNotificationClickedOnKilledState() -> String {
+        
+        let event = CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT
         
         sendMessage(
-            name: CourierReactNativeModule.COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
+            name: event,
             message: lastClickedMessage
         )
+        
+        return event
         
     }
     
