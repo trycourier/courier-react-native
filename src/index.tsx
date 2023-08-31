@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import { CourierInboxListener } from './models/CourierInboxListener';
+import { CourierPushListener } from './models/CourierPushListener';
 import { InboxMessage } from './models/InboxMessage';
 export { CourierInboxView } from './views/CourierInboxView';
 export { CourierInboxProvider, useCourierInbox } from './hooks/useCourierInbox';
@@ -150,59 +151,56 @@ class Courier {
   *```
   * @returns  function that can be used to unsubscribe from registered listeners
   */
-  public registerPushNotificationListeners(props: { onPushNotificationClicked: (push: any) => void, onPushNotificationDelivered: (push: any) => void }) {
+  public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
     
-    let notificationClickedListener: EmitterSubscription;
-    let notificationDeliveredListener: EmitterSubscription;
+    const pushListener = new CourierPushListener();
 
-    // Android
     if (Platform.OS === 'android') {
-      notificationClickedListener = DeviceEventEmitter.addListener(
-        this.PUSH_NOTIFICATION_CLICKED,
-        (event: any) => {
-          try {
-            props.onPushNotificationClicked(JSON.parse(event));
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      );
 
-      notificationDeliveredListener = DeviceEventEmitter.addListener(
-        this.PUSH_NOTIFICATION_DELIVERED,
-        (event: any) => {
+      if (props.onPushNotificationClicked) {
+        pushListener.onNotificationClickedListener = DeviceEventEmitter.addListener(this.PUSH_NOTIFICATION_CLICKED, (event: any) => {
           try {
-            props.onPushNotificationDelivered(JSON.parse(event));
+            props.onPushNotificationClicked!(JSON.parse(event));
           } catch (error) {
             console.log(error);
           }
-        }
-      );
+        });
+      }
+
+      if (props.onPushNotificationDelivered) {
+        pushListener.onNotificationDeliveredListener = DeviceEventEmitter.addListener(this.PUSH_NOTIFICATION_DELIVERED, (event: any) => {
+          try {
+            props.onPushNotificationDelivered!(JSON.parse(event));
+          } catch (error) {
+            console.log(error);
+          }
+        });
+      }
+
     }
 
-    // iOS
     if (Platform.OS === 'ios') {
-      notificationClickedListener = CourierEventEmitter.addListener(
-        this.PUSH_NOTIFICATION_CLICKED,
-        (event: any) => {
-          try {
-            props.onPushNotificationClicked(JSON.parse(event));
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      );
 
-      notificationDeliveredListener = CourierEventEmitter.addListener(
-        this.PUSH_NOTIFICATION_DELIVERED,
-        (event: any) => {
+      if (props.onPushNotificationClicked) {
+        pushListener.onNotificationClickedListener = CourierEventEmitter.addListener(this.PUSH_NOTIFICATION_CLICKED, (event: any) => {
           try {
-            props.onPushNotificationDelivered(JSON.parse(event));
+            props.onPushNotificationClicked!(JSON.parse(event));
           } catch (error) {
             console.log(error);
           }
-        }
-      );
+        });
+      }
+
+      if (props.onPushNotificationDelivered) {
+        pushListener.onNotificationDeliveredListener = CourierEventEmitter.addListener(this.PUSH_NOTIFICATION_DELIVERED, (event: any) => {
+          try {
+            props.onPushNotificationDelivered!(JSON.parse(event));
+          } catch (error) {
+            console.log(error);
+          }
+        });
+      }
+
     }
 
     // When listener is registered
@@ -211,10 +209,7 @@ class Courier {
     // user launched the app by clicking on a notifications
     CourierReactNativeModules.registerPushNotificationClickedOnKilledState();
 
-    return () => {
-      notificationClickedListener.remove();
-      notificationDeliveredListener.remove();
-    };
+    return pushListener
 
   }
 

@@ -21,8 +21,8 @@ const Auth = () => {
     try {
 
       await Courier.shared.signIn({
-        accessToken: 'pk_prod_2M1VP0GVFE4M0RQ4ZYFW1DGH3R90',
-        clientKey: 'YWQxN2M2ZmMtNDU5OS00ZThlLWE4NTktZDQ4YzVlYjkxM2Mx',
+        accessToken: 'pk_prod_MVPCX80QWXMJ1HQMTZNBFE4ZQYJS',
+        clientKey: 'MWVmNzI3ZDUtZDk2NS00OGU1LThjMjQtMDgwMjlkYjM1YWYx',
         userId: userId,
       });
 

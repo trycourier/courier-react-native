@@ -8,7 +8,7 @@ export default function App() {
 
   useEffect(() => {
 
-    const unsubscribeNotificationListeners = Courier.shared.registerPushNotificationListeners({
+    const listener = Courier.shared.addPushNotificationListener({
       onPushNotificationClicked: (push) => {
         Alert.alert(`Push Clicked\n${JSON.stringify(push)}`);
       },
@@ -18,7 +18,7 @@ export default function App() {
     });
 
     return () => {
-      unsubscribeNotificationListeners();
+      listener.remove()
     }
 
   }, []);
