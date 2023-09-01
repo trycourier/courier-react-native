@@ -8,7 +8,7 @@ export default function App() {
   // IMPORTANT: Please add `CourierProvider` if you want to access realtime Courier events
 
   return (
-    <CourierProvider listeners={['auth', 'push', 'inbox']}> 
+    <CourierProvider> 
       <NavigationContainer>
         <Navigation />
       </NavigationContainer>

@@ -4,7 +4,7 @@ import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, Touchabl
 
 const Auth = () => {
 
-  const { auth, push } = useCourier();
+  const { auth, push } = useCourier({ modules: ['auth', 'push'] });
 
   useEffect(() => {
 
@@ -18,15 +18,15 @@ const Auth = () => {
 
     try {
       
-      await auth?.signIn({
+      await auth.signIn({
         accessToken: 'pk_prod_MVPCX80QWXMJ1HQMTZNBFE4ZQYJS',
         clientKey: 'MWVmNzI3ZDUtZDk2NS00OGU1LThjMjQtMDgwMjlkYjM1YWYx',
         userId: userId,
       })
 
-      const requestStatus = await push?.requestNotificationPermission();
+      const requestStatus = await push.requestNotificationPermission();
       console.log('Request Notification Status: ' + requestStatus);
-      console.log('Get Notification Status: ' + push?.notificationPermissionStatus);
+      console.log('Get Notification Status: ' + push.notificationPermissionStatus);
 
     } catch (e) {
 
@@ -146,14 +146,14 @@ const Auth = () => {
   return (
     <View style={styles.container}>
 
-      {auth?.isLoading && (
+      {auth.isLoading && (
         <ActivityIndicator size="small" />
       )}
 
-      {!auth?.isLoading && (
+      {!auth.isLoading && (
         <>
-          {auth?.userId && <Text style={styles.text}>{auth?.userId}</Text>}
-          <AuthButton buttonText={auth?.userId ? 'Sign Out' : 'Sign In'} />
+          {auth.userId && <Text style={styles.text}>{auth.userId}</Text>}
+          <AuthButton buttonText={auth.userId ? 'Sign Out' : 'Sign In'} />
         </>
       )}
 

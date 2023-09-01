@@ -6,44 +6,53 @@ let authListener: CourierAuthenticationListener | undefined = undefined
 let pushListener: CourierPushListener | undefined = undefined
 let inboxListener: CourierInboxListener | undefined = undefined
 
-interface CourierContextType {
-  auth?: {
-    isLoading: boolean;
-    error?: string;
-    userId?: string;
-    signIn: (props: { accessToken: string, clientKey?: string, userId: string }) => Promise<void>;
-    signOut: () => Promise<void>;
-  }
-  push?: {
-    delivered: any;
-    clicked: any;
-    tokens: {
-      apns?: string,
-      fcm?: string;
-    },
-    notificationPermissionStatus?: string;
-    requestNotificationPermission: () => Promise<void>;
-  }
-  inbox?: {
-    isLoading: boolean;
-    error?: string;
-    messages: InboxMessage[];
-    unreadMessageCount: number;
-    totalMessageCount: number;
-    canPaginate: boolean;
-    setPaginationLimit: (limit: number) => void;
-    fetchNextPageOfMessages: () => Promise<InboxMessage[]>;
-    refresh: () => Promise<void>;
-    isRefreshing: boolean;
-    readAllMessages: () => Promise<void>;
-    readMessage: (messageId: string) => Promise<void>;
-    unreadMessage: (messageId: string) => Promise<void>;
-  }
+type CourierModule = 'auth' | 'push' | 'inbox';
+
+interface CourierAuth {
+  isLoading: boolean;
+  error?: string;
+  userId?: string;
+  signIn: (props: { accessToken: string; clientKey?: string; userId: string }) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
-const CourierContext = createContext<CourierContextType | undefined>(undefined);
+interface CourierPush {
+  delivered: any;
+  clicked: any;
+  tokens: {
+    apns?: string;
+    fcm?: string;
+  };
+  notificationPermissionStatus?: string;
+  requestNotificationPermission: () => Promise<void>;
+}
 
-export const CourierProvider: React.FC<{ listeners: ('auth' | 'push' | 'inbox')[], children: ReactNode }> = ({ listeners, children }) => {
+interface CourierInbox {
+  isLoading: boolean;
+  error?: string;
+  messages: InboxMessage[];
+  unreadMessageCount: number;
+  totalMessageCount: number;
+  canPaginate: boolean;
+  setPaginationLimit: (limit: number) => void;
+  fetchNextPageOfMessages: () => Promise<InboxMessage[]>;
+  refresh: () => Promise<void>;
+  isRefreshing: boolean;
+  readAllMessages: () => Promise<void>;
+  readMessage: (messageId: string) => Promise<void>;
+  unreadMessage: (messageId: string) => Promise<void>;
+}
+
+interface CourierContext {
+  setModules: (modules: CourierModule[]) => void;
+  auth: CourierAuth;
+  push: CourierPush;
+  inbox: CourierInbox;
+}
+
+const CourierContext = createContext<CourierContext | undefined>(undefined);
+
+export const CourierProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   // Auth
   const [auth_userId, auth_setUserId] = useState<string | undefined>(undefined);
@@ -82,33 +91,35 @@ export const CourierProvider: React.FC<{ listeners: ('auth' | 'push' | 'inbox')[
 
   useEffect(() => {
 
-    authListener?.remove();
-    pushListener?.remove();
-    inboxListener?.remove();
+    return () => {
+      authListener?.remove();
+      pushListener?.remove();
+      inboxListener?.remove();
+    }
 
-    // Push
-    if (listeners.includes('auth')) {
+  }, []);
+
+  const setModules = (modules: CourierModule[]) => {
+
+    // Start the modules that are needed
+    if (modules.includes('auth') && !authListener) {
 
       authListener = Courier.shared.addAuthenticationListener({
-        onUserChanged: (userId) => {
-          auth_setUserId(userId);
-        }
-      })
+        onUserChanged: (userId) => auth_setUserId(userId)
+      });
 
     }
 
-    // Push
-    if (listeners.includes('push')) {
+    if (modules.includes('push') && !pushListener) {
 
       pushListener = Courier.shared.addPushNotificationListener({
         onPushNotificationDelivered: (push) => inbox_setPushNotificationDelivered(push),
         onPushNotificationClicked: (push) => inbox_setPushNotificationClicked(push)
       });
-
+      
     }
 
-    // Inbox
-    if (listeners.includes('inbox')) {
+    if (modules.includes('inbox') && !inboxListener) {
 
       inboxListener = Courier.shared.addInboxListener({
         onInitialLoad: () => {
@@ -128,16 +139,10 @@ export const CourierProvider: React.FC<{ listeners: ('auth' | 'push' | 'inbox')[
           inbox_setCanPaginate(canPaginate);
         }
       });
-
+      
     }
 
-    return () => {
-      authListener?.remove();
-      pushListener?.remove();
-      inboxListener?.remove();
-    }
-
-  }, [listeners]);
+  }
 
   const signIn = async (props: { accessToken: string, clientKey?: string, userId: string }): Promise<void> => {
     
@@ -145,7 +150,7 @@ export const CourierProvider: React.FC<{ listeners: ('auth' | 'push' | 'inbox')[
     auth_setError(undefined);
 
     try {
-      await Courier.shared.signIn(props)
+      await Courier.shared.signIn(props);
     } catch (error) {
       auth_setError(error as string);
     }
@@ -228,6 +233,7 @@ export const CourierProvider: React.FC<{ listeners: ('auth' | 'push' | 'inbox')[
 
   return (
     <CourierContext.Provider value={{
+      setModules,
       auth: {
         isLoading: auth_isLoading,
         error: auth_error,
@@ -268,18 +274,22 @@ export const CourierProvider: React.FC<{ listeners: ('auth' | 'push' | 'inbox')[
 };
 
 interface UseCourierProps {
+  modules: CourierModule[];
   inbox?: {
     paginationLimit?: number;
   }
 }
 
-export const useCourier = (props: UseCourierProps = {}): CourierContextType => {
+export const useCourier = (props: UseCourierProps = { modules: [] }): CourierContext => {
 
   const context = useContext(CourierContext);
 
   if (!context) {
     throw new Error('useCourier must be used within an CourierProvider');
   }
+
+  // Set the modules
+  context.setModules(props.modules);
 
   // Set the initial pagination limit if needed
   if (props.inbox?.paginationLimit) {

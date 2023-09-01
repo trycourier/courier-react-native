@@ -13,7 +13,8 @@ const Tab = createBottomTabNavigator();
 
 const Navigation = () => {
 
-  const courier = useCourier({ 
+  const { push, inbox } = useCourier({ 
+    modules: ['push', 'inbox'],
     inbox: {
       paginationLimit: 100
     }
@@ -22,51 +23,51 @@ const Navigation = () => {
   useEffect(() => {
 
     console.log('Notification Permissions');
-    console.log(courier.push?.notificationPermissionStatus);
+    console.log(push?.notificationPermissionStatus);
 
-  }, [courier.push?.notificationPermissionStatus])
+  }, [push?.notificationPermissionStatus])
 
   useEffect(() => {
 
     console.log('Push Tokens');
-    console.log(courier.push?.tokens);
+    console.log(push.tokens);
 
-  }, [courier.push?.tokens])
-
-  useEffect(() => {
-
-    if (courier.push?.delivered) {
-      console.log(courier.push?.delivered);
-      Alert.alert('📬 Push Notification Delivered', JSON.stringify(courier.push?.delivered));
-    }
-
-  }, [courier.push?.delivered]);
+  }, [push?.tokens])
 
   useEffect(() => {
 
-    if (courier.push?.clicked) {
-      console.log(courier.push?.clicked);
-      Alert.alert('👆 Push Notification Clicked', JSON.stringify(courier.push?.clicked));
+    if (push.delivered) {
+      console.log(push.delivered);
+      Alert.alert('📬 Push Notification Delivered', JSON.stringify(push.delivered));
     }
 
-  }, [courier.push?.clicked]);
+  }, [push?.delivered]);
+
+  useEffect(() => {
+
+    if (push.clicked) {
+      console.log(push.clicked);
+      Alert.alert('👆 Push Notification Clicked', JSON.stringify(push.clicked));
+    }
+
+  }, [push?.clicked]);
 
   const inboxOptions = (): BottomTabNavigationOptions => {
 
     const badgeCount = () => {
 
-      if (!courier.inbox || courier.inbox?.error) {
+      if (inbox.error) {
         return undefined
       }
 
-      return courier.inbox?.unreadMessageCount > 0 ? courier.inbox?.unreadMessageCount : undefined
+      return inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined
 
     }
 
     return {
       headerRight: () => (
         <Button
-          onPress={() => courier.inbox?.readAllMessages()}
+          onPress={() => inbox?.readAllMessages()}
           title="Read All"
         />
       ),

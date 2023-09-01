@@ -5,7 +5,8 @@ import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
 
-  const courier = useCourier({ 
+  const { inbox } = useCourier({
+    modules: ['inbox'],
     inbox: {
       paginationLimit: 100
     }
@@ -33,7 +34,7 @@ const InboxCustom = () => {
 
     function toggleMessage() {
       const messageId = props.message.messageId;
-      isRead ? courier.inbox?.unreadMessage(messageId) : courier.inbox?.readMessage(messageId);
+      isRead ? inbox?.unreadMessage(messageId) : inbox?.readMessage(messageId);
     }
 
     return (
@@ -56,31 +57,31 @@ const InboxCustom = () => {
 
   function buildContent() {
 
-    if (courier.inbox?.isLoading) {
+    if (inbox?.isLoading) {
       return <Text>Loading</Text>
     }
 
-    if (courier.inbox?.error) {
-      return <Text>{courier.inbox?.error}</Text>
+    if (inbox?.error) {
+      return <Text>{inbox?.error}</Text>
     }
 
     return (
       <FlatList
-        data={courier.inbox?.messages}
+        data={inbox?.messages}
         keyExtractor={message => message.messageId}
         renderItem={message => <ListItem message={message.item} />}
         refreshControl={
           <RefreshControl
-            refreshing={courier.inbox?.isRefreshing ?? false}
-            onRefresh={courier.inbox?.refresh}
+            refreshing={inbox?.isRefreshing ?? false}
+            onRefresh={inbox?.refresh}
           />
         }
         ListFooterComponent={() => {
-          return courier.inbox?.canPaginate ? <PaginationItem /> : null
+          return inbox?.canPaginate ? <PaginationItem /> : null
         }}
         onEndReached={() => {
-          if (courier.inbox?.canPaginate) {
-            courier.inbox?.fetchNextPageOfMessages()
+          if (inbox?.canPaginate) {
+            inbox?.fetchNextPageOfMessages()
           }
         }}
       />
