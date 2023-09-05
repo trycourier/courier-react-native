@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Alert, Button } from 'react-native';
-import { useCourier } from '@trycourier/courier-react-native';
+import { useCourierInbox, useCourierPush } from '@trycourier/courier-react-native';
 import InboxCustom from './pages/InboxCustom';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import InboxDefault from './pages/InboxDefault';
@@ -13,10 +13,11 @@ const Tab = createBottomTabNavigator();
 
 const Navigation = () => {
 
-  const { push, inbox } = useCourier({ 
-    modules: ['push', 'inbox'],
-    inbox: {
-      paginationLimit: 100
+  const push = useCourierPush();
+  const inbox = useCourierInbox({
+    paginationLimit: 100,
+    iOS: {
+      foregroundPresentationOptions: ['sound', 'badge', 'list', 'banner']
     }
   });
 
@@ -25,14 +26,14 @@ const Navigation = () => {
     console.log('Notification Permissions');
     console.log(push?.notificationPermissionStatus);
 
-  }, [push?.notificationPermissionStatus])
+  }, [push?.notificationPermissionStatus]);
 
   useEffect(() => {
 
     console.log('Push Tokens');
     console.log(push.tokens);
 
-  }, [push?.tokens])
+  }, [push?.tokens]);
 
   useEffect(() => {
 
@@ -57,10 +58,10 @@ const Navigation = () => {
     const badgeCount = () => {
 
       if (inbox.error) {
-        return undefined
+        return undefined;
       }
 
-      return inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined
+      return inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined;
 
     }
 

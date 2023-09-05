@@ -1,15 +1,12 @@
-import { useCourier } from '@trycourier/courier-react-native';
+import { useCourierInbox } from '@trycourier/courier-react-native';
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
 
-  const { inbox } = useCourier({
-    modules: ['inbox'],
-    inbox: {
-      paginationLimit: 100
-    }
+  const inbox = useCourierInbox({
+    paginationLimit: 100
   });
 
   const ListItem = (props: { message: InboxMessage }) => {

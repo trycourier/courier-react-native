@@ -14,10 +14,11 @@ import { InboxMessage } from './models/InboxMessage';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
-export { CourierProvider, useCourier } from './hooks/useCourier';
+export { CourierProvider, useCourierAuth, useCourierPush, useCourierInbox } from './hooks/CourierProvider';
 export { CourierInboxListener } from './models/CourierInboxListener';
 export { CourierPushListener } from './models/CourierPushListener';
 export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
+export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
@@ -108,7 +109,7 @@ class Courier {
    * @param props 
    * @returns 
    */
-  public iOSForegroundPresentationOptions(props: { options: ('sound' | 'badge' | 'list' | 'banner')[] }): string {
+  public iOSForegroundPresentationOptions(props: { options: iOSForegroundPresentationOptions[] }): string {
 
     // Only works on iOS
     if (Platform.OS !== 'ios') return 'unsupported';

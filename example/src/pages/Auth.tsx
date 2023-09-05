@@ -1,18 +1,18 @@
-import Courier, { useCourier } from "@trycourier/courier-react-native";
+import { useCourierPush, useCourierAuth } from "@trycourier/courier-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const Auth = () => {
 
-  const { auth, push } = useCourier({ modules: ['auth', 'push'] });
+  const push = useCourierPush();
+  const auth = useCourierAuth();
 
   useEffect(() => {
 
-    Courier.shared.iOSForegroundPresentationOptions({
-      options: ['sound', 'badge', 'list', 'banner'],
-    });
+    console.log('-- Courier User Id Changed --');
+    console.log(auth.userId);
 
-  }, []);
+  }, [auth.userId]);
 
   async function signIn(userId: string) {
 
@@ -22,7 +22,7 @@ const Auth = () => {
         accessToken: 'pk_prod_MVPCX80QWXMJ1HQMTZNBFE4ZQYJS',
         clientKey: 'MWVmNzI3ZDUtZDk2NS00OGU1LThjMjQtMDgwMjlkYjM1YWYx',
         userId: userId,
-      })
+      });
 
       const requestStatus = await push.requestNotificationPermission();
       console.log('Request Notification Status: ' + requestStatus);
