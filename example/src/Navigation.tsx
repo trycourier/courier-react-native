@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Alert, Button } from 'react-native';
-import { useCourierInbox, useCourierPush } from '@trycourier/courier-react-native';
+import { useCourierAuth, useCourierInbox, useCourierPush } from '@trycourier/courier-react-native';
 import InboxCustom from './pages/InboxCustom';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import InboxDefault from './pages/InboxDefault';
@@ -13,12 +13,14 @@ const Tab = createBottomTabNavigator();
 
 const Navigation = () => {
 
-  const push = useCourierPush();
+  const auth = useCourierAuth();
+
+  const push = useCourierPush({
+    iOSForegroundPresentationOptions: ['sound', 'badge', 'list', 'banner']
+  });
+
   const inbox = useCourierInbox({
-    paginationLimit: 100,
-    iOS: {
-      foregroundPresentationOptions: ['sound', 'badge', 'list', 'banner']
-    }
+    paginationLimit: 100
   });
 
   useEffect(() => {

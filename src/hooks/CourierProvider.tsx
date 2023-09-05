@@ -23,6 +23,7 @@ interface CourierPushContext {
     apns?: string;
     fcm?: string;
   };
+  iOSForegroundPresentationOptions: (options: iOSForegroundPresentationOptions[]) => void;
   notificationPermissionStatus?: string;
   requestNotificationPermission: () => Promise<void>;
 }
@@ -35,7 +36,6 @@ interface CourierInboxContext {
   unreadMessageCount: number;
   totalMessageCount: number;
   canPaginate: boolean;
-  iOSForegroundPresentationOptions: (options: iOSForegroundPresentationOptions[]) => void;
   setPaginationLimit: (limit: number) => void;
   fetchNextPageOfMessages: () => Promise<InboxMessage[]>;
   refresh: () => Promise<void>;
@@ -263,6 +263,7 @@ export const CourierProvider: React.FC<{ children: ReactNode }> = ({ children })
           fcm: push_fcmToken,
           apns: push_apnsToken,
         },
+        iOSForegroundPresentationOptions,
         notificationPermissionStatus: push_notificationPermission,
         requestNotificationPermission,
       },
@@ -274,7 +275,6 @@ export const CourierProvider: React.FC<{ children: ReactNode }> = ({ children })
         unreadMessageCount: inbox_unreadMessageCount,
         totalMessageCount: inbox_totalMessageCount,
         canPaginate: inbox_canPaginate,
-        iOSForegroundPresentationOptions,
         setPaginationLimit,
         fetchNextPageOfMessages,
         refresh,
@@ -305,13 +305,23 @@ export const useCourierAuth = (): CourierAuthContext => {
 
 };
 
+interface UseCourierPushProps {
+  iOSForegroundPresentationOptions?: iOSForegroundPresentationOptions[]
+}
+
 // Push Hook
-export const useCourierPush = (): CourierPushContext => {
+export const useCourierPush = (props: UseCourierPushProps = {}): CourierPushContext => {
 
   const context = useContext(CourierContext);
 
   if (!context) {
     throw new Error('useCourierPush must be used within an CourierProvider');
+  }
+
+  // Set the presentation options
+  const options = props.iOSForegroundPresentationOptions;
+  if (options) {
+    context.push?.iOSForegroundPresentationOptions(options);
   }
 
   context.push.start();
@@ -322,9 +332,6 @@ export const useCourierPush = (): CourierPushContext => {
 
 interface UseCourierInboxProps {
   paginationLimit?: number;
-  iOS?: {
-    foregroundPresentationOptions?: iOSForegroundPresentationOptions[]
-  }
 }
 
 // Inbox Hook
@@ -340,12 +347,6 @@ export const useCourierInbox = (props: UseCourierInboxProps = {}): CourierInboxC
   const limit = props.paginationLimit;
   if (limit) {
     context.inbox?.setPaginationLimit(limit);
-  }
-
-  // Set the presentation options
-  const options = props.iOS?.foregroundPresentationOptions;
-  if (options) {
-    context.inbox?.iOSForegroundPresentationOptions(options);
   }
 
   context.inbox?.start();
