@@ -6,7 +6,7 @@ class CourierReactNativeModule: RCTEventEmitter {
     private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
     
     class LogEvents {
-        internal static let DEBUG_LOG_EVENT = "courierDebugEvent"
+        internal static let DEBUG_LOG = "courierDebugEvent"
     }
     
     class AuthEvents {
@@ -55,7 +55,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         // setup listeners
         Courier.shared.logListener = { log in
             self.sendEvent(
-                withName: CourierReactNativeModule.LogEvents.DEBUG_LOG_EVENT,
+                withName: CourierReactNativeModule.LogEvents.DEBUG_LOG,
                 body: log
             )
         }
@@ -245,8 +245,9 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     }
     
-    @objc func getFcmToken() -> String? {
-        return Courier.shared.fcmToken
+    @objc(getFcmToken: withRejecter:)
+    func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        resolve(Courier.shared.fcmToken)
     }
 
     @objc func getApnsToken() -> String? {
@@ -402,7 +403,7 @@ class CourierReactNativeModule: RCTEventEmitter {
 
     override func supportedEvents() -> [String]! {
         return [
-            CourierReactNativeModule.LogEvents.DEBUG_LOG_EVENT,
+            CourierReactNativeModule.LogEvents.DEBUG_LOG,
             CourierReactNativeModule.AuthEvents.USER_CHANGED,
             CourierReactNativeModule.PushEvents.CLICKED_EVENT,
             CourierReactNativeModule.PushEvents.DELIVERED_EVENT,

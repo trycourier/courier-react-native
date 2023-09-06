@@ -136,7 +136,7 @@ class Courier {
    * using Courier token management apis
    * @example const fcmToken = await Courier.fcmToken
    */
-  get fcmToken(): string | undefined {
+  get fcmToken(): Promise<string | undefined> {
     return CourierReactNativeModules.getFcmToken();
   }
 
@@ -338,26 +338,54 @@ class Courier {
     const inboxListener = new CourierInboxListener();
 
     if (props.onInitialLoad) {
-      inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', () => {
-        props.onInitialLoad!()
+
+      inboxListener.onInitialLoad = DeviceEventEmitter.addListener('inboxInitialLoad', () => {
+        props.onInitialLoad!();
       });
+
+      // inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', () => {
+      //   props.onInitialLoad!()
+      // });
+
     }
 
     if (props.onError) {
-      inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
-        props.onError!(event)
+
+      inboxListener.onError = DeviceEventEmitter.addListener('inboxError', event => {
+        props.onError!(event);
       });
+
+      // inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
+      //   props.onError!(event)
+      // });
+
     }
 
     if (props.onMessagesChanged) {
-      inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
+
+      inboxListener.onMessagesChanged = DeviceEventEmitter.addListener('inboxMessagesChanged', event => {
+
+        console.log('MESSAGES -----')
+        console.log(event)
+
         props.onMessagesChanged!(
           event.messages,
           event.unreadMessageCount,
           event.totalMessageCount,
           event.canPaginate,
-        )
+        );
+
       });
+
+      // inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
+      //   props.onMessagesChanged!(
+      //     event.messages,
+      //     event.unreadMessageCount,
+      //     event.totalMessageCount,
+      //     event.canPaginate,
+      //   )
+      // });
+
     }
 
     inboxListener.listenerId = CourierReactNativeModules.addInboxListener();

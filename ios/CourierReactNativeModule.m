@@ -49,8 +49,9 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   getApnsToken
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getFcmToken
+RCT_EXTERN_METHOD(
+  getFcmToken: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
