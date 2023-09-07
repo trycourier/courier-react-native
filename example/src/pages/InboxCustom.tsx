@@ -1,6 +1,6 @@
 import { useCourierInbox } from '@trycourier/courier-react-native';
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator, Platform } from 'react-native';
 import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
@@ -21,6 +21,7 @@ const InboxCustom = () => {
         backgroundColor: 'red'
       },
       text: {
+        width: Platform.OS === 'ios' ? undefined : '100%',
         fontFamily: 'Menlo',
         lineHeight: 22,
         fontSize: 16,

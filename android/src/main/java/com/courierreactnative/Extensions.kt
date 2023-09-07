@@ -12,6 +12,19 @@ internal fun ReactContext.sendEvent(eventName: String, value: Any?) {
   getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java).emit(eventName, value)
 }
 
+@JvmName("toWritableArrayInboxMessage")
+internal fun List<InboxMessage>.toWritableArray(): WritableArray {
+  
+  val messagesArray = Arguments.createArray()
+
+  forEach { message ->
+    messagesArray.pushMap(message.toWritableMap())
+  }
+
+  return messagesArray
+
+}
+
 internal fun InboxMessage.toWritableMap(): WritableMap {
 
   val map = Arguments.createMap()

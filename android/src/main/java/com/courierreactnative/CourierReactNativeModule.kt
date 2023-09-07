@@ -34,6 +34,16 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
   }
 
+  @ReactMethod
+  fun addListener(type: String?) {
+    // Keep: Required for RN built in Event Emitter Calls.
+  }
+
+  @ReactMethod
+  fun removeListeners(type: Int?) {
+    // Keep: Required for RN built in Event Emitter Calls.
+  }
+
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun setDebugMode(isDebugging: Boolean): Boolean {
     Courier.shared.isDebugging = isDebugging
@@ -214,16 +224,15 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
       },
       onMessagesChanged = { messages: List<InboxMessage>, unreadMessageCount: Int, totalMessageCount: Int, canPaginate: Boolean ->
 
-        val json = mapOf(
-          "messages" to messages.map { it.toWritableMap() },
-          "unreadMessageCount" to unreadMessageCount,
-          "totalMessageCount" to totalMessageCount,
-          "canPaginate" to canPaginate
-        )
+        val json = Arguments.createMap()
+        json.putArray("messages", messages.toWritableArray())
+        json.putInt("unreadMessageCount", unreadMessageCount)
+        json.putInt("totalMessageCount", totalMessageCount)
+        json.putBoolean("canPaginate", canPaginate)
 
         reactApplicationContext.sendEvent(
           eventName = CourierEvents.Inbox.MESSAGES_CHANGED,
-          value = json.toWritableMap()
+          value = json
         )
 
       }
@@ -261,7 +270,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   fun fetchNextPageOfMessages(promise: Promise) {
     Courier.shared.fetchNextPageOfMessages(
       onSuccess = { messages ->
-        promise.resolve(messages)
+        promise.resolve(messages.toWritableArray())
       },
       onFailure = { e ->
         promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
@@ -274,75 +283,5 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     Courier.shared.inboxPaginationLimit = limit.toInt()
     return Courier.shared.inboxPaginationLimit.toString()
   }
-
-//
-//  @ReactMethod
-//  fun sendPush(
-//    authKey: String,
-//    userId: String,
-//    title: String,
-//    body: String,
-//    providers: ReadableArray,
-//    promise: Promise
-//  ) {
-////    Courier.shared.sendPush(
-////      authKey = authKey,
-////      userId = userId,
-////      title = title,
-////      body = body,
-////      providers = providers.toCourierProviders(),
-////      onSuccess = { messageId ->
-////        promise.resolve(messageId)
-////      },
-////      onFailure = { e ->
-////        promise.reject(COURIER_ERROR_TAG, e)
-////      }
-////    )
-//  }
-//
-//  @ReactMethod
-//  fun registerPushNotificationClickedOnKilledState() {
-//    reactActivity?.let { activity ->
-//      checkIntentForPushNotificationClick(activity.intent)
-//    }
-//  }
-//
-//  private fun checkIntentForPushNotificationClick(intent: Intent?) {
-//    intent?.trackPushNotificationClick { message ->
-//      postPushNotificationClicked(message)
-//    }
-//  }
-//
-//  private fun postPushNotificationClicked(message: RemoteMessage) {
-//    sendEvent(
-//      reactApplicationContext,
-//      COURIER_PUSH_NOTIFICATION_CLICKED_EVENT,
-//      JSONObject(message.pushNotification).toString()
-//    )
-//  }
-//
-//
-//
-//  @ReactMethod
-//  fun addListener(eventName: String?) {
-//    // Empty
-//  }
-//
-//  @ReactMethod
-//  fun removeListeners(count: Int?) {
-//    // Empty
-//  }
-//
-//  private fun ReadableArray.toCourierProviders(): List<CourierProvider> {
-//    val providers: MutableList<CourierProvider> = mutableListOf()
-//    for (provider in toArrayList()) {
-//      CourierProvider.values().forEach {
-//        if (it.value == provider) {
-//          providers.add(it)
-//        }
-//      }
-//    }
-//    return providers
-//  }
 
 }

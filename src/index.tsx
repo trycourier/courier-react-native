@@ -339,34 +339,28 @@ class Courier {
 
     if (props.onInitialLoad) {
 
-      inboxListener.onInitialLoad = DeviceEventEmitter.addListener('inboxInitialLoad', () => {
+      inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', () => {
         props.onInitialLoad!();
       });
-
-      // inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', () => {
-      //   props.onInitialLoad!()
-      // });
 
     }
 
     if (props.onError) {
 
-      inboxListener.onError = DeviceEventEmitter.addListener('inboxError', event => {
+      inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
         props.onError!(event);
       });
-
-      // inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
-      //   props.onError!(event)
-      // });
 
     }
 
     if (props.onMessagesChanged) {
 
-      inboxListener.onMessagesChanged = DeviceEventEmitter.addListener('inboxMessagesChanged', event => {
+      inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
 
-        console.log('MESSAGES -----')
-        console.log(event)
+        console.log(event.messages,
+          event.unreadMessageCount,
+          event.totalMessageCount,
+          event.canPaginate,)
 
         props.onMessagesChanged!(
           event.messages,
@@ -374,17 +368,7 @@ class Courier {
           event.totalMessageCount,
           event.canPaginate,
         );
-
       });
-
-      // inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
-      //   props.onMessagesChanged!(
-      //     event.messages,
-      //     event.unreadMessageCount,
-      //     event.totalMessageCount,
-      //     event.canPaginate,
-      //   )
-      // });
 
     }
 
@@ -423,6 +407,8 @@ class Courier {
 
   /**
    * TODO
+   * Min = 1
+   * Max = 100
    * @param props 
    * @returns 
    */
