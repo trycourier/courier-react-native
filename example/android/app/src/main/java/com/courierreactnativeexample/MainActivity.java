@@ -1,7 +1,6 @@
 package com.courierreactnativeexample;
 
 import com.courierreactnative.CourierReactNativeActivity;
-import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;

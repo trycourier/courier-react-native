@@ -189,13 +189,13 @@ export const CourierProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   }
 
-  const syncTokens = () => {
+  const syncTokens = async () => {
 
     // APNS
     const apnsToken = Courier.shared.apnsToken;
     push_setApnsToken(apnsToken);
 
-    const fcmToken = Courier.shared.fcmToken;
+    const fcmToken = await Courier.shared.fcmToken;
     push_setFcmToken(fcmToken);
 
   }

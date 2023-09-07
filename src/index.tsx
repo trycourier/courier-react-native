@@ -356,12 +356,6 @@ class Courier {
     if (props.onMessagesChanged) {
 
       inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
-
-        console.log(event.messages,
-          event.unreadMessageCount,
-          event.totalMessageCount,
-          event.canPaginate,)
-
         props.onMessagesChanged!(
           event.messages,
           event.unreadMessageCount,
