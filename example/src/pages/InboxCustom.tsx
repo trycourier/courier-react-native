@@ -32,7 +32,8 @@ const InboxCustom = () => {
 
     function toggleMessage() {
       const messageId = props.message.messageId;
-      isRead ? inbox?.unreadMessage(messageId) : inbox?.readMessage(messageId);
+      const test = isRead ? inbox?.unreadMessage(messageId) : inbox?.readMessage(messageId);
+      console.log(test)
     }
 
     return (

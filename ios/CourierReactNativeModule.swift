@@ -268,34 +268,18 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
-    @objc(readMessage: withResolver: withRejecter:)
-    func readMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        Courier.shared.readMessage(
-            messageId: messageId as String,
-            onSuccess: {
-                resolve(nil)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
-        
+    @objc(readMessage:)
+    func readMessage(messageId: NSString) -> String {
+        let id = messageId as String
+        Courier.shared.readMessage(messageId: id)
+        return id
     }
     
-    @objc(unreadMessage: withResolver: withRejecter:)
-    func unreadMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        Courier.shared.unreadMessage(
-            messageId: messageId as String,
-            onSuccess: {
-                resolve(nil)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
-        
+    @objc(unreadMessage:)
+    func unreadMessage(messageId: NSString) -> String {
+        let id = messageId as String
+        Courier.shared.unreadMessage(messageId: id)
+        return id
     }
     
     @objc(readAllInboxMessages: withRejecter:)

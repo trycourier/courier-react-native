@@ -182,16 +182,16 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     )
   }
 
-  @ReactMethod
-  fun readMessage(messageId: String, promise: Promise) {
-    // TODO: Read Message exposure
-    promise.resolve("TODO")
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  fun readMessage(messageId: String): String {
+    Courier.shared.readMessage(messageId)
+    return messageId
   }
 
-  @ReactMethod
-  fun unreadMessage(messageId: String, promise: Promise) {
-    // TODO: Read Message exposure
-    promise.resolve("TODO")
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  fun unreadMessage(messageId: String): String {
+    Courier.shared.unreadMessage(messageId)
+    return messageId
   }
 
   @ReactMethod

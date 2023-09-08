@@ -60,16 +60,12 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   readMessage: (NSString*)messageId
-  withResolver: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   unreadMessage: (NSString*)messageId
-  withResolver: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(

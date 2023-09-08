@@ -305,7 +305,7 @@ class Courier {
    * @param props 
    * @returns 
    */
-  public readMessage(props: { messageId: string }): Promise<void> {
+  public readMessage(props: { messageId: string }): string {
     return CourierReactNativeModules.readMessage(props.messageId);
   }
 
@@ -314,7 +314,7 @@ class Courier {
    * @param props 
    * @returns 
    */
-  public unreadMessage(props: { messageId: string }): Promise<void> {
+  public unreadMessage(props: { messageId: string }): string {
     return CourierReactNativeModules.unreadMessage(props.messageId);
   }
 

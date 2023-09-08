@@ -41,8 +41,8 @@ interface CourierInboxContext {
   refresh: () => Promise<void>;
   isRefreshing: boolean;
   readAllMessages: () => Promise<void>;
-  readMessage: (messageId: string) => Promise<void>;
-  unreadMessage: (messageId: string) => Promise<void>;
+  readMessage: (messageId: string) => string;
+  unreadMessage: (messageId: string) => string;
 }
 
 interface CourierContext {
