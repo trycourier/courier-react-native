@@ -1,9 +1,20 @@
 <resources>
 
+    <!-- TODO: Must use Theme.MaterialComponents if you are using prebuilt UI -->
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+    <!-- TODO: Customize the theme here. This will set the default values of your Courier Inbox as well -->
+
+<!--        &lt;!&ndash; Primary brand color. &ndash;&gt;-->
+<!--        <item name="colorPrimary">@android:color/holo_purple</item>-->
+<!--        <item name="colorPrimaryVariant">@android:color/holo_purple</item>-->
+<!--        <item name="colorOnPrimary">@android:color/white</item>-->
+
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+
     </style>
 
 </resources>

@@ -24,7 +24,10 @@ export default interface CourierInboxTheme {
       separatorStyle?: 'none' | 'singleLine' | 'singleLineEtched',
       separatorInsets?: { top?: number, left?: number, bottom?: number, right?: number },
       separatorColor?: string,
-      selectionStyle?: 'none' | 'blue' | 'gray' | 'default'
+      selectionStyle?: 'none' | 'blue' | 'gray' | 'default',
     }
+  },
+  android?: {
+    dividerItemDecoration?: 'none' | 'vertical',
   }
 }

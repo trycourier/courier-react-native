@@ -1,6 +1,6 @@
 import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import CourierInboxTheme from 'src/models/CourierInboxTheme';
 
 const InboxStyled = () => {
@@ -9,32 +9,35 @@ const InboxStyled = () => {
   const primaryColor = '#882DB9'
   const secondaryColor = '#EA6866'
 
+  const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
+  const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
+
   const lightTheme: CourierInboxTheme = {
     unreadIndicatorBarColor: secondaryColor,
     loadingIndicatorColor: primaryColor,
     titleFont: {
-      family: 'Avenir Black',
+      family: titleFont,
       size: 20,
       color: textColor
     },
     timeFont: {
-      family: 'Avenir Medium',
+      family: defaultFont,
       size: 16,
       color: textColor
     },
     bodyFont: {
-      family: 'Avenir Medium',
+      family: defaultFont,
       size: 18,
       color: textColor
     },
     detailTitleFont: {
-      family: 'Avenir Medium',
+      family: defaultFont,
       size: 20,
       color: textColor
     },
     buttonStyles: {
       font: {
-        family: 'Avenir Black',
+        family: titleFont,
         size: 16,
         color: '#FFFFFF'
       },
@@ -52,6 +55,9 @@ const InboxStyled = () => {
           bottom: 0
         }
       }
+    },
+    android: {
+      dividerItemDecoration: 'vertical'
     }
   }
 
@@ -59,28 +65,28 @@ const InboxStyled = () => {
     unreadIndicatorBarColor: '#ffffff',
     loadingIndicatorColor: '#ffffff',
     titleFont: {
-      family: 'Avenir Black',
+      family: titleFont,
       size: 20,
       color: '#ffffff'
     },
     timeFont: {
-      family: 'Avenir Medium',
+      family: defaultFont,
       size: 16,
       color: '#ffffff'
     },
     bodyFont: {
-      family: 'Avenir Medium',
+      family: defaultFont,
       size: 18,
       color: '#ffffff'
     },
     detailTitleFont: {
-      family: 'Avenir Medium',
+      family: defaultFont,
       size: 20,
       color: '#ffffff'
     },
     buttonStyles: {
       font: {
-        family: 'Avenir Black',
+        family: titleFont,
         size: 16,
         color: '#000000'
       },
@@ -98,6 +104,9 @@ const InboxStyled = () => {
           bottom: 0
         }
       }
+    },
+    android: {
+      dividerItemDecoration: 'vertical'
     }
   }
 
