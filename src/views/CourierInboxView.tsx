@@ -1,5 +1,5 @@
-import React from "react";
-import { Platform, requireNativeComponent, UIManager, ViewStyle } from "react-native";
+import React, { useEffect } from "react";
+import { Platform, requireNativeComponent, UIManager, ViewStyle, DeviceEventEmitter, EmitterSubscription } from "react-native";
 import CourierInboxTheme from "src/models/CourierInboxTheme";
 import { InboxAction } from "src/models/InboxAction";
 import { InboxMessage } from "src/models/InboxMessage";
@@ -32,13 +32,37 @@ const CourierInbox =
 
 export const CourierInboxView = (props: CourierInboxViewProps) => {
 
+  let onClickInboxMessageAtIndexListener: EmitterSubscription | undefined = undefined;
+  let onClickInboxActionForMessageAtIndexListener: EmitterSubscription | undefined = undefined;
+  let onScrollInboxListener: EmitterSubscription | undefined = undefined;
+
+  useEffect(() => {
+
+    return () => {
+      onClickInboxMessageAtIndexListener?.remove();
+      onClickInboxActionForMessageAtIndexListener?.remove();
+      onScrollInboxListener?.remove();
+    }
+
+  }, [])
+
+  useEffect(() => {
+
+    onClickInboxMessageAtIndexListener?.remove();
+
+    if (Platform.OS === 'android' && props.onClickInboxMessageAtIndex) {
+      onClickInboxMessageAtIndexListener = DeviceEventEmitter.addListener('courierClickMessageAtIndex', onClickInboxMessageAtIndex);
+    }
+
+  }, [props.onClickInboxMessageAtIndex])
+
   const onClickInboxMessageAtIndex = (event: any) => {
 
     // Parse the native event data
     if (props.onClickInboxMessageAtIndex) {
 
-      const index = event.nativeEvent["index"]
-      const message = event.nativeEvent["message"] as InboxMessage
+      const index = event["index"]
+      const message = event["message"] as InboxMessage
 
       props.onClickInboxMessageAtIndex(message, index)
 
@@ -46,14 +70,24 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
 
   }
 
+  useEffect(() => {
+
+    onClickInboxActionForMessageAtIndexListener?.remove();
+
+    if (Platform.OS === 'android' && props.onClickInboxActionForMessageAtIndex) {
+      onClickInboxActionForMessageAtIndexListener = DeviceEventEmitter.addListener('courierClickActionAtIndex', onClickInboxActionForMessageAtIndex);
+    }
+
+  }, [props.onClickInboxActionForMessageAtIndex])
+
   const onClickInboxActionForMessageAtIndex = (event: any) => {
 
     // Parse the native event data
     if (props.onClickInboxActionForMessageAtIndex) {
 
-      const index = event.nativeEvent["index"]
-      const action = event.nativeEvent["action"] as InboxAction
-      const message = event.nativeEvent["message"] as InboxMessage
+      const index = event["index"]
+      const action = event["action"] as InboxAction
+      const message = event["message"] as InboxMessage
 
       props.onClickInboxActionForMessageAtIndex(action, message, index)
 
@@ -61,12 +95,22 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
 
   }
 
+  useEffect(() => {
+
+    onScrollInboxListener?.remove();
+
+    if (Platform.OS === 'android' && props.onScrollInbox) {
+      onScrollInboxListener = DeviceEventEmitter.addListener('courierScrollInbox', onScrollInbox);
+    }
+
+  }, [props.onScrollInbox])
+
   const onScrollInbox = (event: any) => {
 
     // Parse the native event data
     if (props.onScrollInbox) {
 
-      const contentOffset = event.nativeEvent["contentOffset"]
+      const contentOffset = event["contentOffset"]
       props.onScrollInbox(contentOffset["y"], contentOffset["x"])
 
     }
@@ -76,9 +120,9 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
   return (
     <CourierInbox 
       theme={props.theme ?? { light: undefined, dark: undefined }} 
-      onClickInboxMessageAtIndex={onClickInboxMessageAtIndex}
-      onClickInboxActionForMessageAtIndex={onClickInboxActionForMessageAtIndex}
-      onScrollInbox={onScrollInbox}
+      onClickInboxMessageAtIndex={(event: any) => onClickInboxMessageAtIndex(event.nativeEvent)}
+      onClickInboxActionForMessageAtIndex={(event: any) => onClickInboxActionForMessageAtIndex(event.nativeEvent)}
+      onScrollInbox={(event: any) => onScrollInbox(event.nativeEvent)}
       style={props.style}
     />
   )

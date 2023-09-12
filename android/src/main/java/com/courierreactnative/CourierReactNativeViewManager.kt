@@ -4,75 +4,87 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.View
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.courier.android.Courier
 import com.courier.android.inbox.CourierInbox
 import com.courier.android.inbox.CourierInboxButtonStyles
 import com.courier.android.inbox.CourierInboxFont
 import com.courier.android.inbox.CourierInboxTheme
-import com.courier.android.models.markAsRead
-import com.courier.android.models.markAsUnread
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
-import java.io.IOException
 
-class CourierReactNativeViewManager : SimpleViewManager<FrameLayout>() {
+
+class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
+
+  private companion object {
+    const val ON_CLICK_MESSAGE_AT_INDEX = "courierClickMessageAtIndex"
+    const val ON_CLICK_ACTION_AT_INDEX = "courierClickActionAtIndex"
+    const val ON_SCROLL = "courierScrollInbox"
+  }
 
   override fun getName() = "CourierReactNativeView"
 
-  override fun createViewInstance(reactContext: ThemedReactContext): FrameLayout {
-    return FrameLayout(reactContext)
+  override fun createViewInstance(reactContext: ThemedReactContext): CourierInbox {
+    return CourierInbox(reactContext)
   }
 
-  @ReactProp(name = "theme")
-  fun setTheme(view: FrameLayout, theme: ReadableMap) {
+  private val View.reactContext: ThemedReactContext get() = context as ThemedReactContext
 
-    // Remove the other views if needed
-    view.removeAllViews()
+  @ReactProp(name = "onClickInboxMessageAtIndex")
+  fun setOnClickInboxMessageAtIndex(view: CourierInbox, callback: Boolean) {
 
-    // Create the view
-    val courierInbox = CourierInbox(view.context)
+    view.setOnClickMessageListener { message, index ->
 
-    // Set the layout params
-    val layoutParams = FrameLayout.LayoutParams(
-      FrameLayout.LayoutParams.MATCH_PARENT,
-      FrameLayout.LayoutParams.MATCH_PARENT
-    )
-    courierInbox.layoutParams = layoutParams
+      val map = Arguments.createMap()
+      map.putMap("message", message.toWritableMap())
+      map.putInt("index", index)
 
-    // Create the inbox
-    courierInbox.apply {
-
-      // Set the themes
-      theme.getMap("light")?.toTheme(view)?.let {
-        lightTheme = it
-      }
-
-      theme.getMap("dark")?.toTheme(view)?.let {
-        darkTheme = it
-      }
-
-      setOnClickMessageListener { message, index ->
-        Courier.log(message.toString())
-        if (message.isRead) message.markAsUnread() else message.markAsRead()
-      }
-
-      setOnClickActionListener { action, message, index ->
-        Courier.log(action.toString())
-      }
-
-      setOnScrollInboxListener { offsetInDp ->
-        Courier.log(offsetInDp.toString())
-      }
+      view.reactContext.sendEvent(ON_CLICK_MESSAGE_AT_INDEX, map)
 
     }
 
-    // Add the view to the parent
-    view.addView(courierInbox)
+  }
 
+  @ReactProp(name = "onClickInboxActionForMessageAtIndex")
+  fun setOnClickInboxActionForMessageAtIndex(view: CourierInbox, callback: Boolean) {
+
+    view.setOnClickActionListener { action, message, index ->
+
+      val map = Arguments.createMap()
+      map.putMap("action", action.toWritableMap())
+      map.putMap("message", message.toWritableMap())
+      map.putInt("index", index)
+
+      view.reactContext.sendEvent(ON_CLICK_ACTION_AT_INDEX, map)
+
+    }
+
+  }
+
+  @ReactProp(name = "onScrollInbox")
+  fun setOnScrollInbox(view: CourierInbox, callback: Boolean) {
+
+    view.setOnScrollInboxListener { offsetInDp ->
+
+      val offset = Arguments.createMap()
+      offset.putInt("y", offsetInDp)
+      offset.putInt("x", 0)
+
+      val map = Arguments.createMap()
+      map.putMap("contentOffset", offset)
+
+      view.reactContext.sendEvent(ON_SCROLL, map)
+
+    }
+
+  }
+
+  @ReactProp(name = "theme")
+  fun setTheme(view: CourierInbox, theme: ReadableMap) {
+    view.lightTheme = theme.getMap("light")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_LIGHT
+    view.darkTheme = theme.getMap("dark")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_DARK
   }
 
   private fun ReadableMap.toTheme(view: View): CourierInboxTheme {
