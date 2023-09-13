@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import { InboxMessage } from 'src/models/InboxMessage';
 import Courier, { CourierPushListener, CourierInboxListener, CourierAuthenticationListener, iOSForegroundPresentationOptions } from '..';
 

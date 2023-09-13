@@ -4,7 +4,6 @@ import {
   EmitterSubscription,
   Platform,
   DeviceEventEmitter,
-  Alert,
 } from 'react-native';
 
 // Imports
