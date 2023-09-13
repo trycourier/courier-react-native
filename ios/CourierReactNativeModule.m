@@ -95,8 +95,13 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   setInboxPaginationLimit: (double)limit
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   registerPushNotificationClickedOnKilledState
 )
+
++ (BOOL)requiresMainQueueSetup
+{
+  return YES;
+}
 
 @end

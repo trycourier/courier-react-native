@@ -3,9 +3,9 @@ package com.courierreactnative
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Handler
 import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.courier.android.inbox.CourierInbox
 import com.courier.android.inbox.CourierInboxButtonStyles
 import com.courier.android.inbox.CourierInboxFont
 import com.courier.android.inbox.CourierInboxTheme
@@ -16,7 +16,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
 
 
-class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
+class CourierReactNativeViewManager : SimpleViewManager<ReactNativeCourierInbox>() {
 
   private companion object {
     const val ON_CLICK_MESSAGE_AT_INDEX = "courierClickMessageAtIndex"
@@ -26,16 +26,14 @@ class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
 
   override fun getName() = "CourierReactNativeView"
 
-  override fun createViewInstance(reactContext: ThemedReactContext): CourierInbox {
-    return CourierInbox(reactContext)
-  }
+  override fun createViewInstance(reactContext: ThemedReactContext): ReactNativeCourierInbox = ReactNativeCourierInbox(reactContext)
 
   private val View.reactContext: ThemedReactContext get() = context as ThemedReactContext
 
   @ReactProp(name = "onClickInboxMessageAtIndex")
-  fun setOnClickInboxMessageAtIndex(view: CourierInbox, callback: Boolean) {
+  fun setOnClickInboxMessageAtIndex(view: ReactNativeCourierInbox, callback: Boolean) {
 
-    view.setOnClickMessageListener { message, index ->
+    view.inbox.setOnClickMessageListener { message, index ->
 
       val map = Arguments.createMap()
       map.putMap("message", message.toWritableMap())
@@ -48,9 +46,9 @@ class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
   }
 
   @ReactProp(name = "onClickInboxActionForMessageAtIndex")
-  fun setOnClickInboxActionForMessageAtIndex(view: CourierInbox, callback: Boolean) {
+  fun setOnClickInboxActionForMessageAtIndex(view: ReactNativeCourierInbox, callback: Boolean) {
 
-    view.setOnClickActionListener { action, message, index ->
+    view.inbox.setOnClickActionListener { action, message, index ->
 
       val map = Arguments.createMap()
       map.putMap("action", action.toWritableMap())
@@ -64,9 +62,9 @@ class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
   }
 
   @ReactProp(name = "onScrollInbox")
-  fun setOnScrollInbox(view: CourierInbox, callback: Boolean) {
+  fun setOnScrollInbox(view: ReactNativeCourierInbox, callback: Boolean) {
 
-    view.setOnScrollInboxListener { offsetInDp ->
+    view.inbox.setOnScrollInboxListener { offsetInDp ->
 
       val offset = Arguments.createMap()
       offset.putInt("y", offsetInDp)
@@ -82,9 +80,9 @@ class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
   }
 
   @ReactProp(name = "theme")
-  fun setTheme(view: CourierInbox, theme: ReadableMap) {
-    view.lightTheme = theme.getMap("light")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_LIGHT
-    view.darkTheme = theme.getMap("dark")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_DARK
+  fun setTheme(view: ReactNativeCourierInbox, theme: ReadableMap) {
+    view.inbox.lightTheme = theme.getMap("light")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_LIGHT
+    view.inbox.darkTheme = theme.getMap("dark")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_DARK
   }
 
   private fun ReadableMap.toTheme(view: View): CourierInboxTheme {

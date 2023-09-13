@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Alert, Button } from 'react-native';
-import { useCourierInbox, useCourierPush } from '@trycourier/courier-react-native';
+import Courier, { useCourierInbox, useCourierPush } from '@trycourier/courier-react-native';
 import InboxCustom from './pages/InboxCustom';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import InboxDefault from './pages/InboxDefault';

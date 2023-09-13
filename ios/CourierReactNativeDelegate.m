@@ -65,10 +65,14 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     }
     ];
     
-    NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:pushNotification];
+    dispatch_async(dispatch_get_main_queue(), ^{
     
-    completionHandler(notificationPresentationOptions);
+        NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:pushNotification];
+        
+        completionHandler(notificationPresentationOptions);
+        
+    });
     
 }
 
@@ -86,11 +90,13 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     }
     ];
     
-    NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
-    
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
+        
         completionHandler();
+        
     });
     
 }
