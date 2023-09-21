@@ -1,5 +1,7 @@
 <img width="1000" alt="banner" src="https://user-images.githubusercontent.com/6370613/232106835-cf4e584c-9453-40bf-88be-7bf8dfe59886.png">
 
+TODO 👆
+
 &emsp;
 
 # Requirements & Support
@@ -24,6 +26,12 @@
         </tr>
         <tr width="600px">
             <td align="left">Minimum iOS SDK Version</td>
+            <td align="center">
+                <code>13.0</code>
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">Minimum Android SDK Version</td>
             <td align="center">
                 <code>13.0</code>
             </td>

@@ -1,6 +1,7 @@
 import { useCourierPush, useCourierAuth } from "@trycourier/courier-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Env from "../Env";
 
 const Auth = () => {
 
@@ -19,8 +20,8 @@ const Auth = () => {
     try {
       
       await auth.signIn({
-        accessToken: 'pk_prod_MVPCX80QWXMJ1HQMTZNBFE4ZQYJS',
-        clientKey: 'MWVmNzI3ZDUtZDk2NS00OGU1LThjMjQtMDgwMjlkYjM1YWYx',
+        accessToken: Env.accessToken,
+        clientKey: Env.clientKey,
         userId: userId,
       });
 
