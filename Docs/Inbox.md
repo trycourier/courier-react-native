@@ -44,13 +44,9 @@ An in-app notification center list you can use to notify your users. Allows you 
 ## Default Inbox Example
 
 ⚠️ TODO
+<img width="894" alt="default-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/e39a1f20-5636-48a9-9337-e1416fbb67bf">
 
 The default `CourierInbox` styles. Colors are using `colorPrimary` located in your `res/values/themes.xml` file.
-
-![default-inbox](https://github.com/trycourier/courier-react-native/assets/6370613/695e70ca-5d33-452d-b55d-b61bfb812db3)
-![inbox-default](https://github.com/trycourier/courier-react-native/assets/6370613/6b0b7b6d-478e-433f-9bf5-1ec64da53c7c)
-
-<img width="894" alt="inbox-default" src="https://github.com/trycourier/courier-react-native/assets/6370613/fa5fd1cb-22a9-472e-bf19-aaa3bce8ab9c">
 
 ```javascript
 val inbox: CourierInbox = view.findViewById(R.id.courierInbox)
@@ -69,11 +65,12 @@ inbox.setOnClickActionListener { action, message, index ->
 
 ## Styled Inbox Example
 
+⚠️ TODO
+<img width="894" alt="styled-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/46ad8b3a-5931-490c-8f48-d36c05e89abd">
+
 The styles you can use to quickly customize the `CourierInbox`.
 
-<img width="415" alt="android-styled-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/cfea668d-2a8d-4da6-a128-bf5d747a8e11">
-
-```kotlin
+```javascript
 val inbox: CourierInbox = view.findViewById(R.id.courierInbox)
 
 val theme = CourierInboxTheme(
@@ -128,59 +125,14 @@ inbox.setOnScrollInboxListener { offsetInDp ->
 }
 ```
 
-&emsp;
-
-### Courier Studio Branding (Optional)
-
-<img width="782" alt="setting" src="https://user-images.githubusercontent.com/6370613/228931428-04dc2130-789a-4ac3-bf3f-0bbb49d5519a.png">
-
-You can control your branding from the [`Courier Studio`](https://app.courier.com/designer/brands).
-
-```kotlin
-// Sets the brand for the inbox
-Courier.shared.inboxBrandId = "YOUR_BRAND_ID"
-
-val inbox: CourierInbox = view.findViewById(R.id.courierInbox)
-
-// ⚠️ Any colors you apply to the theme will override the brand you applied
-val theme = CourierInboxTheme(
-    loadingIndicatorColor = ContextCompat.getColor(requireContext(), R.color.courier_purple)
-)
-
-inbox.lightTheme = theme
-inbox.darkTheme = theme
-```
-
-&emsp;
-
-<table>
-    <thead>
-        <tr>
-            <th width="800px" align="left">Supported Brand Styles</th>
-            <th width="200px" align="center">Support</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr width="600px">
-            <td align="left"><code>Primary Color</code></td>
-            <td align="center">✅</td>
-        </tr>
-        <tr width="600px">
-            <td align="left"><code>Show/Hide Courier Footer</code></td>
-            <td align="center">✅</td>
-        </tr>
-    </tbody>
-</table>
-
-&emsp;
-
 ## Custom Inbox Example
+
+⚠️ TODO
+<img width="894" alt="custom-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/90456f3d-c39f-4d66-aac1-d1d62a84f3c5">
 
 The raw data you can use to build any UI you'd like.
 
-<img width="415" alt="android-custom-inbox" src="https://github.com/trycourier/courier-android/assets/6370613/e89a3b52-08ba-426c-94ac-ee26bcf7cfee">
-
-```kotlin
+```javascript
 class CustomInboxFragment: Fragment(R.layout.fragment_custom_inbox) {
 
     private lateinit var inboxListener: CourierInboxListener
