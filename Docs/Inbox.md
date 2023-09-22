@@ -43,22 +43,22 @@ An in-app notification center list you can use to notify your users. Allows you 
 
 ## Default Inbox Example
 
-⚠️ TODO
 <img width="894" alt="default-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/e39a1f20-5636-48a9-9337-e1416fbb67bf">
 
-The default `CourierInbox` styles. Colors are using `colorPrimary` located in your `res/values/themes.xml` file.
+TODO: Describe the android requirements
 
 ```javascript
-val inbox: CourierInbox = view.findViewById(R.id.courierInbox)
+import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
-inbox.setOnClickMessageListener { message, index ->
-    Courier.log(message.toString())
-    if (message.isRead) message.markAsUnread() else message.markAsRead()
-}
-
-inbox.setOnClickActionListener { action, message, index ->
-    Courier.log(action.toString())
-}
+<CourierInboxView
+  onClickInboxMessageAtIndex={(message, index) => {
+    console.log(message)
+    message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId })
+  }}
+  onClickInboxActionForMessageAtIndex={(action, message, index) => {
+    console.log(action)
+  }}
+  style={...} />
 ```
 
 &emsp;
