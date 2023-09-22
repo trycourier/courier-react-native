@@ -59,11 +59,11 @@ In your `res/values/styles.xml` set the follow:
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
-  <!-- TODO: Customize the theme here. This will set the default values of your Courier Inbox as well -->
+  <!-- TODO: Customize the theme here. This will set the default values of your Courier Inbox -->
 
-<!--        <item name="colorPrimary">@android:color/holo_purple</item>-->
-<!--        <item name="colorPrimaryVariant">@android:color/holo_purple</item>-->
-<!--        <item name="colorOnPrimary">@android:color/white</item>-->
+  <!-- <item name="colorPrimary">@android:color/holo_purple</item>-->
+  <!-- <item name="colorPrimaryVariant">@android:color/holo_green_light</item>-->
+  <!-- <item name="colorOnPrimary">@android:color/white</item>-->
 
   </style>
 
