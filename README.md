@@ -53,6 +53,8 @@ npm install @trycourier/courier-react-native
 yarn add @trycourier/courier-react-native
 ```
 
+TODO: DOUBLE CHECK THIS
+
 &emsp;
 
 # Getting Started
