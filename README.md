@@ -1,6 +1,4 @@
-<img width="1000" alt="banner" src="https://user-images.githubusercontent.com/6370613/232106835-cf4e584c-9453-40bf-88be-7bf8dfe59886.png">
-
-TODO 👆
+<img width="1000" alt="banner-react-native" src="https://github.com/trycourier/courier-react-native/assets/6370613/b4aa8347-1a40-415f-9654-f61dffb994f1">
 
 &emsp;
 
