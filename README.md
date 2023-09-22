@@ -107,19 +107,6 @@ These are all the available features of the SDK.
                 Automatically manages push notification device tokens and gives convenient functions for handling push notification receiving and clicking.
             </td>
         </tr>
-        <tr width="600px">
-            <td align="center">
-                4
-            </td>
-            <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Testing.md">
-                    <code>Testing</code>
-                </a>
-            </td>
-            <td align="left">
-                Send inbox messages and push notifications to your device without needing any server side setup.
-            </td>
-        </tr>
     </tbody>
 </table>
 
