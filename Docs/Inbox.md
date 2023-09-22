@@ -95,64 +95,136 @@ import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
 ## Styled Inbox Example
 
-⚠️ TODO
 <img width="894" alt="styled-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/46ad8b3a-5931-490c-8f48-d36c05e89abd">
 
 The styles you can use to quickly customize the `CourierInbox`.
 
+#### Fonts:
+
+TODO: Discuss
+
 ```javascript
-val inbox: CourierInbox = view.findViewById(R.id.courierInbox)
+const textColor = '#2A1537'
+const primaryColor = '#882DB9'
+const secondaryColor = '#EA6866'
 
-val theme = CourierInboxTheme(
-    unreadIndicatorBarColor = ContextCompat.getColor(requireContext(), R.color.courier_red),
-    loadingIndicatorColor = ContextCompat.getColor(requireContext(), R.color.courier_purple),
-    titleFont = CourierInboxFont(
-        typeface = ResourcesCompat.getFont(requireContext(), R.font.poppins),
-        color = ContextCompat.getColor(requireContext(), android.R.color.black),
-        sizeInSp = 18
-    ),
-    bodyFont = CourierInboxFont(
-        typeface = ResourcesCompat.getFont(requireContext(), R.font.poppins),
-        color = ContextCompat.getColor(requireContext(), android.R.color.darker_gray),
-        sizeInSp = 16
-    ),
-    timeFont = CourierInboxFont(
-        typeface = ResourcesCompat.getFont(requireContext(), R.font.poppins),
-        color = ContextCompat.getColor(requireContext(), android.R.color.darker_gray),
-        sizeInSp = 14
-    ),
-    detailTitleFont = CourierInboxFont(
-        typeface = ResourcesCompat.getFont(requireContext(), R.font.poppins),
-        color = ContextCompat.getColor(requireContext(), android.R.color.black),
-        sizeInSp = 18
-    ),
-    buttonStyles = CourierInboxButtonStyles(
-        font = CourierInboxFont(
-            typeface = ResourcesCompat.getFont(requireContext(), R.font.poppins),
-            color = ContextCompat.getColor(requireContext(), android.R.color.white),
-            sizeInSp = 16
-        ),
-        backgroundColor = ContextCompat.getColor(requireContext(), R.color.courier_purple),
-        cornerRadiusInDp = 100
-    ),
-    dividerItemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-)
+const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
+const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
 
-inbox.lightTheme = theme
-inbox.darkTheme = theme
-
-inbox.setOnClickMessageListener { message, index ->
-    Courier.log(message.toString())
-    if (message.isRead) message.markAsUnread() else message.markAsRead()
+const lightTheme: CourierInboxTheme = {
+  unreadIndicatorBarColor: secondaryColor,
+  loadingIndicatorColor: primaryColor,
+  titleFont: {
+    family: titleFont,
+    size: 20,
+    color: textColor
+  },
+  timeFont: {
+    family: defaultFont,
+    size: 16,
+    color: textColor
+  },
+  bodyFont: {
+    family: defaultFont,
+    size: 18,
+    color: textColor
+  },
+  detailTitleFont: {
+    family: defaultFont,
+    size: 20,
+    color: textColor
+  },
+  buttonStyles: {
+    font: {
+      family: titleFont,
+      size: 16,
+      color: '#FFFFFF'
+    },
+    backgroundColor: primaryColor,
+    cornerRadius: 100
+  },
+  iOS: {
+    messageAnimationStyle: 'right',
+    cellStyles: {
+      separatorStyle: 'singleLineEtched',
+      separatorInsets: {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
+      }
+    }
+  },
+  android: {
+    dividerItemDecoration: 'vertical'
+  }
 }
 
-inbox.setOnClickActionListener { action, message, index ->
-    Courier.log(action.toString())
+const darkTheme: CourierInboxTheme = {
+  unreadIndicatorBarColor: '#ffffff',
+  loadingIndicatorColor: '#ffffff',
+  titleFont: {
+    family: titleFont,
+    size: 20,
+    color: '#ffffff'
+  },
+  timeFont: {
+    family: defaultFont,
+    size: 16,
+    color: '#ffffff'
+  },
+  bodyFont: {
+    family: defaultFont,
+    size: 18,
+    color: '#ffffff'
+  },
+  detailTitleFont: {
+    family: defaultFont,
+    size: 20,
+    color: '#ffffff'
+  },
+  buttonStyles: {
+    font: {
+      family: titleFont,
+      size: 16,
+      color: '#000000'
+    },
+    backgroundColor: '#ffffff',
+    cornerRadius: 100
+  },
+  iOS: {
+    messageAnimationStyle: 'right',
+    cellStyles: {
+      separatorStyle: 'singleLineEtched',
+      separatorInsets: {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
+      }
+    }
+  },
+  android: {
+    dividerItemDecoration: 'vertical'
+  }
 }
 
-inbox.setOnScrollInboxListener { offsetInDp ->
-    Courier.log(offsetInDp.toString())
-}
+<CourierInboxView 
+  theme={{
+    light: lightTheme,
+    dark: darkTheme
+  }}
+  onClickInboxMessageAtIndex={(message, index) => {
+    console.log(message)
+    message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
+  }}
+  onClickInboxActionForMessageAtIndex={(action, message, index) => {
+    console.log(action);
+  }}
+  onScrollInbox={(y, x) => {
+    console.log(`Inbox scroll offset y: ${y}`);
+  }}
+  style={...} />
 ```
 
 ## Custom Inbox Example
