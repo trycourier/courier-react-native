@@ -45,7 +45,33 @@ An in-app notification center list you can use to notify your users. Allows you 
 
 <img width="894" alt="default-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/e39a1f20-5636-48a9-9337-e1416fbb67bf">
 
-TODO: Describe the android requirements
+### Android Requirement
+
+Because Courier Inbox uses your apps native styles as the default colors, you need to make sure your `styles.xml` theme parent extends `MaterialComponents`.
+
+In your `res/values/styles.xml` set the follow:
+
+```xml
+<resources>
+
+  <!-- TODO: Must use Theme.MaterialComponents if you are using prebuilt UI -->
+
+  <!-- Base application theme. -->
+  <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+  <!-- TODO: Customize the theme here. This will set the default values of your Courier Inbox as well -->
+
+<!--        <item name="colorPrimary">@android:color/holo_purple</item>-->
+<!--        <item name="colorPrimaryVariant">@android:color/holo_purple</item>-->
+<!--        <item name="colorOnPrimary">@android:color/white</item>-->
+
+  </style>
+
+</resources>
+
+```
+
+In your React Native project, add the View to your app:
 
 ```javascript
 import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
