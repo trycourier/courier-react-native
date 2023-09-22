@@ -50,6 +50,8 @@ TODO: Describe the android requirements
 ```javascript
 import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
+...
+
 <CourierInboxView
   onClickInboxMessageAtIndex={(message, index) => {
     console.log(message)
