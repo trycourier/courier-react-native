@@ -28,7 +28,7 @@ An in-app notification center list you can use to notify your users. Allows you 
                 </td>
             </tr>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-android/blob/master/Docs/Authentication.md">
+                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Authentication.md">
                     <code>Authentication</code>
                 </a>
             </td>
