@@ -47,7 +47,7 @@ An in-app notification center list you can use to notify your users. Allows you 
 
 The default `CourierInbox` styles. Colors are using `colorPrimary` located in your `res/values/themes.xml` file.
 
-<img width="894" alt="android-default-inbox-styles" src="https://github.com/trycourier/courier-react-native/assets/6370613/d9551f6a-2e2d-4171-a4cc-8be496933eaa">
+![default-inbox](https://github.com/trycourier/courier-react-native/assets/6370613/695e70ca-5d33-452d-b55d-b61bfb812db3)
 
 ```javascript
 val inbox: CourierInbox = view.findViewById(R.id.courierInbox)
