@@ -100,6 +100,10 @@ import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
 The styles you can use to quickly customize the `CourierInbox`.
 
+#### ⚠️ Important Android Requirement
+
+Be sure to add support for the material theme. More info [`here`](https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#%EF%B8%8F-important-android-requirement).
+
 #### Fonts:
 
 iOS fonts point to the name of the font you have loaded into your app's fonts resources. More about that can be found [`here`](https://developer.apple.com/documentation/uikit/text_display_and_fonts/adding_a_custom_font_to_your_app).
