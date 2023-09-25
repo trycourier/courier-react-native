@@ -107,11 +107,12 @@ TODO: Discuss
 const textColor = '#2A1537'
 const primaryColor = '#882DB9'
 const secondaryColor = '#EA6866'
+const buttonTextColor = '#FFFFFF'
 
 const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
 const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
 
-const lightTheme: CourierInboxTheme = {
+const theme: CourierInboxTheme = {
   unreadIndicatorBarColor: secondaryColor,
   loadingIndicatorColor: primaryColor,
   titleFont: {
@@ -138,7 +139,7 @@ const lightTheme: CourierInboxTheme = {
     font: {
       family: titleFont,
       size: 16,
-      color: '#FFFFFF'
+      color: buttonTextColor
     },
     backgroundColor: primaryColor,
     cornerRadius: 100
@@ -160,59 +161,10 @@ const lightTheme: CourierInboxTheme = {
   }
 }
 
-const darkTheme: CourierInboxTheme = {
-  unreadIndicatorBarColor: '#ffffff',
-  loadingIndicatorColor: '#ffffff',
-  titleFont: {
-    family: titleFont,
-    size: 20,
-    color: '#ffffff'
-  },
-  timeFont: {
-    family: defaultFont,
-    size: 16,
-    color: '#ffffff'
-  },
-  bodyFont: {
-    family: defaultFont,
-    size: 18,
-    color: '#ffffff'
-  },
-  detailTitleFont: {
-    family: defaultFont,
-    size: 20,
-    color: '#ffffff'
-  },
-  buttonStyles: {
-    font: {
-      family: titleFont,
-      size: 16,
-      color: '#000000'
-    },
-    backgroundColor: '#ffffff',
-    cornerRadius: 100
-  },
-  iOS: {
-    messageAnimationStyle: 'right',
-    cellStyles: {
-      separatorStyle: 'singleLineEtched',
-      separatorInsets: {
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
-      }
-    }
-  },
-  android: {
-    dividerItemDecoration: 'vertical'
-  }
-}
-
 <CourierInboxView 
   theme={{
-    light: lightTheme,
-    dark: darkTheme
+    light: theme,
+    dark: theme
   }}
   onClickInboxMessageAtIndex={(message, index) => {
     console.log(message)
@@ -229,47 +181,18 @@ const darkTheme: CourierInboxTheme = {
 
 ## Custom Inbox Example
 
-⚠️ TODO
 <img width="894" alt="custom-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/90456f3d-c39f-4d66-aac1-d1d62a84f3c5">
 
 The raw data you can use to build any UI you'd like.
 
+### React Hooks
 ```javascript
-class CustomInboxFragment: Fragment(R.layout.fragment_custom_inbox) {
+TODO
+```
 
-    private lateinit var inboxListener: CourierInboxListener
-    private lateinit var recyclerView: RecyclerView
-    private val messagesAdapter = MessagesAdapter()
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // Create the list
-        recyclerView = view.findViewById(R.id.recyclerView)
-        recyclerView.adapter = messagesAdapter
-
-        // Setup the listener
-        inboxListener = Courier.shared.addInboxListener(
-            onInitialLoad = {
-                ..
-            },
-            onError = { error ->
-                ..
-            },
-            onMessagesChanged = { messages, unreadMessageCount, totalMessageCount, canPaginate ->
-                messagesAdapter.messages = messages
-                messagesAdapter.notifyDataSetChanged()
-            }
-        )
-
-    }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        inboxListener.remove()
-    }
-
-}
+### Vanilla Javascript
+```javascript
+TODO
 ```
 
 &emsp;
