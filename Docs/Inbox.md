@@ -88,7 +88,8 @@ import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
   onClickInboxActionForMessageAtIndex={(action, message, index) => {
     console.log(action)
   }}
-  style={...} />
+  style={...} 
+/>
 ```
 
 &emsp;
@@ -101,16 +102,19 @@ The styles you can use to quickly customize the `CourierInbox`.
 
 #### Fonts:
 
-TODO: Discuss
+iOS fonts point to the name of the font you have loaded into your app's fonts resources. More about that can be found [`here`](https://developer.apple.com/documentation/uikit/text_display_and_fonts/adding_a_custom_font_to_your_app).
+
+Android fonts point to system fonts with the path included. More about Android fonts [`here`](https://developer.android.com/develop/ui/views/text-and-emoji/fonts-in-xml).
 
 ```javascript
+// See above for more details about fonts
+const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
+const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
+
 const textColor = '#2A1537'
 const primaryColor = '#882DB9'
 const secondaryColor = '#EA6866'
 const buttonTextColor = '#FFFFFF'
-
-const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
-const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
 
 const theme: CourierInboxTheme = {
   unreadIndicatorBarColor: secondaryColor,
@@ -176,7 +180,8 @@ const theme: CourierInboxTheme = {
   onScrollInbox={(y, x) => {
     console.log(`Inbox scroll offset y: ${y}`);
   }}
-  style={...} />
+  style={...} 
+/>
 ```
 
 ## Custom Inbox Example
