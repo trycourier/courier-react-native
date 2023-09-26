@@ -133,6 +133,75 @@ The easiest way to support push notifications in your app.
 
 &emsp;
 
+## 1. Enable the "Push Notifications" capability 
+
+https://user-images.githubusercontent.com/29832989/204891095-1b9ac4f4-8e5f-4c71-8e8f-bf77dc0a2bf3.mov
+1. Select your Xcode project file
+2. Click your project Target
+3. Click "Signing & Capabilities"
+4. Click the small "+" to add a capability
+5. Press Enter
+
+## 2. Support Notification Callbacks and Automatic APNS Token syncing
+
+1. Open your iOS project and increase the min SDK target to iOS 13.0+
+2. Open your `Podfile` and increase the platform:
+
+```
+..
+platform :ios, '13'
+..
+```
+
+3. From your React Native project's root directory, run: `cd ios && pod update`
+4. In Xcode, change your `AppDelegate.h` to use the snippet below:
+   - This automatically syncs APNS tokens to Courier token management
+   - Allows the React Native SDK to handle when push notifications are delivered and clicked
+
+```objective-c
+#import <courier-react-native/CourierReactNativeDelegate.h>
+
+@interface AppDelegate : CourierReactNativeDelegate
+@end
+```
+
+## 3. Add the Notification Service Extension (Optional, but recommended)
+
+To make sure Courier can track when a notification is delivered to the device, you need to add a Notification Service Extension. Here is how to add one.
+
+https://user-images.githubusercontent.com/29832989/202580269-863a9293-4c0b-48c9-8485-c0c43f077e12.mov
+
+1. Download and Unzip the Courier Notification Service Extension: [`CourierNotificationServiceTemplate.zip`](https://github.com/trycourier/courier-notification-service-extension-template/archive/refs/heads/main.zip)
+2. Open the folder in terminal and run `sh make_template.sh`
+    - This will create the Notification Service Extension on your mac to save you time
+3. Open your iOS app in Xcode and go to File > New > Target
+4. Select "Courier Service" and click "Next"
+5. Give the Notification Service Extension a name (i.e. "CourierService").
+6. Click Finish
+
+### Link the Courier SDK to your extension:
+
+#### Swift Package Manager Setup
+1. Click on your project file
+2. Under Targets, click on your new Target
+3. Under the General tab > Frameworks and Libraries, click the "+" icon
+4. Select the Courier package from the list under Courier Package > Courier
+
+#### Cocoapods Setup
+1. Add the following snippet to the bottom of your Podfile
+
+```ruby 
+target 'CourierService' do
+    pod 'Courier_iOS'
+end
+```
+
+2. Run `pod install`
+
+&emsp;
+
+<?-----?>
+
 ## 1. Setup a Push Notification Provider
 
 Select which push notification provider you would like Courier to route push notifications to. Choose APNS - Apple Push Notification Service if you are not sure which provider to use.
