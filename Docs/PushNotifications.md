@@ -210,9 +210,7 @@ https://user-images.githubusercontent.com/29832989/204891095-1b9ac4f4-8e5f-4c71-
 
 ## 2. Support Notification Callbacks and Automatic APNS Token syncing
 
-In Xcode, change your `AppDelegate.h` to use the snippet below:
-   - This automatically syncs APNS tokens to Courier token management
-   - Allows the React Native SDK to handle when push notifications are delivered and clicked
+In Xcode, change your `AppDelegate.h` to use this snippet.
 
 ```objective-c
 #import <courier-react-native/CourierReactNativeDelegate.h>
