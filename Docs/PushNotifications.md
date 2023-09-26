@@ -102,8 +102,6 @@ The easiest way to support push notifications in your app.
 
 # iOS Setup 
 
-## 1. Setup a Push Notification Provider
-
 <table>
     <thead>
         <tr>
@@ -134,6 +132,8 @@ The easiest way to support push notifications in your app.
 </table>
 
 &emsp;
+
+## 1. Setup a Push Notification Provider
 
 Select which push notification provider you would like Courier to route push notifications to. Choose APNS - Apple Push Notification Service if you are not sure which provider to use.
 
