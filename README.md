@@ -70,7 +70,7 @@ prepare_react_native_project!
 ..
 ```
 
-### 2. Update your iOS project to support iOS 13.0 minimum
+### 2. Support iOS 13.0+ in your Project
    
 <img width="737" alt="Screenshot 2023-09-26 at 2 16 51 PM" src="https://github.com/trycourier/courier-react-native/assets/6370613/6bf98576-9b26-4b5e-8add-7289531e6431">
 
