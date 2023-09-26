@@ -88,7 +88,7 @@ cd ios && pod install
 
 ### 1. Add the Jitpack repository
 
-In your `android/build.gradle` add the following line
+In your `android/build.gradle` make sure your build and repository values are as follows
 
 ```gradle
 buildscript {
