@@ -210,17 +210,7 @@ https://user-images.githubusercontent.com/29832989/204891095-1b9ac4f4-8e5f-4c71-
 
 ## 2. Support Notification Callbacks and Automatic APNS Token syncing
 
-1. Open your iOS project and increase the min SDK target to iOS 13.0+
-2. Open your `Podfile` and increase the platform:
-
-```
-..
-platform :ios, '13'
-..
-```
-
-3. From your React Native project's root directory, run: `cd ios && pod update`
-4. In Xcode, change your `AppDelegate.h` to use the snippet below:
+In Xcode, change your `AppDelegate.h` to use the snippet below:
    - This automatically syncs APNS tokens to Courier token management
    - Allows the React Native SDK to handle when push notifications are delivered and clicked
 
