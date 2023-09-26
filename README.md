@@ -74,13 +74,17 @@ prepare_react_native_project!
    
 <img width="737" alt="Screenshot 2023-09-26 at 2 16 51 PM" src="https://github.com/trycourier/courier-react-native/assets/6370613/6bf98576-9b26-4b5e-8add-7289531e6431">
 
-### 3. Update or Install the Cocoapods
+### 3. Install the Cocoapods
 
 From the root of your React Native project run
 
 ```sh
 cd ios && pod install
 ```
+
+&emsp;
+
+## Android: TODO
 
 &emsp;
 
