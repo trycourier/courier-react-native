@@ -388,7 +388,7 @@ Courier.shared.setInboxPaginationLimit({ limit: 100 });
 
 // Handle inbox changes
 
-// Hook
+// Hook state
 inbox.isLoading
 inbox.error
 inbox.messages
@@ -396,7 +396,7 @@ inbox.unreadMessageCount
 inbox.totalMessageCount
 inbox.canPaginate
 
-// Vanilla
+// Vanilla Javascript
 const inboxListener = Courier.shared.addInboxListener({
   onInitialLoad: () => {
     // Handle loading
