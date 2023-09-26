@@ -289,33 +289,6 @@ https://user-images.githubusercontent.com/6370613/199335432-aa52028a-f7ae-48bb-a
 1. Open Android project
 2. Register your app in Firebase and download your `google-services.json` file
 3. Add the `google-services.json` file to your `yourApp/app/src` directory
-4. Make sure your `yourApp/android/build.gradle` file supports Jitpack:
-
-```groovy
-allprojects {
-    repositories {
-        ..
-        maven { url 'https://www.jitpack.io' } // This line is needed
-    }
-}
-```
-
-3. Update your `yourApp/android/build.gradle` to support the following SDK versions
-   - This is needed to support newer Android Notification APIs
-
-```groovy
-buildscript {
-    ext {
-        buildToolsVersion = "32.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 32
-        targetSdkVersion = 32
-        ..
-    }
-    ..
-}
-```
-
 4. Add the `google-services` dependency to your `yourApp/android/build.gradle` file:
 
 ```groovy
