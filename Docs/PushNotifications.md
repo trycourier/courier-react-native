@@ -77,22 +77,22 @@ The easiest way to support push notifications in your app.
     <tbody>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/PushNotifications.md#1-setup-a-push-notification-provider">
-                    <code>A Configured Provider</code>
-                </a>
-            </td>
-            <td align="left">
-                Courier needs to know who to route the push notifications to so your users can receive them.
-            </td>
-        </tr>
-        <tr width="600px">
-            <td align="left">
                 <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Authentication.md">
                     <code>Authentication</code>
                 </a>
             </td>
             <td align="left">
                 Needs Authentication to sync push notification device tokens to the current user and Courier.
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/PushNotifications.md#1-setup-a-push-notification-provider">
+                    <code>A Configured Provider</code>
+                </a>
+            </td>
+            <td align="left">
+                Courier needs to know who to route the push notifications to so your users can receive them.
             </td>
         </tr>
     </tbody>
