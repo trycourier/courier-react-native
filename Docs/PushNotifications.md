@@ -427,30 +427,117 @@ public class YourExampleService extends CourierService {
 
 &emsp;
 
-## 5. Send a Test Push Notification
+# Authenticate and Test
 
 1. Register for push notifications
 
-```swift
-import Courier_iOS
+### React Hooks
 
-Task {
-                    
-    // Make sure your user is signed into Courier
-    // This allows Courier to sync push notification tokens automatically
-    try await Courier.shared.signIn(
-        accessToken: Env.COURIER_ACCESS_TOKEN,
-        clientKey: Env.COURIER_CLIENT_KEY,
-        userId: "example_user_id"
-    )
+```javascript
+import { CourierProvider } from '@trycourier/courier-react-native';
 
-    // Shows a popup where your user can allow or deny push notifications
-    // You should put this in a place that makes sense for your app
-    // You cannot ask the user for push notification permissions again
-    // if they deny, you will have to get them to open their device settings to change this
-    let status = try await Courier.requestNotificationPermission()
+// Add the CourierProvider as the parent to your component
+<CourierProvider>
+   ...
+</CourierProvider>
 
-}
+// Add the following to your component
+import { useCourierAuth, useCourierPush } from '@trycourier/courier-react-native';
+
+const auth = useCourierAuth();
+
+const push = useCourierPush({
+  iOSForegroundPresentationOptions: ['sound', 'badge', 'list', 'banner']
+});
+
+useEffect(() => {
+
+  const signIn = async () => {
+
+    // Sign the user in
+    // This registers the SDK to authenticate a user
+    await auth.signIn({
+      accessToken: "your_access_token",
+      userId: "your_user_id",
+    });
+
+    // Request push permissions
+    // This will sync the tokens to Courier
+    const status = await push.requestNotificationPermission();
+
+  }
+
+  signIn();
+
+}, []);
+
+// Push Notification Permission Status
+useEffect(() => {
+  console.log('Notification Permissions');
+  console.log(push.notificationPermissionStatus);
+}, [push.notificationPermissionStatus]);
+
+// Available Push Tokens
+useEffect(() => {
+  console.log('Push Tokens');
+  console.log(push.tokens);
+}, [push.tokens]);
+
+// Push is delivered
+useEffect(() => {
+  if (push.delivered) {
+    console.log(push.delivered);
+    Alert.alert('📬 Push Notification Delivered', JSON.stringify(push.delivered));
+  }
+}, [push.delivered]);
+
+// Push is clicked
+useEffect(() => {
+  if (push.clicked) {
+    console.log(push.clicked);
+    Alert.alert('👆 Push Notification Clicked', JSON.stringify(push.clicked));
+  }
+}, [push.clicked]);
+```
+
+### Vanilla Javascript
+
+```javascript
+import Courier from '@trycourier/courier-react-native';
+
+useEffect(() => {
+
+  // Handle sign in
+  const signIn = async () => {
+
+    await Courier.shared.signIn({
+      accessToken: 'asdf',
+      userId: 'asdf'
+    });
+
+    const status = await Courier.shared.requestNotificationPermission();
+
+  }
+
+  signIn();
+
+  // Handle pushes
+  const pushListener = Courier.shared.addPushNotificationListener({
+    onPushNotificationDelivered: (push) => {
+      console.log(push);
+      Alert.alert('👆 Push Notification Delivery', JSON.stringify(push));
+    },
+    onPushNotificationClicked: (push) => {
+      console.log(push);
+      Alert.alert('👆 Push Notification Clicked', JSON.stringify(push));
+    }
+  });
+
+  return () => {
+    pushListener.remove();
+  }
+
+}, []);
 ```
 
 2. Send a test message
