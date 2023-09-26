@@ -41,7 +41,7 @@ const Navigation = () => {
       Alert.alert('📬 Push Notification Delivered', JSON.stringify(push.delivered));
     }
 
-  }, [push?.delivered]);
+  }, [push.delivered]);
 
   useEffect(() => {
 

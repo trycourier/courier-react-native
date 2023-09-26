@@ -4,7 +4,9 @@ import android.content.Intent
 import com.courier.android.Courier
 import com.courier.android.models.*
 import com.courier.android.modules.*
+import com.courier.android.utils.isPushPermissionGranted
 import com.courier.android.utils.pushNotification
+import com.courier.android.utils.requestNotificationPermission
 import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
@@ -70,28 +72,16 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     )
   }
 
-  @ReactMethod
+  @ReactMethod // TODO: Update in the future
   fun requestNotificationPermission(promise: Promise) {
-//    try {
-//      reactActivity?.requestNotificationPermission { isGranted ->
-////        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
-////        promise.resolve(status.value)
-//      }
-//    } catch (e: Exception) {
-//      promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
-//    }
+    reactActivity?.requestNotificationPermission()
   }
 
-  @ReactMethod
+  @ReactMethod // TODO: Update in the future
   fun getNotificationPermissionStatus(promise: Promise) {
-//    try {
-//      reactActivity?.getNotificationPermissionStatus { isGranted ->
-//        val status = if (isGranted) NotificationPermissionStatus.AUTHORIZED else NotificationPermissionStatus.DENIED
-//        promise.resolve(status.value)
-//      }
-//    } catch (e: Exception) {
-//      promise.reject(COURIER_ERROR_TAG, e)
-//    }
+    val granted = reactActivity?.isPushPermissionGranted
+    val status = if (granted == true) "authorized" else "denied"
+    promise.resolve(status)
   }
 
   @ReactMethod

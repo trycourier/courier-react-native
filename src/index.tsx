@@ -77,7 +77,6 @@ class Courier {
   /**
    * Tells native Courier SDKs to show or hide logs.
    * Defaults to the React __DEV__ mode
-   * @example Courier.setIsDebugging(true)
    */
   public setIsDebugging(isDebugging: boolean): boolean {
 
@@ -100,14 +99,15 @@ class Courier {
 
   }
 
+  /**
+   * Returns the status of debugging
+   */
   get isDebugging(): boolean {
     return this._isDebugging;
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Sets the notification presentation options for iOS
    */
   public iOSForegroundPresentationOptions(props: { options: iOSForegroundPresentationOptions[] }): string {
 
@@ -122,9 +122,7 @@ class Courier {
   }
 
   /**
-   * Sets the current Apple Push Notification Service (APNS) token
-   * using Courier token management apis
-   * @example const apnsToken = await Courier.apnsToken
+   * Gets the apns token being used
    */
    get apnsToken(): string | undefined {
     if (Platform.OS !== 'ios') return undefined;
@@ -132,47 +130,51 @@ class Courier {
   }
 
   /**
-   * Sets the current Firebase Cloud Messaging (FCM) token
-   * using Courier token management apis
-   * @example const fcmToken = await Courier.fcmToken
+   * Gets the fcm token being used
    */
   get fcmToken(): Promise<string | undefined> {
     return CourierReactNativeModules.getFcmToken();
   }
 
   /**
-   * Sets the current Firebase Cloud Messaging (FCM) token
-   * using Courier token management apis
-   * @example await setFcmToken('asdf...asdf')
+   * Sets the fcm token to be used by Courier
    */
   public setFcmToken(props: { token: string }): Promise<void> {
     return CourierReactNativeModules.setFcmToken(props.token);
   }
 
   /**
-   * Gets notification permission status at a system level.
-   * @example const permissionStatus = await Courier.getNotificationPermissionStatus()
+   * Returns the notification permission status
+   * Only supported on iOS
    */
   public getNotificationPermissionStatus(): Promise<string> {
-    return CourierReactNativeModules.getNotificationPermissionStatus();
+
+    if (Platform.OS === 'ios') {
+      return CourierReactNativeModules.getNotificationPermissionStatus();
+    }
+
+    return Promise.reject('unknown')
+
   }
 
   /**
-   * Requests notification permission status at a system level.
-   * Returns the string associated with the permission status.
-   * Will return the current status and will not present a popup
-   * if the user has already been asked for permission.
-   * @example const permissionStatus = await Courier.requestNotificationPermission()
+   * Requests notification permissions
+   * This will show a dialog asking the user for permission
+   * Only supported on iOS
    */
   public requestNotificationPermission(): Promise<string> {
-    return CourierReactNativeModules.requestNotificationPermission();
+
+    if (Platform.OS === 'ios') {
+      return CourierReactNativeModules.requestNotificationPermission();
+    }
+
+    return Promise.reject('unknown')
+
   }
 
   /**
-   * @example 
-  TODO
-  * @returns  function that can be used to unsubscribe from registered listeners
-  */
+   * Listens to push notification clicked and delivered messages
+   */
   public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
     
     const pushListener = new CourierPushListener();
@@ -236,46 +238,29 @@ class Courier {
   }
 
   /**
-   * Returns the current user id stored in local native storage
-   * @example const userId = await Courier.userId
+   * Gets the user id that is currently being used
+   * This is the user id associated with the http requests the sdk does
    */
   get userId(): string | undefined {
     return CourierReactNativeModules.getUserId() ?? undefined
   }
 
   /**
-   * Signs user in and persists signin in between sessions
-   * using native level storage apis
-   * 
-   * @example
-   * ```
-   *await Courier.signIn({
-      accessToken: YOUR_COURIER_GENERATED_JWT,
-      clientKey: YOUR_CLIENT_KEY,
-      userId: YOUR_USER_ID,
-    })
-   * ```
-   * Your access token should be generated using this endpoint
-   * that is requested from your backend
-   * https://www.courier.com/docs/reference/auth/issue-token/
+   * Registers the auth token, client key and user id the sdk should use for requests
    */
   public signIn(props: { accessToken: string, clientKey?: string, userId: string }): Promise<void> {
     return CourierReactNativeModules.signIn(props.accessToken, props.clientKey ?? null, props.userId);
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Removes the current user and credentials from the sdk
    */
    public signOut(): Promise<void> {
     return CourierReactNativeModules.signOut();
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Listens to authentication changes for the current user
    */
    public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
 
@@ -292,45 +277,35 @@ class Courier {
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Removes an authentication listener
    */
   public removeAuthenticationListener(props: { listenerId: string }): string {
     return CourierReactNativeModules.removeAuthenticationListener(props.listenerId);
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Reads an inbox message
    */
   public readMessage(props: { messageId: string }): string {
     return CourierReactNativeModules.readMessage(props.messageId);
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Unreads an inbox message
    */
   public unreadMessage(props: { messageId: string }): string {
     return CourierReactNativeModules.unreadMessage(props.messageId);
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Reads all the inbox messages
    */
   public readAllInboxMessages(): Promise<void> {
     return CourierReactNativeModules.readAllInboxMessages();
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Listens to changes for the inbox itself
    */
   public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
@@ -373,38 +348,32 @@ class Courier {
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Removes an inbox listener
    */
   public removeInboxListener(props: { listenerId: string }): string {
     return CourierReactNativeModules.removeInboxListener(props.listenerId);
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Refreshes the inbox
+   * Useful for pull to refresh
    */
   public async refreshInbox(): Promise<void> {
     return CourierReactNativeModules.refreshInbox();
   }
 
   /**
-   * TODO
-   * @param props 
-   * @returns 
+   * Fetches the next page of inbox messages
+   * Returns the fetched inbox messages
    */
    public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
     return CourierReactNativeModules.fetchNextPageOfMessages();
   }
 
   /**
-   * TODO
+   * Sets the pagination limit
    * Min = 1
    * Max = 100
-   * @param props 
-   * @returns 
    */
    public setInboxPaginationLimit(props: { limit: number }): void {
     CourierReactNativeModules.setInboxPaginationLimit(props.limit);

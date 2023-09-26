@@ -312,7 +312,7 @@ export default InboxCustom;
 
 ### Vanilla Javascript
 
-See [`full documentation`](https://developer.android.com/develop/ui/views/text-and-emoji/fonts-in-xml) for examples.
+See [`full documentation`](https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#available-properties-and-functions) for examples.
 
 &emsp;
 
