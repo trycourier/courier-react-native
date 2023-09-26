@@ -268,9 +268,40 @@ end
 
 # Android Setup 
 
-https://user-images.githubusercontent.com/6370613/199335432-aa52028a-f7ae-48bb-abec-427795baa6f4.mov
+<table>
+    <thead>
+        <tr>
+            <th width="300px" align="left">Requirement</th>
+            <th width="750px" align="left">Reason</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://firebase.google.com/">
+                    <code>Firebase Account</code>
+                </a>
+            </td>
+            <td align="left">
+                Needed to send push notifications out to your Android devices. Courier recommends you do this for the most ideal developer experience.
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">
+                A phyical Android device
+            </td>
+            <td align="left">
+                Although you can setup the Courier SDK without a physical device, a physical device is the best way to fully ensure push notification tokens and notification delivery is working correctly. Simulators are not reliable.
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-### Written Tutorial 👇
+&emsp;
+
+## 1. Add Firebase 
+
+https://user-images.githubusercontent.com/6370613/199335432-aa52028a-f7ae-48bb-abec-427795baa6f4.mov
 
 1. Open Android project
 2. Register your app in Firebase and download your `google-services.json` file
@@ -322,11 +353,9 @@ apply plugin: "com.google.gms.google-services" // Add this line
 
 6. Run Gradle Sync
 
-### **Update Activity and Register Service**
+## 2. Support Notification Callbacks and Automatic FCM Token syncing
 
 https://user-images.githubusercontent.com/6370613/199335233-0880209b-5aec-4584-9726-eaa1077bf80d.mov
-
-### Written Tutorial 👇
 
 1. Change your `MainActivity` to extend the `CourierReactNativeActivity`
    - This allows Courier to handle when push notifications are delivered and clicked
