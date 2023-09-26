@@ -473,30 +473,38 @@ useEffect(() => {
 
 // Push Notification Permission Status
 useEffect(() => {
+
   console.log('Notification Permissions');
   console.log(push.notificationPermissionStatus);
+
 }, [push.notificationPermissionStatus]);
 
 // Available Push Tokens
 useEffect(() => {
+
   console.log('Push Tokens');
   console.log(push.tokens);
+
 }, [push.tokens]);
 
 // Push is delivered
 useEffect(() => {
+
   if (push.delivered) {
     console.log(push.delivered);
     Alert.alert('📬 Push Notification Delivered', JSON.stringify(push.delivered));
   }
+
 }, [push.delivered]);
 
 // Push is clicked
 useEffect(() => {
+
   if (push.clicked) {
     console.log(push.clicked);
     Alert.alert('👆 Push Notification Clicked', JSON.stringify(push.clicked));
   }
+
 }, [push.clicked]);
 ```
 
@@ -525,7 +533,7 @@ useEffect(() => {
   const pushListener = Courier.shared.addPushNotificationListener({
     onPushNotificationDelivered: (push) => {
       console.log(push);
-      Alert.alert('👆 Push Notification Delivery', JSON.stringify(push));
+      Alert.alert('📬 Push Notification Delivery', JSON.stringify(push));
     },
     onPushNotificationClicked: (push) => {
       console.log(push);
@@ -559,7 +567,7 @@ curl --request POST \
 		"routing": {
 			"method": "all",
 			"channels": [
-				"apn", "firebase-fcm"
+				"apn", "firebase-fcm" // Depending on your providers
 			]
 		}
 	}
