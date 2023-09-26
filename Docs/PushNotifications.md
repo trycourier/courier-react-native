@@ -71,7 +71,40 @@ The easiest way to support push notifications in your app.
     <thead>
         <tr>
             <th width="300px" align="left">Requirement</th>
-            <th width="700px" align="left">Reason</th>
+            <th width="750px" align="left">Reason</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/PushNotifications.md#1-setup-a-push-notification-provider">
+                    <code>A Configured Provider</code>
+                </a>
+            </td>
+            <td align="left">
+                Courier needs to know who to route the push notifications to so your users can receive them.
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/Authentication.md">
+                    <code>Authentication</code>
+                </a>
+            </td>
+            <td align="left">
+                Needs Authentication to sync push notification device tokens to the current user and Courier.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+## iOS Requirements
+
+<table>
+    <thead>
+        <tr>
+            <th width="300px" align="left">Requirement</th>
+            <th width="750px" align="left">Reason</th>
         </tr>
     </thead>
     <tbody>
@@ -93,24 +126,35 @@ The easiest way to support push notifications in your app.
                 Although you can setup the Courier SDK without a device, a physical device is the only way to fully ensure push notification tokens and notification delivery is working correctly. Simulators are not reliable.
             </td>
         </tr>
+    </tbody>
+</table>
+
+## Android Requirements
+
+<table>
+    <thead>
+        <tr>
+            <th width="300px" align="left">Requirement</th>
+            <th width="750px" align="left">Reason</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/PushNotifications.md#1-setup-a-push-notification-provider">
-                    <code>A Configured Provider</code>
+                <a href="https://firebase.google.com/">
+                    <code>Firebase Account</code>
                 </a>
             </td>
             <td align="left">
-                Courier needs to know who to route the push notifications to so your users can receive them.
+                Needed to send push notifications out to your Android devices. Courier recommends you do this for the most ideal developer experience.
             </td>
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/Authentication.md">
-                    <code>Authentication</code>
-                </a>
+                A phyical Android device
             </td>
             <td align="left">
-                Needs Authentication to sync push notification device tokens to the current user and Courier.
+                Although you can setup the Courier SDK without a physical device, a physical device is the best way to fully ensure push notification tokens and notification delivery is working correctly. Simulators are not reliable.
             </td>
         </tr>
     </tbody>
