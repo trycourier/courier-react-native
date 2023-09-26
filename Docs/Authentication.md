@@ -44,6 +44,7 @@ Manages user credentials between app sessions.
 Put this code where you normally manage your user's state. The user's access to [`Courier Inbox`](https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md) and [`Push Notifications`](https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/PushNotifications.md) will automatically be managed by the SDK and stored in persistent storage. This means that if your user fully closes your app and starts it back up, they will still be "signed in".
 
 ### React Hooks
+
 ```javascript
 import { useCourierAuth } from "@trycourier/courier-react-native";
 
@@ -54,9 +55,12 @@ await auth.signIn({
   clientKey: 'YOUR_CLIENT_KEY', // Optional
   userId: 'YOUR_USERNAME',
 });
+
+await auth.signOut();
 ```
 
 ### Vanilla Javascript
+
 ```javascript
 import Courier from "@trycourier/courier-react-native";
 
@@ -65,6 +69,8 @@ Courier.shared.signIn({
   clientKey: 'YOUR_CLIENT_KEY', // Optional
   userId: 'YOUR_USERNAME',
 });
+
+await Courier.shared.signOut();
 ```
 
 &emsp;
