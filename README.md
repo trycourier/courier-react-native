@@ -92,19 +92,25 @@ In your `android/build.gradle` add the following line
 
 ```gradle
 buildscript {
+
     ext {
-        buildToolsVersion = "32.0.0" // Min 32 required
-        minSdkVersion = 21
-        compileSdkVersion = 32 // Min 32 required
-        targetSdkVersion = 32 // Min 32 required
+
+        // Double check these values
+        buildToolsVersion = "32.0.0"
+        minSdkVersion = 23
+        compileSdkVersion = 32
+        targetSdkVersion = 32
         ..
     }
+
     repositories {
         google()
         mavenCentral()
         maven { url 'https://www.jitpack.io' } // THIS LINE
     }
+
     ..
+
 }
 ```
 
