@@ -223,7 +223,7 @@ In Xcode, change your `AppDelegate.h` to use this snippet.
 
 To make sure Courier can track when a notification is delivered to the device, you need to add a Notification Service Extension. Here is how to add one.
 
-https://user-images.githubusercontent.com/29832989/202580269-863a9293-4c0b-48c9-8485-c0c43f077e12.mov
+https://github.com/trycourier/courier-react-native/assets/6370613/c3dcd451-e24a-4a0f-8676-36239d817ddb
 
 1. Download and Unzip the Courier Notification Service Extension: [`CourierNotificationServiceTemplate.zip`](https://github.com/trycourier/courier-notification-service-extension-template/archive/refs/heads/main.zip)
 2. Open the folder in terminal and run `sh make_template.sh`
@@ -232,6 +232,8 @@ https://user-images.githubusercontent.com/29832989/202580269-863a9293-4c0b-48c9-
 4. Select "Courier Service" and click "Next"
 5. Give the Notification Service Extension a name (i.e. "CourierService").
 6. Click Finish
+7. Go into your CourierService target > Build Settings > Search "ENABLE_USER"
+8. Set "User Script Sandboxing" to "No"
 
 ### Link the Courier SDK to your extension:
 
