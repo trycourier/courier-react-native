@@ -43,11 +43,13 @@ An in-app notification center list you can use to notify your users. Allows you 
 
 ## Default Inbox Example
 
+The default `CourierInbox` styles.
+
 <img width="894" alt="default-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/e39a1f20-5636-48a9-9337-e1416fbb67bf">
 
 #### ⚠️ Important Android Requirement
 
-Because Courier Inbox uses your apps native styles as the default colors, you need to make sure your `styles.xml` theme parent extends `MaterialComponents`.
+Because Courier Inbox uses Android's Material theme and your app's styles as the default colors, you need to make sure your `styles.xml` theme parent extends `MaterialComponents`.
 
 In your `res/values/styles.xml` set the follow:
 
@@ -78,8 +80,6 @@ In your React Native project, add the View to your app:
 ```javascript
 import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
-...
-
 <CourierInboxView
   onClickInboxMessageAtIndex={(message, index) => {
     console.log(message)
@@ -96,21 +96,25 @@ import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
 ## Styled Inbox Example
 
-<img width="894" alt="styled-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/46ad8b3a-5931-490c-8f48-d36c05e89abd">
-
 The styles you can use to quickly customize the `CourierInbox`.
 
-#### ⚠️ Important Android Requirement
+<img width="894" alt="styled-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/46ad8b3a-5931-490c-8f48-d36c05e89abd">
+
+#### ⚠️ Android Theme Requirement
 
 Be sure to add support for the material theme. More info [`here`](https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#%EF%B8%8F-important-android-requirement).
 
-#### Fonts:
+Setting `CourierInboxTheme` will override your app's default `styles.xml` theme.
+
+#### Custom Fonts:
 
 iOS fonts point to the name of the font you have loaded into your app's fonts resources. More about that can be found [`here`](https://developer.apple.com/documentation/uikit/text_display_and_fonts/adding_a_custom_font_to_your_app).
 
 Android fonts point to system fonts with the path included. More about Android fonts [`here`](https://developer.android.com/develop/ui/views/text-and-emoji/fonts-in-xml).
 
 ```javascript
+import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
+
 // See above for more details about fonts
 const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
 const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
@@ -190,16 +194,124 @@ const theme: CourierInboxTheme = {
 
 ## Custom Inbox Example
 
-<img width="894" alt="custom-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/90456f3d-c39f-4d66-aac1-d1d62a84f3c5">
-
 The raw data you can use to build any UI you'd like.
 
+<img width="894" alt="custom-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/90456f3d-c39f-4d66-aac1-d1d62a84f3c5">
+
 ### React Hooks
+
+Add the `CourierProvider`
+
 ```javascript
-TODO
+export default function App() {
+
+  ..
+
+  return (
+    <CourierProvider> 
+      
+      <InboxCustom />
+      ...
+
+    </CourierProvider>
+  );
+
+}
+```
+
+Add the `useCourierInbox` hook
+
+```javascript
+import { useCourierInbox } from '@trycourier/courier-react-native';
+
+const InboxCustom = () => {
+
+  const inbox = useCourierInbox({
+    paginationLimit: 100
+  });
+
+  const ListItem = (props: { message: InboxMessage }) => {
+
+    const isRead = props.message.read;
+
+    function toggleMessage() {
+      const messageId = props.message.messageId;
+      const test = isRead ? inbox?.unreadMessage(messageId) : inbox?.readMessage(messageId);
+    }
+
+    return (
+      <TouchableOpacity style={[isRead ? undefined : styles.unread]} onPress={toggleMessage}>
+        <Text>{JSON.stringify(props.message, null, 2)}</Text>
+      </TouchableOpacity>
+    );
+
+  };
+
+  function buildContent() {
+
+    if (inbox?.isLoading) {
+      return <Text>Loading</Text>
+    }
+
+    if (inbox?.error) {
+      return <Text>{inbox?.error}</Text>
+    }
+
+    return (
+      <FlatList
+        data={inbox?.messages}
+        keyExtractor={message => message.messageId}
+        renderItem={message => <ListItem message={message.item} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={inbox?.isRefreshing ?? false}
+            onRefresh={inbox?.refresh}
+          />
+        }
+        ListFooterComponent={() => {
+
+          if (inbox?.canPaginate) {
+            return (
+              <View style={{ paddingVertical: 20 }}>
+                <ActivityIndicator size="small" />
+              </View>
+            )
+          }
+
+          return null
+
+        }}
+        onEndReached={() => {
+          if (inbox?.canPaginate) {
+            inbox?.fetchNextPageOfMessages()
+          }
+        }}
+      />
+    )
+
+  }
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
+  
+  return (
+    <View style={styles.container}>
+      {buildContent()}
+    </View>
+  );
+
+};
+
+export default InboxCustom;
 ```
 
 ### Vanilla Javascript
+
 ```javascript
 TODO
 ```
