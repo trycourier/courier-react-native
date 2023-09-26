@@ -463,6 +463,7 @@ useEffect(() => {
 
     // Request push permissions
     // This will sync the tokens to Courier
+    // Note: This only works on iOS at the moment. You will have to do this on Android in another way.
     const status = await push.requestNotificationPermission();
 
   }
