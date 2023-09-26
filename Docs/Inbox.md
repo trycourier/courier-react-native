@@ -236,7 +236,7 @@ const InboxCustom = () => {
 
     function toggleMessage() {
       const messageId = props.message.messageId;
-      const test = isRead ? inbox?.unreadMessage(messageId) : inbox?.readMessage(messageId);
+      isRead ? inbox.unreadMessage(messageId) : inbox.readMessage(messageId);
     }
 
     return (
@@ -249,28 +249,28 @@ const InboxCustom = () => {
 
   function buildContent() {
 
-    if (inbox?.isLoading) {
+    if (inbox.isLoading) {
       return <Text>Loading</Text>
     }
 
-    if (inbox?.error) {
+    if (inbox.error) {
       return <Text>{inbox?.error}</Text>
     }
 
     return (
       <FlatList
-        data={inbox?.messages}
+        data={inbox.messages}
         keyExtractor={message => message.messageId}
         renderItem={message => <ListItem message={message.item} />}
         refreshControl={
           <RefreshControl
-            refreshing={inbox?.isRefreshing ?? false}
-            onRefresh={inbox?.refresh}
+            refreshing={inbox.isRefreshing ?? false}
+            onRefresh={inbox.refresh}
           />
         }
         ListFooterComponent={() => {
 
-          if (inbox?.canPaginate) {
+          if (inbox.canPaginate) {
             return (
               <View style={{ paddingVertical: 20 }}>
                 <ActivityIndicator size="small" />
@@ -282,8 +282,8 @@ const InboxCustom = () => {
 
         }}
         onEndReached={() => {
-          if (inbox?.canPaginate) {
-            inbox?.fetchNextPageOfMessages()
+          if (inbox.canPaginate) {
+            inbox.fetchNextPageOfMessages()
           }
         }}
       />
@@ -312,9 +312,7 @@ export default InboxCustom;
 
 ### Vanilla Javascript
 
-```javascript
-TODO
-```
+See [`full documentation`](https://developer.android.com/develop/ui/views/text-and-emoji/fonts-in-xml) for examples.
 
 &emsp;
 
@@ -330,36 +328,36 @@ TODO
     <tbody>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-android/blob/master/app/src/main/java/com/courier/example/fragments/PrebuiltInboxFragment.kt">
+                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/example/src/pages/InboxDefault.tsx">
                     <code>Default Example</code>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-android/blob/master/Docs/Inbox.md#default-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#default-inbox-example">
                     <code>Default</code>
                 </a>
             </td>
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-android/blob/master/app/src/main/java/com/courier/example/fragments/StyledInboxFragment.kt">
+                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/example/src/pages/InboxStyled.tsx">
                     <code>Styled Example</code>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-android/blob/master/Docs/Inbox.md#styled-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#styled-inbox-example">
                     <code>Styled</code>
                 </a>
             </td>
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-android/blob/master/app/src/main/java/com/courier/example/fragments/CustomInboxFragment.kt">
+                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/example/src/pages/InboxCustom.tsx">
                     <code>Custom Example</code>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-android/blob/master/Docs/Inbox.md#custom-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#custom-inbox-example">
                     <code>Custom</code>
                 </a>
             </td>
@@ -371,54 +369,67 @@ TODO
 
 ## Available Properties and Functions
 
-```kotlin
+```javascript
 
-// Listen to all inbox events
-// Only one "pipe" of data is created behind the scenes for network / performance reasons
-val inboxListener = Courier.shared.addInboxListener(
-    onInitialLoad = {
-        // Called when the inbox starts up
-    },
-    onError = { error ->
-        // Called if an error occurs
-    },
-    onMessagesChanged = { messages, unreadMessageCount, totalMessageCount, canPaginate ->
-        // Called when messages update
-    }
-)
 
-// Stop the current listener
-inboxListener.remove()
+// Hook: If you are using useCourierInbox, you must wrap your component in CourierProvider
+<CourierProvider> 
+  ...
+</CourierProvider>
 
-// Remove all listeners
-// This will also remove the listener of the prebuilt UI
-Courier.shared.removeAllInboxListeners()
+// Hook: Access inbox and optionally set pagination limit
+const inbox = useCourierInbox({
+  paginationLimit: 100 // Optional
+});
 
-// The amount of inbox messages to fetch at a time
-// Will affect prebuilt UI
-Courier.shared.inboxPaginationLimit = 123
+// Change pagination Limit
+inbox.setPaginationLimit(123);
+Courier.shared.setInboxPaginationLimit({ limit: 100 });
 
-// The available messages the inbox has
-val inboxMessages = Courier.shared.inboxMessages
+// Handle inbox changes
 
-lifecycle.coroutineScope.launch {
+// Hook
+inbox.isLoading
+inbox.error
+inbox.messages
+inbox.unreadMessageCount
+inbox.totalMessageCount
+inbox.canPaginate
 
-    // Fetches the next page of messages
-    Courier.shared.fetchNextPageOfMessages()
+// Vanilla
+const inboxListener = Courier.shared.addInboxListener({
+  onInitialLoad: () => {
+    // Handle loading
+  },
+  onError: (error) => {
+    // Handle error
+  },
+  onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
+    // Handle data
+  }
+});
 
-    // Reloads the inbox
-    // Commonly used with pull to refresh
-    Courier.shared.refreshInbox()
+// Remove the listener
+inboxListener.remove();
+Courier.shared.removeInboxListener({ messageId: 'asdf' });
 
-    // Reads all the messages
-    // Writes the update instantly and performs request in background
-    try await Courier.shared.readAllInboxMessages()
+// Refresh inbox
+await inbox.refresh();
+await Courier.shared.refreshInbox();
 
-}
+// Read all messages
+await inbox.readAllMessages();
+await Courier.shared.readAllInboxMessages();
 
-// Mark message as read/unread
-let message = InboxMessage(..)
-message.markAsRead()
-message.markAsUnread()
+// Read a single message
+await inbox.readMessage('asdf');
+await Courier.shared.readMessage({ messageId: 'asdf' });
 
+// Unread a single message
+await inbox.unreadMessage('asdf');
+await Courier.shared.unreadMessage({ messageId: 'asdf' });
+
+// Fetch a new page of messages
+const messages = await inbox.fetchNextPageOfMessages();
+const messages = await Courier.shared.fetchNextPageOfMessages()
 ```
