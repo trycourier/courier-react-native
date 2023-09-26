@@ -55,6 +55,27 @@ yarn add @trycourier/courier-react-native
 
 &emsp;
 
+## iOS
+
+1. Update your Podfile to support iOS 13+
+
+```sh
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p'..
+
+# Courier React Native requires iOS 13+
+platform :ios, '13.0' // Add this line
+prepare_react_native_project!
+
+..
+```
+
+2. Update your iOS project to support iOS 13.0 minimum
+   
+<img width="737" alt="Screenshot 2023-09-26 at 2 16 51 PM" src="https://github.com/trycourier/courier-react-native/assets/6370613/6bf98576-9b26-4b5e-8add-7289531e6431">
+
+&emsp;
+
 # Getting Started
 
 These are all the available features of the SDK.
