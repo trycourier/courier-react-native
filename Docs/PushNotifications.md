@@ -13,6 +13,8 @@ The easiest way to support push notifications in your app.
         <tr>
             <th width="300px" align="left">Feature</th>
             <th width="700px" align="left">Description</th>
+            <th width="100px" align="left">iOS</th>
+            <th width="100px" align="left">Android</th>
         </tr>
     </thead>
     <tbody>
@@ -40,6 +42,11 @@ The easiest way to support push notifications in your app.
             </td>
             <td align="left">
                 Simple functions to request and check push notification permission settings. iOS only.
+            </td>
+        </tr>
+        <tr width="100px">
+            <td align="center">
+              ✅
             </td>
         </tr>
     </tbody>
