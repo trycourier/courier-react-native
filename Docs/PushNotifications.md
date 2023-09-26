@@ -100,6 +100,72 @@ The easiest way to support push notifications in your app.
 
 &emsp;
 
+<table>
+    <thead>
+        <tr>
+            <th width="700px" align="left">Provider</th>
+            <th width="200px" align="center">iOS Token Sync</th>
+            <th width="200px" align="center">Android Token Sync</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://app.courier.com/channels/apn">
+                    <code>(APNS) - Apple Push Notification Service</code>
+                </a>
+            </td>
+            <td align="center">
+                <code>Automatic</code>
+            </td>
+            <td align="center">
+                <code>Not Supported</code>
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://app.courier.com/channels/firebase-fcm">
+                    <code>(FCM) - Firebase Cloud Messaging</code>
+                </a>
+            </td>
+            <td align="center">
+                <code>Manual</code>
+            </td>
+            <td align="center">
+                <code>Automatic</code>
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://app.courier.com/channels/onesignal">
+                    <code>OneSignal</code>
+                </a>
+            </td>
+            <td align="center">
+                <code>Not Supported</code>
+            </td>
+            <td align="center">
+                <code>Not Supported</code>
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://app.courier.com/channels/expo">
+                    <code>Expo</code>
+                </a>
+            </td>
+            <td align="center">
+                <code>Not Supported</code>
+            </td>
+            <td align="center">
+                <code>Not Supported</code>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+&emsp;
+
 # iOS Setup 
 
 <table>
