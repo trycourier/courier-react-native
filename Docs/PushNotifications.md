@@ -13,8 +13,8 @@ The easiest way to support push notifications in your app.
         <tr>
             <th width="300px" align="left">Feature</th>
             <th width="600px" align="left">Description</th>
-            <th width="100px" align="left">iOS</th>
-            <th width="100px" align="left">Android</th>
+            <th width="100px" align="center">iOS</th>
+            <th width="100px" align="center">Android</th>
         </tr>
     </thead>
     <tbody>
@@ -23,7 +23,7 @@ The easiest way to support push notifications in your app.
                 <code>Automatic Token Management</code>
             </td>
             <td align="left">
-                Skip manually managing push notification device tokens.
+                Push notification tokens automatically sync to the Courier studio.
             </td>
             <td align="center">
               ✅
@@ -37,17 +37,27 @@ The easiest way to support push notifications in your app.
                 <code>Notification Tracking</code>
             </td>
             <td align="left">
-                Track if your users are receiving your notifications even if your app is not runnning or open.
+                Track if your users received or clicked your notifications even if your app is not runnning or open.
+            </td>
+            <td align="center">
+              ✅
+            </td>
+            <td align="center">
+              ✅
             </td>
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/PushNotifications.md#5-send-a-test-push-notification">
-                    <code>Permission Requests & Checking</code>
-                </a>
+                <code>Permission Requests & Checking</code>
             </td>
             <td align="left">
-                Simple functions to request and check push notification permission settings. iOS only.
+                Simple functions to request and check push notification permission settings.
+            </td>
+            <td align="center">
+              ✅
+            </td>
+            <td align="center">
+              ❌
             </td>
         </tr>
     </tbody>
