@@ -65,7 +65,7 @@ The easiest way to support push notifications in your app.
 
 &emsp;
 
-## Requirements
+## Configuration Requirements
 
 <table>
     <thead>
@@ -98,6 +98,8 @@ The easiest way to support push notifications in your app.
     </tbody>
 </table>
 
+&emsp;
+
 ## iOS Requirements
 
 <table>
@@ -128,6 +130,8 @@ The easiest way to support push notifications in your app.
         </tr>
     </tbody>
 </table>
+
+&emsp;
 
 ## Android Requirements
 
