@@ -197,88 +197,41 @@ https://user-images.githubusercontent.com/29832989/204891095-1b9ac4f4-8e5f-4c71-
 
 &emsp;
 
-## 3. Implement the `CourierDelegate`
+## 3. Implement the `CourierReactNativeDelegate`
     
-```swift
-import Courier_iOS
+1. Open your iOS project and increase the min SDK target to iOS 13.0+
+2. Open your `Podfile` and increase the platform:
 
-@main
-class AppDelegate: CourierDelegate {
-    
-    ...
-
-    override func pushNotificationDeliveredInForeground(message: [AnyHashable : Any]) -> UNNotificationPresentationOptions {
-        
-        print("\n=== 💌 Push Notification Delivered In Foreground ===\n")
-        print(message)
-        print("\n=================================================\n")
-        
-        // This is how you want to show your notification in the foreground
-        // You can pass "[]" to not show the notification to the user or
-        // handle this with your own custom styles
-        return [.sound, .list, .banner, .badge]
-        
-    }
-    
-    override func pushNotificationClicked(message: [AnyHashable : Any]) {
-        
-        print("\n=== 👉 Push Notification Clicked ===\n")
-        print(message)
-        print("\n=================================\n")
-        
-        showMessageAlert(title: "Message Clicked", message: "\(message)")
-        
-    }
-
-}
+```
+..
+platform :ios, '13'
+..
 ```
 
-1. In your `AppDelegate`, add `import Courier_iOS`
-2. Change your `AppDelegate` to extend the `CourierDelegate`
-    * This adds simple functions to handle push notification delivery and clicks
-    * This automatically syncs APNS tokens to Courier
+3. From your React Native project's root directory, run: `cd ios && pod update`
+4. In Xcode, change your `AppDelegate.h` to use the snippet below:
+   - This automatically syncs APNS tokens to Courier token management
+   - Allows the React Native SDK to handle when push notifications are delivered and clicked
+
+```objective-c
+#import <courier-react-native/CourierReactNativeDelegate.h>
+
+@interface AppDelegate : CourierReactNativeDelegate
+@end
+```
     
 ### FCM - Firebase Cloud Messaging Support
 
 ⚠️ The [`Firebase iOS package`](https://firebase.google.com/docs/ios/setup) is required
 
-Here is how you can configure your project to support FCM tokens.
+You are responsible for handling the token syncing and setup with React Native and Firebase. Here is the function used to sync firebase tokens to the Courier sdk.
 
-```swift
-import Courier_iOS
-import FirebaseCore
-import FirebaseMessaging
+```javascript
+import Courier from '@trycourier/courier-react-native';
 
-@main
-class AppDelegate: CourierDelegate, MessagingDelegate {
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        // Initialize Firebase and FCM
-        FirebaseApp.configure()
-        Messaging.messaging().delegate = self
-        
-        return true
-        
-    }
-
-    ...
-    
-    public func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-
-        guard let token = fcmToken else { return }
-
-        Task {
-            do {
-                try await Courier.shared.setFCMToken(token)
-            } catch {
-                print(String(describing: error))
-            }
-        }
-
-    }
-
-}
+await Courier.shared.setFcmToken({
+  token: 'your_fcm_token'
+});
 ```
 
 &emsp;
