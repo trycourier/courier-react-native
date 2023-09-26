@@ -235,13 +235,6 @@ https://user-images.githubusercontent.com/29832989/202580269-863a9293-4c0b-48c9-
 
 ### Link the Courier SDK to your extension:
 
-#### Swift Package Manager Setup
-1. Click on your project file
-2. Under Targets, click on your new Target
-3. Under the General tab > Frameworks and Libraries, click the "+" icon
-4. Select the Courier package from the list under Courier Package > Courier
-
-#### Cocoapods Setup
 1. Add the following snippet to the bottom of your Podfile
 
 ```ruby 
