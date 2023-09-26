@@ -181,6 +181,17 @@ Select which push notification provider you would like Courier to route push not
             </td>
             <td align="center">❌</td>
         </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://app.courier.com/channels/expo">
+                    <code>Expo</code>
+                </a>
+            </td>
+            <td align="center">
+                —
+            </td>
+            <td align="center">❌</td>
+        </tr>
     </tbody>
 </table>
 
@@ -232,6 +243,8 @@ import Courier from '@trycourier/courier-react-native';
 await Courier.shared.setFcmToken({
   token: 'your_fcm_token'
 });
+
+const fcmToken = Courier.shared.fcmToken;
 ```
 
 &emsp;
@@ -299,23 +312,28 @@ Task {
 
 2. Send a test message
 
-```swift
-import Courier_iOS
-
-Task {
-        
-    // Sends a test message
-    // "YOUR_AUTH_KEY" is found here: https://app.courier.com/settings/api-keys
-    // DO NOT LEAVE "YOUR_AUTH_KEY" in your production app. This is only for testing.
-    try await Courier.shared.sendMessage(
-        authKey: "YOUR_AUTH_KEY",
-        userId: "example_user_id",
-        title: "Hello!",
-        message: "I hope you are having a great day",
-        providers: [.apns, .fcm]
-    )
-
-}
+```curl
+curl --request POST \
+  --url https://api.courier.com/send \
+  --header 'Authorization: Bearer YOUR_AUTH_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"message": {
+		"to": {
+			"user_id": "your_user_id"
+		},
+		"content": {
+			"title": "Hey there 👋",
+			"body": "Have a great day 😄"
+		},
+		"routing": {
+			"method": "all",
+			"channels": [
+				"apn", "firebase-fcm"
+			]
+		}
+	}
+}'
 ```
 
 ## Android Requirements
