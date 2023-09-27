@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { InboxMessage } from 'src/models/InboxMessage';
+import { InboxMessage } from './../models/InboxMessage';
 import Courier, { CourierPushListener, CourierInboxListener, CourierAuthenticationListener, iOSForegroundPresentationOptions } from '..';
 
 let authListener: CourierAuthenticationListener | undefined = undefined
