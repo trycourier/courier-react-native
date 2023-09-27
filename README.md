@@ -136,12 +136,12 @@ These are all the available features of the SDK.
                 1
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Authentication.md">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Authentication.md">
                     <code>Authentication</code>
                 </a>
             </td>
             <td align="left">
-                Manages user credentials between app sessions. Required if you would like to use <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md"><code>Courier Inbox</code></a> and <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/PushNotifications.md"><code>Push Notifications</code></a>.
+                Manages user credentials between app sessions. Required if you would like to use <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md"><code>Courier Inbox</code></a> and <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/PushNotifications.md"><code>Push Notifications</code></a>.
             </td>
         </tr>
         <tr width="600px">
@@ -149,7 +149,7 @@ These are all the available features of the SDK.
                 2
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md">
                     <code>Courier Inbox</code>
                 </a>
             </td>
@@ -162,7 +162,7 @@ These are all the available features of the SDK.
                 3
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/PushNotifications.md">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/PushNotifications.md">
                     <code>Push Notifications</code>
                 </a>
             </td>
@@ -188,7 +188,7 @@ Starter projects using this SDK.
     <tbody>
         <tr width="1000px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/tree/feature/courier-inbox/example">
+                <a href="https://github.com/trycourier/courier-react-native/tree/master/example">
                     <code>Example</code>
                 </a>
             </td>

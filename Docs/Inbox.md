@@ -28,7 +28,7 @@ An in-app notification center list you can use to notify your users. Allows you 
                 </td>
             </tr>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Authentication.md">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Authentication.md">
                     <code>Authentication</code>
                 </a>
             </td>
@@ -102,7 +102,7 @@ The styles you can use to quickly customize the `CourierInbox`.
 
 #### ⚠️ Android Theme Requirement
 
-Be sure to add support for the material theme. More info [`here`](https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#%EF%B8%8F-important-android-requirement).
+Be sure to add support for the material theme. More info [`here`](https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#%EF%B8%8F-important-android-requirement).
 
 Setting `CourierInboxTheme` will override your app's default `styles.xml` theme.
 
@@ -312,7 +312,7 @@ export default InboxCustom;
 
 ### Vanilla Javascript
 
-See [`full documentation`](https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#available-properties-and-functions) for examples.
+See [`full documentation`](https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#available-properties-and-functions) for examples.
 
 &emsp;
 
@@ -328,36 +328,36 @@ See [`full documentation`](https://github.com/trycourier/courier-react-native/bl
     <tbody>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/example/src/pages/InboxDefault.tsx">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/example/src/pages/InboxDefault.tsx">
                     <code>Default Example</code>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#default-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#default-inbox-example">
                     <code>Default</code>
                 </a>
             </td>
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/example/src/pages/InboxStyled.tsx">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/example/src/pages/InboxStyled.tsx">
                     <code>Styled Example</code>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#styled-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#styled-inbox-example">
                     <code>Styled</code>
                 </a>
             </td>
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/example/src/pages/InboxCustom.tsx">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/example/src/pages/InboxCustom.tsx">
                     <code>Custom Example</code>
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-react-native/blob/feature/courier-inbox/Docs/Inbox.md#custom-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#custom-inbox-example">
                     <code>Custom</code>
                 </a>
             </td>
