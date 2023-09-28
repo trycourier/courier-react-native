@@ -43,7 +43,7 @@ An in-app notification center list you can use to notify your users. Allows you 
 
 ## Default Inbox Example
 
-The default `CourierInbox` styles.
+The default `CourierInboxView` styles.
 
 <img width="894" alt="default-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/e39a1f20-5636-48a9-9337-e1416fbb67bf">
 
@@ -96,7 +96,7 @@ import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
 ## Styled Inbox Example
 
-The styles you can use to quickly customize the `CourierInbox`.
+The styles you can use to quickly customize the `CourierInboxView`.
 
 <img width="894" alt="styled-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/46ad8b3a-5931-490c-8f48-d36c05e89abd">
 
