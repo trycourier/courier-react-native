@@ -53,7 +53,7 @@ import { useCourierAuth } from "@trycourier/courier-react-native";
    ...
 </CourierProvider>
 
-// In your component. Use the following:
+// In your component use the following:
 const auth = useCourierAuth();
 
 await auth.signIn({
