@@ -46,7 +46,7 @@ Put this code where you normally manage your user's state. The user's access to 
 ### React Hooks
 
 ```javascript
-import { useCourierAuth } from "@trycourier/courier-react-native";
+import { CourierProvider, useCourierAuth } from "@trycourier/courier-react-native";
 
 // Add the CourierProvider as the parent to your component
 <CourierProvider>
