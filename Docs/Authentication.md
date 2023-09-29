@@ -48,6 +48,12 @@ Put this code where you normally manage your user's state. The user's access to 
 ```javascript
 import { useCourierAuth } from "@trycourier/courier-react-native";
 
+// Add the CourierProvider as the parent to your component
+<CourierProvider>
+   ...
+</CourierProvider>
+
+// In your component. Use the following:
 const auth = useCourierAuth();
 
 await auth.signIn({
