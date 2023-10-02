@@ -1,7 +1,7 @@
 PODS:
   - boost (1.76.0)
   - CocoaAsyncSocket (7.6.5)
-  - courier-react-native (2.0.0-beta9):
+  - courier-react-native (2.0.2):
     - Courier_iOS (= 2.0.4)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -682,7 +682,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  courier-react-native: a8d86b926c54f1909ee8ae9ef3976c904a5e7a27
+  courier-react-native: af84020879112ea890fde39005f3f6e4e88ec3b8
   Courier_iOS: f60376b0dea368ccce411b15b9a568e6b24359c6
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 5d4a3b7f411219a45a6d952f77d2c0a6c9989da5

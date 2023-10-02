@@ -82,12 +82,6 @@ export const CourierProvider: React.FC<{ children: ReactNode }> = ({ children })
     const userId = Courier.shared.userId;
     auth_setUserId(userId);
 
-    // Permissions
-    syncNotificationPermissions();
-
-    // Push tokens
-    syncTokens();
-
   }, []);
 
   useEffect(() => {
@@ -113,6 +107,12 @@ export const CourierProvider: React.FC<{ children: ReactNode }> = ({ children })
   }
 
   const startPush = () => {
+
+    // Permissions
+    syncNotificationPermissions();
+
+    // Push tokens
+    syncTokens();
 
     if (!pushListener) {
 
@@ -321,7 +321,7 @@ export const useCourierPush = (props: UseCourierPushProps = {}): CourierPushCont
   // Set the presentation options
   const options = props.iOSForegroundPresentationOptions;
   if (options) {
-    context.push?.iOSForegroundPresentationOptions(options);
+    context.push.iOSForegroundPresentationOptions(options);
   }
 
   context.push.start();
@@ -346,10 +346,10 @@ export const useCourierInbox = (props: UseCourierInboxProps = {}): CourierInboxC
   // Set the initial pagination limit if needed
   const limit = props.paginationLimit;
   if (limit) {
-    context.inbox?.setPaginationLimit(limit);
+    context.inbox.setPaginationLimit(limit);
   }
 
-  context.inbox?.start();
+  context.inbox.start();
 
   return context.inbox;
 

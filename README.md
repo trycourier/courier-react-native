@@ -96,10 +96,10 @@ buildscript {
     ext {
 
         // Double check these values
-        buildToolsVersion = "32.0.0"
+        buildToolsVersion = "33.0.0"
         minSdkVersion = 23
-        compileSdkVersion = 32
-        targetSdkVersion = 32
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         ..
     }
 
@@ -115,6 +115,22 @@ buildscript {
 ```
 
 ### 2. Run Gradle Sync
+
+&emsp;
+
+### 3. Extend the `CourierReactNativeActivity`
+
+In your Android project, change your `MainActivity` to extend the `CourierReactNativeActivity`.
+
+This allows the Courier SDK to manage the current user between app sessions.
+
+```java
+import com.courierreactnative.CourierReactNativeActivity;
+
+public class MainActivity extends CourierReactNativeActivity {
+    ..
+}
+```
 
 &emsp;
 
