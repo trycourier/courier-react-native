@@ -6,7 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "pods": "pod-install --quiet"
+    "pods": "pod-install --quiet",
+    "setupEnv": "if [[ ! -e .env ]] ; then cp .env.sample .env ; fi"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.5.8",
