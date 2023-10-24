@@ -8,11 +8,9 @@ export default function App() {
   // IMPORTANT: Please add `CourierProvider` if you want to access realtime Courier events
 
   return (
-    <CourierProvider> 
-      <NavigationContainer>
-        <Navigation />
-      </NavigationContainer>
-    </CourierProvider>
+    <NavigationContainer>
+      <Navigation />
+    </NavigationContainer>
   );
 
 }

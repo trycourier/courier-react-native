@@ -1,33 +1,87 @@
-import { useCourierPush, useCourierAuth } from "@trycourier/courier-react-native";
+import Courier, { useCourierPush, useCourierAuth, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Env from "../Env";
 
 const Auth = () => {
 
-  const push = useCourierPush();
-  const auth = useCourierAuth();
+  // const push = useCourierPush();
+  // const auth = useCourierAuth();
+
+  // useEffect(() => {
+
+  //   console.log('-- Courier User Id Changed --');
+  //   console.log(auth.userId);
+
+  // }, [auth.userId]);
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [userId, setUserId] = useState<string | undefined>()
 
   useEffect(() => {
 
-    console.log('-- Courier User Id Changed --');
-    console.log(auth.userId);
+    setUserId(Courier.shared.userId)
 
-  }, [auth.userId]);
+  }, [])
+
+  useEffect(() => {
+
+    if (userId) {
+      getPrefs()
+    }
+
+  }, [userId])
+
+  async function getPrefs() {
+
+    console.log('PREFS')
+
+    try {
+
+      const preferences = await Courier.shared.getUserPreferences()
+      console.log(JSON.stringify(preferences))
+
+      const topicId = preferences.items!![0]?.topicId!!
+
+      const topic = await Courier.shared.getUserPreferencesTopic({ 
+        topicId: topicId
+      })
+      console.log(JSON.stringify(topic))
+
+      await Courier.shared.putUserPreferencesTopic({
+        topicId: topicId,
+        status: CourierUserPreferencesStatus.OptedOut,
+        hasCustomRouting: true,
+        customRouting: [
+          CourierUserPreferencesChannel.Push,
+          CourierUserPreferencesChannel.Email,
+          CourierUserPreferencesChannel.SMS
+        ]
+      })
+
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
 
   async function signIn(userId: string) {
 
+    setIsLoading(true)
+
     try {
       
-      await auth.signIn({
+      await Courier.shared.signIn({
         accessToken: Env.accessToken,
         clientKey: Env.clientKey,
         userId: userId,
       });
 
-      const requestStatus = await push.requestNotificationPermission();
+      setUserId(Courier.shared.userId)
+
+      const requestStatus = await Courier.shared.requestNotificationPermission();
       console.log('Request Notification Status: ' + requestStatus);
-      console.log('Get Notification Status: ' + push.notificationPermissionStatus);
+      console.log('Get Notification Status: ' + await Courier.shared.getNotificationPermissionStatus());
 
     } catch (e) {
 
@@ -35,10 +89,13 @@ const Auth = () => {
 
     }
 
+    setIsLoading(false)
+
   }
 
   async function signOut() {
-    await auth?.signOut();
+    await Courier.shared.signOut();
+    setUserId(Courier.shared.userId);
   }
 
   const styles = StyleSheet.create({
@@ -97,7 +154,7 @@ const Auth = () => {
   
     const handleButtonPress = () => {
 
-      if (auth?.userId) {
+      if (userId) {
         signOut();
       } else {
         setModalVisible(true);
@@ -147,14 +204,14 @@ const Auth = () => {
   return (
     <View style={styles.container}>
 
-      {auth.isLoading && (
+      {isLoading && (
         <ActivityIndicator size="small" />
       )}
 
-      {!auth.isLoading && (
+      {!isLoading && (
         <>
-          {auth.userId && <Text style={styles.text}>{auth.userId}</Text>}
-          <AuthButton buttonText={auth.userId ? 'Sign Out' : 'Sign In'} />
+          {userId && <Text style={styles.text}>{userId}</Text>}
+          <AuthButton buttonText={userId ? 'Sign Out' : 'Sign In'} />
         </>
       )}
 

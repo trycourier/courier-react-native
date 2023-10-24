@@ -380,6 +380,57 @@ class CourierReactNativeModule: RCTEventEmitter {
         Courier.shared.inboxPaginationLimit = Int(limit)
         return String(describing: Courier.shared.inboxPaginationLimit)
     }
+    
+    @objc(getUserPreferences: withResolver: withRejecter:)
+    func getUserPreferences(paginationCursor: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let cursor = paginationCursor != "" ? paginationCursor as String : nil
+        
+        Courier.shared.getUserPreferences(
+            paginationCursor: cursor,
+            onSuccess: { preferences in
+                resolve(preferences.toDictionary())
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
+    
+    @objc(getUserPreferencesTopic: withResolver: withRejecter:)
+    func getUserPreferencesTopic(topicId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        Courier.shared.getUserPreferencesTopic(
+            topicId: topicId as String,
+            onSuccess: { topic in
+                resolve(topic.toDictionary())
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
+    
+    @objc(putUserPreferencesTopic: withStatus: withHasCustomRouting: withCustomRouting: withResolver: withRejecter:)
+        func putUserPreferencesTopic(topicId: NSString, status: NSString, hasCustomRouting: Bool, customRouting: [NSString], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+
+        
+        Courier.shared.putUserPreferencesTopic(
+            topicId: topicId as String,
+            status: CourierUserPreferencesStatus(rawValue: status as String) ?? .unknown,
+            hasCustomRouting: hasCustomRouting,
+            customRouting: customRouting.map { CourierUserPreferencesChannel(rawValue: $0 as String) ?? .unknown },
+            onSuccess: {
+                resolve(nil)
+            },
+            onFailure: { error in
+                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+            }
+        )
+        
+    }
 
     override func supportedEvents() -> [String]! {
         return [
@@ -431,19 +482,4 @@ extension NSDictionary {
         
     }
     
-}
-
-extension UNAuthorizationStatus {
-
-    var name: String {
-        switch (self) {
-        case .notDetermined: return "notDetermined"
-        case .denied: return "denied"
-        case .authorized: return "authorized"
-        case .provisional: return "provisional"
-        case .ephemeral: return "ephemeral"
-        @unknown default: return "unknown"
-        }
-    }
-
 }

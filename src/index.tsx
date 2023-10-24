@@ -11,6 +11,10 @@ import { CourierInboxListener } from './models/CourierInboxListener';
 import { CourierPushListener } from './models/CourierPushListener';
 import { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
 import { InboxMessage } from './models/InboxMessage';
+import { CourierUserPreferences } from './models/CourierUserPreferences';
+import { CourierUserPreferencesTopic } from './models/CourierUserPreferencesTopic';
+import { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
+import { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
@@ -18,6 +22,8 @@ export { CourierProvider, useCourierAuth, useCourierPush, useCourierInbox } from
 export { CourierInboxListener } from './models/CourierInboxListener';
 export { CourierPushListener } from './models/CourierPushListener';
 export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
+export { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
+export { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
 
 const LINKING_ERROR =
@@ -377,6 +383,27 @@ class Courier {
    */
    public setInboxPaginationLimit(props: { limit: number }): void {
     CourierReactNativeModules.setInboxPaginationLimit(props.limit);
+  }
+  
+  /**
+   * Get all available preferences
+   */
+  public async getUserPreferences(props?: { paginationCursor: string }): Promise<CourierUserPreferences> {
+    return CourierReactNativeModules.getUserPreferences(props?.paginationCursor ?? "");
+  }
+
+  /**
+   * Get individual preferences topic
+   */
+  public async getUserPreferencesTopic(props: { topicId: string }): Promise<CourierUserPreferencesTopic> {
+    return CourierReactNativeModules.getUserPreferencesTopic(props.topicId);
+  }
+
+  /**
+   * Update individual preferences topic
+   */
+  public async putUserPreferencesTopic(props: { topicId: string, status: CourierUserPreferencesStatus, hasCustomRouting: boolean, customRouting: CourierUserPreferencesChannel[] }): Promise<void> {
+    return CourierReactNativeModules.putUserPreferencesTopic(props.topicId, props.status, props.hasCustomRouting, props.customRouting);
   }
   
 }

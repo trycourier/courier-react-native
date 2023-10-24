@@ -96,6 +96,33 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
 )
 
 RCT_EXTERN_METHOD(
+  getUserPreferences: (NSString*)paginationCursor
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getUserPreferencesTopic: (NSString*)topicId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getUserPreferencesTopic: (NSString*)topicId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  putUserPreferencesTopic: (NSString*)topicId
+  withStatus: (NSString*)status
+  withHasCustomRouting: (BOOL*)hasCustomRouting
+  withCustomRouting: (NSArray*)customRouting
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
   registerPushNotificationClickedOnKilledState
 )
 
