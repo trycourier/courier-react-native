@@ -274,4 +274,54 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     return Courier.shared.inboxPaginationLimit.toString()
   }
 
+  @ReactMethod
+  fun getUserPreferences(paginationCursor: String, promise: Promise) {
+
+    val cursor = if (paginationCursor != "") paginationCursor else null
+
+    Courier.shared.getUserPreferences(
+      paginationCursor = cursor,
+      onSuccess = { preferences ->
+        promise.resolve(preferences.toWritableMap())
+      },
+      onFailure = { e ->
+        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
+      }
+    )
+
+  }
+
+  @ReactMethod
+  fun getUserPreferencesTopic(topicId: String, promise: Promise) {
+    Courier.shared.getUserPreferenceTopic(
+      topicId = topicId,
+      onSuccess = { topic ->
+        promise.resolve(topic.toWritableMap())
+      },
+      onFailure = { e ->
+        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
+      }
+    )
+  }
+
+  @ReactMethod
+  fun putUserPreferencesTopic(topicId: String, status: String, hasCustomRouting: Boolean, customRouting: ReadableArray, promise: Promise) {
+
+    val routing = customRouting.toArrayList().map { CourierPreferenceChannel.fromString(it as String) }
+
+    Courier.shared.putUserPreferenceTopic(
+      topicId = topicId,
+      status = CourierPreferenceStatus.fromString(status),
+      hasCustomRouting = hasCustomRouting,
+      customRouting = routing,
+      onSuccess = {
+        promise.resolve(null)
+      },
+      onFailure = { e ->
+        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
+      }
+    )
+
+  }
+
 }

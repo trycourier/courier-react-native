@@ -1,7 +1,6 @@
 package com.courierreactnative
 
-import com.courier.android.models.InboxAction
-import com.courier.android.models.InboxMessage
+import com.courier.android.models.*
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableArray
@@ -12,9 +11,58 @@ internal fun ReactContext.sendEvent(eventName: String, value: Any?) {
   getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java).emit(eventName, value)
 }
 
+internal fun CourierUserPreferences.toWritableMap(): WritableMap {
+
+  val map = Arguments.createMap()
+
+  val itemsArray = Arguments.createArray()
+  items.forEach { topic ->
+    itemsArray.pushMap(topic.toWritableMap())
+  }
+  map.putArray("items", itemsArray)
+
+  map.putMap("paging", paging.toWritableMap())
+
+  return map
+
+}
+
+internal fun CourierPreferenceTopic.toWritableMap(): WritableMap {
+
+  val map = Arguments.createMap()
+  map.putString("defaultStatus", defaultStatus.value)
+  map.putBoolean("hasCustomRouting", hasCustomRouting)
+  map.putString("status", status.value)
+  map.putString("topicId", topicId)
+  map.putString("topicName", topicName)
+
+  val actionsArray = Arguments.createArray()
+  customRouting.forEach { routing ->
+    actionsArray.pushString(routing.value)
+  }
+  map.putArray("customRouting", actionsArray)
+
+  return map
+
+}
+
+internal fun Paging.toWritableMap(): WritableMap {
+
+  val map = Arguments.createMap()
+
+  cursor?.let {
+    map.putString("cursor", it)
+  }
+
+  map.putBoolean("more", more)
+
+  return map
+
+}
+
 @JvmName("toWritableArrayInboxMessage")
 internal fun List<InboxMessage>.toWritableArray(): WritableArray {
-  
+
   val messagesArray = Arguments.createArray()
 
   forEach { message ->

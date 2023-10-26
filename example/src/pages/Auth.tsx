@@ -34,19 +34,21 @@ const Auth = () => {
 
   async function getPrefs() {
 
-    console.log('PREFS')
-
     try {
 
-      const preferences = await Courier.shared.getUserPreferences()
-      console.log(JSON.stringify(preferences))
+      const preferences = await Courier.shared.getUserPreferences();
 
-      const topicId = preferences.items!![0]?.topicId!!
+      console.log('PREFERENCES');
+      console.log(JSON.stringify(preferences));
+
+      const topicId = preferences.items!![0]?.topicId!!;
 
       const topic = await Courier.shared.getUserPreferencesTopic({ 
         topicId: topicId
-      })
-      console.log(JSON.stringify(topic))
+      });
+
+      console.log('TOPIC');
+      console.log(JSON.stringify(topic));
 
       await Courier.shared.putUserPreferencesTopic({
         topicId: topicId,
@@ -57,10 +59,10 @@ const Auth = () => {
           CourierUserPreferencesChannel.Email,
           CourierUserPreferencesChannel.SMS
         ]
-      })
+      });
 
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
 
   }
