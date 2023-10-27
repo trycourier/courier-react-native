@@ -186,6 +186,19 @@ These are all the available features of the SDK.
                 Automatically manages push notification device tokens and gives convenient functions for handling push notification receiving and clicking.
             </td>
         </tr>
+        <tr width="600px">
+            <td align="center">
+                4
+            </td>
+            <td align="left">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Preferences.md">
+                    <code>Preferences</code>
+                </a>
+            </td>
+            <td align="left">
+                Allow users to update which types of notifications they would like to receive.
+            </td>
+        </tr>
     </tbody>
 </table>
 
