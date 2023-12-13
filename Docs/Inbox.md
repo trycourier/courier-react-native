@@ -116,45 +116,90 @@ Android fonts point to system fonts with the path included. More about Android f
 import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
 
 // See above for more details about fonts
-const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
-const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
-
 const textColor = '#2A1537'
 const primaryColor = '#882DB9'
 const secondaryColor = '#EA6866'
-const buttonTextColor = '#FFFFFF'
+
+const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
+const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
 
 const theme: CourierInboxTheme = {
-  unreadIndicatorBarColor: secondaryColor,
   loadingIndicatorColor: primaryColor,
-  titleFont: {
-    family: titleFont,
-    size: 20,
-    color: textColor
+  unreadIndicatorStyle: {
+    indicator: 'dot',
+    color: secondaryColor
   },
-  timeFont: {
-    family: defaultFont,
-    size: 16,
-    color: textColor
-  },
-  bodyFont: {
-    family: defaultFont,
-    size: 18,
-    color: textColor
-  },
-  detailTitleFont: {
-    family: defaultFont,
-    size: 20,
-    color: textColor
-  },
-  buttonStyles: {
-    font: {
+  titleStyle: {
+    unread: {
       family: titleFont,
-      size: 16,
-      color: buttonTextColor
+      size: 20,
+      color: textColor
     },
-    backgroundColor: primaryColor,
-    cornerRadius: 100
+    read: {
+      family: titleFont,
+      size: 20,
+      color: textColor
+    }
+  },
+  timeStyle: {
+    unread: {
+      family: defaultFont,
+      size: 16,
+      color: textColor
+    },
+    read: {
+      family: defaultFont,
+      size: 16,
+      color: textColor
+    }
+  },
+  bodyStyle: {
+    unread: {
+      family: defaultFont,
+      size: 18,
+      color: textColor
+    },
+    read: {
+      family: defaultFont,
+      size: 18,
+      color: textColor
+    }
+  },
+  buttonStyle: {
+    unread: {
+      font: {
+        family: titleFont,
+        size: 16,
+        color: '#FFFFFF'
+      },
+      backgroundColor: primaryColor,
+      cornerRadius: 100
+    },
+    read: {
+      font: {
+        family: titleFont,
+        size: 16,
+        color: '#FFFFFF'
+      },
+      backgroundColor: primaryColor,
+      cornerRadius: 100
+    }
+  },
+  infoViewStyle: {
+    font: {
+      family: defaultFont,
+      size: 20,
+      color: textColor
+    },
+    button: {
+      font: {
+        family: titleFont,
+        size: 16,
+        color: '#FFFFFF'
+      },
+      backgroundColor: primaryColor,
+      cornerRadius: 100
+    }
   },
   iOS: {
     messageAnimationStyle: 'right',

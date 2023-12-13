@@ -5,8 +5,8 @@ export interface CourierInboxFont {
 }
 
 export interface CourierInboxButtonStyle {
-  unread: CourierInboxButton
-  read: CourierInboxButton
+  unread?: CourierInboxButton
+  read?: CourierInboxButton
 }
 
 export interface CourierInboxButton {
@@ -16,13 +16,13 @@ export interface CourierInboxButton {
 }
 
 export interface CourierInboxTextStyle {
-  unread: CourierInboxFont
-  read: CourierInboxFont
+  unread?: CourierInboxFont
+  read?: CourierInboxFont
 }
 
 export interface CourierInboxInfoViewStyle {
-  font: CourierInboxFont
-  button: CourierInboxButton
+  font?: CourierInboxFont
+  button?: CourierInboxButton
 }
 
 export interface CourierInboxUnreadIndicatorStyle {

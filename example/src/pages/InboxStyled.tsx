@@ -26,7 +26,7 @@ const InboxStyled = () => {
       read: {
         family: titleFont,
         size: 20,
-        color: primaryColor
+        color: textColor
       }
     },
     timeStyle: {
@@ -106,54 +106,100 @@ const InboxStyled = () => {
     }
   }
 
-  // const darkTheme: CourierInboxTheme = {
-  //   unreadIndicatorBarColor: '#ffffff',
-  //   loadingIndicatorColor: '#ffffff',
-  //   titleFont: {
-  //     family: titleFont,
-  //     size: 20,
-  //     color: '#ffffff'
-  //   },
-  //   timeFont: {
-  //     family: defaultFont,
-  //     size: 16,
-  //     color: '#ffffff'
-  //   },
-  //   bodyFont: {
-  //     family: defaultFont,
-  //     size: 18,
-  //     color: '#ffffff'
-  //   },
-  //   detailTitleFont: {
-  //     family: defaultFont,
-  //     size: 20,
-  //     color: '#ffffff'
-  //   },
-  //   buttonStyles: {
-  //     font: {
-  //       family: titleFont,
-  //       size: 16,
-  //       color: '#000000'
-  //     },
-  //     backgroundColor: '#ffffff',
-  //     cornerRadius: 100
-  //   },
-  //   iOS: {
-  //     messageAnimationStyle: 'right',
-  //     cellStyles: {
-  //       separatorStyle: 'singleLineEtched',
-  //       separatorInsets: {
-  //         top: 0,
-  //         left: 0,
-  //         right: 0,
-  //         bottom: 0
-  //       }
-  //     }
-  //   },
-  //   android: {
-  //     dividerItemDecoration: 'vertical'
-  //   }
-  // }
+  const darkTheme: CourierInboxTheme = {
+    loadingIndicatorColor: '#ffffff',
+    unreadIndicatorStyle: {
+      indicator: 'dot',
+      color: '#ffffff'
+    },
+    titleStyle: {
+      unread: {
+        family: titleFont,
+        size: 20,
+        color: '#ffffff'
+      },
+      read: {
+        family: titleFont,
+        size: 20,
+        color: '#ffffff'
+      }
+    },
+    timeStyle: {
+      unread: {
+        family: defaultFont,
+        size: 16,
+        color: '#ffffff'
+      },
+      read: {
+        family: defaultFont,
+        size: 16,
+        color: '#ffffff'
+      }
+    },
+    bodyStyle: {
+      unread: {
+        family: defaultFont,
+        size: 18,
+        color: '#ffffff'
+      },
+      read: {
+        family: defaultFont,
+        size: 18,
+        color: '#ffffff'
+      }
+    },
+    infoViewStyle: {
+      font: {
+        family: defaultFont,
+        size: 20,
+        color: '#ffffff'
+      },
+      button: {
+        font: {
+          family: titleFont,
+          size: 16,
+          color: '#000000'
+        },
+        backgroundColor: '#ffffff',
+        cornerRadius: 100
+      }
+    },
+    buttonStyle: {
+      unread: {
+        font: {
+          family: titleFont,
+          size: 16,
+          color: '#000000'
+        },
+        backgroundColor: '#ffffff',
+        cornerRadius: 100
+      },
+      read: {
+        font: {
+          family: titleFont,
+          size: 16,
+          color: '#000000'
+        },
+        backgroundColor: '#ffffff',
+        cornerRadius: 100
+      }
+    },
+    iOS: {
+      messageAnimationStyle: 'right',
+      cellStyles: {
+        separatorStyle: 'singleLineEtched',
+        separatorInsets: {
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0
+        }
+      }
+    },
+    android: {
+      dividerItemDecoration: 'vertical'
+    }
+  }
 
   const styles = StyleSheet.create({
     container: {
@@ -170,7 +216,7 @@ const InboxStyled = () => {
       <CourierInboxView 
         theme={{
           light: lightTheme,
-          dark: lightTheme
+          dark: darkTheme
         }}
         onClickInboxMessageAtIndex={(message, index) => {
           console.log(message)
