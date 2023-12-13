@@ -22,7 +22,7 @@ const Auth = () => {
 
     setUserId(Courier.shared.userId)
 
-  }, [])
+  }, []);
 
   useEffect(() => {
 
@@ -30,7 +30,7 @@ const Auth = () => {
       getPrefs()
     }
 
-  }, [userId])
+  }, [userId]);
 
   async function getPrefs() {
 
@@ -79,11 +79,7 @@ const Auth = () => {
         userId: userId,
       });
 
-      setUserId(Courier.shared.userId)
-
-      const requestStatus = await Courier.shared.requestNotificationPermission();
-      console.log('Request Notification Status: ' + requestStatus);
-      console.log('Get Notification Status: ' + await Courier.shared.getNotificationPermissionStatus());
+      setUserId(Courier.shared.userId);
 
     } catch (e) {
 

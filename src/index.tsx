@@ -15,6 +15,7 @@ import { CourierUserPreferences } from './models/CourierUserPreferences';
 import { CourierUserPreferencesTopic } from './models/CourierUserPreferencesTopic';
 import { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
 import { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
+import { CourierPushProvider } from './models/CourierPushProvider';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
@@ -24,6 +25,7 @@ export { CourierPushListener } from './models/CourierPushListener';
 export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
 export { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
 export { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
+export { CourierPushProvider } from './models/CourierPushProvider';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
 
 const LINKING_ERROR =
@@ -128,25 +130,25 @@ class Courier {
   }
 
   /**
-   * Gets the apns token being used
+   * Gets a token for key
    */
-   get apnsToken(): string | undefined {
-    if (Platform.OS !== 'ios') return undefined;
-    return CourierReactNativeModules.getApnsToken();
+  public getToken(props: { key: string }): string | undefined {
+    return CourierReactNativeModules.getToken(props.key);
   }
 
-  /**
-   * Gets the fcm token being used
-   */
-  get fcmToken(): Promise<string | undefined> {
-    return CourierReactNativeModules.getFcmToken();
+  public getTokenForProvider(props: { provider: CourierPushProvider }): string | undefined {
+    return CourierReactNativeModules.getToken(props.provider);
   }
 
   /**
    * Sets the fcm token to be used by Courier
    */
-  public setFcmToken(props: { token: string }): Promise<void> {
-    return CourierReactNativeModules.setFcmToken(props.token);
+  public setToken(props: { key: string, token: string }): Promise<void> {
+    return CourierReactNativeModules.setToken(props.key, props.token);
+  }
+
+  public setTokenForProvider(props: { provider: CourierPushProvider, token: string }): Promise<void> {
+    return CourierReactNativeModules.setToken(props.provider, props.token);
   }
 
   /**
@@ -159,7 +161,7 @@ class Courier {
       return CourierReactNativeModules.getNotificationPermissionStatus();
     }
 
-    return Promise.reject('unknown')
+    return Promise.reject('unknown');
 
   }
 
@@ -169,13 +171,7 @@ class Courier {
    * Only supported on iOS
    */
   public requestNotificationPermission(): Promise<string> {
-
-    if (Platform.OS === 'ios') {
-      return CourierReactNativeModules.requestNotificationPermission();
-    }
-
-    return Promise.reject('unknown')
-
+    return CourierReactNativeModules.requestNotificationPermission();
   }
 
   /**

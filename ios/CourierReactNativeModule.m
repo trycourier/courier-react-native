@@ -45,19 +45,15 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getApnsToken
-)
-
 RCT_EXTERN_METHOD(
-  getFcmToken: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
-)
-
-RCT_EXTERN_METHOD(
-  setFcmToken: (NSString*)token
+  setToken: (NSString*)key
+  withToken: (NSString*)token
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getToken: (NSString*)key
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(

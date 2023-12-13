@@ -7,6 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import InboxDefault from './pages/InboxDefault';
 import InboxStyled from './pages/InboxStyled';
 import Auth from './pages/Auth';
+import Push from './pages/Push';
 
 const Tab = createBottomTabNavigator();
 
@@ -89,6 +90,7 @@ const Navigation = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Auth" component={Auth} options={icon('account-circle')} />
+      <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
       {/* <Tab.Screen name="Prebuilt Inbox" component={InboxDefault} options={inboxOptions()} />
       <Tab.Screen name="Styled Inbox" component={InboxStyled} options={inboxOptions()} />
       <Tab.Screen name="Custom Inbox" component={InboxCustom} options={inboxOptions()} /> */}

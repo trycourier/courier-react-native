@@ -1,12 +1,15 @@
 package com.courierreactnative
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.courier.android.Courier
 import com.courier.android.models.*
 import com.courier.android.modules.*
-import com.courier.android.utils.isPushPermissionGranted
 import com.courier.android.utils.pushNotification
-import com.courier.android.utils.requestNotificationPermission
 import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.*
@@ -72,16 +75,48 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     )
   }
 
-  @ReactMethod // TODO: Update in the future
+  @ReactMethod
   fun requestNotificationPermission(promise: Promise) {
-    reactActivity?.requestNotificationPermission()
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      promise.resolve("unknown")
+      return
+    }
+
+    // Request the push permission
+    reactActivity?.let { context ->
+
+      val permissionState: Int = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+
+      if (permissionState == PackageManager.PERMISSION_DENIED) {
+        ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+      }
+
+    }
+
+    promise.resolve("unknown")
+
   }
 
-  @ReactMethod // TODO: Update in the future
+  @ReactMethod
   fun getNotificationPermissionStatus(promise: Promise) {
-    val granted = reactActivity?.isPushPermissionGranted
-    val status = if (granted == true) "authorized" else "denied"
-    promise.resolve(status)
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      promise.resolve("unknown")
+      return
+    }
+
+    reactActivity?.let { context ->
+
+      val permissionState: Int = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+      val status = if (permissionState == PackageManager.PERMISSION_GRANTED) "authorized" else "denied"
+      promise.resolve(status)
+      return
+
+    }
+
+    promise.resolve("unknown")
+
   }
 
   @ReactMethod
@@ -148,23 +183,17 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   }
 
   @ReactMethod
-  fun setFcmToken(token: String, promise: Promise) {
-    Courier.shared.setFCMToken(
-      token = token,
-      onSuccess = {
-        promise.resolve(null)
-      },
-      onFailure = { e ->
-        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
-      }
-    )
+  fun getToken(key: String): String? {
+    return Courier.shared.getToken(key)
   }
 
   @ReactMethod
-  fun getFcmToken(promise: Promise) {
-    Courier.shared.getFCMToken(
-      onSuccess = { token ->
-        promise.resolve(token)
+  fun setToken(key: String, token: String, promise: Promise) {
+    Courier.shared.setToken(
+      provider = key,
+      token = token,
+      onSuccess = {
+        promise.resolve(null)
       },
       onFailure = { e ->
         promise.reject(CourierEvents.COURIER_ERROR_TAG, e)

@@ -226,11 +226,12 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
-    @objc(setFcmToken: withResolver: withRejecter:)
-    func setFcmToken(token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    @objc(setToken: withToken: withResolver: withRejecter:)
+    func setToken(key: NSString, token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
-        Courier.shared.setFCMToken(
-            token as String,
+        Courier.shared.setToken(
+            providerKey: key as String,
+            token: token as String,
             onSuccess: {
                 resolve(nil)
             },
@@ -241,13 +242,9 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     }
     
-    @objc(getFcmToken: withRejecter:)
-    func getFcmToken(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        resolve(Courier.shared.fcmToken)
-    }
-
-    @objc func getApnsToken() -> String? {
-        return Courier.shared.apnsToken
+    @objc(getToken:)
+    func getToken(key: NSString) -> String? {
+        return Courier.shared.getToken(providerKey: key as String)
     }
 
     @objc(iOSForegroundPresentationOptions:)

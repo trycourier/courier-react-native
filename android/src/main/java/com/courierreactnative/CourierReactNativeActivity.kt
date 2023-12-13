@@ -6,10 +6,7 @@ import com.courier.android.Courier
 import com.courier.android.utils.getLastDeliveredMessage
 import com.courier.android.utils.pushNotification
 import com.courier.android.utils.trackPushNotificationClick
-//import com.courier.android.pushNotification
-//import com.courier.android.trackPushNotificationClick
 import com.facebook.react.ReactActivity
-import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 
