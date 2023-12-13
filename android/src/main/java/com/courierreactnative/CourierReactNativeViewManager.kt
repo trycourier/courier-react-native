@@ -87,29 +87,42 @@ class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
     val android = getMap("android")
     val dividerItemDecoration = android?.getString("dividerItemDecoration")
 
-    val unreadIndicatorBarColor = getString("unreadIndicatorBarColor")
+    val unreadIndicatorStyle = getMap("unreadIndicatorStyle")
     val loadingIndicatorColor = getString("loadingIndicatorColor")
 
-    val titleFont = getMap("titleFont")
-    val timeFont = getMap("timeFont")
-    val bodyFont = getMap("bodyFont")
-    val detailTitleFont = getMap("detailTitleFont")
+    val titleStyle = getMap("titleStyle")
+    val timeStyle = getMap("timeStyle")
+    val bodyStyle = getMap("bodyStyle")
+    val infoViewStyle = getMap("infoViewStyle")
     val buttonStyles = getMap("buttonStyles")
 
     val context = view.context
 
-    return CourierInboxTheme()
-
-//    return CourierInboxTheme(
-//      dividerItemDecoration = dividerItemDecoration?.toDivider(context),
-//      unreadIndicatorBarColor = unreadIndicatorBarColor?.toColor(),
-//      loadingIndicatorColor = loadingIndicatorColor?.toColor(),
-//      titleFont = titleFont?.toFont(context) ?: CourierInboxFont(),
-//      timeFont = timeFont?.toFont(context) ?: CourierInboxFont(),
-//      bodyFont = bodyFont?.toFont(context) ?: CourierInboxFont(),
-//      detailTitleFont = detailTitleFont?.toFont(context) ?: CourierInboxFont(),
-//      buttonStyles = buttonStyles?.toButtonStyles(context) ?: CourierInboxButtonStyles()
-//    )
+    return CourierInboxTheme(
+      unreadIndicatorStyle = unreadIndicatorStyle?.toUnreadIndicatorStyle() ?: CourierInboxUnreadIndicatorStyle(),
+      loadingIndicatorColor = loadingIndicatorColor?.toColor(),
+      titleStyle = titleStyle?.toTextStyle(context) ?: CourierInboxTextStyle(
+        unread = CourierInboxFont(),
+        read = CourierInboxFont(),
+      ),
+      timeStyle = timeStyle?.toTextStyle(context) ?: CourierInboxTextStyle(
+        unread = CourierInboxFont(),
+        read = CourierInboxFont(),
+      ),
+      bodyStyle = bodyStyle?.toTextStyle(context) ?: CourierInboxTextStyle(
+        unread = CourierInboxFont(),
+        read = CourierInboxFont(),
+      ),
+      buttonStyle = buttonStyles?.toButtonStyle(context) ?: CourierInboxButtonStyle(
+        unread = CourierInboxButton(),
+        read = CourierInboxButton(),
+      ),
+      infoViewStyle = infoViewStyle?.toInfoStyle(context) ?: CourierInboxInfoViewStyle(
+        font = CourierInboxFont(),
+        button = CourierInboxButton(),
+      ),
+      dividerItemDecoration = dividerItemDecoration?.toDivider(context),
+    )
 
   }
 
@@ -141,22 +154,71 @@ class CourierReactNativeViewManager : SimpleViewManager<CourierInbox>() {
 
   }
 
-  private fun ReadableMap.toButtonStyles(context: Context): CourierInboxButtonStyle {
+  private fun ReadableMap.toTextStyle(context: Context): CourierInboxTextStyle {
+
+    val unread = getMap("unread")
+    val read = getMap("read")
+
+    return CourierInboxTextStyle(
+      unread = unread?.toFont(context) ?: CourierInboxFont(),
+      read = read?.toFont(context) ?: CourierInboxFont(),
+    )
+
+  }
+
+  private fun ReadableMap.toUnreadIndicatorStyle(): CourierInboxUnreadIndicatorStyle {
+
+    val indicator = getString("indicator")
+    val color = getString("color")
+
+    var style = CourierInboxUnreadIndicator.LINE
+
+    if (indicator == "dot") {
+      style = CourierInboxUnreadIndicator.DOT
+    }
+
+    return CourierInboxUnreadIndicatorStyle(
+      indicator = style,
+      color = color?.toColor(),
+    )
+
+  }
+
+  private fun ReadableMap.toButton(context: Context): CourierInboxButton {
 
     val font = getMap("font")
     val backgroundColor = getString("backgroundColor")
     val cornerRadius = if (isNull("cornerRadius")) null else getDouble("cornerRadius")
 
-    return CourierInboxButtonStyle(
-      unread = CourierInboxButton(),
-      read = CourierInboxButton()
+    return CourierInboxButton(
+      font = font?.toFont(context),
+      backgroundColor = backgroundColor?.toColor(),
+      cornerRadiusInDp = cornerRadius?.toInt()
     )
 
-//    return CourierInboxButtonStyles(
-//      font = font?.toFont(context),
-//      backgroundColor = backgroundColor?.toColor(),
-//      cornerRadiusInDp = cornerRadius?.toInt()
-//    )
+  }
+
+  private fun ReadableMap.toButtonStyle(context: Context): CourierInboxButtonStyle {
+
+    val unread = getMap("unread")
+    val read = getMap("read")
+
+    return CourierInboxButtonStyle(
+      unread = unread?.toButton(context) ?: CourierInboxButton(),
+      read = read?.toButton(context) ?: CourierInboxButton()
+    )
+
+  }
+
+  private fun ReadableMap.toInfoStyle(context: Context): CourierInboxInfoViewStyle {
+
+    val font = getMap("font")
+    val button = getMap("button")
+
+    return CourierInboxInfoViewStyle(
+      font = font?.toFont(context) ?: CourierInboxFont(),
+      button = button?.toButton(context) ?: CourierInboxButton()
+    )
 
   }
 

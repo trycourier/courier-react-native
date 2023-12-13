@@ -4,20 +4,40 @@ export interface CourierInboxFont {
   color?: string
 }
 
-export interface CourierInboxButtonStyles {
+export interface CourierInboxButtonStyle {
+  unread: CourierInboxButton
+  read: CourierInboxButton
+}
+
+export interface CourierInboxButton {
   font?: CourierInboxFont
   backgroundColor?: string
   cornerRadius?: number
 }
 
-export default interface CourierInboxTheme {
-  unreadIndicatorBarColor?: string
+export interface CourierInboxTextStyle {
+  unread: CourierInboxFont
+  read: CourierInboxFont
+}
+
+export interface CourierInboxInfoViewStyle {
+  font: CourierInboxFont
+  button: CourierInboxButton
+}
+
+export interface CourierInboxUnreadIndicatorStyle {
+  indicator?: 'dot' | 'line'
+  color?: string
+}
+
+export interface CourierInboxTheme {
   loadingIndicatorColor?: string
-  titleFont?: CourierInboxFont
-  timeFont?: CourierInboxFont
-  bodyFont?: CourierInboxFont
-  detailTitleFont?: CourierInboxFont
-  buttonStyles?: CourierInboxButtonStyles
+  unreadIndicatorStyle?: CourierInboxUnreadIndicatorStyle
+  titleStyle?: CourierInboxTextStyle
+  timeStyle?: CourierInboxTextStyle
+  bodyStyle?: CourierInboxTextStyle
+  buttonStyle?: CourierInboxButtonStyle
+  infoViewStyle?: CourierInboxInfoViewStyle
   iOS?: {
     messageAnimationStyle?: 'fade' | 'right' | 'left' | 'top' | 'bottom' | 'none' | 'middle' | 'automatic',
     cellStyles?: {

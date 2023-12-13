@@ -182,7 +182,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
   }
 
-  @ReactMethod
+  @ReactMethod(isBlockingSynchronousMethod = true)
   fun getToken(key: String): String? {
     return Courier.shared.getToken(key)
   }

@@ -26,6 +26,7 @@ export { CourierAuthenticationListener } from './models/CourierAuthenticationLis
 export { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
 export { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
 export { CourierPushProvider } from './models/CourierPushProvider';
+export { CourierInboxFont, CourierInboxButtonStyle, CourierInboxButton, CourierInboxTextStyle, CourierInboxInfoViewStyle, CourierInboxUnreadIndicatorStyle, CourierInboxTheme } from './models/CourierInboxTheme';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
 
 const LINKING_ERROR =

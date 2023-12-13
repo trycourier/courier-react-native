@@ -17,9 +17,9 @@ const Navigation = () => {
   //   iOSForegroundPresentationOptions: ['sound', 'badge', 'list', 'banner']
   // });
 
-  // const inbox = useCourierInbox({
-  //   paginationLimit: 100
-  // });
+  const inbox = useCourierInbox({
+    paginationLimit: 100
+  });
 
   // useEffect(() => {
 
@@ -53,31 +53,31 @@ const Navigation = () => {
 
   // }, [push?.clicked]);
 
-  // const inboxOptions = (): BottomTabNavigationOptions => {
+  const inboxOptions = (): BottomTabNavigationOptions => {
 
-  //   const badgeCount = () => {
+    const badgeCount = () => {
 
-  //     if (inbox.error) {
-  //       return undefined;
-  //     }
+      if (inbox.error) {
+        return undefined;
+      }
 
-  //     return inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined;
+      return inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined;
 
-  //   }
+    }
 
-  //   return {
-  //     headerRight: () => (
-  //       <Button
-  //         onPress={() => inbox?.readAllMessages()}
-  //         title="Read All"
-  //       />
-  //     ),
-  //     tabBarBadge: badgeCount(),
-  //     tabBarIcon: ({ color, size }) => (
-  //       <MaterialCommunityIcons name={'bell'} color={color} size={size} />
-  //     )
-  //   }
-  // }
+    return {
+      headerRight: () => (
+        <Button
+          onPress={() => inbox?.readAllMessages()}
+          title="Read All"
+        />
+      ),
+      tabBarBadge: badgeCount(),
+      tabBarIcon: ({ color, size }) => (
+        <MaterialCommunityIcons name={'bell'} color={color} size={size} />
+      )
+    }
+  }
 
   const icon = (icon: string): BottomTabNavigationOptions => {
     return {
@@ -90,6 +90,7 @@ const Navigation = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Auth" component={Auth} options={icon('account-circle')} />
+      <Tab.Screen name="Styled Inbox" component={InboxStyled} options={inboxOptions()} />
       <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
       {/* <Tab.Screen name="Prebuilt Inbox" component={InboxDefault} options={inboxOptions()} />
       <Tab.Screen name="Styled Inbox" component={InboxStyled} options={inboxOptions()} />

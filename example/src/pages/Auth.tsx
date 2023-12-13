@@ -87,7 +87,7 @@ const Auth = () => {
 
     }
 
-    setIsLoading(false)
+    setIsLoading(false);
 
   }
 

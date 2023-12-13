@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Platform, requireNativeComponent, UIManager, ViewStyle, DeviceEventEmitter, EmitterSubscription } from "react-native";
-import CourierInboxTheme from "../models/CourierInboxTheme";
 import { InboxAction } from "../models/InboxAction";
 import { InboxMessage } from "../models/InboxMessage";
+import { CourierInboxTheme } from "src/models/CourierInboxTheme";
 
 type CourierInboxViewProps = {
   theme?: { 
