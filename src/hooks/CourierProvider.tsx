@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { InboxMessage } from '../models/InboxMessage';
-import Courier, { CourierPushListener, CourierInboxListener, CourierAuthenticationListener, iOSForegroundPresentationOptions } from '..';
+import Courier, { CourierPushListener, CourierInboxListener, CourierAuthenticationListener, iOSForegroundPresentationOptions, CourierPushProvider } from '..';
 
 let authListener: CourierAuthenticationListener | undefined = undefined
 let pushListener: CourierPushListener | undefined = undefined
@@ -192,10 +192,10 @@ export const CourierProvider: React.FC<{ children: ReactNode }> = ({ children })
   const syncTokens = async () => {
 
     // APNS
-    const apnsToken = Courier.shared.apnsToken;
+    const apnsToken = Courier.shared.getTokenForProvider({ provider: CourierPushProvider.APN });
     push_setApnsToken(apnsToken);
 
-    const fcmToken = await Courier.shared.fcmToken;
+    const fcmToken = Courier.shared.getTokenForProvider({ provider: CourierPushProvider.FIREBASE_FCM });
     push_setFcmToken(fcmToken);
 
   }

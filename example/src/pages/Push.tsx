@@ -1,9 +1,10 @@
 import Courier, { CourierPushProvider } from '@trycourier/courier-react-native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Clipboard } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Clipboard, ActivityIndicator } from 'react-native';
 
 const Push = () => {
 
+  const [isLoading, setIsLoading] = useState(false)
   const [tokens, setTokens] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
@@ -30,6 +31,8 @@ const Push = () => {
 
   const setExampleToken = async () => {
 
+    setIsLoading(true);
+
     const requestStatus = await Courier.shared.requestNotificationPermission();
     console.log('Request Notification Status: ' + requestStatus);
     console.log('Get Notification Status: ' + await Courier.shared.getNotificationPermissionStatus());
@@ -39,6 +42,8 @@ const Push = () => {
       provider: CourierPushProvider.EXPO,
       token: 'example_expo_token'
     });
+
+    setIsLoading(false);
 
     refreshTokens();
 
@@ -86,18 +91,28 @@ const Push = () => {
   
   return (
     <View style={styles.container}>
-      {[...tokens.entries()].map(([key, value]) => (
-        <TouchableOpacity key={key} onPress={() => handleCopyToClipboard(value)} style={styles.itemContainer}>
-          <Text style={styles.keyText}>{key}</Text>
-          <Text style={styles.valueText}>{value}</Text>
-        </TouchableOpacity>
-      ))}
-      <TouchableOpacity style={styles.button} onPress={refreshTokens}>
-        <Text style={styles.buttonText}>Refresh Tokens</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
-        <Text style={styles.buttonText}>Request Permissions</Text>
-      </TouchableOpacity>
+
+      {isLoading && (
+        <ActivityIndicator size="small" />
+      )}
+
+      {!isLoading && (
+        <>
+          {[...tokens.entries()].map(([key, value]) => (
+            <TouchableOpacity key={key} onPress={() => handleCopyToClipboard(value)} style={styles.itemContainer}>
+              <Text style={styles.keyText}>{key}</Text>
+              <Text style={styles.valueText}>{value}</Text>
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity style={styles.button} onPress={refreshTokens}>
+            <Text style={styles.buttonText}>Refresh Tokens</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+            <Text style={styles.buttonText}>Request Permissions</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
     </View>
   );
 
