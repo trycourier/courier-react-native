@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Alert, Button } from 'react-native';
-import { useCourierInbox, useCourierPush } from '@trycourier/courier-react-native';
-import InboxCustom from './pages/InboxCustom';
+import { Button } from 'react-native';
+import { useCourierInbox } from '@trycourier/courier-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import InboxDefault from './pages/InboxDefault';
 import InboxStyled from './pages/InboxStyled';
 import Auth from './pages/Auth';
 import Push from './pages/Push';
+import Preferences from './pages/Preferences';
+import Inbox from './pages/Inbox';
 
 const Tab = createBottomTabNavigator();
 
@@ -90,11 +90,9 @@ const Navigation = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Auth" component={Auth} options={icon('account-circle')} />
-      <Tab.Screen name="Styled Inbox" component={InboxStyled} options={inboxOptions()} />
+      <Tab.Screen name="Inbox" component={Inbox} options={inboxOptions()} />
       <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
-      {/* <Tab.Screen name="Prebuilt Inbox" component={InboxDefault} options={inboxOptions()} />
-      <Tab.Screen name="Styled Inbox" component={InboxStyled} options={inboxOptions()} />
-      <Tab.Screen name="Custom Inbox" component={InboxCustom} options={inboxOptions()} /> */}
+      <Tab.Screen name="Preferences" component={Preferences} options={icon('wrench')} />
     </Tab.Navigator>
   );
 };

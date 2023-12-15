@@ -24,49 +24,6 @@ const Auth = () => {
 
   }, []);
 
-  useEffect(() => {
-
-    if (userId) {
-      getPrefs()
-    }
-
-  }, [userId]);
-
-  async function getPrefs() {
-
-    try {
-
-      const preferences = await Courier.shared.getUserPreferences();
-
-      console.log('PREFERENCES');
-      console.log(JSON.stringify(preferences));
-
-      const topicId = preferences.items!![0]?.topicId!!;
-
-      const topic = await Courier.shared.getUserPreferencesTopic({ 
-        topicId: topicId
-      });
-
-      console.log('TOPIC');
-      console.log(JSON.stringify(topic));
-
-      await Courier.shared.putUserPreferencesTopic({
-        topicId: topicId,
-        status: CourierUserPreferencesStatus.OptedOut,
-        hasCustomRouting: true,
-        customRouting: [
-          CourierUserPreferencesChannel.Push,
-          CourierUserPreferencesChannel.Email,
-          CourierUserPreferencesChannel.SMS
-        ]
-      });
-
-    } catch (e) {
-      console.log(e);
-    }
-
-  }
-
   async function signIn(userId: string) {
 
     setIsLoading(true)

@@ -4,7 +4,8 @@ import { View, StyleSheet, Platform } from 'react-native';
 
 const InboxStyled = () => {
 
-  const textColor = '#2A1537'
+  const unreadTextColor = '#2A1537'
+  const readTextColor = '#A990B9'
   const primaryColor = '#882DB9'
   const secondaryColor = '#EA6866'
 
@@ -21,36 +22,36 @@ const InboxStyled = () => {
       unread: {
         family: titleFont,
         size: 20,
-        color: textColor
+        color: unreadTextColor
       },
       read: {
         family: titleFont,
         size: 20,
-        color: textColor
+        color: readTextColor
       }
     },
     timeStyle: {
       unread: {
         family: defaultFont,
         size: 16,
-        color: textColor
+        color: unreadTextColor
       },
       read: {
         family: defaultFont,
         size: 16,
-        color: textColor
+        color: readTextColor
       }
     },
     bodyStyle: {
       unread: {
         family: defaultFont,
         size: 18,
-        color: textColor
+        color: unreadTextColor
       },
       read: {
         family: defaultFont,
         size: 18,
-        color: textColor
+        color: readTextColor
       }
     },
     buttonStyle: {
@@ -77,7 +78,7 @@ const InboxStyled = () => {
       font: {
         family: defaultFont,
         size: 20,
-        color: textColor
+        color: unreadTextColor
       },
       button: {
         font: {
