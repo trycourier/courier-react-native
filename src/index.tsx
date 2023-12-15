@@ -19,7 +19,6 @@ import { CourierPushProvider } from './models/CourierPushProvider';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
-export { CourierProvider, useCourierAuth, useCourierPush, useCourierInbox } from './hooks/CourierProvider';
 export { CourierInboxListener } from './models/CourierInboxListener';
 export { CourierPushListener } from './models/CourierPushListener';
 export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';

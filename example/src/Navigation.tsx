@@ -1,74 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Button } from 'react-native';
-import { useCourierInbox } from '@trycourier/courier-react-native';
+import { Alert, Button } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import InboxStyled from './pages/InboxStyled';
 import Auth from './pages/Auth';
 import Push from './pages/Push';
 import Preferences from './pages/Preferences';
 import Inbox from './pages/Inbox';
+import Courier from '@trycourier/courier-react-native';
 
 const Tab = createBottomTabNavigator();
 
 const Navigation = () => {
 
-  // const push = useCourierPush({
-  //   iOSForegroundPresentationOptions: ['sound', 'badge', 'list', 'banner']
-  // });
+  const [unreadCount, setUnreadCount] = useState<number>(0);
 
-  const inbox = useCourierInbox({
-    paginationLimit: 100
-  });
+  useEffect(() => {
 
-  // useEffect(() => {
+    // Setup Push
 
-  //   console.log('Notification Permissions');
-  //   console.log(push?.notificationPermissionStatus);
+    Courier.shared.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
 
-  // }, [push?.notificationPermissionStatus]);
+    const pushListener = Courier.shared.addPushNotificationListener({
+      onPushNotificationClicked(push) {
+        console.log(push);
+        Alert.alert('👆 Push Notification Clicked', JSON.stringify(push.delivered));
+      },
+      onPushNotificationDelivered(push) {
+        console.log(push);
+        Alert.alert('📬 Push Notification Delivered', JSON.stringify(push.delivered));
+      }
+    })
 
-  // useEffect(() => {
+    // Setup Inbox
 
-  //   console.log('Push Tokens');
-  //   console.log(push.tokens);
+    Courier.shared.setInboxPaginationLimit({ limit: 100 });
 
-  // }, [push?.tokens]);
+    const inboxListener = Courier.shared.addInboxListener({
+      onError(error) {
+        setUnreadCount(0);
+      },
+      onMessagesChanged(messages, unreadMessageCount, totalMessageCount, canPaginate) {
+        setUnreadCount(unreadMessageCount);
+      },
+    });
 
-  // useEffect(() => {
+    return () => {
+      pushListener.remove();
+      inboxListener.remove();
+    };
 
-  //   if (push.delivered) {
-  //     console.log(push.delivered);
-  //     Alert.alert('📬 Push Notification Delivered', JSON.stringify(push.delivered));
-  //   }
-
-  // }, [push.delivered]);
-
-  // useEffect(() => {
-
-  //   if (push.clicked) {
-  //     console.log(push.clicked);
-  //     Alert.alert('👆 Push Notification Clicked', JSON.stringify(push.clicked));
-  //   }
-
-  // }, [push?.clicked]);
+  }, []);
 
   const inboxOptions = (): BottomTabNavigationOptions => {
 
     const badgeCount = () => {
-
-      if (inbox.error) {
-        return undefined;
-      }
-
-      return inbox.unreadMessageCount > 0 ? inbox.unreadMessageCount : undefined;
-
+      return unreadCount > 0 ? unreadCount : undefined;
     }
 
     return {
       headerRight: () => (
         <Button
-          onPress={() => inbox?.readAllMessages()}
+          onPress={() => Courier.shared.readAllInboxMessages()}
           title="Read All"
         />
       ),

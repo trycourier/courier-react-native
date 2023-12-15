@@ -243,121 +243,77 @@ The raw data you can use to build any UI you'd like.
 
 <img width="894" alt="custom-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/90456f3d-c39f-4d66-aac1-d1d62a84f3c5">
 
-### React Hooks
-
-Add the `CourierProvider`
-
 ```javascript
-export default function App() {
+import Courier from '@trycourier/courier-react-native';
 
-  ..
+const Page = () => {
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [inbox, setInbox] = useState<any>({});
+
+  useEffect(() => {
+
+    Courier.shared.setInboxPaginationLimit({ limit: 100 });
+
+    const inboxListener = Courier.shared.addInboxListener({
+      onInitialLoad() {
+        setIsLoading(true);
+      },
+      onError(error) {
+        setIsLoading(false);
+        setError(error);
+      },
+      onMessagesChanged(messages, unreadMessageCount, totalMessageCount, canPaginate) {
+        setIsLoading(false);
+        setError(null);
+        setInbox({
+          messages,
+          unreadMessageCount,
+          totalMessageCount,
+          canPaginate
+        });
+      },
+    });
+
+    return () => {
+      inboxListener.remove();
+    };
+
+  }, []);
+
+  if (isLoading) {
+    return <Text>Loading</Text>
+  }
+
+  if (error) {
+    return <Text>{error}</Text>
+  }
 
   return (
-    <CourierProvider> 
-      
-      <InboxCustom />
-      ...
-
-    </CourierProvider>
-  );
+    <FlatList
+      data={inbox?.messages}
+      keyExtractor={message => message.messageId}
+      renderItem={message => <ListItem message={message.item} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={refresh}
+        />
+      }
+      ListFooterComponent={() => {
+        return inbox?.canPaginate ? <PaginationItem /> : null
+      }}
+      onEndReached={() => {
+        if (inbox?.canPaginate) {
+          Courier.shared.fetchNextPageOfMessages();
+        }
+      }}
+    />
+  )
 
 }
 ```
-
-Add the `useCourierInbox` hook
-
-```javascript
-import { useCourierInbox } from '@trycourier/courier-react-native';
-
-const InboxCustom = () => {
-
-  const inbox = useCourierInbox({
-    paginationLimit: 100
-  });
-
-  const ListItem = (props: { message: InboxMessage }) => {
-
-    const isRead = props.message.read;
-
-    function toggleMessage() {
-      const messageId = props.message.messageId;
-      isRead ? inbox.unreadMessage(messageId) : inbox.readMessage(messageId);
-    }
-
-    return (
-      <TouchableOpacity style={[isRead ? undefined : styles.unread]} onPress={toggleMessage}>
-        <Text>{JSON.stringify(props.message, null, 2)}</Text>
-      </TouchableOpacity>
-    );
-
-  };
-
-  function buildContent() {
-
-    if (inbox.isLoading) {
-      return <Text>Loading</Text>
-    }
-
-    if (inbox.error) {
-      return <Text>{inbox?.error}</Text>
-    }
-
-    return (
-      <FlatList
-        data={inbox.messages}
-        keyExtractor={message => message.messageId}
-        renderItem={message => <ListItem message={message.item} />}
-        refreshControl={
-          <RefreshControl
-            refreshing={inbox.isRefreshing ?? false}
-            onRefresh={inbox.refresh}
-          />
-        }
-        ListFooterComponent={() => {
-
-          if (inbox.canPaginate) {
-            return (
-              <View style={{ paddingVertical: 20 }}>
-                <ActivityIndicator size="small" />
-              </View>
-            )
-          }
-
-          return null
-
-        }}
-        onEndReached={() => {
-          if (inbox.canPaginate) {
-            inbox.fetchNextPageOfMessages()
-          }
-        }}
-      />
-    )
-
-  }
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  });
-  
-  return (
-    <View style={styles.container}>
-      {buildContent()}
-    </View>
-  );
-
-};
-
-export default InboxCustom;
-```
-
-### Vanilla Javascript
-
-See [`full documentation`](https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#available-properties-and-functions) for examples.
 
 &emsp;
 
@@ -415,33 +371,10 @@ See [`full documentation`](https://github.com/trycourier/courier-react-native/bl
 ## Available Properties and Functions
 
 ```javascript
-
-
-// Hook: If you are using useCourierInbox, you must wrap your component in CourierProvider
-<CourierProvider> 
-  ...
-</CourierProvider>
-
-// Hook: Access inbox and optionally set pagination limit
-const inbox = useCourierInbox({
-  paginationLimit: 100 // Optional
-});
-
-// Change pagination Limit
-inbox.setPaginationLimit(123);
+// Pagination limit
 Courier.shared.setInboxPaginationLimit({ limit: 100 });
 
-// Handle inbox changes
-
-// Hook state
-inbox.isLoading
-inbox.error
-inbox.messages
-inbox.unreadMessageCount
-inbox.totalMessageCount
-inbox.canPaginate
-
-// Vanilla Javascript
+// Inbox listener
 const inboxListener = Courier.shared.addInboxListener({
   onInitialLoad: () => {
     // Handle loading
@@ -455,26 +388,20 @@ const inboxListener = Courier.shared.addInboxListener({
 });
 
 // Remove the listener
-inboxListener.remove();
 Courier.shared.removeInboxListener({ messageId: 'asdf' });
 
 // Refresh inbox
-await inbox.refresh();
 await Courier.shared.refreshInbox();
 
 // Read all messages
-await inbox.readAllMessages();
 await Courier.shared.readAllInboxMessages();
 
 // Read a single message
-await inbox.readMessage('asdf');
 await Courier.shared.readMessage({ messageId: 'asdf' });
 
 // Unread a single message
-await inbox.unreadMessage('asdf');
 await Courier.shared.unreadMessage({ messageId: 'asdf' });
 
 // Fetch a new page of messages
-const messages = await inbox.fetchNextPageOfMessages();
 const messages = await Courier.shared.fetchNextPageOfMessages()
 ```
