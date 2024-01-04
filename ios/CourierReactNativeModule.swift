@@ -242,9 +242,18 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     }
     
-    @objc(getToken:)
-    func getToken(key: NSString) -> String? {
-        return Courier.shared.getToken(providerKey: key as String)
+    @objc(getToken: withResolver: withRejecter:)
+    func getToken(key: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let provider = key as String
+        
+        Task {
+            
+            let token = await Courier.shared.getToken(providerKey: provider)
+            resolve(token)
+            
+        }
+        
     }
 
     @objc(iOSForegroundPresentationOptions:)

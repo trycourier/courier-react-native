@@ -132,11 +132,11 @@ class Courier {
   /**
    * Gets a token for key
    */
-  public getToken(props: { key: string }): string | undefined {
+  public getToken(props: { key: string }): Promise<string | undefined> {
     return CourierReactNativeModules.getToken(props.key);
   }
 
-  public getTokenForProvider(props: { provider: CourierPushProvider }): string | undefined {
+  public getTokenForProvider(props: { provider: CourierPushProvider }): Promise<string | undefined> {
     return CourierReactNativeModules.getToken(props.provider);
   }
 
@@ -156,13 +156,7 @@ class Courier {
    * Only supported on iOS
    */
   public getNotificationPermissionStatus(): Promise<string> {
-
-    if (Platform.OS === 'ios') {
-      return CourierReactNativeModules.getNotificationPermissionStatus();
-    }
-
-    return Promise.reject('unknown');
-
+    return CourierReactNativeModules.getNotificationPermissionStatus();
   }
 
   /**

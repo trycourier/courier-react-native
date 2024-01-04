@@ -219,14 +219,14 @@ const InboxStyled = () => {
           light: lightTheme,
           dark: darkTheme
         }}
-        onClickInboxMessageAtIndex={(message, index) => {
+        onClickInboxMessageAtIndex={(message, _index) => {
           console.log(message)
           message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
         }}
-        onClickInboxActionForMessageAtIndex={(action, message, index) => {
+        onClickInboxActionForMessageAtIndex={(action, _message, _index) => {
           console.log(action);
         }}
-        onScrollInbox={(y, x) => {
+        onScrollInbox={(y, _x) => {
           console.log(`Inbox scroll offset y: ${y}`);
         }}
         style={styles.box} />

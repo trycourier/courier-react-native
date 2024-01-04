@@ -1,11 +1,6 @@
 package com.courierreactnative
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.courier.android.Courier
 import com.courier.android.models.*
 import com.courier.android.modules.*
@@ -78,20 +73,8 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod
   fun requestNotificationPermission(promise: Promise) {
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-      promise.resolve("unknown")
-      return
-    }
-
-    // Request the push permission
-    reactActivity?.let { context ->
-
-      val permissionState: Int = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-
-      if (permissionState == PackageManager.PERMISSION_DENIED) {
-        ActivityCompat.requestPermissions(context, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-      }
-
+    reactActivity?.let { activity ->
+      Courier.shared.requestNotificationPermission(activity)
     }
 
     promise.resolve("unknown")
@@ -101,15 +84,10 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod
   fun getNotificationPermissionStatus(promise: Promise) {
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-      promise.resolve("unknown")
-      return
-    }
-
     reactActivity?.let { context ->
 
-      val permissionState: Int = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-      val status = if (permissionState == PackageManager.PERMISSION_GRANTED) "authorized" else "denied"
+      val isGranted = Courier.shared.isPushPermissionGranted(context)
+      val status = if (isGranted) "authorized" else "denied"
       promise.resolve(status)
       return
 
@@ -182,9 +160,10 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getToken(key: String): String? {
-    return Courier.shared.getToken(key)
+  @ReactMethod
+  fun getToken(key: String, promise: Promise) {
+    val token = Courier.shared.getToken(key)
+    promise.resolve(token)
   }
 
   @ReactMethod

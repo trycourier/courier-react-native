@@ -13,13 +13,13 @@ const Push = () => {
 
   }, []);
 
-  const refreshTokens = () => {
+  const refreshTokens = async () => {
 
     const pushProviderValues = Object.values(CourierPushProvider);
     const tokensMap = new Map<string, string>();
 
     for (const provider of pushProviderValues) {
-      const token = Courier.shared.getTokenForProvider({ provider: provider });
+      const token = await Courier.shared.getTokenForProvider({ provider: provider });
       if (token) {
         tokensMap.set(provider, token);
       }

@@ -52,8 +52,10 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   getToken: (NSString*)key
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
