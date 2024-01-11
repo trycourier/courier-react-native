@@ -23,11 +23,11 @@ const Navigation = () => {
     const pushListener = Courier.shared.addPushNotificationListener({
       onPushNotificationClicked(push) {
         console.log(push);
-        Alert.alert('👆 Push Notification Clicked', JSON.stringify(push.delivered));
+        Alert.alert('👆 Push Notification Clicked', JSON.stringify(push));
       },
       onPushNotificationDelivered(push) {
         console.log(push);
-        Alert.alert('📬 Push Notification Delivered', JSON.stringify(push.delivered));
+        Alert.alert('📬 Push Notification Delivered', JSON.stringify(push));
       }
     })
 
@@ -82,8 +82,8 @@ const Navigation = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Auth" component={Auth} options={icon('account-circle')} />
-      <Tab.Screen name="Inbox" component={Inbox} options={inboxOptions()} />
       <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
+      <Tab.Screen name="Inbox" component={Inbox} options={inboxOptions()} />
       <Tab.Screen name="Preferences" component={Preferences} options={icon('wrench')} />
     </Tab.Navigator>
   );

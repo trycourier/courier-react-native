@@ -1,6 +1,6 @@
 import Courier, { CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CourierUserPreferencesTopic } from "src/models/CourierUserPreferencesTopic";
 
 const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => void }) => (
@@ -51,6 +51,32 @@ const Preferences = () => {
 
   }
 
+  function getRandomChannels() {
+
+    const channelValues = [
+      CourierUserPreferencesChannel.DirectMessage,
+      CourierUserPreferencesChannel.Email,
+      CourierUserPreferencesChannel.Push,
+      CourierUserPreferencesChannel.SMS,
+      CourierUserPreferencesChannel.Webhook,
+    ];
+  
+    const random = () => Math.floor(Math.random() * channelValues.length);
+    const randomCount = random();
+    const randomChannels: CourierUserPreferencesChannel[] = [];
+  
+    while (randomChannels.length < randomCount) {
+      const randomIndex = random();
+      const randomChannel = channelValues[randomIndex];
+  
+      if (randomChannel && !randomChannels.includes(randomChannel)) {
+        randomChannels.push(randomChannel);
+      }
+    }
+  
+    return randomChannels;
+  }
+
   const onItemClick = async (item: CourierUserPreferencesTopic) => {
 
     try {
@@ -65,18 +91,15 @@ const Preferences = () => {
         topicId: topic.topicId ?? 'empty',
         status: CourierUserPreferencesStatus.OptedOut,
         hasCustomRouting: true,
-        customRouting: [
-          CourierUserPreferencesChannel.Push,
-          CourierUserPreferencesChannel.Email,
-          CourierUserPreferencesChannel.SMS
-        ]
+        customRouting: getRandomChannels(),
       });
   
       getPrefs();
 
-    } catch (e) {
+    } catch (e: any) {
 
       console.error(e);
+      Alert.alert('Error Updating Preference', e.toString());
 
     }
 
