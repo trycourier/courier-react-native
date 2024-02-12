@@ -124,8 +124,6 @@ class Courier {
    */
   private registerInboxListenerEvents() {
 
-    console.log('registerInboxListenerEvents')
-
     CourierEventEmitter.addListener('inboxInitialLoad', () => {
       this.inboxListeners.forEach((value, _) => {
         value.onInitialLoad?.();

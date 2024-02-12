@@ -24,10 +24,15 @@ class CourierReactNativeModule: RCTEventEmitter {
         internal static let MESSAGES_CHANGED = "inboxMessagesChanged"
     }
     
-    private var authListeners = [String: CourierAuthenticationListener]()
-    private var inboxListeners = [String: CourierInboxListener]()
+    // Auth Listeners
+    private var authListener: CourierAuthenticationListener? = nil
+    private var authListeners: [String] = []
     
-    private var hasListeners = false
+    // Inbox Listeners
+    private var inboxListener: CourierInboxListener? = nil
+    private var inboxListeners: [String] = []
+    
+    private var hasDebuggingListeners = false
     
     private var lastClickedMessage: [AnyHashable: Any]? = nil
     private var notificationCenter: NotificationCenter {
@@ -50,7 +55,7 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     override func startObserving() {
 
-        hasListeners = true
+        hasDebuggingListeners = true
 
         // setup listeners
         Courier.shared.logListener = { log in
@@ -64,7 +69,7 @@ class CourierReactNativeModule: RCTEventEmitter {
 
     override func stopObserving() {
 
-        hasListeners = false
+        hasDebuggingListeners = false
         // perform actions after listener is removed
         
     }
@@ -193,7 +198,11 @@ class CourierReactNativeModule: RCTEventEmitter {
 
     @objc func addAuthenticationListener() -> String {
         
-        let listener = Courier.shared.addAuthenticationListener { [weak self] userId in
+        // Remove the listener
+        authListener?.remove()
+        
+        // Set the new listener
+        authListener = Courier.shared.addAuthenticationListener { [weak self] userId in
             
             self?.sendEvent(
                 withName: CourierReactNativeModule.AuthEvents.USER_CHANGED,
@@ -202,9 +211,9 @@ class CourierReactNativeModule: RCTEventEmitter {
             
         }
         
-        // Create an id and add the listener to the dictionary
+        // Add the listener to the arrau
         let id = UUID().uuidString
-        authListeners[id] = listener
+        authListeners.append(id)
         
         return id
         
@@ -215,12 +224,16 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         let id = listenerId as String
         
-        // Remove the listener
-        let listener = authListeners[id]
-        listener?.remove()
+        // Remove the item from the array
+        if let index = authListeners.firstIndex(of: id) {
+            authListeners.remove(at: index)
+        }
         
-        // Remove from dictionary
-        authListeners.removeValue(forKey: id)
+        // Check the length
+        if (authListeners.isEmpty) {
+            authListener?.remove()
+            authListener = nil
+        }
         
         return id
         
@@ -300,7 +313,11 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     @objc func addInboxListener() -> String {
         
-        let listener = Courier.shared.addInboxListener(
+        // Remove the old listener
+        inboxListener?.remove()
+        
+        // Create the new listener
+        inboxListener = Courier.shared.addInboxListener(
             onInitialLoad: { [weak self] in
                 
                 self?.sendEvent(
@@ -334,9 +351,9 @@ class CourierReactNativeModule: RCTEventEmitter {
             }
         )
         
-        // Create an id and add the listener to the dictionary
+        // Track listener id
         let id = UUID().uuidString
-        inboxListeners[id] = listener
+        inboxListeners.append(id)
         
         return id
         
@@ -347,12 +364,16 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         let id = listenerId as String
         
-        // Remove the listener
-        let listener = inboxListeners[id]
-        listener?.remove()
+        // Remove the item from the array
+        if let index = inboxListeners.firstIndex(of: id) {
+            inboxListeners.remove(at: index)
+        }
         
-        // Remove from dictionary
-        inboxListeners.removeValue(forKey: id)
+        // Check the length
+        if (inboxListeners.isEmpty) {
+            inboxListener?.remove()
+            inboxListener = nil
+        }
         
         return id
         
