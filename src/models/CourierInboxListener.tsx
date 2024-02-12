@@ -1,12 +1,16 @@
-import { EmitterSubscription } from "react-native";
 import Courier from "@trycourier/courier-react-native";
+import { InboxMessage } from "./InboxMessage";
 
 export class CourierInboxListener {
 
-  public listenerId?: string
-  public onInitialLoad?: EmitterSubscription
-  public onError?: EmitterSubscription
-  public onMessagesChanged?: EmitterSubscription
+  readonly listenerId: string
+  public onInitialLoad?: () => void
+  public onError?: (error: string) => void
+  public onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void
+
+  constructor(id: string) {
+    this.listenerId = id;
+  }
 
   public remove() {
 
@@ -14,11 +18,6 @@ export class CourierInboxListener {
     if (this.listenerId) {
       Courier.shared.removeInboxListener({ listenerId: this.listenerId });
     }
-
-    // Remove the emitters
-    this.onInitialLoad?.remove();
-    this.onError?.remove();
-    this.onMessagesChanged?.remove();
 
   }
 

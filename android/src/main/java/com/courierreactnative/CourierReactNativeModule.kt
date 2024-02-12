@@ -18,8 +18,13 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   override fun getName() = "CourierReactNativeModule"
   private val reactActivity: ReactActivity? get() = currentActivity as? ReactActivity
 
-  private val authListeners = mutableMapOf<String, CourierAuthenticationListener>()
-  private val inboxListeners = mutableMapOf<String, CourierInboxListener>()
+  // Auth Listener
+  private var authListener: CourierAuthenticationListener? = null
+  private val authListeners = mutableMapOf<String, CourierAuthenticationListener?>()
+
+  // Inbox Listener
+  private var inboxListener: CourierInboxListener? = null
+  private val inboxListeners = mutableMapOf<String, CourierInboxListener?>()
 
   init {
 
@@ -132,15 +137,21 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun addAuthenticationListener(): String {
 
-    val listener = Courier.shared.addAuthenticationListener { userId ->
+    val id = UUID.randomUUID().toString()
+
+    if (authListener != null) {
+      authListeners[id] = authListener
+      return id
+    }
+
+    authListener = Courier.shared.addAuthenticationListener { userId ->
       reactApplicationContext.sendEvent(
         eventName = CourierEvents.Auth.USER_CHANGED,
         value = userId
       )
     }
 
-    val id = UUID.randomUUID().toString()
-    authListeners[id] = listener
+    authListeners[id] = authListener
 
     return id
 
@@ -149,12 +160,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun removeAuthenticationListener(listenerId: String): String {
 
-    // Remove the listener
-    val listener = authListeners[listenerId]
-    listener?.remove()
-
     // Remove from map
     authListeners.remove(listenerId)
+
+    // Delete the listener
+    if (authListeners.isEmpty()) {
+      authListener?.remove()
+      authListener = null
+    }
 
     return listenerId
 
@@ -182,13 +195,19 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun readMessage(messageId: String): String {
-    Courier.shared.readMessage(messageId)
+    Courier.shared.readMessage(messageId, onFailure = null)
     return messageId
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun unreadMessage(messageId: String): String {
-    Courier.shared.unreadMessage(messageId)
+    Courier.shared.unreadMessage(messageId, onFailure = null)
+    return messageId
+  }
+
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  fun clickMessage(messageId: String): String {
+    Courier.shared.clickMessage(messageId, onFailure = null)
     return messageId
   }
 
@@ -207,7 +226,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun addInboxListener(): String {
 
-    val listener = Courier.shared.addInboxListener(
+    val id = UUID.randomUUID().toString()
+
+    if (inboxListener != null) {
+      inboxListeners[id] = inboxListener
+      return id
+    }
+
+    inboxListener = Courier.shared.addInboxListener(
       onInitialLoad = {
         reactApplicationContext.sendEvent(
           eventName = CourierEvents.Inbox.INITIAL_LOADING,
@@ -236,8 +262,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
       }
     )
 
-    val id = UUID.randomUUID().toString()
-    inboxListeners[id] = listener
+    inboxListeners[id] = inboxListener
 
     return id
 
@@ -246,12 +271,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun removeInboxListener(listenerId: String): String {
 
-    // Remove the listener
-    val listener = inboxListeners[listenerId]
-    listener?.remove()
-
     // Remove from map
     inboxListeners.remove(listenerId)
+
+    // Delete the listener
+    if (inboxListeners.isEmpty()) {
+      inboxListener?.remove()
+      inboxListener = null
+    }
 
     return listenerId
 

@@ -57,6 +57,7 @@ class Courier {
   private static _sharedInstance: Courier;
   private _isDebugging = false;
   private debugListener: EmitterSubscription | undefined;
+  private inboxListeners: Map<string, CourierInboxListener> = new Map<string, CourierInboxListener>();
 
   public constructor() {
 
@@ -64,6 +65,10 @@ class Courier {
     // Defaults to React Native level debugging
     // and will show all foreground notification styles in iOS
     this.setDefaults();
+
+    // Register for inbox listener changes
+    this.registerInboxListenerEvents();
+
   }
 
   // Returns the public shared instance
@@ -112,6 +117,38 @@ class Courier {
    */
   get isDebugging(): boolean {
     return this._isDebugging;
+  }
+
+  /**
+   * Register inbox listener events
+   */
+  private registerInboxListenerEvents() {
+
+    console.log('registerInboxListenerEvents')
+
+    CourierEventEmitter.addListener('inboxInitialLoad', () => {
+      this.inboxListeners.forEach((value, _) => {
+        value.onInitialLoad?.();
+      });
+    });
+
+    CourierEventEmitter.addListener('inboxError', event => {
+      this.inboxListeners.forEach((value, _) => {
+        value.onError?.(event);
+      });
+    });
+
+    CourierEventEmitter.addListener('inboxMessagesChanged', event => {
+      this.inboxListeners.forEach((value, _) => {
+        value.onMessagesChanged?.(
+          event.messages,
+          event.unreadMessageCount,
+          event.totalMessageCount,
+          event.canPaginate,
+        );
+      });
+    });
+
   }
 
   /**
@@ -305,41 +342,19 @@ class Courier {
    */
   public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
+    // Set the listener id
+    const id = CourierReactNativeModules.addInboxListener();
+
     // Create the initial listeners
-    const inboxListener = new CourierInboxListener();
+    const listener = new CourierInboxListener(id);
+    listener.onInitialLoad = props.onInitialLoad;
+    listener.onError = props.onError;
+    listener.onMessagesChanged = props.onMessagesChanged;
 
-    if (props.onInitialLoad) {
+    // Add listener to manager
+    this.inboxListeners.set(id, listener);
 
-      inboxListener.onInitialLoad = CourierEventEmitter.addListener('inboxInitialLoad', () => {
-        props.onInitialLoad!();
-      });
-
-    }
-
-    if (props.onError) {
-
-      inboxListener.onError = CourierEventEmitter.addListener('inboxError', event => {
-        props.onError!(event);
-      });
-
-    }
-
-    if (props.onMessagesChanged) {
-
-      inboxListener.onMessagesChanged = CourierEventEmitter.addListener('inboxMessagesChanged', event => {
-        props.onMessagesChanged!(
-          event.messages,
-          event.unreadMessageCount,
-          event.totalMessageCount,
-          event.canPaginate,
-        );
-      });
-
-    }
-
-    inboxListener.listenerId = CourierReactNativeModules.addInboxListener();
-
-    return inboxListener;
+    return listener;
 
   }
 
@@ -347,7 +362,17 @@ class Courier {
    * Removes an inbox listener
    */
   public removeInboxListener(props: { listenerId: string }): string {
-    return CourierReactNativeModules.removeInboxListener(props.listenerId);
+
+    // Call native code
+    CourierReactNativeModules.removeInboxListener(props.listenerId);
+
+    // Remove the js listener
+    if (this.inboxListeners.has(props.listenerId)) {
+      this.inboxListeners.delete(props.listenerId);
+    }
+
+    return props.listenerId;
+
   }
 
   /**
