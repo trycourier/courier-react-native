@@ -95,6 +95,16 @@ internal fun InboxMessage.toWritableMap(): WritableMap {
   map.putBoolean("opened", isOpened)
   map.putBoolean("archived", isArchived)
 
+  val trackingIds = Arguments.createMap()
+  trackingIds.putString("archiveTrackingId", archiveTrackingId)
+  trackingIds.putString("openTrackingId", openTrackingId)
+  trackingIds.putString("clickTrackingId", clickTrackingId)
+  trackingIds.putString("deliverTrackingId", deliverTrackingId)
+  trackingIds.putString("unreadTrackingId", unreadTrackingId)
+  trackingIds.putString("readTrackingId", readTrackingId)
+
+  map.putMap("trackingIds", trackingIds)
+
   return map
 
 }

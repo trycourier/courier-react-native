@@ -13,4 +13,5 @@ export interface InboxMessage {
   archived?: boolean | null
   subtitle?: string | null;
   time?: string;
+  trackingIds?: { [key: string]: any } | null
 }

@@ -315,6 +315,13 @@ class Courier {
   }
 
   /**
+   * Click an inbox message
+   */
+  public clickMessage(props: { messageId: string }): string {
+    return CourierReactNativeModules.clickMessage(props.messageId);
+  }
+
+  /**
    * Reads an inbox message
    */
   public readMessage(props: { messageId: string }): string {

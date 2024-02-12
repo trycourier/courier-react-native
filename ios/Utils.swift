@@ -103,7 +103,15 @@ internal extension InboxMessage {
             "data": data,
             "read": isRead,
             "opened": isOpened,
-            "archived": isArchived
+            "archived": isArchived,
+            "trackingIds": [
+                "archiveTrackingId": trackingIds?.archiveTrackingId,
+                "openTrackingId": trackingIds?.openTrackingId,
+                "clickTrackingId": trackingIds?.clickTrackingId,
+                "deliverTrackingId": trackingIds?.deliverTrackingId,
+                "unreadTrackingId": trackingIds?.unreadTrackingId,
+                "readTrackingId": trackingIds?.readTrackingId,
+            ]
         ]
         
         return dictionary.clean()

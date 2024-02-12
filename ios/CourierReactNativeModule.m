@@ -59,6 +59,10 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  clickMessage: (NSString*)messageId
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   readMessage: (NSString*)messageId
 )
 

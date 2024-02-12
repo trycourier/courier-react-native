@@ -283,6 +283,13 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
+    @objc(clickMessage:)
+    func clickMessage(messageId: NSString) -> String {
+        let id = messageId as String
+        Courier.shared.clickMessage(messageId: id)
+        return id
+    }
+    
     @objc(readMessage:)
     func readMessage(messageId: NSString) -> String {
         let id = messageId as String
@@ -327,7 +334,7 @@ class CourierReactNativeModule: RCTEventEmitter {
                 
             },
             onError: { [weak self] error in
-                
+                     
                 self?.sendEvent(
                     withName: CourierReactNativeModule.InboxEvents.ERROR,
                     body: String(describing: error)

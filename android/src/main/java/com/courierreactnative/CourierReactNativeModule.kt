@@ -193,6 +193,12 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
+  fun clickMessage(messageId: String): String {
+    Courier.shared.clickMessage(messageId, onFailure = null)
+    return messageId
+  }
+
+  @ReactMethod(isBlockingSynchronousMethod = true)
   fun readMessage(messageId: String): String {
     Courier.shared.readMessage(messageId, onFailure = null)
     return messageId
@@ -201,12 +207,6 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun unreadMessage(messageId: String): String {
     Courier.shared.unreadMessage(messageId, onFailure = null)
-    return messageId
-  }
-
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun clickMessage(messageId: String): String {
-    Courier.shared.clickMessage(messageId, onFailure = null)
     return messageId
   }
 
