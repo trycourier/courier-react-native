@@ -13,6 +13,7 @@ import org.json.JSONObject
 open class CourierReactNativeActivity : ReactActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
+
     // Starts the Courier SDK
     // Used to ensure shared preferences works properly
     Courier.initialize(this)
