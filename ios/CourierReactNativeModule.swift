@@ -9,28 +9,14 @@ class CourierReactNativeModule: RCTEventEmitter {
         internal static let DEBUG_LOG = "courierDebugEvent"
     }
     
-    class AuthEvents {
-        internal static let USER_CHANGED = "courierAuthUserChanged"
-    }
-    
     class PushEvents {
         internal static let CLICKED_EVENT = "pushNotificationClicked"
         internal static let DELIVERED_EVENT = "pushNotificationDelivered"
     }
     
-    class InboxEvents {
-        internal static let INITIAL_LOADING = "inboxInitialLoad"
-        internal static let ERROR = "inboxError"
-        internal static let MESSAGES_CHANGED = "inboxMessagesChanged"
-    }
-    
-    // Auth Listeners
-    private var authListener: CourierAuthenticationListener? = nil
-    private var authListeners: [String] = []
-    
-    // Inbox Listeners
-    private var inboxListener: CourierInboxListener? = nil
-    private var inboxListeners: [String] = []
+    // Listeners
+    private var authListeners: [String: CourierAuthenticationListenerWrapper] = [:]
+    private var inboxListeners: [String: CourierInboxListenerWrapper] = [:]
     
     private var hasDebuggingListeners = false
     
@@ -105,13 +91,26 @@ class CourierReactNativeModule: RCTEventEmitter {
         }
      
         do {
-            sendEvent(
-                withName: name,
+            broadcastEvent(
+                name: name,
                 body: try message.toString()
             )
         } catch {
             Courier.log(String(describing: error))
         }
+        
+    }
+    
+    private func broadcastEvent(name: String, body: Any?) {
+        
+        if (!supportedEvents().contains(name)) {
+            return
+        }
+        
+        sendEvent(
+            withName: name,
+            body: body
+        )
         
     }
 
@@ -196,24 +195,22 @@ class CourierReactNativeModule: RCTEventEmitter {
         return Courier.shared.userId
     }
 
-    @objc func addAuthenticationListener() -> String {
+    @objc(addAuthenticationListener:)
+    func addAuthenticationListener(authId: String) -> String {
         
-        // Remove the listener
-        authListener?.remove()
-        
-        // Set the new listener
-        authListener = Courier.shared.addAuthenticationListener { [weak self] userId in
-            
-            self?.sendEvent(
-                withName: CourierReactNativeModule.AuthEvents.USER_CHANGED,
+        let listener = Courier.shared.addAuthenticationListener { [weak self] userId in
+            self?.broadcastEvent(
+                name: authId,
                 body: userId
             )
-            
         }
         
-        // Add the listener to the arrau
         let id = UUID().uuidString
-        authListeners.append(id)
+        
+        authListeners[id] = CourierAuthenticationListenerWrapper(
+            authId: authId,
+            listener: listener
+        )
         
         return id
         
@@ -224,16 +221,13 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         let id = listenerId as String
         
-        // Remove the item from the array
-        if let index = authListeners.firstIndex(of: id) {
-            authListeners.remove(at: index)
-        }
+        let wrapper = authListeners[id]
         
-        // Check the length
-        if (authListeners.isEmpty) {
-            authListener?.remove()
-            authListener = nil
-        }
+        // Disable the listener
+        wrapper?.listener.remove()
+        
+        // Remove the id from the map
+        authListeners.removeValue(forKey: id)
         
         return id
         
@@ -318,25 +312,23 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
-    @objc func addInboxListener() -> String {
-        
-        // Remove the old listener
-        inboxListener?.remove()
+    @objc(addInboxListener: withErrorId: withMessagesId:)
+    func addInboxListener(loadingId: String, errorId: String, messagesId: String) -> String {
         
         // Create the new listener
-        inboxListener = Courier.shared.addInboxListener(
+        let listener = Courier.shared.addInboxListener(
             onInitialLoad: { [weak self] in
                 
-                self?.sendEvent(
-                    withName: CourierReactNativeModule.InboxEvents.INITIAL_LOADING,
+                self?.broadcastEvent(
+                    name: loadingId,
                     body: nil
                 )
                 
             },
             onError: { [weak self] error in
                      
-                self?.sendEvent(
-                    withName: CourierReactNativeModule.InboxEvents.ERROR,
+                self?.broadcastEvent(
+                    name: errorId,
                     body: String(describing: error)
                 )
                 
@@ -350,17 +342,23 @@ class CourierReactNativeModule: RCTEventEmitter {
                     "canPaginate": canPaginate
                 ]
                 
-                self?.sendEvent(
-                    withName: CourierReactNativeModule.InboxEvents.MESSAGES_CHANGED,
+                self?.broadcastEvent(
+                    name: messagesId,
                     body: json
                 )
                 
             }
         )
         
-        // Track listener id
+        let wrapper = CourierInboxListenerWrapper(
+            loadingId: loadingId,
+            errorId: errorId,
+            messagesId: messagesId,
+            listener: listener
+        )
+        
         let id = UUID().uuidString
-        inboxListeners.append(id)
+        inboxListeners[id] = wrapper
         
         return id
         
@@ -371,16 +369,13 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         let id = listenerId as String
         
-        // Remove the item from the array
-        if let index = inboxListeners.firstIndex(of: id) {
-            inboxListeners.remove(at: index)
-        }
+        let wrapper = inboxListeners[id]
         
-        // Check the length
-        if (inboxListeners.isEmpty) {
-            inboxListener?.remove()
-            inboxListener = nil
-        }
+        // Disable the listener
+        wrapper?.listener.remove()
+        
+        // Remove the id from the map
+        inboxListeners.removeValue(forKey: id)
         
         return id
         
@@ -450,7 +445,6 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc(putUserPreferencesTopic: withStatus: withHasCustomRouting: withCustomRouting: withResolver: withRejecter:)
         func putUserPreferencesTopic(topicId: NSString, status: NSString, hasCustomRouting: Bool, customRouting: [NSString], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        
         Courier.shared.putUserPreferencesTopic(
             topicId: topicId as String,
             status: CourierUserPreferencesStatus(rawValue: status as String) ?? .unknown,
@@ -467,15 +461,23 @@ class CourierReactNativeModule: RCTEventEmitter {
     }
 
     override func supportedEvents() -> [String]! {
-        return [
+        
+        // Built in events
+        var events = [
             CourierReactNativeModule.LogEvents.DEBUG_LOG,
-            CourierReactNativeModule.AuthEvents.USER_CHANGED,
             CourierReactNativeModule.PushEvents.CLICKED_EVENT,
-            CourierReactNativeModule.PushEvents.DELIVERED_EVENT,
-            CourierReactNativeModule.InboxEvents.INITIAL_LOADING,
-            CourierReactNativeModule.InboxEvents.ERROR,
-            CourierReactNativeModule.InboxEvents.MESSAGES_CHANGED
+            CourierReactNativeModule.PushEvents.DELIVERED_EVENT
         ]
+        
+        // Add the custom events
+        let inboxIds = inboxListeners.flatMap { [$0.value.loadingId, $0.value.errorId, $0.value.messagesId] }
+        events.append(contentsOf: inboxIds)
+        
+        let authIds = authListeners.flatMap { [$0.value.authId] }
+        events.append(contentsOf: authIds)
+        
+        return events
+        
     }
     
     @objc override static func requiresMainQueueSetup() -> Bool {

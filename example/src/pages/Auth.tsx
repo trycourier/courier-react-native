@@ -1,26 +1,26 @@
-import Courier, { useCourierPush, useCourierAuth, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
+import Courier from "@trycourier/courier-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Env from "../Env";
 
 const Auth = () => {
 
-  // const push = useCourierPush();
-  // const auth = useCourierAuth();
-
-  // useEffect(() => {
-
-  //   console.log('-- Courier User Id Changed --');
-  //   console.log(auth.userId);
-
-  // }, [auth.userId]);
-
   const [isLoading, setIsLoading] = useState(false)
   const [userId, setUserId] = useState<string | undefined>()
 
   useEffect(() => {
 
-    setUserId(Courier.shared.userId)
+    const authListener = Courier.shared.addAuthenticationListener({
+      onUserChanged: (userId) => {
+        console.log(`User changed: ${userId}`);
+      }
+    });
+
+    setUserId(Courier.shared.userId);
+
+    return () => {
+      authListener.remove();
+    };
 
   }, []);
 

@@ -18,13 +18,9 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   override fun getName() = "CourierReactNativeModule"
   private val reactActivity: ReactActivity? get() = currentActivity as? ReactActivity
 
-  // Auth Listeners
-  private var authListener: CourierAuthenticationListener? = null
-  private var authListeners: MutableList<String> = mutableListOf()
-
-  // Inbox Listeners
-  private var inboxListener: CourierInboxListener? = null
-  private var inboxListeners: MutableList<String> = mutableListOf()
+  // Listeners
+  private var authListeners = mutableMapOf<String, CourierAuthenticationListener>()
+  private var inboxListeners = mutableMapOf<String, CourierInboxListener>()
 
   init {
 
@@ -135,19 +131,21 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
-  fun addAuthenticationListener(): String {
+  fun addAuthenticationListener(authId: String): String {
 
-    authListener?.remove()
+    // Create the listener
+    val listener = Courier.shared.addAuthenticationListener { userId ->
 
-    authListener = Courier.shared.addAuthenticationListener { userId ->
       reactApplicationContext.sendEvent(
-        eventName = CourierEvents.Auth.USER_CHANGED,
+        eventName = authId,
         value = userId
       )
+
     }
 
+    // Add the listener to the map
     val id = UUID.randomUUID().toString()
-    authListeners.add(id)
+    authListeners[id] = listener
 
     return id
 
@@ -156,17 +154,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun removeAuthenticationListener(listenerId: String): String {
 
-    // Remove the item from the array
-    val index = authListeners.indexOf(listenerId)
-    if (index != -1) {
-      authListeners.removeAt(index)
-    }
+    // Get the listener
+    val listener = authListeners[listenerId]
 
-    // Check the length
-    if (authListeners.isEmpty()) {
-      authListener?.remove()
-      authListener = null
-    }
+    // Remove the listener
+    listener?.remove()
+
+    // Remove the listener
+    authListeners.remove(listenerId)
 
     return listenerId
 
@@ -223,23 +218,24 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
-  fun addInboxListener(): String {
+  fun addInboxListener(loadingId: String, errorId: String, messagesId: String): String {
 
-    // Remove the old listener
-    inboxListener?.remove()
-
-    inboxListener = Courier.shared.addInboxListener(
+    val listener = Courier.shared.addInboxListener(
       onInitialLoad = {
+
         reactApplicationContext.sendEvent(
-          eventName = CourierEvents.Inbox.INITIAL_LOADING,
+          eventName = loadingId,
           value = null
         )
+
       },
       onError = { e ->
+
         reactApplicationContext.sendEvent(
-          eventName = CourierEvents.Inbox.ERROR,
+          eventName = errorId,
           value = e.message ?: "Courier Inbox Error"
         )
+
       },
       onMessagesChanged = { messages: List<InboxMessage>, unreadMessageCount: Int, totalMessageCount: Int, canPaginate: Boolean ->
 
@@ -250,7 +246,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
         json.putBoolean("canPaginate", canPaginate)
 
         reactApplicationContext.sendEvent(
-          eventName = CourierEvents.Inbox.MESSAGES_CHANGED,
+          eventName = messagesId,
           value = json
         )
 
@@ -259,7 +255,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
     // Add listener
     val id = UUID.randomUUID().toString()
-    inboxListeners.add(id)
+    inboxListeners[id] = listener
 
     return id
 
@@ -268,17 +264,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun removeInboxListener(listenerId: String): String {
 
-    // Remove the item from the array
-    val index = inboxListeners.indexOf(listenerId)
-    if (index != -1) {
-      inboxListeners.removeAt(index)
-    }
+    // Get the listener
+    val listener = inboxListeners[listenerId]
 
-    // Check the length
-    if (inboxListeners.isEmpty()) {
-      inboxListener?.remove()
-      inboxListener = null
-    }
+    // Remove the listener
+    listener?.remove()
+
+    // Remove the listener
+    inboxListeners.remove(listenerId)
 
     return listenerId
 

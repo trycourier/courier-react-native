@@ -28,7 +28,7 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  addAuthenticationListener
+  addAuthenticationListener: (NSString*)authId
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
@@ -76,7 +76,9 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  addInboxListener
+  addInboxListener: (NSString*)loadingId
+  withErrorId: (NSString*)errorId
+  withMessagesId: (NSString*)messagesId
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(

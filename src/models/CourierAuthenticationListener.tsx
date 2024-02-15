@@ -3,15 +3,19 @@ import Courier from "..";
 
 export class CourierAuthenticationListener {
 
-  public listenerId?: string
+  readonly listenerId: string
   public onUserChanged?: EmitterSubscription
+
+  constructor(id: string) {
+    this.listenerId = id;
+  }
 
   public remove() {
 
-    if (this.listenerId) {
-      Courier.shared.removeInboxListener({ listenerId: this.listenerId });
-    }
+    // Remove the native inbox listener
+    Courier.shared.removeInboxListener({ listenerId: this.listenerId });
 
+    // Remove the emitter
     this.onUserChanged?.remove();
     
   }

@@ -10,19 +10,9 @@ internal class CourierEvents {
     const val DEBUG_LOG = "courierDebugEvent"
   }
 
-  object Auth {
-    const val USER_CHANGED = "courierAuthUserChanged"
-  }
-
   object Push {
     const val CLICKED_EVENT = "pushNotificationClicked"
     const val DELIVERED_EVENT = "pushNotificationDelivered"
-  }
-
-  object Inbox {
-    const val INITIAL_LOADING = "inboxInitialLoad"
-    const val ERROR = "inboxError"
-    const val MESSAGES_CHANGED = "inboxMessagesChanged"
   }
 
 }

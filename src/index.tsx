@@ -1,9 +1,9 @@
 import {
-  NativeModules,
-  NativeEventEmitter,
   EmitterSubscription,
   Platform,
   DeviceEventEmitter,
+  NativeModules,
+  NativeEventEmitter,
 } from 'react-native';
 
 // Imports
@@ -16,6 +16,7 @@ import { CourierUserPreferencesTopic } from './models/CourierUserPreferencesTopi
 import { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
 import { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
 import { CourierPushProvider } from './models/CourierPushProvider';
+import { Events, Utils } from './utils';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
@@ -51,12 +52,11 @@ const CourierEventEmitter = new NativeEventEmitter(
 
 class Courier {
 
-  readonly PUSH_NOTIFICATION_CLICKED = 'pushNotificationClicked';
-  readonly PUSH_NOTIFICATION_DELIVERED = 'pushNotificationDelivered';
-
   private static _sharedInstance: Courier;
   private _isDebugging = false;
   private debugListener: EmitterSubscription | undefined;
+
+  private authListeners: Map<string, CourierAuthenticationListener> = new Map<string, CourierAuthenticationListener>();
   private inboxListeners: Map<string, CourierInboxListener> = new Map<string, CourierInboxListener>();
 
   public constructor() {
@@ -65,9 +65,6 @@ class Courier {
     // Defaults to React Native level debugging
     // and will show all foreground notification styles in iOS
     this.setDefaults();
-
-    // Register for inbox listener changes
-    this.registerInboxListenerEvents();
 
   }
 
@@ -99,7 +96,7 @@ class Courier {
     // Set a new listener
     // listener needs to be registered first to catch the event
     if (isDebugging) {
-      this.debugListener = CourierEventEmitter.addListener('courierDebugEvent', event => {
+      this.debugListener = CourierEventEmitter.addListener(Events.Log.DEBUG_LOG, event => {
         console.log('\x1b[36m%s\x1b[0m', 'COURIER', event);
       });
     }
@@ -117,36 +114,6 @@ class Courier {
    */
   get isDebugging(): boolean {
     return this._isDebugging;
-  }
-
-  /**
-   * Register inbox listener events
-   */
-  private registerInboxListenerEvents() {
-
-    CourierEventEmitter.addListener('inboxInitialLoad', () => {
-      this.inboxListeners.forEach((value, _) => {
-        value.onInitialLoad?.();
-      });
-    });
-
-    CourierEventEmitter.addListener('inboxError', event => {
-      this.inboxListeners.forEach((value, _) => {
-        value.onError?.(event);
-      });
-    });
-
-    CourierEventEmitter.addListener('inboxMessagesChanged', event => {
-      this.inboxListeners.forEach((value, _) => {
-        value.onMessagesChanged?.(
-          event.messages,
-          event.unreadMessageCount,
-          event.totalMessageCount,
-          event.canPaginate,
-        );
-      });
-    });
-
   }
 
   /**
@@ -210,52 +177,24 @@ class Courier {
     
     const pushListener = new CourierPushListener();
 
-    if (Platform.OS === 'android') {
-
-      if (props.onPushNotificationClicked) {
-        pushListener.onNotificationClickedListener = DeviceEventEmitter.addListener(this.PUSH_NOTIFICATION_CLICKED, (event: any) => {
-          try {
-            props.onPushNotificationClicked!(JSON.parse(event));
-          } catch (error) {
-            console.log(error);
-          }
-        });
-      }
-
-      if (props.onPushNotificationDelivered) {
-        pushListener.onNotificationDeliveredListener = DeviceEventEmitter.addListener(this.PUSH_NOTIFICATION_DELIVERED, (event: any) => {
-          try {
-            props.onPushNotificationDelivered!(JSON.parse(event));
-          } catch (error) {
-            console.log(error);
-          }
-        });
-      }
-
+    if (props.onPushNotificationClicked) {
+      pushListener.onNotificationClickedListener = Utils.addEventListener(Events.Push.CLICKED, CourierEventEmitter, (event) => {
+        try {
+          props.onPushNotificationClicked!(JSON.parse(event));
+        } catch (error) {
+          console.log(error);
+        }
+      });
     }
 
-    if (Platform.OS === 'ios') {
-
-      if (props.onPushNotificationClicked) {
-        pushListener.onNotificationClickedListener = CourierEventEmitter.addListener(this.PUSH_NOTIFICATION_CLICKED, (event: any) => {
-          try {
-            props.onPushNotificationClicked!(JSON.parse(event));
-          } catch (error) {
-            console.log(error);
-          }
-        });
-      }
-
-      if (props.onPushNotificationDelivered) {
-        pushListener.onNotificationDeliveredListener = CourierEventEmitter.addListener(this.PUSH_NOTIFICATION_DELIVERED, (event: any) => {
-          try {
-            props.onPushNotificationDelivered!(JSON.parse(event));
-          } catch (error) {
-            console.log(error);
-          }
-        });
-      }
-
+    if (props.onPushNotificationDelivered) {
+      pushListener.onNotificationDeliveredListener = Utils.addEventListener(Events.Push.DELIVERED, CourierEventEmitter, (event) => {
+        try {
+          props.onPushNotificationDelivered!(JSON.parse(event));
+        } catch (error) {
+          console.log(error);
+        }
+      });
     }
 
     // When listener is registered
@@ -286,7 +225,7 @@ class Courier {
   /**
    * Removes the current user and credentials from the sdk
    */
-   public signOut(): Promise<void> {
+  public signOut(): Promise<void> {
     return CourierReactNativeModules.signOut();
   }
 
@@ -295,15 +234,22 @@ class Courier {
    */
    public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
 
-    const authListener = new CourierAuthenticationListener();
+    // Event listener id
+    const authId = Utils.generateUUID();
 
-    authListener.onUserChanged = CourierEventEmitter.addListener('courierAuthUserChanged', event => {
-      props.onUserChanged(event)
-    });
+    // Get the id
+    const id = CourierReactNativeModules.addAuthenticationListener(authId);
 
-    authListener.listenerId = CourierReactNativeModules.addAuthenticationListener();
+    // Create the listener
+    const listener = new CourierAuthenticationListener(id);
 
-    return authListener;
+    // Add the event listener
+    listener.onUserChanged = Utils.addEventListener(authId, CourierEventEmitter, (event) => props.onUserChanged(event));
+
+    // Add listener to manager
+    this.authListeners.set(id, listener);
+
+    return listener;
 
   }
 
@@ -311,7 +257,24 @@ class Courier {
    * Removes an authentication listener
    */
   public removeAuthenticationListener(props: { listenerId: string }): string {
-    return CourierReactNativeModules.removeAuthenticationListener(props.listenerId);
+
+    // Remove the native listener
+    CourierReactNativeModules.removeAuthenticationListener(props.listenerId);
+
+    // Remove the listener
+    if (this.authListeners.has(props.listenerId)) {
+
+      // Get the listener
+      const listener = this.authListeners.get(props.listenerId);
+      listener?.onUserChanged?.remove();
+
+      // Remove the listener
+      this.authListeners.delete(props.listenerId);
+
+    }
+
+    return props.listenerId;
+
   }
 
   /**
@@ -347,14 +310,44 @@ class Courier {
    */
   public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
+    const listenerIds = {
+      loading: Utils.generateUUID(),
+      error: Utils.generateUUID(),
+      messages: Utils.generateUUID()
+    }
+
     // Set the listener id
-    const id = CourierReactNativeModules.addInboxListener();
+    const id = CourierReactNativeModules.addInboxListener(
+      listenerIds.loading,
+      listenerIds.error,
+      listenerIds.messages
+    );
 
     // Create the initial listeners
     const listener = new CourierInboxListener(id);
-    listener.onInitialLoad = props.onInitialLoad;
-    listener.onError = props.onError;
-    listener.onMessagesChanged = props.onMessagesChanged;
+
+    if (props.onInitialLoad) {
+      listener.onInitialLoad = Utils.addEventListener(listenerIds.loading, CourierEventEmitter, (_: any) => {
+        props.onInitialLoad?.();
+      });
+    }
+
+    if (props.onError) {
+      listener.onError = Utils.addEventListener(listenerIds.error, CourierEventEmitter, (event: any) => {
+        props.onError?.(event);
+      });
+    }
+
+    if (props.onMessagesChanged) {
+      listener.onMessagesChanged = Utils.addEventListener(listenerIds.messages, CourierEventEmitter, (event: any) => {
+        props.onMessagesChanged?.(
+          event.messages,
+          event.unreadMessageCount,
+          event.totalMessageCount,
+          event.canPaginate,
+        );
+      });
+    }
 
     // Add listener to manager
     this.inboxListeners.set(id, listener);
@@ -371,9 +364,18 @@ class Courier {
     // Call native code
     CourierReactNativeModules.removeInboxListener(props.listenerId);
 
-    // Remove the js listener
+    // Remove the listener
     if (this.inboxListeners.has(props.listenerId)) {
+
+      // Remove emitters
+      const listener = this.inboxListeners.get(props.listenerId);
+      listener?.onInitialLoad?.remove();
+      listener?.onError?.remove();
+      listener?.onMessagesChanged?.remove();
+
+      // Remove the listener
       this.inboxListeners.delete(props.listenerId);
+
     }
 
     return props.listenerId;
@@ -392,7 +394,7 @@ class Courier {
    * Fetches the next page of inbox messages
    * Returns the fetched inbox messages
    */
-   public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
+  public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
     return CourierReactNativeModules.fetchNextPageOfMessages();
   }
 
@@ -401,7 +403,7 @@ class Courier {
    * Min = 1
    * Max = 100
    */
-   public setInboxPaginationLimit(props: { limit: number }): void {
+  public setInboxPaginationLimit(props: { limit: number }): void {
     CourierReactNativeModules.setInboxPaginationLimit(props.limit);
   }
   
