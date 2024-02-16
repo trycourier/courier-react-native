@@ -240,7 +240,7 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
       onMessagesChanged = { messages: List<InboxMessage>, unreadMessageCount: Int, totalMessageCount: Int, canPaginate: Boolean ->
 
         val json = Arguments.createMap()
-        json.putArray("messages", messages.toWritableArray())
+        json.putArray("messages", messages.toList().toWritableArray())
         json.putInt("unreadMessageCount", unreadMessageCount)
         json.putInt("totalMessageCount", totalMessageCount)
         json.putBoolean("canPaginate", canPaginate)
