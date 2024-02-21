@@ -234,7 +234,7 @@ class Courier {
    public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
 
     // Event listener id
-    const authId = Utils.generateUUID();
+    const authId = `authentication_${Utils.generateUUID()}`;
 
     // Get the id
     const id = CourierReactNativeModules.addAuthenticationListener(authId);
@@ -310,9 +310,9 @@ class Courier {
   public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
     const listenerIds = {
-      loading: Utils.generateUUID(),
-      error: Utils.generateUUID(),
-      messages: Utils.generateUUID()
+      loading: `inbox_loading_${Utils.generateUUID()}`,
+      error: `inbox_error_${Utils.generateUUID()}`,
+      messages: `inbox_messages_${Utils.generateUUID()}`
     }
 
     // Set the listener id
@@ -325,28 +325,22 @@ class Courier {
     // Create the initial listeners
     const listener = new CourierInboxListener(id);
 
-    if (props.onInitialLoad) {
-      listener.onInitialLoad = Utils.addEventListener(listenerIds.loading, CourierEventEmitter, (_: any) => {
-        props.onInitialLoad?.();
-      });
-    }
+    listener.onInitialLoad = Utils.addEventListener(listenerIds.loading, CourierEventEmitter, (_: any) => {
+      props.onInitialLoad?.();
+    });
 
-    if (props.onError) {
-      listener.onError = Utils.addEventListener(listenerIds.error, CourierEventEmitter, (event: any) => {
-        props.onError?.(event);
-      });
-    }
+    listener.onError = Utils.addEventListener(listenerIds.error, CourierEventEmitter, (event: any) => {
+      props.onError?.(event);
+    });
 
-    if (props.onMessagesChanged) {
-      listener.onMessagesChanged = Utils.addEventListener(listenerIds.messages, CourierEventEmitter, (event: any) => {
-        props.onMessagesChanged?.(
-          event.messages,
-          event.unreadMessageCount,
-          event.totalMessageCount,
-          event.canPaginate,
-        );
-      });
-    }
+    listener.onMessagesChanged = Utils.addEventListener(listenerIds.messages, CourierEventEmitter, (event: any) => {
+      props.onMessagesChanged?.(
+        event.messages,
+        event.unreadMessageCount,
+        event.totalMessageCount,
+        event.canPaginate,
+      );
+    });
 
     // Add listener to manager
     this.inboxListeners.set(id, listener);

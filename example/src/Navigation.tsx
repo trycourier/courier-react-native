@@ -29,17 +29,19 @@ const Navigation = () => {
         console.log(push);
         Alert.alert('📬 Push Notification Delivered', JSON.stringify(push));
       }
-    })
+    });
 
     // Setup Inbox
 
     Courier.shared.setInboxPaginationLimit({ limit: 100 });
 
+    Courier.shared.setIsDebugging(false);
+
     const inboxListener = Courier.shared.addInboxListener({
-      onError(error) {
+      onError(_error) {
         setUnreadCount(0);
       },
-      onMessagesChanged(messages, unreadMessageCount, totalMessageCount, canPaginate) {
+      onMessagesChanged(_messages, unreadMessageCount, _totalMessageCount, _canPaginate) {
         setUnreadCount(unreadMessageCount);
       },
     });
