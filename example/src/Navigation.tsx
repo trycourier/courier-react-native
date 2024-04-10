@@ -16,6 +16,10 @@ const Navigation = () => {
 
   useEffect(() => {
 
+    // Debugging
+
+    Courier.shared.setIsDebugging(false);
+
     // Setup Push
 
     Courier.shared.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
@@ -34,8 +38,6 @@ const Navigation = () => {
     // Setup Inbox
 
     Courier.shared.setInboxPaginationLimit({ limit: 100 });
-
-    Courier.shared.setIsDebugging(false);
 
     const inboxListener = Courier.shared.addInboxListener({
       onError(_error) {

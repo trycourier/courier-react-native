@@ -130,32 +130,32 @@ class CourierReactNativeView : UIView {
         
     }
     
-    func dictionaryToUnreadStyle(dictionary: [String : Any]?) -> CourierInboxUnreadIndicatorStyle {
+    func dictionaryToUnreadStyle(dictionary: [String : Any]?) -> CourierStyles.Inbox.UnreadIndicatorStyle {
         
         guard let dict = dictionary else {
-            return CourierInboxUnreadIndicatorStyle()
+            return CourierStyles.Inbox.UnreadIndicatorStyle()
         }
         
         let indicator = dict["indicator"] as? String
         let color = dict["color"] as? String
         
-        var style: CourierInboxUnreadIndicator = .line
+        var style: CourierStyles.Inbox.UnreadIndicator = .line
 
         if (indicator == "dot") {
             style = .dot
         }
         
-        return CourierInboxUnreadIndicatorStyle(
+        return CourierStyles.Inbox.UnreadIndicatorStyle(
             indicator: style,
             color: color?.toColor()
         )
         
     }
     
-    func dictionaryToFont(dictionary: [String : Any]?, defaultFont: UIFont, defaultColor: UIColor) -> CourierInboxFont {
+    func dictionaryToFont(dictionary: [String : Any]?, defaultFont: UIFont, defaultColor: UIColor) -> CourierStyles.Font {
         
         guard let dict = dictionary else {
-            return CourierInboxFont(
+            return CourierStyles.Font(
                 font: defaultFont,
                 color: defaultColor
             )
@@ -165,18 +165,18 @@ class CourierReactNativeView : UIView {
         let size = dict["size"] as? CGFloat ?? defaultFont.pointSize
         let color = dict["color"] as? String
         
-        return CourierInboxFont(
+        return CourierStyles.Font(
             font: UIFont(name: family, size: size) ?? defaultFont,
             color: color?.toColor() ?? defaultColor
         )
         
     }
     
-    func dictionaryToButton(dictionary: [String : Any]?) -> CourierInboxButton {
+    func dictionaryToButton(dictionary: [String : Any]?) -> CourierStyles.Button {
         
         guard let dict = dictionary else {
-            return CourierInboxButton(
-                font: CourierInboxFont(
+            return CourierStyles.Button(
+                font: CourierStyles.Font(
                     font: UIFont.systemFont(ofSize: UIFont.labelFontSize),
                     color: .white
                 )
@@ -187,7 +187,7 @@ class CourierReactNativeView : UIView {
         let backgroundColor = dict["backgroundColor"] as? String
         let cornerRadius = dict["cornerRadius"] as? CGFloat
         
-        return CourierInboxButton(
+        return CourierStyles.Button(
             font: dictionaryToFont(
                 dictionary: font,
                 defaultFont: UIFont.systemFont(ofSize: UIFont.labelFontSize),
@@ -199,36 +199,36 @@ class CourierReactNativeView : UIView {
         
     }
     
-    func dictionaryToButtonStyle(dictionary: [String : Any]?) -> CourierInboxButtonStyle {
+    func dictionaryToButtonStyle(dictionary: [String : Any]?) -> CourierStyles.Inbox.ButtonStyle {
         
         guard let dict = dictionary else {
-            return CourierInboxButtonStyle()
+            return CourierStyles.Inbox.ButtonStyle()
         }
         
         let unread = dict["unread"] as? [String : Any]
         let read = dict["read"] as? [String : Any]
         
-        return CourierInboxButtonStyle(
+        return CourierStyles.Inbox.ButtonStyle(
             unread: dictionaryToButton(dictionary: unread),
             read: dictionaryToButton(dictionary: read)
         )
         
     }
     
-    func dictionaryToInfoViewStyle(dictionary: [String : Any]?) -> CourierInboxInfoViewStyle {
+    func dictionaryToInfoViewStyle(dictionary: [String : Any]?) -> CourierStyles.InfoViewStyle {
         
         let defaultColor: UIColor = .label
         let defaultFont: UIFont = UIFont.systemFont(ofSize: UIFont.labelFontSize)
         
-        let defaultInboxFont = CourierInboxFont(
+        let defaultInboxFont = CourierStyles.Font(
             font: defaultFont,
             color: defaultColor
         )
         
         guard let dict = dictionary else {
-            return CourierInboxInfoViewStyle(
+            return CourierStyles.InfoViewStyle(
                 font: defaultInboxFont,
-                button: CourierInboxButton(
+                button: CourierStyles.Button(
                     font: defaultInboxFont
                 )
             )
@@ -237,24 +237,24 @@ class CourierReactNativeView : UIView {
         let font = dict["font"] as? [String : Any]
         let button = dict["button"] as? [String : Any]
         
-        return CourierInboxInfoViewStyle(
-            font: dictionaryToFont(dictionary: font, defaultFont: defaultFont, defaultColor: defaultColor), 
+        return CourierStyles.InfoViewStyle(
+            font: dictionaryToFont(dictionary: font, defaultFont: defaultFont, defaultColor: defaultColor),
             button: dictionaryToButton(dictionary: button)
         )
         
     }
     
-    func dictionaryToTextStyle(dictionary: [String : Any]?) -> CourierInboxTextStyle {
+    func dictionaryToTextStyle(dictionary: [String : Any]?) -> CourierStyles.Inbox.TextStyle {
         
         let defaultColor: UIColor = .label
         let defaultFont: UIFont = UIFont.systemFont(ofSize: UIFont.labelFontSize)
         
-        let defaultInboxFont = CourierInboxFont(
+        let defaultInboxFont = CourierStyles.Font(
             font: defaultFont,
             color: defaultColor
         )
         
-        let defaultText = CourierInboxTextStyle(
+        let defaultText = CourierStyles.Inbox.TextStyle(
             unread: defaultInboxFont,
             read: defaultInboxFont
         )
@@ -266,17 +266,17 @@ class CourierReactNativeView : UIView {
         let unread = dict["unread"] as? [String : Any]
         let read = dict["read"] as? [String : Any]
         
-        return CourierInboxTextStyle(
+        return CourierStyles.Inbox.TextStyle(
             unread: dictionaryToFont(dictionary: unread, defaultFont: defaultFont, defaultColor: defaultColor),
             read: dictionaryToFont(dictionary: read, defaultFont: defaultFont, defaultColor: defaultColor)
         )
         
     }
     
-    func dictionaryToCellStyles(dictionary: [String : Any]?) -> CourierInboxCellStyle {
+    func dictionaryToCellStyles(dictionary: [String : Any]?) -> CourierStyles.Cell {
         
         guard let dict = dictionary else {
-            return CourierInboxCellStyle()
+            return CourierStyles.Cell()
         }
         
         let separatorStyle = dict["separatorStyle"] as? String
@@ -290,7 +290,7 @@ class CourierReactNativeView : UIView {
         let bottom = insets?["bottom"] as? CGFloat
         let separatorInsets = UIEdgeInsets(top: top ?? 0, left: left ?? 0, bottom: bottom ?? 0, right: right ?? 0)
         
-        return CourierInboxCellStyle(
+        return CourierStyles.Cell(
             separatorStyle: separatorStyle?.toSeparatorStyle() ?? .singleLine,
             separatorInsets: separatorInsets,
             separatorColor: separatorColor?.toColor(),

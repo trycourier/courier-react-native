@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@trycourier/courier-react-native": ["./src/index"]
+      "@trycourier/courier-react-native": ["./src/index"],
+      "react": ["./node_modules/@types/react"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

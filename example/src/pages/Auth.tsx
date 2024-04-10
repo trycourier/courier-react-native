@@ -2,6 +2,7 @@ import Courier from "@trycourier/courier-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Env from "../Env";
+import { ExampleServer } from "../Utils";
 
 const Auth = () => {
 
@@ -13,10 +14,13 @@ const Auth = () => {
     const authListener = Courier.shared.addAuthenticationListener({
       onUserChanged: (userId) => {
         console.log(`User changed: ${userId}`);
+        setUserId(userId);
       }
     });
 
-    setUserId(Courier.shared.userId);
+    const userId = Courier.shared.userId;
+    console.log(`Initial user: ${userId}`)
+    refreshJWT(userId);
 
     return () => {
       authListener.remove();
@@ -24,15 +28,64 @@ const Auth = () => {
 
   }, []);
 
-  async function signIn(userId: string) {
+  async function refreshJWT(userId?: string) {
 
-    setIsLoading(true)
+    console.log('Refreshing JWT');
+
+    if (!userId) {
+      console.log(`No user found`);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
+
+      console.log(`User ID: ${userId}`);
+
+      await Courier.shared.signOut();
+
+      const token = await ExampleServer.generateJwt({
+        authKey: Env.authKey,
+        userId: userId,
+      });
+
+      console.log(`New token: ${token}`);
+
+      await Courier.shared.signIn({
+        accessToken: token,
+        userId: userId,
+      });
+
+    } catch (e) {
+
+      console.error(e);
+
+    }
+
+    setIsLoading(false);
+
+  }
+
+  async function signIn(userId: string) {
+
+    console.log('Signing User In');
+    console.log(`User ID: ${userId}`);
+
+    setIsLoading(true);
+
+    try {
+
+      const token = await ExampleServer.generateJwt({
+        authKey: Env.authKey,
+        userId: userId,
+      });
+
+      console.log(`New token: ${token}`);
       
       await Courier.shared.signIn({
-        accessToken: Env.accessToken,
-        clientKey: Env.clientKey,
+        accessToken: token,
         userId: userId,
       });
 

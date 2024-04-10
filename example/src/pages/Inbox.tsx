@@ -1,7 +1,8 @@
+import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import InboxStyled from './InboxStyled';
-import InboxDefault from './InboxDefault';
-import InboxCustom from './InboxCustom';
+import InboxDefault from './inbox/InboxDefault';
+import InboxStyled from './inbox/InboxStyled';
+import InboxCustom from './inbox/InboxCustom';
 
 const Tab = createMaterialTopTabNavigator();
 

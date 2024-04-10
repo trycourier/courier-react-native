@@ -207,8 +207,8 @@ class Courier {
   }
 
   /**
-   * Gets the user id that is currently being used
-   * This is the user id associated with the http requests the sdk does
+   * Gets the user id that is currently being used.
+   * This is the user id associated with the network requests the sdk does.
    */
   get userId(): string | undefined {
     return CourierReactNativeModules.getUserId() ?? undefined
