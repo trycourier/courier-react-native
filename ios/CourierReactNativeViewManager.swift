@@ -29,10 +29,8 @@ class CourierReactNativeView : UIView {
     
     private func refreshInbox() {
         
-        // Disable animations
         UIView.setAnimationsEnabled(false)
         
-        // Remove all previous views
         subviews.forEach {
             $0.removeFromSuperview()
         }
@@ -40,7 +38,6 @@ class CourierReactNativeView : UIView {
         let lightTheme = theme?["light"] as? NSDictionary
         let darkTheme = theme?["dark"] as? NSDictionary
         
-        // Create the view
         let courierInbox = CourierInbox(
             lightTheme: dictionaryToTheme(dictionary: lightTheme) ?? .defaultLight,
             darkTheme: dictionaryToTheme(dictionary: darkTheme) ?? .defaultDark,
@@ -67,11 +64,9 @@ class CourierReactNativeView : UIView {
             }
         )
 
-        // Add the view to your UI
         courierInbox.translatesAutoresizingMaskIntoConstraints = false
         addSubview(courierInbox)
 
-        // Constrain the view how you'd like
         NSLayoutConstraint.activate([
             courierInbox.topAnchor.constraint(equalTo: topAnchor),
             courierInbox.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -79,7 +74,6 @@ class CourierReactNativeView : UIView {
             courierInbox.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
         
-        // Enable animations
         UIView.setAnimationsEnabled(true)
         
     }

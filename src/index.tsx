@@ -19,6 +19,7 @@ import { Events, Utils } from './utils';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
+export { CourierPreferencesView } from './views/CourierPreferencesView';
 export { CourierInboxListener } from './models/CourierInboxListener';
 export { CourierPushListener } from './models/CourierPushListener';
 export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';

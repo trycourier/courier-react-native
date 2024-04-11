@@ -19,7 +19,7 @@ const Auth = () => {
     });
 
     const userId = Courier.shared.userId;
-    console.log(`Initial user: ${userId}`)
+    console.log(`Initial user: ${userId}`);
     refreshJWT(userId);
 
     return () => {

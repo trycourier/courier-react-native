@@ -44,7 +44,7 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
       onScrollInboxListener?.remove();
     }
 
-  }, [])
+  }, []);
 
   useEffect(() => {
 
@@ -54,7 +54,7 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
       onClickInboxMessageAtIndexListener = DeviceEventEmitter.addListener('courierClickMessageAtIndex', onClickInboxMessageAtIndex);
     }
 
-  }, [props.onClickInboxMessageAtIndex])
+  }, [props.onClickInboxMessageAtIndex]);
 
   const onClickInboxMessageAtIndex = (event: any) => {
 
