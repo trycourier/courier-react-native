@@ -1,10 +1,10 @@
 PODS:
   - boost (1.76.0)
   - courier-react-native (3.0.0):
-    - Courier_iOS (= 3.2.1)
+    - Courier_iOS (= 3.2.3)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - Courier_iOS (3.2.1)
+  - Courier_iOS (3.2.3)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.72.4)
   - FBReactNativeSpec (0.72.4):
@@ -592,8 +592,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
-  courier-react-native: 2c540b96f2d2d8e5c68c97621f6955ba34b6498c
-  Courier_iOS: d451e62b9559ed2a26b2369d3e16672da68ca435
+  courier-react-native: e26581eab6db996c4aba92d013daebf2c7dfd9a9
+  Courier_iOS: 18ac6227887bc2ab8b191fb9215cdfe5ce6c18fb
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 5d4a3b7f411219a45a6d952f77d2c0a6c9989da5
   FBReactNativeSpec: 3fc2d478e1c4b08276f9dd9128f80ec6d5d85c1f

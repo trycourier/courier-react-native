@@ -205,3 +205,28 @@ internal extension String {
     }
     
 }
+
+internal extension NSDictionary {
+    
+    func toFont() -> CourierStyles.Font {
+        
+        let defaultColor: UIColor = .label
+        let defaultFont: UIFont = UIFont.systemFont(ofSize: UIFont.labelFontSize)
+        
+        let defaultInboxFont = CourierStyles.Font(
+            font: defaultFont,
+            color: defaultColor
+        )
+        
+        let family = self["family"] as? String ?? defaultFont.familyName
+        let size = self["size"] as? CGFloat ?? defaultFont.pointSize
+        let color = self["color"] as? String
+        
+        return CourierStyles.Font(
+            font: UIFont(name: family, size: size) ?? defaultFont,
+            color: color?.toColor() ?? defaultColor
+        )
+        
+    }
+    
+}

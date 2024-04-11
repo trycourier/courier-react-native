@@ -16,7 +16,7 @@ const PreferencesDefault = () => {
   
   return (
     <View style={styles.container}>
-      <CourierPreferencesView style={styles.box} />
+      <CourierPreferencesView mode={{ type: 'topic' }} style={styles.box} />
     </View>
   );
 

@@ -1,8 +1,4 @@
-export interface CourierInboxFont {
-  family?: string
-  size?: number
-  color?: string
-}
+import { CourierFont } from "./CourierFont"
 
 export interface CourierInboxButtonStyle {
   unread?: CourierInboxButton
@@ -10,18 +6,18 @@ export interface CourierInboxButtonStyle {
 }
 
 export interface CourierInboxButton {
-  font?: CourierInboxFont
+  font?: CourierFont
   backgroundColor?: string
   cornerRadius?: number
 }
 
 export interface CourierInboxTextStyle {
-  unread?: CourierInboxFont
-  read?: CourierInboxFont
+  unread?: CourierFont
+  read?: CourierFont
 }
 
 export interface CourierInboxInfoViewStyle {
-  font?: CourierInboxFont
+  font?: CourierFont
   button?: CourierInboxButton
 }
 

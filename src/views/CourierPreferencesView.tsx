@@ -1,8 +1,9 @@
 import React from "react";
 import { Platform, requireNativeComponent, UIManager, ViewStyle } from "react-native";
-import { CourierPreferencesTheme } from "src/models/CourierPreferencesTheme";
+import { CourierPreferencesMode, CourierPreferencesTheme } from "src/models/CourierPreferencesTheme";
 
 type CourierPreferencesProps = {
+  mode?: CourierPreferencesMode,
   theme?: { 
     light?: CourierPreferencesTheme, 
     dark?: CourierPreferencesTheme 
@@ -29,6 +30,7 @@ export const CourierPreferencesView = (props: CourierPreferencesProps) => {
 
   return (
     <CourierPreferences 
+      mode={props.mode}
       theme={props.theme ?? { light: undefined, dark: undefined }}
       style={props.style}
     />
