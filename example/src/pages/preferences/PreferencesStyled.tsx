@@ -1,110 +1,82 @@
 import { CourierPreferencesView } from "@trycourier/courier-react-native";
 import Env from "../../Env";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { CourierPreferencesTheme } from "src/models/CourierPreferencesTheme";
+import { Styles } from "../Styles";
 
 const PreferencesStyled = () => {
 
-  const primaryColor = '#882DB9'
-  const secondaryColor = '#EA6866'
+  function getTheme(isDark: boolean): CourierPreferencesTheme {
 
-  const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
-  const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
-
-  const lightTheme: CourierPreferencesTheme = {
-    brandId: Env.brandId,
-    loadingIndicatorColor: primaryColor,
-    sectionTitleFont: {
-      family: titleFont,
-      size: 24,
-      color: primaryColor
-    },
-    topicTitleFont: {
-      family: defaultFont,
-      size: 16,
-      color: secondaryColor
-    },
-    topicSubtitleFont: {
-      family: defaultFont,
-      size: 16,
-      color: secondaryColor
-    },
-    topicButton: {
-      font: {
-        family: titleFont,
-        size: 16,
-        color: '#000000'
+    const styles = Styles(isDark)
+    
+    return {
+      brandId: Env.brandId,
+      sectionTitleFont: {
+        family: styles.Fonts.heading,
+        size: styles.TextSizes.heading,
+        color: styles.Colors.heading
       },
-      backgroundColor: secondaryColor,
-      cornerRadius: 0
-    },
-    sheetTitleFont: {
-      family: titleFont,
-      size: 24,
-      color: primaryColor
-    },
-    infoView: {
-      font: {
-        family: titleFont,
-        size: 24,
-        color: primaryColor
+      topicTitleFont: {
+        family: styles.Fonts.title,
+        size: styles.TextSizes.title,
+        color: styles.Colors.title
       },
-      button: {
+      topicSubtitleFont: {
+        family: styles.Fonts.subtitle,
+        size: styles.TextSizes.subtitle,
+        color: styles.Colors.subtitle
+      },
+      topicButton: {
         font: {
-          family: titleFont,
-          size: 16,
-          color: '#000000'
+          family: styles.Fonts.subtitle,
+          size: styles.TextSizes.subtitle,
+          color: styles.Colors.title
         },
-        backgroundColor: secondaryColor,
-        cornerRadius: 0
-      }
-    },
-    iOS: {
-      topicCellStyles: {
-        separatorStyle: 'none'
+        backgroundColor: styles.Colors.option,
+        cornerRadius: styles.Corners.button
       },
-      sheetSettingStyles: {
+      sheetTitleFont: {
+        family: styles.Fonts.heading,
+        size: styles.TextSizes.heading,
+        color: styles.Colors.heading
+      },
+      infoView: {
         font: {
-          family: defaultFont,
-          size: 16,
-          color: secondaryColor
+          family: styles.Fonts.title,
+          size: styles.TextSizes.title,
+          color: styles.Colors.title
         },
-        toggleColor: primaryColor
+        button: {
+          font: {
+            family: styles.Fonts.subtitle,
+            size: styles.TextSizes.subtitle,
+            color: styles.Colors.action
+          },
+          backgroundColor: styles.Colors.title,
+          cornerRadius: styles.Corners.button
+        }
       },
-      sheetCornerRadius: 0,
-      sheetCellStyles: {
-        separatorStyle: 'none'
+      iOS: {
+        topicCellStyles: {
+          separatorStyle: 'none'
+        },
+        sheetSettingStyles: {
+          font: {
+            family: styles.Fonts.title,
+            size: styles.TextSizes.title,
+            color: styles.Colors.title
+          },
+          toggleColor: styles.Colors.action
+        },
+        sheetCornerRadius: 20,
+        sheetCellStyles: {
+          separatorStyle: 'none'
+        }
       }
     }
-  }
 
-  const darkTheme: CourierPreferencesTheme = {
-    brandId: Env.brandId,
-    loadingIndicatorColor: '#ffffff',
-    sectionTitleFont: {
-      family: titleFont,
-      size: 20,
-      color: primaryColor
-    },
-    topicTitleFont: {
-      family: defaultFont,
-      size: 16,
-      color: secondaryColor
-    },
-    topicSubtitleFont: {
-      family: defaultFont,
-      size: 16,
-      color: secondaryColor
-    },
-    topicButton: {
-
-    },
-    iOS: {
-      topicCellStyles: {
-        separatorStyle: 'none'
-      }
-    }
   }
 
   const styles = StyleSheet.create({
@@ -125,8 +97,8 @@ const PreferencesStyled = () => {
           channels: ['push', 'sms', 'email'] 
         }}
         theme={{
-          light: lightTheme,
-          dark: darkTheme
+          light: getTheme(false),
+          dark: getTheme(true),
         }}
         style={styles.box}
        />
