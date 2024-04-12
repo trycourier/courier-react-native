@@ -1,24 +1,15 @@
+import { CourierButton } from "./CourierButton"
 import { CourierFont } from "./CourierFont"
+import { CourierInfoViewStyle } from "./CourierInfoView"
 
 export interface CourierInboxButtonStyle {
-  unread?: CourierInboxButton
-  read?: CourierInboxButton
-}
-
-export interface CourierInboxButton {
-  font?: CourierFont
-  backgroundColor?: string
-  cornerRadius?: number
+  unread?: CourierButton
+  read?: CourierButton
 }
 
 export interface CourierInboxTextStyle {
   unread?: CourierFont
   read?: CourierFont
-}
-
-export interface CourierInboxInfoViewStyle {
-  font?: CourierFont
-  button?: CourierInboxButton
 }
 
 export interface CourierInboxUnreadIndicatorStyle {
@@ -33,7 +24,7 @@ export interface CourierInboxTheme {
   timeStyle?: CourierInboxTextStyle
   bodyStyle?: CourierInboxTextStyle
   buttonStyle?: CourierInboxButtonStyle
-  infoViewStyle?: CourierInboxInfoViewStyle
+  infoViewStyle?: CourierInfoViewStyle
   iOS?: {
     messageAnimationStyle?: 'fade' | 'right' | 'left' | 'top' | 'bottom' | 'none' | 'middle' | 'automatic',
     cellStyles?: {

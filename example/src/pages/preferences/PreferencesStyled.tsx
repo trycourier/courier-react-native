@@ -19,6 +19,63 @@ const PreferencesStyled = () => {
       family: titleFont,
       size: 24,
       color: primaryColor
+    },
+    topicTitleFont: {
+      family: defaultFont,
+      size: 16,
+      color: secondaryColor
+    },
+    topicSubtitleFont: {
+      family: defaultFont,
+      size: 16,
+      color: secondaryColor
+    },
+    topicButton: {
+      font: {
+        family: titleFont,
+        size: 16,
+        color: '#000000'
+      },
+      backgroundColor: secondaryColor,
+      cornerRadius: 0
+    },
+    sheetTitleFont: {
+      family: titleFont,
+      size: 24,
+      color: primaryColor
+    },
+    infoView: {
+      font: {
+        family: titleFont,
+        size: 24,
+        color: primaryColor
+      },
+      button: {
+        font: {
+          family: titleFont,
+          size: 16,
+          color: '#000000'
+        },
+        backgroundColor: secondaryColor,
+        cornerRadius: 0
+      }
+    },
+    iOS: {
+      topicCellStyles: {
+        separatorStyle: 'none'
+      },
+      sheetSettingStyles: {
+        font: {
+          family: defaultFont,
+          size: 16,
+          color: secondaryColor
+        },
+        toggleColor: primaryColor
+      },
+      sheetCornerRadius: 0,
+      sheetCellStyles: {
+        separatorStyle: 'none'
+      }
     }
   }
 
@@ -29,6 +86,24 @@ const PreferencesStyled = () => {
       family: titleFont,
       size: 20,
       color: primaryColor
+    },
+    topicTitleFont: {
+      family: defaultFont,
+      size: 16,
+      color: secondaryColor
+    },
+    topicSubtitleFont: {
+      family: defaultFont,
+      size: 16,
+      color: secondaryColor
+    },
+    topicButton: {
+
+    },
+    iOS: {
+      topicCellStyles: {
+        separatorStyle: 'none'
+      }
     }
   }
 

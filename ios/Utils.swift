@@ -208,15 +208,24 @@ internal extension String {
 
 internal extension NSDictionary {
     
+    func toButton(fallback: CourierStyles.Button) -> CourierStyles.Button {
+        
+        let font = self["font"] as? NSDictionary
+        let backgroundColor = self["backgroundColor"] as? String
+        let cornerRadius = self["cornerRadius"] as? CGFloat
+        
+        return CourierStyles.Button(
+            font: font?.toFont() ?? fallback.font,
+            backgroundColor: backgroundColor?.toColor() ?? fallback.backgroundColor,
+            cornerRadius: cornerRadius ?? fallback.cornerRadius
+        )
+        
+    }
+    
     func toFont() -> CourierStyles.Font {
         
         let defaultColor: UIColor = .label
         let defaultFont: UIFont = UIFont.systemFont(ofSize: UIFont.labelFontSize)
-        
-        let defaultInboxFont = CourierStyles.Font(
-            font: defaultFont,
-            color: defaultColor
-        )
         
         let family = self["family"] as? String ?? defaultFont.familyName
         let size = self["size"] as? CGFloat ?? defaultFont.pointSize
@@ -225,6 +234,40 @@ internal extension NSDictionary {
         return CourierStyles.Font(
             font: UIFont(name: family, size: size) ?? defaultFont,
             color: color?.toColor() ?? defaultColor
+        )
+        
+    }
+    
+    func toCellStyle() -> CourierStyles.Cell {
+        
+        let separatorStyle = self["separatorStyle"] as? String
+        let separatorColor = self["separatorColor"] as? String
+        let selectionStyle = self["selectionStyle"] as? String
+        let insets = self["separatorInsets"] as? [String : Any]
+        
+        let top = insets?["top"] as? CGFloat
+        let left = insets?["left"] as? CGFloat
+        let right = insets?["right"] as? CGFloat
+        let bottom = insets?["bottom"] as? CGFloat
+        let separatorInsets = UIEdgeInsets(top: top ?? 0, left: left ?? 0, bottom: bottom ?? 0, right: right ?? 0)
+        
+        return CourierStyles.Cell(
+            separatorStyle: separatorStyle?.toSeparatorStyle() ?? .singleLine,
+            separatorInsets: separatorInsets,
+            separatorColor: separatorColor?.toColor(),
+            selectionStyle: selectionStyle?.toSelectionStyle() ?? .default
+        )
+        
+    }
+    
+    func toInfoView(fallback: CourierStyles.InfoViewStyle) -> CourierStyles.InfoViewStyle {
+        
+        let font = self["font"] as? NSDictionary
+        let button = self["button"] as? NSDictionary
+        
+        return CourierStyles.InfoViewStyle(
+            font: font?.toFont() ?? fallback.font,
+            button: button?.toButton(fallback: fallback.button) ?? fallback.button
         )
         
     }

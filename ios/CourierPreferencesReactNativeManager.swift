@@ -83,65 +83,48 @@ internal extension NSDictionary {
         
     }
     
-    func toPreferencesTheme() -> CourierPreferencesTheme? {
+    func toSheetSettingStyles() -> CourierStyles.Preferences.SettingStyles {
         
-//        let iOS = self["iOS"] as? [String : Any]
-        let brandId = self["brandId"] as? String
-        let sectionTitleFont = self["sectionTitleFont"] as? NSDictionary
+        let font = self["font"] as? NSDictionary
+        let toggleColor = self["toggleColor"] as? String
+        
+        return CourierStyles.Preferences.SettingStyles(
+            font: font?.toFont(),
+            toggleColor: toggleColor?.toColor()
+        )
+        
+    }
+    
+    func toPreferencesTheme() -> CourierPreferencesTheme? {
         
         let defaultTheme = CourierPreferencesTheme()
         
+        let brandId = self["brandId"] as? String
+        let sectionTitleFont = self["sectionTitleFont"] as? NSDictionary
+        let topicTitleFont = self["topicTitleFont"] as? NSDictionary
+        let topicSubtitleFont = self["topicSubtitleFont"] as? NSDictionary
+        let topicButton = self["topicButton"] as? NSDictionary
+        let sheetTitleFont = self["sheetTitleFont"] as? NSDictionary
+        let infoView = self["infoView"] as? NSDictionary
+        
+        let iOS = self["iOS"] as? NSDictionary
+        let topicCellStyles = iOS?["topicCellStyles"] as? NSDictionary
+        let sheetSettingStyles = iOS?["sheetSettingStyles"] as? NSDictionary
+        let sheetCornerRadius = iOS?["sheetCornerRadius"] as? CGFloat
+        let sheetCellStyles = iOS?["sheetCellStyles"] as? NSDictionary
+        
         return CourierPreferencesTheme(
             brandId: brandId,
-            sectionTitleFont: sectionTitleFont?.toFont() ?? defaultTheme.sectionTitleFont
-//            topicCellStyles: CourierStyles.Cell(
-//                separatorStyle: .none
-//            ),
-//            topicTitleFont: CourierStyles.Font(
-//                font: UIFont(name: "Avenir Medium", size: 18)!,
-//                color: textColor
-//            ),
-//            topicSubtitleFont: CourierStyles.Font(
-//                font: UIFont(name: "Avenir Medium", size: 16)!,
-//                color: .gray
-//            ),
-//            topicButton: CourierStyles.Button(
-//                font: CourierStyles.Font(
-//                    font: UIFont(name: "Avenir Medium", size: 16)!,
-//                    color: .white
-//                ),
-//                backgroundColor: secondaryColor,
-//                cornerRadius: 8
-//            ),
-//            sheetTitleFont: CourierStyles.Font(
-//                font: UIFont(name: "Avenir Medium", size: 18)!,
-//                color: textColor
-//            ),
-//            sheetSettingStyles: CourierStyles.Preferences.SettingStyles(
-//                font: CourierStyles.Font(
-//                    font: UIFont(name: "Avenir Medium", size: 18)!,
-//                    color: textColor
-//                ),
-//                toggleColor: secondaryColor
-//            ),
-//            sheetCornerRadius: 0,
-//            sheetCellStyles: CourierStyles.Cell(
-//                separatorStyle: .none
-//            ),
-//            infoViewStyle: CourierStyles.InfoViewStyle(
-//                font: CourierStyles.Font(
-//                    font: UIFont(name: "Avenir Medium", size: 20)!,
-//                    color: textColor
-//                ),
-//                button: CourierStyles.Button(
-//                    font: CourierStyles.Font(
-//                        font: UIFont(name: "Avenir Medium", size: 16)!,
-//                        color: .white
-//                    ),
-//                    backgroundColor: secondaryColor,
-//                    cornerRadius: 8
-//                )
-//            )
+            sectionTitleFont: sectionTitleFont?.toFont() ?? defaultTheme.sectionTitleFont,
+            topicCellStyles: topicCellStyles?.toCellStyle() ?? defaultTheme.topicCellStyles,
+            topicTitleFont: topicTitleFont?.toFont() ?? defaultTheme.topicTitleFont,
+            topicSubtitleFont: topicSubtitleFont?.toFont() ?? defaultTheme.topicSubtitleFont,
+            topicButton: topicButton?.toButton(fallback: defaultTheme.topicButton) ?? defaultTheme.topicButton,
+            sheetTitleFont: sheetTitleFont?.toFont() ?? defaultTheme.sheetTitleFont,
+            sheetSettingStyles: sheetSettingStyles?.toSheetSettingStyles() ?? defaultTheme.sheetSettingStyles,
+            sheetCornerRadius: sheetCornerRadius ?? defaultTheme.sheetCornerRadius,
+            sheetCellStyles: sheetCellStyles?.toCellStyle() ?? defaultTheme.sheetCellStyles,
+            infoViewStyle: infoView?.toInfoView(fallback: defaultTheme.infoViewStyle) ?? defaultTheme.infoViewStyle
         )
         
     }
