@@ -42,7 +42,7 @@ const PreferencesStyled = () => {
         size: styles.TextSizes.heading,
         color: styles.Colors.heading
       },
-      infoView: {
+      infoViewStyle: {
         font: {
           family: styles.Fonts.title,
           size: styles.TextSizes.title,
