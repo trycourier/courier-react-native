@@ -15,7 +15,7 @@ type CourierInboxViewProps = {
   style?: ViewStyle;
 };
 
-const ComponentName = 'CourierReactNativeView';
+const ComponentName = 'CourierInboxView';
 
 const LINKING_ERROR =
   `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +

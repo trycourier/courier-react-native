@@ -1,10 +1,10 @@
 import Courier_iOS
 
-@objc(CourierReactNativeViewManager)
-class CourierReactNativeViewManager: RCTViewManager {
+@objc(CourierInboxViewManager)
+class CourierInboxViewManager: RCTViewManager {
 
-    override func view() -> (CourierReactNativeView) {
-        return CourierReactNativeView()
+    override func view() -> (CourierInboxView) {
+        return CourierInboxView()
     }
 
     @objc override static func requiresMainQueueSetup() -> Bool {
@@ -13,11 +13,11 @@ class CourierReactNativeViewManager: RCTViewManager {
     
 }
 
-class CourierReactNativeView : UIView {
+class CourierInboxView : UIView {
     
     @objc var theme: NSDictionary? = [:] {
         didSet {
-            refreshInbox()
+            refresh()
         }
     }
     
@@ -27,7 +27,7 @@ class CourierReactNativeView : UIView {
     
     @objc var onScrollInbox: RCTBubblingEventBlock? = nil
     
-    private func refreshInbox() {
+    private func refresh() {
         
         UIView.setAnimationsEnabled(false)
         

@@ -1,6 +1,6 @@
 import { CourierButton } from "./CourierButton";
 import { CourierFont } from "./CourierFont"
-import { CourierInfoViewStyle } from "./CourierInfoView";
+import { CourierInfoViewStyle } from "./CourierInfoViewStyle";
 import { iOS_CourierCell } from "./iOS_CourierCell";
 import { iOS_CourierSheet } from "./iOS_CourierSheet";
 

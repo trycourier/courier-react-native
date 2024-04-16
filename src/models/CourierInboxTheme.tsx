@@ -1,6 +1,6 @@
 import { CourierButton } from "./CourierButton"
 import { CourierFont } from "./CourierFont"
-import { CourierInfoViewStyle } from "./CourierInfoView"
+import { CourierInfoViewStyle } from "./CourierInfoViewStyle"
 
 export interface CourierInboxButtonStyle {
   unread?: CourierButton
@@ -18,6 +18,7 @@ export interface CourierInboxUnreadIndicatorStyle {
 }
 
 export interface CourierInboxTheme {
+  brandId?: string,
   loadingIndicatorColor?: string
   unreadIndicatorStyle?: CourierInboxUnreadIndicatorStyle
   titleStyle?: CourierInboxTextStyle

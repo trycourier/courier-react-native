@@ -1,6 +1,6 @@
 #import <React/RCTViewManager.h>
 
-@interface RCT_EXTERN_MODULE(CourierReactNativeViewManager, RCTViewManager)
+@interface RCT_EXTERN_MODULE(CourierInboxViewManager, RCTViewManager)
 
 RCT_EXPORT_VIEW_PROPERTY(theme, NSDictionary)
 
