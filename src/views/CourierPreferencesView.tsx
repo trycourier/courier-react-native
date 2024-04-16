@@ -8,6 +8,7 @@ type CourierPreferencesProps = {
     light?: CourierPreferencesTheme, 
     dark?: CourierPreferencesTheme 
   };
+  onError?: (message: string) => void;
   style?: ViewStyle;
 };
 
@@ -28,10 +29,23 @@ const CourierPreferences =
 
 export const CourierPreferencesView = (props: CourierPreferencesProps) => {
 
+  const onError = (event: any) => {
+
+    // Parse the native event data
+    if (props.onError) {
+
+      const message = event["error"];
+      props.onError(message);
+
+    }
+
+  }
+
   return (
     <CourierPreferences 
       mode={props.mode}
       theme={props.theme ?? { light: undefined, dark: undefined }}
+      onError={(event: any) => onError(event.nativeEvent)}
       style={props.style}
     />
   )

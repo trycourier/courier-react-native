@@ -18,7 +18,7 @@ export interface CourierPreferencesTheme {
   topicSubtitleFont?: CourierFont
   topicButton?: CourierButton
   sheetTitleFont?: CourierFont
-  infoView?: CourierInfoViewStyle
+  infoViewStyle?: CourierInfoViewStyle
   iOS?: {
     topicCellStyles?: iOS_CourierCell
     sheetSettingStyles?: iOS_CourierSheet

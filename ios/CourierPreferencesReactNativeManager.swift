@@ -29,6 +29,8 @@ class CourierPreferencesView : UIView {
         }
     }
     
+    @objc var onPreferenceError: RCTBubblingEventBlock? = nil
+    
     private func refresh() {
         
         UIView.setAnimationsEnabled(false)
@@ -43,8 +45,14 @@ class CourierPreferencesView : UIView {
         let courierPreferences = CourierPreferences(
             mode: mode?.toMode() ?? .channels(CourierUserPreferencesChannel.allCases),
             lightTheme: lightTheme?.toPreferencesTheme() ?? .defaultLight,
-            darkTheme: darkTheme?.toPreferencesTheme() ?? .defaultDark
+            darkTheme: darkTheme?.toPreferencesTheme() ?? .defaultDark,
+            onError: { [weak self] error in
+                self?.onPreferenceError?([
+                    "error" : error.message
+                ])
+            }
         )
+        
         courierPreferences.translatesAutoresizingMaskIntoConstraints = false
         addSubview(courierPreferences)
         
@@ -105,7 +113,7 @@ internal extension NSDictionary {
         let topicSubtitleFont = self["topicSubtitleFont"] as? NSDictionary
         let topicButton = self["topicButton"] as? NSDictionary
         let sheetTitleFont = self["sheetTitleFont"] as? NSDictionary
-        let infoView = self["infoView"] as? NSDictionary
+        let infoViewStyle = self["infoViewStyle"] as? NSDictionary
         
         let iOS = self["iOS"] as? NSDictionary
         let topicCellStyles = iOS?["topicCellStyles"] as? NSDictionary
@@ -124,7 +132,7 @@ internal extension NSDictionary {
             sheetSettingStyles: sheetSettingStyles?.toSheetSettingStyles() ?? defaultTheme.sheetSettingStyles,
             sheetCornerRadius: sheetCornerRadius ?? defaultTheme.sheetCornerRadius,
             sheetCellStyles: sheetCellStyles?.toCellStyle() ?? defaultTheme.sheetCellStyles,
-            infoViewStyle: infoView?.toInfoView(fallback: defaultTheme.infoViewStyle) ?? defaultTheme.infoViewStyle
+            infoViewStyle: infoViewStyle?.toInfoView(fallback: defaultTheme.infoViewStyle) ?? defaultTheme.infoViewStyle
         )
         
     }

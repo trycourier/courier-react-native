@@ -61,10 +61,10 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
     // Parse the native event data
     if (props.onClickInboxMessageAtIndex) {
 
-      const index = event["index"]
-      const message = event["message"] as InboxMessage
+      const index = event["index"];
+      const message = event["message"] as InboxMessage;
 
-      props.onClickInboxMessageAtIndex(message, index)
+      props.onClickInboxMessageAtIndex(message, index);
 
     }
 
@@ -85,11 +85,11 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
     // Parse the native event data
     if (props.onClickInboxActionForMessageAtIndex) {
 
-      const index = event["index"]
-      const action = event["action"] as InboxAction
-      const message = event["message"] as InboxMessage
+      const index = event["index"];
+      const action = event["action"] as InboxAction;
+      const message = event["message"] as InboxMessage;
 
-      props.onClickInboxActionForMessageAtIndex(action, message, index)
+      props.onClickInboxActionForMessageAtIndex(action, message, index);
 
     }
 
@@ -110,8 +110,8 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
     // Parse the native event data
     if (props.onScrollInbox) {
 
-      const contentOffset = event["contentOffset"]
-      props.onScrollInbox(contentOffset["y"], contentOffset["x"])
+      const contentOffset = event["contentOffset"];
+      props.onScrollInbox(contentOffset["y"], contentOffset["x"]);
 
     }
 
