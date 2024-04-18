@@ -56,14 +56,12 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
 //    }
 //  }
 
-  private val View.reactContext: ThemedReactContext get() = context as ThemedReactContext
-
   @ReactProp(name = "onPreferenceError")
   fun setOnPreferenceError(view: CourierPreferences, callback: Boolean) {
     view.onError = { error ->
       val map = Arguments.createMap()
       map.putString("error", error.message)
-      view.reactContext.sendEvent(ON_ERROR, map)
+//      view.reactContext.sendEvent(ON_ERROR, map)
     }
   }
 
