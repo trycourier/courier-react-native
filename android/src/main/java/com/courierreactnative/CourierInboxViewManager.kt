@@ -7,6 +7,7 @@ import com.courier.android.ui.CourierStyles
 import com.courier.android.ui.inbox.CourierInbox
 import com.courier.android.ui.inbox.CourierInboxTheme
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -29,7 +30,7 @@ internal class CourierReactNativeInboxView @JvmOverloads constructor(context: Co
 
 }
 
-class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
+class CourierInboxViewManager(private val reactContext: ReactContext) : SimpleViewManager<CourierInbox>() {
 
   private companion object {
     const val ON_CLICK_MESSAGE_AT_INDEX = "courierClickMessageAtIndex"
@@ -41,8 +42,6 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
 
   override fun createViewInstance(reactContext: ThemedReactContext): CourierInbox = CourierReactNativeInboxView(reactContext)
 
-  private val View.reactContext: ThemedReactContext get() = context as ThemedReactContext
-
   @ReactProp(name = "onClickInboxMessageAtIndex")
   fun setOnClickInboxMessageAtIndex(view: CourierInbox, callback: Boolean) {
 
@@ -52,7 +51,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
       map.putMap("message", message.toWritableMap())
       map.putInt("index", index)
 
-      view.reactContext.sendEvent(ON_CLICK_MESSAGE_AT_INDEX, map)
+      reactContext.sendEvent(ON_CLICK_MESSAGE_AT_INDEX, map)
 
     }
 
@@ -68,7 +67,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
       map.putMap("message", message.toWritableMap())
       map.putInt("index", index)
 
-      view.reactContext.sendEvent(ON_CLICK_ACTION_AT_INDEX, map)
+      reactContext.sendEvent(ON_CLICK_ACTION_AT_INDEX, map)
 
     }
 
@@ -86,7 +85,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
       val map = Arguments.createMap()
       map.putMap("contentOffset", offset)
 
-      view.reactContext.sendEvent(ON_SCROLL, map)
+      reactContext.sendEvent(ON_SCROLL, map)
 
     }
 

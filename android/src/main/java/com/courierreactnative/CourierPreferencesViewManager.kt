@@ -2,13 +2,13 @@ package com.courierreactnative
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import androidx.fragment.app.FragmentActivity
 import com.courier.android.models.CourierPreferenceChannel
 import com.courier.android.ui.CourierStyles
 import com.courier.android.ui.preferences.CourierPreferences
 import com.courier.android.ui.preferences.CourierPreferencesTheme
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -31,7 +31,7 @@ internal class CourierReactNativePreferencesView @JvmOverloads constructor(conte
 
 }
 
-class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
+class CourierPreferencesViewManager(private val reactContext: ReactApplicationContext) : SimpleViewManager<CourierPreferences>() {
 
   private companion object {
     const val ON_ERROR = "courierPreferenceError"
@@ -44,14 +44,12 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
     return CourierReactNativePreferencesView(activity)
   }
 
-  private val View.reactContext: ThemedReactContext get() = context as ThemedReactContext
-
   @ReactProp(name = "onPreferenceError")
   fun setOnPreferenceError(view: CourierPreferences, callback: Boolean) {
     view.onError = { error ->
       val map = Arguments.createMap()
       map.putString("error", error.message)
-      view.reactContext.sendEvent(ON_ERROR, map)
+      reactContext.sendEvent(ON_ERROR, map)
     }
   }
 
