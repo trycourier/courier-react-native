@@ -18,7 +18,7 @@ const Navigation = () => {
 
     // Debugging
 
-    Courier.shared.setIsDebugging(false);
+    // Courier.shared.setIsDebugging(false);
 
     // Setup Push
 

@@ -1,8 +1,18 @@
 package com.courierreactnative
 
-import com.courier.android.models.*
+import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.courier.android.models.CourierPreferenceTopic
+import com.courier.android.models.CourierUserPreferences
+import com.courier.android.models.InboxAction
+import com.courier.android.models.InboxMessage
+import com.courier.android.models.Paging
+import com.courier.android.ui.CourierStyles
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
@@ -150,4 +160,59 @@ internal fun List<Any>?.toWritableArray(): WritableArray {
     }
   }
   return array
+}
+
+internal fun String.toDivider(context: Context): DividerItemDecoration? = if (this == "vertical") DividerItemDecoration(context, DividerItemDecoration.VERTICAL) else null
+
+
+internal fun String.toColor(): Int = Color.parseColor(this)
+
+internal fun String.toFont(context: Context): Typeface? {
+  return try {
+    val assetManager = context.assets
+    Typeface.createFromAsset(assetManager, this)
+  } catch (e: Exception) {
+    e.printStackTrace()
+    null
+  }
+}
+
+internal fun ReadableMap.toFont(context: Context): CourierStyles.Font {
+
+  val typeface = getString("family")
+  val size = if (isNull("size")) null else getDouble("size")
+  val color = getString("color")
+
+  return CourierStyles.Font(
+    typeface = typeface?.toFont(context),
+    color = color?.toColor(),
+    sizeInSp = size?.toInt()
+  )
+
+}
+
+internal fun ReadableMap.toButton(context: Context): CourierStyles.Button {
+
+  val font = getMap("font")
+  val backgroundColor = getString("backgroundColor")
+  val cornerRadius = if (isNull("cornerRadius")) null else getDouble("cornerRadius")
+
+  return CourierStyles.Button(
+    font = font?.toFont(context),
+    backgroundColor = backgroundColor?.toColor(),
+    cornerRadiusInDp = cornerRadius?.toInt()
+  )
+
+}
+
+internal fun ReadableMap.toInfoViewStyle(context: Context): CourierStyles.InfoViewStyle {
+
+  val font = getMap("font")
+  val button = getMap("button")
+
+  return CourierStyles.InfoViewStyle(
+    font = font?.toFont(context) ?: CourierStyles.Font(),
+    button = button?.toButton(context) ?: CourierStyles.Button()
+  )
+
 }

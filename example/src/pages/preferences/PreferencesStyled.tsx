@@ -10,7 +10,7 @@ const PreferencesStyled = () => {
   function getTheme(isDark: boolean): CourierPreferencesTheme {
 
     const styles = Styles(isDark)
-    
+
     return {
       brandId: Env.brandId,
       sectionTitleFont: {
