@@ -24,6 +24,7 @@ export class ExampleServer {
       fetch(url, request)
         .then(response => response.json())
         .then((data: Response) => {
+          console.log("HEEEEE: " + JSON.stringify(data as any))
           resolve(data.token);
         })
         .catch(error => {

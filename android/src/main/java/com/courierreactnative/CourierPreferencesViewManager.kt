@@ -1,6 +1,7 @@
 package com.courierreactnative
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import com.courier.android.models.CourierPreferenceChannel
@@ -13,6 +14,22 @@ import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
 
+internal class CourierReactNativePreferencesView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : CourierPreferences(context, attrs, defStyleAttr) {
+
+  override fun requestLayout() {
+    super.requestLayout()
+    post(measureAndLayout)
+  }
+
+  private val measureAndLayout = Runnable {
+    measure(
+      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+    )
+    layout(left, top, right, bottom)
+  }
+
+}
 
 class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
 
@@ -23,38 +40,9 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
   override fun getName() = "CourierPreferencesView"
 
   override fun createViewInstance(reactContext: ThemedReactContext): CourierPreferences {
-
     val activity = reactContext.currentActivity as FragmentActivity
-    val preferences = CourierPreferences(activity)
-
-//    Choreographer.getInstance().postFrameCallback(object: Choreographer.FrameCallback {
-//      override fun doFrame(frameTimeNanos: Long) {
-//        traverseViewTree(preferences)
-////        preferences.viewTreeObserver.dispatchOnGlobalLayout()
-//        Choreographer.getInstance().postFrameCallback(this)
-//      }
-//    })
-
-//    preferences.doOnLayout {
-//      preferences.viewTreeObserver.dispatchOnGlobalLayout()
-//    }
-
-    return preferences
-
+    return CourierReactNativePreferencesView(activity)
   }
-
-//  fun traverseViewTree(view: View) {
-//    // Do something with the current view
-//    // For example, you can access its properties or perform some operations
-//
-//    if (view is ViewGroup) {
-//      for (i in 0 until view.childCount) {
-//        val childView = view.getChildAt(i)
-////        childView.requestLayout()
-//        traverseViewTree(childView)
-//      }
-//    }
-//  }
 
   private val View.reactContext: ThemedReactContext get() = context as ThemedReactContext
 
@@ -94,89 +82,45 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
 
   private fun ReadableMap.toTheme(view: CourierPreferences): CourierPreferencesTheme {
 
-    val android = getMap("android")
-    val dividerItemDecoration = android?.getString("dividerItemDecoration")
-
     val brandId = getString("brandId")
-
-    val unreadIndicatorStyle = getMap("unreadIndicatorStyle")
     val loadingIndicatorColor = getString("loadingIndicatorColor")
+    val sectionTitleFont = getMap("sectionTitleFont")
+    val topicTitleFont = getMap("topicTitleFont")
+    val topicSubtitleFont = getMap("topicSubtitleFont")
+    val sheetTitleFont = getMap("sheetTitleFont")
 
-    val titleStyle = getMap("titleStyle")
-    val timeStyle = getMap("timeStyle")
-    val bodyStyle = getMap("bodyStyle")
-    val infoViewStyle = getMap("infoViewStyle")
-    val buttonStyles = getMap("buttonStyles")
+    val android = getMap("android")
+    val topicDividerItemDecoration = android?.getString("topicDividerItemDecoration")
+    val sheetDividerItemDecoration = android?.getString("sheetDividerItemDecoration")
+    val sheetSettingStyles = android?.getMap("sheetSettingStyles")
 
     val context = view.context
+    val defaultTheme = CourierPreferencesTheme()
 
     return CourierPreferencesTheme(
       brandId = brandId,
-//      unreadIndicatorStyle = unreadIndicatorStyle?.toUnreadIndicatorStyle() ?: CourierStyles.Inbox.UnreadIndicatorStyle(),
-//      loadingIndicatorColor = loadingIndicatorColor?.toColor(),
-//      titleStyle = titleStyle?.toTextStyle(context) ?: CourierStyles.Inbox.TextStyle(
-//        unread = CourierStyles.Font(),
-//        read = CourierStyles.Font(),
-//      ),
-//      timeStyle = timeStyle?.toTextStyle(context) ?: CourierStyles.Inbox.TextStyle(
-//        unread = CourierStyles.Font(),
-//        read = CourierStyles.Font(),
-//      ),
-//      bodyStyle = bodyStyle?.toTextStyle(context) ?: CourierStyles.Inbox.TextStyle(
-//        unread = CourierStyles.Font(),
-//        read = CourierStyles.Font(),
-//      ),
-//      buttonStyle = buttonStyles?.toButtonStyle(context) ?: CourierStyles.Inbox.ButtonStyle(
-//        unread = CourierStyles.Button(),
-//        read = CourierStyles.Button(),
-//      ),
-//      infoViewStyle = infoViewStyle?.toInfoViewStyle(context) ?: CourierStyles.InfoViewStyle(
-//        font = CourierStyles.Font(),
-//        button = CourierStyles.Button(),
-//      ),
-//      dividerItemDecoration = dividerItemDecoration?.toDivider(context),
+      loadingIndicatorColor = loadingIndicatorColor?.toColor(),
+      sectionTitleFont = sectionTitleFont?.toFont(context) ?: defaultTheme.sectionTitleFont,
+      topicDividerItemDecoration = topicDividerItemDecoration?.toDivider(context),
+      topicTitleFont = topicTitleFont?.toFont(context) ?: defaultTheme.topicTitleFont,
+      topicSubtitleFont = topicSubtitleFont?.toFont(context) ?: defaultTheme.topicSubtitleFont,
+      sheetTitleFont = sheetTitleFont?.toFont(context) ?: defaultTheme.sheetTitleFont,
+      sheetDividerItemDecoration = sheetDividerItemDecoration?.toDivider(context),
+      sheetSettingStyles = sheetSettingStyles?.toSheetSettingStyles(context, fallback = defaultTheme.sheetSettingStyles) ?: defaultTheme.sheetSettingStyles
     )
 
   }
 
-  private fun ReadableMap.toTextStyle(context: Context): CourierStyles.Inbox.TextStyle {
+  private fun ReadableMap.toSheetSettingStyles(context: Context, fallback: CourierStyles.Preferences.SettingStyles): CourierStyles.Preferences.SettingStyles {
 
-    val unread = getMap("unread")
-    val read = getMap("read")
+    val font = getMap("font")
+    val toggleThumbColor = getString("toggleThumbColor")
+    val toggleTrackColor = getString("toggleTrackColor")
 
-    return CourierStyles.Inbox.TextStyle(
-      unread = unread?.toFont(context) ?: CourierStyles.Font(),
-      read = read?.toFont(context) ?: CourierStyles.Font(),
-    )
-
-  }
-
-  private fun ReadableMap.toUnreadIndicatorStyle(): CourierStyles.Inbox.UnreadIndicatorStyle {
-
-    val indicator = getString("indicator")
-    val color = getString("color")
-
-    var style = CourierStyles.Inbox.UnreadIndicator.LINE
-
-    if (indicator == "dot") {
-      style = CourierStyles.Inbox.UnreadIndicator.DOT
-    }
-
-    return CourierStyles.Inbox.UnreadIndicatorStyle(
-      indicator = style,
-      color = color?.toColor(),
-    )
-
-  }
-
-  private fun ReadableMap.toButtonStyle(context: Context): CourierStyles.Inbox.ButtonStyle {
-
-    val unread = getMap("unread")
-    val read = getMap("read")
-
-    return CourierStyles.Inbox.ButtonStyle(
-      unread = unread?.toButton(context) ?: CourierStyles.Button(),
-      read = read?.toButton(context) ?: CourierStyles.Button()
+    return CourierStyles.Preferences.SettingStyles(
+      font = font?.toFont(context) ?: fallback.font,
+      toggleThumbColor = toggleThumbColor?.toColor(),
+      toggleTrackColor = toggleTrackColor?.toColor(),
     )
 
   }

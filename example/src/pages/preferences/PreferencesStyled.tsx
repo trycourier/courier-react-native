@@ -74,6 +74,19 @@ const PreferencesStyled = () => {
         sheetCellStyles: {
           separatorStyle: 'none'
         }
+      },
+      android: {
+        topicDividerItemDecoration: 'vertical',
+        sheetDividerItemDecoration: 'vertical',
+        sheetSettingStyles: {
+          font: {
+            family: styles.Fonts.title,
+            size: styles.TextSizes.title,
+            color: styles.Colors.title
+          },
+          toggleThumbColor: styles.Colors.action,
+          toggleTrackColor: styles.Colors.option,
+        }
       }
     }
 

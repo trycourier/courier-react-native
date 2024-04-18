@@ -1,3 +1,4 @@
+import { Android_CourierSheet } from "./Android_CourierSheet";
 import { CourierButton } from "./CourierButton";
 import { CourierFont } from "./CourierFont"
 import { CourierInfoViewStyle } from "./CourierInfoViewStyle";
@@ -24,5 +25,10 @@ export interface CourierPreferencesTheme {
     sheetSettingStyles?: iOS_CourierSheet
     sheetCornerRadius?: number
     sheetCellStyles?: iOS_CourierCell
+  },
+  android?: {
+    topicDividerItemDecoration?: 'none' | 'vertical'
+    sheetDividerItemDecoration?: 'none' | 'vertical'
+    sheetSettingStyles?: Android_CourierSheet
   }
 }

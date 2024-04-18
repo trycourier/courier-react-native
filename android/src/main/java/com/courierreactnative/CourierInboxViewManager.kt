@@ -1,6 +1,7 @@
 package com.courierreactnative
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.View
 import com.courier.android.ui.CourierStyles
 import com.courier.android.ui.inbox.CourierInbox
@@ -11,6 +12,22 @@ import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
 
+internal class CourierReactNativeInboxView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : CourierInbox(context, attrs, defStyleAttr) {
+
+  override fun requestLayout() {
+    super.requestLayout()
+    post(measureAndLayout)
+  }
+
+  private val measureAndLayout = Runnable {
+    measure(
+      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+    )
+    layout(left, top, right, bottom)
+  }
+
+}
 
 class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
 
@@ -22,7 +39,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
 
   override fun getName() = "CourierInboxView"
 
-  override fun createViewInstance(reactContext: ThemedReactContext): CourierInbox = CourierInbox(reactContext)
+  override fun createViewInstance(reactContext: ThemedReactContext): CourierInbox = CourierReactNativeInboxView(reactContext)
 
   private val View.reactContext: ThemedReactContext get() = context as ThemedReactContext
 
