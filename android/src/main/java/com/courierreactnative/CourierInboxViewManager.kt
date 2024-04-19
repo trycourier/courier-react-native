@@ -7,7 +7,6 @@ import com.courier.android.ui.CourierStyles
 import com.courier.android.ui.inbox.CourierInbox
 import com.courier.android.ui.inbox.CourierInboxTheme
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -30,7 +29,9 @@ internal class CourierReactNativeInboxView @JvmOverloads constructor(context: Co
 
 }
 
-class CourierInboxViewManager(private val reactContext: ReactContext) : SimpleViewManager<CourierInbox>() {
+class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
+
+  private var themedReactContext: ThemedReactContext? = null
 
   private companion object {
     const val ON_CLICK_MESSAGE_AT_INDEX = "courierClickMessageAtIndex"
@@ -40,19 +41,19 @@ class CourierInboxViewManager(private val reactContext: ReactContext) : SimpleVi
 
   override fun getName() = "CourierInboxView"
 
-  override fun createViewInstance(reactContext: ThemedReactContext): CourierInbox = CourierReactNativeInboxView(reactContext)
+  override fun createViewInstance(reactContext: ThemedReactContext): CourierInbox {
+    themedReactContext = reactContext
+    return CourierReactNativeInboxView(reactContext)
+  }
 
   @ReactProp(name = "onClickInboxMessageAtIndex")
   fun setOnClickInboxMessageAtIndex(view: CourierInbox, callback: Boolean) {
 
     view.setOnClickMessageListener { message, index ->
-
       val map = Arguments.createMap()
       map.putMap("message", message.toWritableMap())
       map.putInt("index", index)
-
-      reactContext.sendEvent(ON_CLICK_MESSAGE_AT_INDEX, map)
-
+      themedReactContext?.sendEvent(ON_CLICK_MESSAGE_AT_INDEX, map)
     }
 
   }
@@ -61,14 +62,11 @@ class CourierInboxViewManager(private val reactContext: ReactContext) : SimpleVi
   fun setOnClickInboxActionForMessageAtIndex(view: CourierInbox, callback: Boolean) {
 
     view.setOnClickActionListener { action, message, index ->
-
       val map = Arguments.createMap()
       map.putMap("action", action.toWritableMap())
       map.putMap("message", message.toWritableMap())
       map.putInt("index", index)
-
-      reactContext.sendEvent(ON_CLICK_ACTION_AT_INDEX, map)
-
+      themedReactContext?.sendEvent(ON_CLICK_ACTION_AT_INDEX, map)
     }
 
   }
@@ -85,7 +83,7 @@ class CourierInboxViewManager(private val reactContext: ReactContext) : SimpleVi
       val map = Arguments.createMap()
       map.putMap("contentOffset", offset)
 
-      reactContext.sendEvent(ON_SCROLL, map)
+      themedReactContext?.sendEvent(ON_SCROLL, map)
 
     }
 

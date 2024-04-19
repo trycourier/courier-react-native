@@ -13,7 +13,7 @@ class CourierReactNativePackage : ReactPackage {
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-    return listOf(CourierInboxViewManager(reactContext), CourierPreferencesViewManager(reactContext))
+    return listOf(CourierInboxViewManager(), CourierPreferencesViewManager())
   }
 
 }

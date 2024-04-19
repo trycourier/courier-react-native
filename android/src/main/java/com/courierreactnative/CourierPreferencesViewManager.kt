@@ -8,7 +8,6 @@ import com.courier.android.ui.CourierStyles
 import com.courier.android.ui.preferences.CourierPreferences
 import com.courier.android.ui.preferences.CourierPreferencesTheme
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -31,7 +30,9 @@ internal class CourierReactNativePreferencesView @JvmOverloads constructor(conte
 
 }
 
-class CourierPreferencesViewManager(private val reactContext: ReactApplicationContext) : SimpleViewManager<CourierPreferences>() {
+class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
+
+  private var themedReactContext: ThemedReactContext? = null
 
   private companion object {
     const val ON_ERROR = "courierPreferenceError"
@@ -40,6 +41,7 @@ class CourierPreferencesViewManager(private val reactContext: ReactApplicationCo
   override fun getName() = "CourierPreferencesView"
 
   override fun createViewInstance(reactContext: ThemedReactContext): CourierPreferences {
+    themedReactContext = reactContext
     val activity = reactContext.currentActivity as FragmentActivity
     return CourierReactNativePreferencesView(activity)
   }
@@ -49,7 +51,7 @@ class CourierPreferencesViewManager(private val reactContext: ReactApplicationCo
     view.onError = { error ->
       val map = Arguments.createMap()
       map.putString("error", error.message)
-      reactContext.sendEvent(ON_ERROR, map)
+      themedReactContext?.sendEvent(ON_ERROR, map)
     }
   }
 
