@@ -11,16 +11,14 @@ const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => vo
   </TouchableOpacity>
 );
 
-const PreferencesCustom = () => {
+const PreferencesCustom = ({ navigation }: any) => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [userId, setUserId] = useState<string | undefined>()
   const [topics, setTopics] = useState<CourierUserPreferencesTopic[]>([])
 
   useEffect(() => {
-
     setUserId(Courier.shared.userId)
-
   }, []);
 
   useEffect(() => {
@@ -50,57 +48,35 @@ const PreferencesCustom = () => {
 
   }
 
-  function getRandomChannels() {
+  const onItemClick = (item: CourierUserPreferencesTopic) => {
 
-    const channelValues = [
-      CourierUserPreferencesChannel.DirectMessage,
-      CourierUserPreferencesChannel.Email,
-      CourierUserPreferencesChannel.Push,
-      CourierUserPreferencesChannel.SMS,
-      CourierUserPreferencesChannel.Webhook,
-    ];
-  
-    const random = () => Math.floor(Math.random() * channelValues.length);
-    const randomCount = random();
-    const randomChannels: CourierUserPreferencesChannel[] = [];
-  
-    while (randomChannels.length < randomCount) {
-      const randomIndex = random();
-      const randomChannel = channelValues[randomIndex];
-  
-      if (randomChannel && !randomChannels.includes(randomChannel)) {
-        randomChannels.push(randomChannel);
-      }
-    }
-  
-    return randomChannels;
-  }
+    console.log(item);
 
-  const onItemClick = async (item: CourierUserPreferencesTopic) => {
+    navigation.push('PreferencesDetail', { id: item.topicId });
 
-    try {
+    // try {
 
-      const topic = await Courier.shared.getUserPreferencesTopic({ 
-        topicId: item.topicId ?? 'empty'
-      });
+    //   const topic = await Courier.shared.getUserPreferencesTopic({ 
+    //     topicId: item.topicId ?? 'empty'
+    //   });
   
-      console.log(topic);
+    //   console.log(topic);
   
-      await Courier.shared.putUserPreferencesTopic({
-        topicId: topic.topicId ?? 'empty',
-        status: CourierUserPreferencesStatus.OptedOut,
-        hasCustomRouting: true,
-        customRouting: getRandomChannels(),
-      });
+    //   await Courier.shared.putUserPreferencesTopic({
+    //     topicId: topic.topicId ?? 'empty',
+    //     status: CourierUserPreferencesStatus.OptedOut,
+    //     hasCustomRouting: true,
+    //     customRouting: getRandomChannels(),
+    //   });
   
-      getPrefs();
+    //   getPrefs();
 
-    } catch (e: any) {
+    // } catch (e: any) {
 
-      console.error(e);
-      Alert.alert('Error Updating Preference', e.toString());
+    //   console.error(e);
+    //   Alert.alert('Error Updating Preference', e.toString());
 
-    }
+    // }
 
   }
 

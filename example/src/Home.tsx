@@ -4,13 +4,13 @@ import { Alert, Button } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Auth from './pages/Auth';
 import Push from './pages/Push';
-import Preferences from './pages/Preferences';
 import Inbox from './pages/Inbox';
 import Courier from '@trycourier/courier-react-native';
+import PreferencesStack from './pages/PreferencesStack';
 
 const Tab = createBottomTabNavigator();
 
-const Navigation = () => {
+const Home = () => {
 
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
@@ -88,9 +88,9 @@ const Navigation = () => {
       <Tab.Screen name="Auth" component={Auth} options={icon('account-circle')} />
       <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
       <Tab.Screen name="Inbox" component={Inbox} options={inboxOptions()} />
-      <Tab.Screen name="Preferences" component={Preferences} options={icon('wrench')} />
+      <Tab.Screen name="Preferences" component={PreferencesStack} options={{ ...icon('wrench'), headerShown: false }} />
     </Tab.Navigator>
   );
 };
 
-export default Navigation;
+export default Home;
