@@ -1,6 +1,6 @@
-import Courier, { CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
+import Courier, {  } from "@trycourier/courier-react-native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CourierUserPreferencesTopic } from "src/models/CourierUserPreferencesTopic";
 
 const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => void }) => (
@@ -13,18 +13,18 @@ const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => vo
 
 const PreferencesCustom = ({ navigation }: any) => {
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [userId, setUserId] = useState<string | undefined>()
-  const [topics, setTopics] = useState<CourierUserPreferencesTopic[]>([])
+  const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | undefined>();
+  const [topics, setTopics] = useState<CourierUserPreferencesTopic[]>([]);
 
   useEffect(() => {
-    setUserId(Courier.shared.userId)
+    setUserId(Courier.shared.userId);
   }, []);
 
   useEffect(() => {
 
     if (userId) {
-      getPrefs()
+      getPrefs();
     }
 
   }, [userId]);
@@ -48,11 +48,11 @@ const PreferencesCustom = ({ navigation }: any) => {
 
   }
 
-  const onItemClick = (item: CourierUserPreferencesTopic) => {
+  const onItemClick = (topic: CourierUserPreferencesTopic) => {
 
-    console.log(item);
+    console.log(topic);
 
-    navigation.push('PreferencesDetail', { id: item.topicId });
+    navigation.push('PreferencesDetail', { id: topic.topicId });
 
     // try {
 

@@ -66,6 +66,8 @@ internal extension CourierUserPreferencesTopic {
             "status": status,
             "topicId": topicId,
             "topicName": topicName,
+            "sectionName": sectionName,
+            "sectionId": sectionId,
         ]
 
         return dictionary.clean()

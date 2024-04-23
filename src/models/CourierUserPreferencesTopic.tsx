@@ -6,6 +6,8 @@ export interface CourierUserPreferencesTopic {
   hasCustomRouting?: string;
   customRouting?: CourierUserPreferencesChannel[];
   status?: CourierUserPreferencesStatus;
+  setionName?: string;
+  setionId?: string;
   topicId?: string;
   topicName?: string;
 }

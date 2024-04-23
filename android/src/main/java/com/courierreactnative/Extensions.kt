@@ -45,6 +45,8 @@ internal fun CourierPreferenceTopic.toWritableMap(): WritableMap {
   map.putString("status", status.value)
   map.putString("topicId", topicId)
   map.putString("topicName", topicName)
+  map.putString("sectionId", sectionId)
+  map.putString("sectionName", sectionName)
 
   val actionsArray = Arguments.createArray()
   customRouting.forEach { routing ->
