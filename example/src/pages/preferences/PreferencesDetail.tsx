@@ -91,10 +91,9 @@ const PreferencesDetail = ({ route, navigation }: any) => {
 
       Toast.show({
         type: 'error',
-        text1: `${error}`,
-        text2: `${error}`,
+        text1: (error as any).message,
       });
-      
+
     } finally {
       setIsLoading(false);
     }
