@@ -161,5 +161,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "react-native-toast-message": "^2.2.0"
   }
 }

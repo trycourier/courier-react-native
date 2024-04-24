@@ -3,6 +3,7 @@ import { ActivityIndicator, Button, ScrollView, StyleSheet, Switch, Text, View }
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
 import Courier, { CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
 import { emitEvent } from "../../Emitter";
+import Toast from 'react-native-toast-message';
 
 const PreferencesDetail = ({ route, navigation }: any) => {
 
@@ -80,12 +81,20 @@ const PreferencesDetail = ({ route, navigation }: any) => {
         customRouting: routingChannels,
       });
 
-      emitEvent('saveButtonClicked', { /* any additional data you want to pass */ })
+      emitEvent('saveButtonClicked', {});
 
       navigation.goBack();
       
     } catch (error) {
+
       console.error("Error saving preferences:", error);
+
+      Toast.show({
+        type: 'error',
+        text1: `${error}`,
+        text2: `${error}`,
+      });
+      
     } finally {
       setIsLoading(false);
     }
