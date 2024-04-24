@@ -47,11 +47,6 @@ const PreferencesCustom = ({ navigation }: any) => {
     // Add listener when component mounts
     addListener('saveButtonClicked', handleSaveClicked);
 
-    // Remove listener when component unmounts
-    return () => {
-      removeListener('saveButtonClicked', handleSaveClicked);
-    };
-
   }, []);
 
   useEffect(() => {
