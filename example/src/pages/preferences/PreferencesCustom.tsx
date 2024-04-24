@@ -1,24 +1,57 @@
 import Courier, {  } from "@trycourier/courier-react-native";
+import { addListener, removeListener } from "../../Emitter";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CourierUserPreferencesTopic } from "src/models/CourierUserPreferencesTopic";
 
-const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => void }) => (
-  <TouchableOpacity onPress={props.onClick}>
-    <View style={{ padding: 16 }}>
-      <Text>{JSON.stringify(props.topic, null, 2)}</Text>
-    </View>
-  </TouchableOpacity>
-);
+const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => void }) => {
+
+  const SCREEN_WIDTH = Dimensions.get("screen").width;
+
+  const styles = StyleSheet.create({
+    container: {
+      width: SCREEN_WIDTH,
+    },
+    text: {
+      fontFamily: 'monospace'
+    }
+  });
+  
+  return (
+    <TouchableOpacity style={styles.container} onPress={props.onClick}>
+      <View style={{ padding: 16 }}>
+        <Text style={styles.text}>{JSON.stringify(props.topic, null, 2)}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+}
 
 const PreferencesCustom = ({ navigation }: any) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | undefined>();
   const [topics, setTopics] = useState<CourierUserPreferencesTopic[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
+
     setUserId(Courier.shared.userId);
+
+    const handleSaveClicked = (eventData?: any) => {
+      if (userId) {
+        getPrefs();
+      }
+    };
+
+    // Add listener when component mounts
+    addListener('saveButtonClicked', handleSaveClicked);
+
+    // Remove listener when component unmounts
+    return () => {
+      removeListener('saveButtonClicked', handleSaveClicked);
+    };
+
   }, []);
 
   useEffect(() => {
@@ -29,9 +62,13 @@ const PreferencesCustom = ({ navigation }: any) => {
 
   }, [userId]);
 
-  async function getPrefs() {
+  async function getPrefs(refresh: boolean = false) {
 
-    setIsLoading(true);
+    if (refresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
 
     try {
 
@@ -44,40 +81,16 @@ const PreferencesCustom = ({ navigation }: any) => {
 
     }
 
-    setIsLoading(false);
+    if (refresh) {
+      setIsRefreshing(false);
+    } else {
+      setIsLoading(false);
+    }
 
   }
 
   const onItemClick = (topic: CourierUserPreferencesTopic) => {
-
-    console.log(topic);
-
     navigation.push('PreferencesDetail', { id: topic.topicId });
-
-    // try {
-
-    //   const topic = await Courier.shared.getUserPreferencesTopic({ 
-    //     topicId: item.topicId ?? 'empty'
-    //   });
-  
-    //   console.log(topic);
-  
-    //   await Courier.shared.putUserPreferencesTopic({
-    //     topicId: topic.topicId ?? 'empty',
-    //     status: CourierUserPreferencesStatus.OptedOut,
-    //     hasCustomRouting: true,
-    //     customRouting: getRandomChannels(),
-    //   });
-  
-    //   getPrefs();
-
-    // } catch (e: any) {
-
-    //   console.error(e);
-    //   Alert.alert('Error Updating Preference', e.toString());
-
-    // }
-
   }
 
   const styles = StyleSheet.create({
@@ -103,6 +116,7 @@ const PreferencesCustom = ({ navigation }: any) => {
           data={topics}
           renderItem={({ item }) => <ListItem topic={item} onClick={() => onItemClick(item)} />}
           keyExtractor={(item) => item.topicId ?? 'empty'}
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={() => getPrefs(true)} />}
         />
       )}
 

@@ -3,7 +3,7 @@ import { CourierUserPreferencesStatus } from "./CourierUserPreferencesStatus";
 
 export interface CourierUserPreferencesTopic {
   defaultStatus?: string;
-  hasCustomRouting?: string;
+  hasCustomRouting?: boolean;
   customRouting?: CourierUserPreferencesChannel[];
   status?: CourierUserPreferencesStatus;
   setionName?: string;
