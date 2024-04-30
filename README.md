@@ -166,7 +166,7 @@ These are all the available features of the SDK.
             </td>
             <td align="left">
                 <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md">
-                    <code>Courier Inbox</code>
+                    <code>Inbox</code>
                 </a>
             </td>
             <td align="left">
