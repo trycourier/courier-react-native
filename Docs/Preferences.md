@@ -33,8 +33,8 @@ In-app notification settings that allow your users to customize which of your no
 
 The default `CourierPreferencesView` styles.
 
-<img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-ios/assets/6370613/483a72be-3869-43a2-ab48-a07a8c7b4cf2.gif">
-<img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/681a8de9-536a-40cb-93bf-8e51caae7f4b.gif">
+<img width="200" alt="default-inbox-styles" src="https://github.com/trycourier/courier-ios/assets/6370613/483a72be-3869-43a2-ab48-a07a8c7b4cf2.gif">
+<img width="200" alt="default-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/681a8de9-536a-40cb-93bf-8e51caae7f4b.gif">
 
 ```javascript
 import { CourierPreferencesView } from '@trycourier/courier-react-native';
@@ -51,8 +51,8 @@ import { CourierPreferencesView } from '@trycourier/courier-react-native';
 
 The styles you can use to quickly customize the `CourierPreferencesView`.
 
-<img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-ios/assets/6370613/4291c507-ffe4-41de-b551-596e5f33ff72.gif">
-<img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/67c6b772-f6e3-4937-b090-b0769d64d100.gif">
+<img width="200" alt="default-inbox-styles" src="https://github.com/trycourier/courier-ios/assets/6370613/4291c507-ffe4-41de-b551-596e5f33ff72.gif">
+<img width="200" alt="default-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/67c6b772-f6e3-4937-b090-b0769d64d100.gif">
 
 ```javascript
 import { CourierPreferencesView } from '@trycourier/courier-react-native';
