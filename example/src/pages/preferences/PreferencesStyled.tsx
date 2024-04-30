@@ -113,6 +113,12 @@ const PreferencesStyled = () => {
           light: getTheme(false),
           dark: getTheme(true),
         }}
+        onScrollPreferences={(offsetX, offsetY) => {
+          console.log(offsetX, offsetY);
+        }}
+        onPreferenceError={(error) => {
+          console.log(error);
+        }}
         style={styles.box}
        />
     </View>

@@ -36,6 +36,7 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
 
   private companion object {
     const val ON_ERROR = "courierPreferenceError"
+    const val ON_SCROLL = "courierScrollPreferences"
   }
 
   override fun getName() = "CourierPreferencesView"
@@ -44,6 +45,24 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
     themedReactContext = reactContext
     val activity = reactContext.currentActivity as FragmentActivity
     return CourierReactNativePreferencesView(activity)
+  }
+
+  @ReactProp(name = "onScrollPreferences")
+  fun setOnScrollPreferences(view: CourierPreferences, callback: Boolean) {
+
+    view.setOnScrollPreferencesListener { offsetInDp ->
+
+      val offset = Arguments.createMap()
+      offset.putInt("y", offsetInDp)
+      offset.putInt("x", 0)
+
+      val map = Arguments.createMap()
+      map.putMap("contentOffset", offset)
+
+      themedReactContext?.sendEvent(ON_SCROLL, map)
+
+    }
+
   }
 
   @ReactProp(name = "onPreferenceError")

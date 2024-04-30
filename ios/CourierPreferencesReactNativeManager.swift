@@ -29,6 +29,8 @@ class CourierPreferencesView : UIView {
         }
     }
     
+    @objc var onScrollPreferences: RCTBubblingEventBlock? = nil
+    
     @objc var onPreferenceError: RCTBubblingEventBlock? = nil
     
     private func refresh() {
@@ -46,6 +48,14 @@ class CourierPreferencesView : UIView {
             mode: mode?.toMode() ?? .channels(CourierUserPreferencesChannel.allCases),
             lightTheme: lightTheme?.toPreferencesTheme() ?? .defaultLight,
             darkTheme: darkTheme?.toPreferencesTheme() ?? .defaultDark,
+            didScrollPreferences: { [weak self] scrollView in
+                self?.onScrollPreferences?([
+                    "contentOffset" : [
+                        "y": scrollView.contentOffset.y,
+                        "x": scrollView.contentOffset.x
+                    ]
+                ])
+            },
             onError: { [weak self] error in
                 self?.onPreferenceError?([
                     "error" : error.message

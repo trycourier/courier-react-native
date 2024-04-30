@@ -32,6 +32,7 @@ export { CourierInfoViewStyle } from './models/CourierInfoViewStyle';
 export { iOS_CourierCell } from './models/iOS_CourierCell';
 export { iOS_CourierSheet } from './models/iOS_CourierSheet';
 export { CourierInboxButtonStyle, CourierInboxTextStyle, CourierInboxUnreadIndicatorStyle, CourierInboxTheme } from './models/CourierInboxTheme';
+export { CourierPreferencesTheme, CourierPreferencesMode, CourierPreferencesChannel } from './models/CourierPreferencesTheme';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
 
 const LINKING_ERROR =
