@@ -171,7 +171,7 @@ const theme = {
   onScrollPreferences={(y, x) => {
     console.log(`Preferences scroll offset y: ${y}`);
   }}
-  onError={(error) => {
+  onPreferenceError={(error) => {
     console.log(error)
   }}
   style={...}
