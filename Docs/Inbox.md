@@ -124,6 +124,7 @@ const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regula
 const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
 
 const theme: CourierInboxTheme = {
+  brandId: 'ASDFASDF',
   loadingIndicatorColor: primaryColor,
   unreadIndicatorStyle: {
     indicator: 'dot',
