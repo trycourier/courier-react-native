@@ -37,7 +37,7 @@ The default `CourierPreferencesView` styles.
 <img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/681a8de9-536a-40cb-93bf-8e51caae7f4b.gif">
 
 ```javascript
-import Courier, { CourierPreferencesView } from '@trycourier/courier-react-native';
+import { CourierPreferencesView } from '@trycourier/courier-react-native';
 
 <CourierPreferencesView 
   mode={{ type: 'topic' }}
@@ -49,74 +49,133 @@ import Courier, { CourierPreferencesView } from '@trycourier/courier-react-nativ
 
 ## Styled Preferences View
 
-The styles you can use to quickly customize the `CourierPreferences`.
+The styles you can use to quickly customize the `CourierPreferencesView`.
 
 <img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-ios/assets/6370613/4291c507-ffe4-41de-b551-596e5f33ff72.gif">
 <img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/67c6b772-f6e3-4937-b090-b0769d64d100.gif">
 
-```swift
-import Courier_iOS
+```javascript
+import { CourierPreferencesView } from '@trycourier/courier-react-native';
 
-let textColor = UIColor(red: 42 / 255, green: 21 / 255, blue: 55 / 255, alpha: 100)
-let primaryColor = UIColor(red: 136 / 255, green: 45 / 255, blue: 185 / 255, alpha: 100)
-let secondaryColor = UIColor(red: 234 / 255, green: 104 / 255, blue: 102 / 255, alpha: 100)
+const styles = {
+  Fonts: {
+    heading: Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
+    title: Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
+    subtitle: Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
+  },
+  Colors: {
+    heading: isDark ? '#9747FF' : '#9747FF',
+    title: isDark ? '#FFFFFF' : '#000000',
+    subtitle: isDark ? '#9A9A9A' : '#BEBEBE',
+    option: isDark ? '#1F1F1F' : '#F0F0F0',
+    action: isDark ? '#9747FF' : '#9747FF',
+  },
+  TextSizes: {
+    heading: 24,
+    title: 18,
+    subtitle: 16,
+  },
+  Corners: {
+    button: 100
+  }
+}
 
-// Theme object containing all the styles you want to apply 
-let preferencesTheme = CourierPreferencesTheme(
-    brandId: "7S9R...3Q1M", // Optional. Theme colors will override this brand.
-    loadingIndicatorColor: secondaryColor,
-    sectionTitleFont: CourierStyles.Font(
-        font: UIFont(name: "Avenir Black", size: 20)!,
-        color: .white
-    ),
-    topicCellStyles: CourierStyles.Cell(
-        separatorStyle: .none
-    ),
-    topicTitleFont: CourierStyles.Font(
-        font: UIFont(name: "Avenir Medium", size: 18)!,
-        color: .white
-    ),
-    topicSubtitleFont: CourierStyles.Font(
-        font: UIFont(name: "Avenir Medium", size: 16)!,
-        color: .white
-    ),
-    topicButton: CourierStyles.Button(
-        font: CourierStyles.Font(
-            font: UIFont(name: "Avenir Medium", size: 16)!,
-            color: .white
-        ),
-        backgroundColor: secondaryColor,
-        cornerRadius: 8
-    ),
-    sheetTitleFont: CourierStyles.Font(
-        font: UIFont(name: "Avenir Medium", size: 18)!,
-        color: .white
-    ),
-    sheetSettingStyles: CourierStyles.Preferences.SettingStyles(
-        font: CourierStyles.Font(
-            font: UIFont(name: "Avenir Medium", size: 18)!,
-            color: .white
-        ),
-        toggleColor: secondaryColor
-    ),
-    sheetCornerRadius: 0,
-    sheetCellStyles: CourierStyles.Cell(
-        separatorStyle: .none
-    )
-)
-
-// Pass the theme to the view
-let courierPreferences = CourierPreferences(
-    mode: .channels([.push, .sms, .email]),
-    lightTheme: preferencesTheme,
-    darkTheme: preferencesTheme,
-    onError: { error in
-        print(error.localizedDescription)
+const theme = {
+  brandId: 'ASDFASDF',
+  sectionTitleFont: {
+    family: styles.Fonts.heading,
+    size: styles.TextSizes.heading,
+    color: styles.Colors.heading
+  },
+  topicTitleFont: {
+    family: styles.Fonts.title,
+    size: styles.TextSizes.title,
+    color: styles.Colors.title
+  },
+  topicSubtitleFont: {
+    family: styles.Fonts.subtitle,
+    size: styles.TextSizes.subtitle,
+    color: styles.Colors.subtitle
+  },
+  topicButton: {
+    font: {
+      family: styles.Fonts.subtitle,
+      size: styles.TextSizes.subtitle,
+      color: styles.Colors.title
+    },
+    backgroundColor: styles.Colors.option,
+    cornerRadius: styles.Corners.button
+  },
+  sheetTitleFont: {
+    family: styles.Fonts.heading,
+    size: styles.TextSizes.heading,
+    color: styles.Colors.heading
+  },
+  infoViewStyle: {
+    font: {
+      family: styles.Fonts.title,
+      size: styles.TextSizes.title,
+      color: styles.Colors.title
+    },
+    button: {
+      font: {
+        family: styles.Fonts.subtitle,
+        size: styles.TextSizes.subtitle,
+        color: styles.Colors.action
+      },
+      backgroundColor: styles.Colors.title,
+      cornerRadius: styles.Corners.button
     }
-)
+  },
+  iOS: {
+    topicCellStyles: {
+      separatorStyle: 'none'
+    },
+    sheetSettingStyles: {
+      font: {
+        family: styles.Fonts.title,
+        size: styles.TextSizes.title,
+        color: styles.Colors.title
+      },
+      toggleColor: styles.Colors.action
+    },
+    sheetCornerRadius: 20,
+    sheetCellStyles: {
+      separatorStyle: 'none'
+    }
+  },
+  android: {
+    topicDividerItemDecoration: 'vertical',
+    sheetDividerItemDecoration: 'vertical',
+    sheetSettingStyles: {
+      font: {
+        family: styles.Fonts.title,
+        size: styles.TextSizes.title,
+        color: styles.Colors.title
+      },
+      toggleThumbColor: styles.Colors.action,
+      toggleTrackColor: styles.Colors.option,
+    }
+  }
+}
 
-view.addSubview(courierPreferences)
-...
+<CourierPreferencesView 
+  mode={{ 
+    type: 'channels', 
+    channels: ['push', 'sms', 'email'] 
+  }}
+  theme={{
+    light: theme,
+    dark: theme,
+  }}
+  onScrollPreferences={(y, x) => {
+    console.log(`Preferences scroll offset y: ${y}`);
+  }}
+  onError={(error) => {
+    console.log(error)
+  }}
+  style={...}
+ />
 ```
 
 If you are interested in using a Courier "Brand", here is where you can adjust that: [`Courier Studio`](https://app.courier.com/designer/brands). 
@@ -141,6 +200,10 @@ If you are interested in using a Courier "Brand", here is where you can adjust t
 </table>
 
 &emsp;
+
+## Custom Preferences APIs
+
+The raw data you can use to build whatever UI you'd like.
 
 # Get All User Preferences
 
