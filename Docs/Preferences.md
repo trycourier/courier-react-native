@@ -31,12 +31,12 @@ In-app notification settings that allow your users to customize which of your no
 
 ## Default Preferences View
 
-The default `CourierPreferences` styles.
+The default `CourierPreferencesView` styles.
 
 <img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-ios/assets/6370613/483a72be-3869-43a2-ab48-a07a8c7b4cf2.gif">
 <img width="150" alt="default-inbox-styles" src="https://github.com/trycourier/courier-android/assets/6370613/681a8de9-536a-40cb-93bf-8e51caae7f4b.gif">
 
-```typescript
+```javascript
 import Courier, { CourierPreferencesView } from '@trycourier/courier-react-native';
 
 <CourierPreferencesView 
