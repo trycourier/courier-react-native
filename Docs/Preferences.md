@@ -29,35 +29,6 @@ In-app notification settings that allow your users to customize which of your no
 
 &emsp;
 
-# Usage
-
-`CourierPreferences` works with all native iOS UI frameworks.
-
-<table>
-    <thead>
-        <tr>
-            <th width="850px" align="left">UI Framework</th>
-            <th width="200px" align="center">Support</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr width="600px">
-            <td align="left"><code>UIKit</code></td>
-            <td align="center">✅</td>
-        </tr>
-        <tr width="600px">
-            <td align="left"><code>XIB</code></td>
-            <td align="center">⚠️ Not optimised</td>
-        </tr>
-        <tr width="600px">
-            <td align="left"><code>SwiftUI</code></td>
-            <td align="center">✅</td>
-        </tr>
-    </tbody>
-</table>
-
-&emsp;
-
 ## Default Preferences View
 
 The default `CourierPreferences` styles.
