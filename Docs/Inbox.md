@@ -78,7 +78,7 @@ In your `res/values/styles.xml` set the follow:
 In your React Native project, add the View to your app:
 
 ```javascript
-import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
+import { CourierInboxView } from '@trycourier/courier-react-native';
 
 <CourierInboxView
   onClickInboxMessageAtIndex={(message, index) => {
@@ -113,7 +113,7 @@ iOS fonts point to the name of the font you have loaded into your app's fonts re
 Android fonts point to system fonts with the path included. More about Android fonts [`here`](https://developer.android.com/develop/ui/views/text-and-emoji/fonts-in-xml).
 
 ```javascript
-import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
+import { CourierInboxView } from '@trycourier/courier-react-native';
 
 // See above for more details about fonts
 const textColor = '#2A1537'
