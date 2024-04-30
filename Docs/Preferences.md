@@ -1,4 +1,4 @@
-<img width="1000" alt="ios-preferences-banner" src="https://github.com/trycourier/courier-ios/assets/6370613/52414bb0-b546-4a29-8137-65ec8d9c410e">
+<img width="1040" alt="banner-react-native-preferences" src="https://github.com/trycourier/courier-react-native/assets/6370613/56685f91-9fb7-4ec1-a8c7-b08302c9e7df">
 
 # Courier Preferences
 
