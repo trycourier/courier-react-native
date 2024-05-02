@@ -199,6 +199,8 @@ const tokenForKey = await Courier.shared.getToken({
 
 &emsp;
 
+# Automatic Token Syncing
+
 # iOS Setup 
 
 <table>
