@@ -142,10 +142,10 @@ The easiest way to support push notifications in your app.
                 </a>
             </td>
             <td align="center">
-                <code>Not Supported</code>
+                <code>Manual</code>
             </td>
             <td align="center">
-                <code>Not Supported</code>
+                <code>Manual</code>
             </td>
         </tr>
         <tr width="600px">
@@ -155,14 +155,47 @@ The easiest way to support push notifications in your app.
                 </a>
             </td>
             <td align="center">
-                <code>Not Supported</code>
+                <code>Manual</code>
             </td>
             <td align="center">
-                <code>Not Supported</code>
+                <code>Manual</code>
             </td>
         </tr>
     </tbody>
 </table>
+
+&emsp;
+
+# Manual Token Syncing
+
+To manually sync tokens, use the following code.
+
+```javascript
+// To set the token in the Courier
+await Courier.shared.setToken({
+  key: 'YOUR_PROVIDER',
+  token: 'example_token'
+});
+
+// Or
+
+await Courier.shared.setTokenForProvider({
+  provider: CourierPushProvider.EXPO,
+  token: 'example_token'
+});
+
+// To get the token stored in the SDK
+// This does not get it from the Courier API, just from the SDK's local storage
+const tokenForProvider = await Courier.shared.getTokenForProvider({
+  provider: CourierPushProvider.EXPO
+});
+
+// Or
+
+const tokenForKey = await Courier.shared.getToken({
+  key: 'YOUR_PROVIDER'
+});
+```
 
 &emsp;
 
