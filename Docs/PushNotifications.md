@@ -57,7 +57,7 @@ The easiest way to support push notifications in your app.
               ✅
             </td>
             <td align="center">
-              ❌
+              ✅
             </td>
         </tr>
     </tbody>
@@ -200,6 +200,8 @@ const tokenForKey = await Courier.shared.getToken({
 &emsp;
 
 # Automatic Token Syncing
+
+To allow the Courier SDK to automatically sync tokens, use the following steps.
 
 # iOS Setup 
 
