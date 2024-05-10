@@ -222,10 +222,17 @@ class Courier {
   }
 
   /**
+   * Gets the tenant id that is currently being used
+   */
+  get tenantId(): string | undefined {
+    return CourierReactNativeModules.getTenantId() ?? undefined
+  }
+
+  /**
    * Registers the auth token, client key and user id the sdk should use for requests
    */
-  public signIn(props: { accessToken: string, clientKey?: string, userId: string }): Promise<void> {
-    return CourierReactNativeModules.signIn(props.accessToken, props.clientKey ?? null, props.userId);
+  public signIn(props: { accessToken: string, clientKey?: string, userId: string, tenantId?: string }): Promise<void> {
+    return CourierReactNativeModules.signIn(props.accessToken, props.clientKey ?? null, props.userId, props.tenantId ?? null);
   }
 
   /**

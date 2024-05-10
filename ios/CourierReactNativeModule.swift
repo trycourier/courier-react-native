@@ -176,39 +176,35 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
-    @objc(signIn: withClientKey: withUserId: withResolver: withRejecter:)
-    func signIn(accessToken: NSString, clientKey: NSString?, userId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc(signIn: withClientKey: withUserId: withTenantId: withResolver: withRejecter:)
+    func signIn(accessToken: NSString, clientKey: NSString?, userId: NSString, tenantId: NSString?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
       
         Courier.shared.signIn(
            accessToken: accessToken as String,
            clientKey: clientKey as? String,
            userId: userId as String,
-           onSuccess: {
-               resolve(nil)
-           },
-           onFailure: { error in
-               reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-           }
-        )
+           tenantId: tenantId as? String
+        ) {
+            resolve(nil)
+        }
       
     }
 
     @objc(signOut: withRejecter:)
     func signOut(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-        Courier.shared.signOut(
-            onSuccess: {
-                resolve(nil)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
+        Courier.shared.signOut {
+            resolve(nil)
+        }
         
     }
 
     @objc func getUserId() -> String? {
         return Courier.shared.userId
+    }
+    
+    @objc func getTenantId() -> String? {
+        return Courier.shared.tenantId
     }
 
     @objc(addAuthenticationListener:)
@@ -366,13 +362,6 @@ class CourierReactNativeModule: RCTEventEmitter {
                 
             }
         )
-        
-//        let wrapper = CourierInboxListenerWrapper(
-//            loadingId: loadingId,
-//            errorId: errorId,
-//            messagesId: messagesId,
-//            listener: listener
-//        )
         
         let id = UUID().uuidString
         inboxListeners[id] = listener
