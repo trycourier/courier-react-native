@@ -60,6 +60,7 @@ Courier.shared.signIn({
   accessToken: 'YOUR_AUTH_TOKEN',
   clientKey: 'YOUR_CLIENT_KEY', // Optional
   userId: 'YOUR_USERNAME',
+  tenantId: 'YOUR_TENANT_ID', // Optional: Only if using Tenants
 });
 
 await Courier.shared.signOut();
