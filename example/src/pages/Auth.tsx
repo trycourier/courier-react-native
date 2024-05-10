@@ -8,19 +8,24 @@ const Auth = () => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [userId, setUserId] = useState<string | undefined>()
+  const [tenantId, setTenantId] = useState<string | undefined>()
 
   useEffect(() => {
 
     const authListener = Courier.shared.addAuthenticationListener({
       onUserChanged: (userId) => {
-        console.log(`User changed: ${userId}`);
         setUserId(userId);
+        setTenantId(Courier.shared.tenantId);
+        console.log(`User changed: ${userId}`);
+        console.log(`Tenant changed: ${Courier.shared.tenantId}`);
       }
     });
 
     const userId = Courier.shared.userId;
+    const tenantId = Courier.shared.tenantId;
     console.log(`Initial user: ${userId}`);
-    refreshJWT(userId);
+    console.log(`Initial tenant: ${tenantId}`);
+    refreshJWT(userId, tenantId);
 
     return () => {
       authListener.remove();
@@ -28,7 +33,7 @@ const Auth = () => {
 
   }, []);
 
-  async function refreshJWT(userId?: string) {
+  async function refreshJWT(userId?: string, tenantId?: string) {
 
     console.log('Refreshing JWT');
 
@@ -56,6 +61,7 @@ const Auth = () => {
       await Courier.shared.signIn({
         accessToken: token,
         userId: userId,
+        tenantId: tenantId,
       });
 
     } catch (e) {
@@ -68,10 +74,11 @@ const Auth = () => {
 
   }
 
-  async function signIn(userId: string) {
+  async function signIn(userId: string, tenantId: string) {
 
     console.log('Signing User In');
     console.log(`User ID: ${userId}`);
+    console.log(`Tenant ID: ${tenantId}`);
 
     setIsLoading(true);
 
@@ -87,9 +94,11 @@ const Auth = () => {
       await Courier.shared.signIn({
         accessToken: token,
         userId: userId,
+        tenantId: tenantId.length ? tenantId : undefined
       });
 
       setUserId(Courier.shared.userId);
+      setTenantId(Courier.shared.tenantId);
 
     } catch (e) {
 
@@ -104,6 +113,7 @@ const Auth = () => {
   async function signOut() {
     await Courier.shared.signOut();
     setUserId(Courier.shared.userId);
+    setTenantId(Courier.shared.tenantId);
   }
 
   const styles = StyleSheet.create({
@@ -120,7 +130,8 @@ const Auth = () => {
   const AuthButton = (props: { buttonText: string }) => {
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+    const [userId, setUserId] = useState('');
+    const [tenantId, setTenantId] = useState('');
     const inputRef = useRef<any>(null);
 
     const styles = StyleSheet.create({
@@ -162,7 +173,7 @@ const Auth = () => {
   
     const handleButtonPress = () => {
 
-      if (userId) {
+      if (Courier.shared.userId) {
         signOut();
       } else {
         setModalVisible(true);
@@ -174,12 +185,16 @@ const Auth = () => {
       setModalVisible(false);
     };
   
-    const handleTextInputChange = (text: string) => {
-      setInputValue(text);
+    const handleUserIdInputChange = (text: string) => {
+      setUserId(text);
+    };
+
+    const handleTenantIdInputChange = (text: string) => {
+      setTenantId(text);
     };
   
     const handleSaveButtonPress = () => {
-      signIn(inputValue);
+      signIn(userId, tenantId);
       setModalVisible(false);
     };
   
@@ -192,10 +207,18 @@ const Auth = () => {
               <TextInput
                 ref={inputRef}
                 style={styles.input}
-                value={inputValue}
+                value={userId}
                 autoCapitalize="none"
                 autoCorrect={false}
-                onChangeText={handleTextInputChange}
+                onChangeText={handleUserIdInputChange}
+              />
+              <Text>Set Tenant Id:</Text>
+              <TextInput
+                style={styles.input}
+                value={tenantId}
+                autoCapitalize="none"
+                autoCorrect={false}
+                onChangeText={handleTenantIdInputChange}
               />
               <Button title="Sign In" onPress={handleSaveButtonPress} />
               <Button title="Cancel" onPress={handleModalClose} />
@@ -219,6 +242,7 @@ const Auth = () => {
       {!isLoading && (
         <>
           {userId && <Text style={styles.text}>{userId}</Text>}
+          {tenantId && <Text style={styles.text}>{tenantId}</Text>}
           <AuthButton buttonText={userId ? 'Sign Out' : 'Sign In'} />
         </>
       )}

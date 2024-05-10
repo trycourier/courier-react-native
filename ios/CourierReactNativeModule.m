@@ -14,6 +14,7 @@ RCT_EXTERN_METHOD(
   signIn: (NSString*)accessToken
   withClientKey: (NSString*)clientKey
   withUserId: (NSString*)userId
+  withTenantId: (NSString*)tenantId
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )
@@ -25,6 +26,10 @@ RCT_EXTERN_METHOD(
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   getUserId
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getTenantId
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
