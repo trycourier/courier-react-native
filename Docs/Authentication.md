@@ -34,6 +34,16 @@ Manages user credentials between app sessions.
                 Needs Authentication to sync push notification device tokens to the current user and Courier.
             </td>
         </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Preferences.md">
+                    <code>Preferences</code>
+                </a>
+            </td>
+            <td align="left">
+                Needs Authentication to manage user notification preferences.
+            </td>
+        </tr>
     </tbody>
 </table>
 
