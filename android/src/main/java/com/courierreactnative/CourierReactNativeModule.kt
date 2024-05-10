@@ -2,15 +2,47 @@ package com.courierreactnative
 
 import android.content.Intent
 import com.courier.android.Courier
-import com.courier.android.models.*
-import com.courier.android.modules.*
+import com.courier.android.models.CourierAgent
+import com.courier.android.models.CourierAuthenticationListener
+import com.courier.android.models.CourierInboxListener
+import com.courier.android.models.CourierPreferenceChannel
+import com.courier.android.models.CourierPreferenceStatus
+import com.courier.android.models.InboxMessage
+import com.courier.android.models.remove
+import com.courier.android.modules.addAuthenticationListener
+import com.courier.android.modules.addInboxListener
+import com.courier.android.modules.clickMessage
+import com.courier.android.modules.fetchNextPageOfMessages
+import com.courier.android.modules.getToken
+import com.courier.android.modules.getUserPreferenceTopic
+import com.courier.android.modules.getUserPreferences
+import com.courier.android.modules.inboxPaginationLimit
+import com.courier.android.modules.isDebugging
+import com.courier.android.modules.isPushPermissionGranted
+import com.courier.android.modules.logListener
+import com.courier.android.modules.putUserPreferenceTopic
+import com.courier.android.modules.readAllInboxMessages
+import com.courier.android.modules.readMessage
+import com.courier.android.modules.refreshInbox
+import com.courier.android.modules.requestNotificationPermission
+import com.courier.android.modules.setToken
+import com.courier.android.modules.signIn
+import com.courier.android.modules.signOut
+import com.courier.android.modules.tenantId
+import com.courier.android.modules.unreadMessage
+import com.courier.android.modules.userId
 import com.courier.android.utils.pushNotification
 import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.ReactActivity
-import com.facebook.react.bridge.*
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableArray
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
-import java.util.*
+import java.util.UUID
 
 
 class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -99,11 +131,12 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   }
 
   @ReactMethod
-  fun signIn(accessToken: String, clientKey: String?, userId: String, promise: Promise) {
+  fun signIn(accessToken: String, clientKey: String?, userId: String, tenantId: String?, promise: Promise) {
     Courier.shared.signIn(
       accessToken = accessToken,
       clientKey = clientKey,
       userId = userId,
+      tenantId = tenantId,
       onSuccess = {
         promise.resolve(null)
       },
@@ -128,6 +161,11 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun getUserId(): String? {
     return Courier.shared.userId
+  }
+
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  fun getTenantId(): String? {
+    return Courier.shared.tenantId
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
