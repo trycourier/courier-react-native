@@ -1,6 +1,6 @@
 {
   "name": "@trycourier/courier-react-native",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Inbox & Push Notifications for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
