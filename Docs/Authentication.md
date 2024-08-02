@@ -128,7 +128,7 @@ curl --request POST \
      --header 'Content-Type: application/json' \
      --data
  '{
-    "scope": "user_id:$YOUR_USER_ID write:user-tokens",
+    "scope": "user_id:$YOUR_USER_ID write:user-tokens inbox:read:messages inbox:write:events read:preferences write:preferences read:brands",
     "expires_in": "$YOUR_NUMBER days"
   }'
 ```
