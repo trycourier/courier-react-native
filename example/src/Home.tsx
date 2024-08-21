@@ -7,6 +7,7 @@ import Push from './pages/Push';
 import Inbox from './pages/Inbox';
 import Courier from '@trycourier/courier-react-native';
 import PreferencesStack from './pages/PreferencesStack';
+import { Tests } from './Tests';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,6 +16,8 @@ const Home = () => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
   useEffect(() => {
+
+    Tests.run();
 
     // Debugging
 

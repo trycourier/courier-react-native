@@ -17,6 +17,10 @@ import { CourierUserPreferencesStatus } from './models/CourierUserPreferencesSta
 import { CourierPushProvider } from './models/CourierPushProvider';
 import { Events, Utils } from './utils';
 
+export { CourierClient } from './client/CourierClient';
+export { BrandClient } from './client/BrandClient';
+export { CourierBrandResponse } from './models/CourierBrand';
+
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
 export { CourierPreferencesView } from './views/CourierPreferencesView';

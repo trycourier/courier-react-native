@@ -144,8 +144,17 @@ RCT_EXTERN_METHOD(
 
 @interface RCT_EXTERN_MODULE(CourierClientModule, NSObject)
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  addClient: (NSDictionary*)options
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  removeClient: (NSString*)clientId
+)
+
 RCT_EXTERN_METHOD(
-  getBrand: (NSString*)brandId
+  getBrand: (NSString*)clientId
+  withBrandId: (NSString*)brandId
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )

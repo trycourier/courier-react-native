@@ -10,11 +10,69 @@ import Courier_iOS
 @objc(CourierClientModule)
 internal class CourierClientModule: CourierReactNativeEventEmitter {
     
-    @objc(getBrand:)
-    func getBrand(brandId: NSString) -> String {
-        let id = brandId as String
-//        Courier.shared.readMessage(messageId: id)
+    private var clients: [String: CourierClient] = [:]
+    
+    @objc(addClient:)
+    func addClient(options: NSDictionary) -> String {
+        
+        guard let userId = options["userId"] as? String, let showLogs = options["showLogs"] as? Bool else {
+            return "invalid"
+        }
+        
+        let client = CourierClient(
+            jwt: options["jwt"] as? String,
+            clientKey: options["clientKey"] as? String,
+            userId: userId,
+            connectionId: options["connectionId"] as? String,
+            tenantId: options["tenantId"] as? String,
+            showLogs: showLogs
+        )
+        
+        let uuid = UUID().uuidString
+        clients[uuid] = client
+        
+        return uuid
+        
+    }
+    
+    @objc(removeClient:)
+    func removeClient(clientId: NSString) -> String {
+        let id = clientId as String
+        clients.removeValue(forKey: id)
         return id
+    }
+    
+    @objc(getBrand: withBrandId: withResolver: withRejecter:)
+    func getBrand(clientId: NSString, brandId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        guard let client = clients[clientId as String] else {
+            reject(String(describing: "Invalid client id"), "Client Error", nil)
+            return
+        }
+        
+        let id = brandId as String
+        
+        Task {
+            
+            do {
+                
+                let brand = try await client.brands.getBrand(
+                    brandId: id
+                )
+                
+                let json = try brand.toJson()
+                resolve(json)
+                
+            } catch {
+                
+                print(error)
+                
+                reject(String(describing: error), "Client Error", nil)
+                
+            }
+            
+        }
+        
     }
     
 }
