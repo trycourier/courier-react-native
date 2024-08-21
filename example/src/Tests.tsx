@@ -29,8 +29,6 @@ export class Tests {
 
     console.log(res);
 
-    client.remove();
-
   }
 
 }

@@ -1,5 +1,5 @@
+import { Modules } from "../Modules";
 import { CourierBrandResponse } from "..";
-import { ClientModule } from "./ClientModule";
 
 export class BrandClient {
 
@@ -10,7 +10,7 @@ export class BrandClient {
   }
 
   public async getBrand(props: { brandId: string }): Promise<CourierBrandResponse> {
-    const json = await ClientModule.NativeModule.getBrand(this.clientId, props.brandId);
+    const json = await Modules.Client.getBrand(this.clientId, props.brandId);
     return JSON.parse(json);
   }
 

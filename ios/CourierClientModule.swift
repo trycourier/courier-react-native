@@ -46,31 +46,20 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     func getBrand(clientId: NSString, brandId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
         guard let client = clients[clientId as String] else {
-            reject(String(describing: "Invalid client id"), "Client Error", nil)
+            Rejections.missingClient(reject)
             return
         }
         
         let id = brandId as String
         
         Task {
-            
             do {
-                
-                let brand = try await client.brands.getBrand(
-                    brandId: id
-                )
-                
+                let brand = try await client.brands.getBrand(brandId: id)
                 let json = try brand.toJson()
                 resolve(json)
-                
             } catch {
-                
-                print(error)
-                
-                reject(String(describing: error), "Client Error", nil)
-                
+                Rejections.apiError(reject, error: error)
             }
-            
         }
         
     }
