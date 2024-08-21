@@ -41,13 +41,13 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     override func startObserving() {
 
-        // Setup debug listeners
-        Courier.shared.logListener = { log in
-            self.broadcastEvent(
-                name: CourierReactNativeModule.LogEvents.DEBUG_LOG,
-                body: log
-            )
-        }
+//        // Setup debug listeners
+//        Courier.shared.logListener = { log in
+//            self.broadcastEvent(
+//                name: CourierReactNativeModule.LogEvents.DEBUG_LOG,
+//                body: log
+//            )
+//        }
 
     }
 
@@ -96,8 +96,9 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     @objc(setDebugMode:)
     func setDebugMode(isDebugging: Bool) -> String {
-        Courier.shared.isDebugging = isDebugging
-        return String(describing: Courier.shared.isDebugging)
+        return "TODO"
+//        Courier.shared.isDebugging = isDebugging
+//        return String(describing: Courier.shared.isDebugging)
     }
     
     private func sendMessage(name: String, message: [AnyHashable: Any]?) {
@@ -112,7 +113,7 @@ class CourierReactNativeModule: RCTEventEmitter {
                 body: try message.toString()
             )
         } catch {
-            Courier.log(String(describing: error))
+//            Courier.log(String(describing: error))
         }
         
     }
@@ -179,23 +180,23 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc(signIn: withClientKey: withUserId: withTenantId: withResolver: withRejecter:)
     func signIn(accessToken: NSString, clientKey: NSString?, userId: NSString, tenantId: NSString?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
       
-        Courier.shared.signIn(
-           accessToken: accessToken as String,
-           clientKey: clientKey as? String,
-           userId: userId as String,
-           tenantId: tenantId as? String
-        ) {
-            resolve(nil)
-        }
+//        Courier.shared.signIn(
+//           accessToken: accessToken as String,
+//           clientKey: clientKey as? String,
+//           userId: userId as String,
+//           tenantId: tenantId as? String
+//        ) {
+//            resolve(nil)
+//        }
       
     }
 
     @objc(signOut: withRejecter:)
     func signOut(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-        Courier.shared.signOut {
-            resolve(nil)
-        }
+//        Courier.shared.signOut {
+//            resolve(nil)
+//        }
         
     }
 
@@ -246,16 +247,16 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc(setToken: withToken: withResolver: withRejecter:)
     func setToken(key: NSString, token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
-        Courier.shared.setToken(
-            providerKey: key as String,
-            token: token as String,
-            onSuccess: {
-                resolve(nil)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
+//        Courier.shared.setToken(
+//            providerKey: key as String,
+//            token: token as String,
+//            onSuccess: {
+//                resolve(nil)
+//            },
+//            onFailure: { error in
+//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+//            }
+//        )
     
     }
     
@@ -266,8 +267,8 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         Task {
             
-            let token = await Courier.shared.getToken(providerKey: provider)
-            resolve(token)
+//            let token = await Courier.shared.getToken(providerKey: provider)
+//            resolve(token)
             
         }
         
@@ -290,35 +291,35 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc(clickMessage:)
     func clickMessage(messageId: NSString) -> String {
         let id = messageId as String
-        Courier.shared.clickMessage(messageId: id)
+//        Courier.shared.clickMessage(messageId: id)
         return id
     }
     
     @objc(readMessage:)
     func readMessage(messageId: NSString) -> String {
         let id = messageId as String
-        Courier.shared.readMessage(messageId: id)
+//        Courier.shared.readMessage(messageId: id)
         return id
     }
     
     @objc(unreadMessage:)
     func unreadMessage(messageId: NSString) -> String {
         let id = messageId as String
-        Courier.shared.unreadMessage(messageId: id)
+//        Courier.shared.unreadMessage(messageId: id)
         return id
     }
     
     @objc(readAllInboxMessages: withRejecter:)
     func readAllInboxMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-        Courier.shared.readAllInboxMessages(
-            onSuccess: {
-                resolve(nil)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
+//        Courier.shared.readAllInboxMessages(
+//            onSuccess: {
+//                resolve(nil)
+//            },
+//            onFailure: { error in
+//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+//            }
+//        )
         
     }
     
@@ -390,23 +391,23 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc(refreshInbox: withRejecter:)
     func refreshInbox(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-        Courier.shared.refreshInbox {
-            resolve(nil)
-        }
+//        Courier.shared.refreshInbox {
+//            resolve(nil)
+//        }
         
     }
     
     @objc(fetchNextPageOfMessages: withRejecter:)
     func fetchNextPageOfMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-        Courier.shared.fetchNextPageOfMessages(
-            onSuccess: { messages in
-                resolve(messages.map { $0.toDictionary() })
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
+//        Courier.shared.fetchNextPageOfMessages(
+//            onSuccess: { messages in
+//                resolve(messages.map { $0.toDictionary() })
+//            },
+//            onFailure: { error in
+//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+//            }
+//        )
         
     }
     
@@ -421,48 +422,48 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         let cursor = paginationCursor != "" ? paginationCursor as String : nil
         
-        Courier.shared.getUserPreferences(
-            paginationCursor: cursor,
-            onSuccess: { preferences in
-                resolve(preferences.toDictionary())
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
+//        Courier.shared.getUserPreferences(
+//            paginationCursor: cursor,
+//            onSuccess: { preferences in
+//                resolve(preferences.toDictionary())
+//            },
+//            onFailure: { error in
+//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+//            }
+//        )
         
     }
     
     @objc(getUserPreferencesTopic: withResolver: withRejecter:)
     func getUserPreferencesTopic(topicId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
-        Courier.shared.getUserPreferencesTopic(
-            topicId: topicId as String,
-            onSuccess: { topic in
-                resolve(topic.toDictionary())
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
+//        Courier.shared.getUserPreferencesTopic(
+//            topicId: topicId as String,
+//            onSuccess: { topic in
+//                resolve(topic.toDictionary())
+//            },
+//            onFailure: { error in
+//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+//            }
+//        )
         
     }
     
     @objc(putUserPreferencesTopic: withStatus: withHasCustomRouting: withCustomRouting: withResolver: withRejecter:)
         func putUserPreferencesTopic(topicId: NSString, status: NSString, hasCustomRouting: Bool, customRouting: [NSString], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        Courier.shared.putUserPreferencesTopic(
-            topicId: topicId as String,
-            status: CourierUserPreferencesStatus(rawValue: status as String) ?? .unknown,
-            hasCustomRouting: hasCustomRouting,
-            customRouting: customRouting.map { CourierUserPreferencesChannel(rawValue: $0 as String) ?? .unknown },
-            onSuccess: {
-                resolve(nil)
-            },
-            onFailure: { error in
-                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-            }
-        )
+//        Courier.shared.putUserPreferencesTopic(
+//            topicId: topicId as String,
+//            status: CourierUserPreferencesStatus(rawValue: status as String) ?? .unknown,
+//            hasCustomRouting: hasCustomRouting,
+//            customRouting: customRouting.map { CourierUserPreferencesChannel(rawValue: $0 as String) ?? .unknown },
+//            onSuccess: {
+//                resolve(nil)
+//            },
+//            onFailure: { error in
+//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
+//            }
+//        )
         
     }
 

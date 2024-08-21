@@ -57,13 +57,13 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     UNNotificationContent *content = notification.request.content;
     NSDictionary *message = content.userInfo;
     
-    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventDelivered completionHandler:^(NSError *error)
-    {
-        if (error != nil) {
-            [self log:error];
-        }
-    }
-    ];
+//    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventDelivered completionHandler:^(NSError *error)
+//    {
+//        if (error != nil) {
+//            [self log:error];
+//        }
+//    }
+//    ];
     
     dispatch_async(dispatch_get_main_queue(), ^{
     
@@ -82,13 +82,13 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     UNNotificationContent *content = response.notification.request.content;
     NSDictionary *message = content.userInfo;
     
-    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventClicked completionHandler:^(NSError *error)
-    {
-        if (error != nil) {
-            [self log:error];
-        }
-    }
-    ];
+//    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventClicked completionHandler:^(NSError *error)
+//    {
+//        if (error != nil) {
+//            [self log:error];
+//        }
+//    }
+//    ];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
@@ -109,23 +109,23 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     
-    [[Courier shared]
-    setAPNSToken:deviceToken
-    onSuccess:^()
-    {
-        // Empty
-    }
-    onFailure:^(NSError *error)
-    {
-        [self log:error];
-    }
-    ];
+//    [[Courier shared]
+//    setAPNSToken:deviceToken
+//    onSuccess:^()
+//    {
+//        // Empty
+//    }
+//    onFailure:^(NSError *error)
+//    {
+//        [self log:error];
+//    }
+//    ];
     
 }
 
 - (void)log: (NSError*)error {
     NSString *err = [NSString stringWithFormat:@"%@", error];
-    [Courier log:err];
+//    [Courier log:err];
 }
 
 @end

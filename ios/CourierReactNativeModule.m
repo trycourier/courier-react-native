@@ -141,3 +141,14 @@ RCT_EXTERN_METHOD(
 }
 
 @end
+
+@interface RCT_EXTERN_MODULE(CourierClientModule, NSObject)
+
+RCT_EXTERN_METHOD(
+  getBrand: (NSString*)brandId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+@end
+
