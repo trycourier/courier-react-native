@@ -23,11 +23,24 @@ export class Tests {
       connectionId: undefined,
     });
 
-    const res = await client.brands.getBrand({
+    // Tokens
+
+    await client.tokens.putUserToken({
+      token: 'example',
+      provider: 'expo',
+    });
+
+    await client.tokens.deleteUserToken({
+      token: 'example',
+    });
+
+    // Brands
+
+    const brandRes = await client.brands.getBrand({
       brandId: Env.brandId,
     });
 
-    console.log(res);
+    client.remove();
 
   }
 

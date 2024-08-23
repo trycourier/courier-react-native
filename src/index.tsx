@@ -20,6 +20,7 @@ import { Events, Utils } from './utils';
 export { CourierClient } from './client/CourierClient';
 export { BrandClient } from './client/BrandClient';
 export { CourierBrandResponse } from './models/CourierBrand';
+export { CourierDevice } from './models/CourierDevice';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';

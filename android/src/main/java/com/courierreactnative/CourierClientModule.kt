@@ -1,6 +1,7 @@
 package com.courierreactnative
 
 import com.courier.android.client.CourierClient
+import com.courier.android.models.CourierDevice
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
@@ -46,6 +47,68 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
     return clientId
   }
 
+  // Tokens
+
+  @ReactMethod
+  fun putUserToken(clientId: String, token: String, provider: String, device: ReadableMap?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    if (reactActivity == null) {
+      promise.rejectMissingContext()
+      return@launch
+    }
+
+    val courierDevice = device?.let {
+      return@let CourierDevice(
+        appId = it.getString("appId"),
+        adId = it.getString("adId"),
+        deviceId = it.getString("deviceId"),
+        platform = it.getString("platform"),
+        manufacturer = it.getString("manufacturer"),
+        model = it.getString("model")
+      )
+    }
+
+    try {
+      client.tokens.putUserToken(
+        token = token,
+        provider = provider,
+        device = courierDevice ?: CourierDevice.current(reactActivity!!)
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun deleteUserToken(clientId: String, token: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.tokens.deleteUserToken(
+        token = token,
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  // Brands
+
   @ReactMethod
   fun getBrand(clientId: String, brandId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
 
@@ -56,13 +119,19 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
     }
 
     try {
-      val brand = client.brands.getBrand(brandId)
+      val brand = client.brands.getBrand(
+        brandId = brandId
+      )
       val json = brand.toJson()
       promise.resolve(json)
     } catch (e: Exception) {
       promise.apiError(e)
     }
 
+  }
+
+  private fun Promise.rejectMissingContext() {
+    reject("Missing Context", tag, null)
   }
 
   private fun Promise.rejectMissingClient() {

@@ -7,6 +7,7 @@
 
 import { BrandClient } from "..";
 import { ClientModule } from "./ClientModule";
+import { TokenClient } from "./TokenClient";
 
 export interface CourierClientOptions {
   userId: string;
@@ -20,7 +21,7 @@ export interface CourierClientOptions {
 export class CourierClient extends ClientModule {
 
   public readonly options: CourierClientOptions;
-  // tokens: TokenClient;
+  public readonly tokens: TokenClient;
   public readonly brands: BrandClient;
   // inbox: InboxClient;
   // preferences: PreferenceClient;
@@ -41,7 +42,7 @@ export class CourierClient extends ClientModule {
 
     this.options = options
 
-    // this.tokens = new TokenClient(this.options);
+    this.tokens = new TokenClient(this.clientId);
     this.brands = new BrandClient(this.clientId);
     // this.inbox = new InboxClient(this.options);
     // this.preferences = new PreferenceClient(this.options);
