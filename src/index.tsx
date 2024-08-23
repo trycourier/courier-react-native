@@ -30,6 +30,7 @@ export { CourierPushListener } from './models/CourierPushListener';
 export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
 export { CourierUserPreferencesChannel } from './models/CourierUserPreferences';
 export { CourierUserPreferencesStatus } from './models/CourierUserPreferences';
+export { CourierTrackingEvent } from './models/CourierTrackingEvent';
 export { CourierPushProvider } from './models/CourierPushProvider';
 export { CourierFont } from './models/CourierFont';
 export { CourierButton } from './models/CourierButton';

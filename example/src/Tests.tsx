@@ -1,7 +1,7 @@
 
 import { ExampleServer } from "./Utils";
 import Env from "./Env";
-import { CourierClient, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
+import { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
 
 export class Tests {
 
@@ -108,6 +108,13 @@ export class Tests {
       hasCustomRouting: true,
       customRouting: [CourierUserPreferencesChannel.Email, CourierUserPreferencesChannel.Push]
     });
+
+    // Tracking
+
+    await client.tracking.postTrackingUrl({
+      url: "https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy",
+      event: CourierTrackingEvent.Delivered,
+    })
 
     client.remove();
 

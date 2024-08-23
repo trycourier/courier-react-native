@@ -10,6 +10,7 @@ import { ClientModule } from "./ClientModule";
 import { InboxClient } from "./InboxClient";
 import { PreferenceClient } from "./PreferenceClient";
 import { TokenClient } from "./TokenClient";
+import { TrackingClient } from "./TrackingClient";
 
 export interface CourierClientOptions {
   userId: string;
@@ -27,8 +28,7 @@ export class CourierClient extends ClientModule {
   public readonly brands: BrandClient;
   public readonly inbox: InboxClient;
   public readonly preferences: PreferenceClient;
-  // preferences: PreferenceClient;
-  // tracking: TrackingClient;
+  public readonly tracking: TrackingClient;
 
   constructor(props: { userId: string, jwt?: string, clientKey?: string, connectionId?: string, tenantId?: string, showLogs?: boolean }) {
 
@@ -49,7 +49,7 @@ export class CourierClient extends ClientModule {
     this.brands = new BrandClient(this.clientId);
     this.inbox = new InboxClient(this.clientId);
     this.preferences = new PreferenceClient(this.clientId);
-    // this.tracking = new TrackingClient(this.options);
+    this.tracking = new TrackingClient(this.clientId);
     
   }
 

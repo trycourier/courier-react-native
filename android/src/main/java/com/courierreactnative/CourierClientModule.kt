@@ -4,6 +4,7 @@ import com.courier.android.client.CourierClient
 import com.courier.android.models.CourierDevice
 import com.courier.android.models.CourierPreferenceChannel
 import com.courier.android.models.CourierPreferenceStatus
+import com.courier.android.models.CourierTrackingEvent
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
@@ -396,6 +397,29 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
         status = CourierPreferenceStatus.fromString(status),
         hasCustomRouting = hasCustomRouting,
         customRouting = customRouting.toArrayList().map { CourierPreferenceChannel.fromString(it as String) },
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  // Tracking
+
+  @ReactMethod
+  fun postTrackingUrl(clientId: String, url: String, event: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.tracking.postTrackingUrl(
+        url = url,
+        event = CourierTrackingEvent.valueOf(event),
       )
       promise.resolve(null)
     } catch (e: Exception) {
