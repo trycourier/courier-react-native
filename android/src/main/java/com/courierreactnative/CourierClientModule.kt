@@ -2,9 +2,12 @@ package com.courierreactnative
 
 import com.courier.android.client.CourierClient
 import com.courier.android.models.CourierDevice
+import com.courier.android.models.CourierPreferenceChannel
+import com.courier.android.models.CourierPreferenceStatus
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -124,6 +127,277 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
       )
       val json = brand.toJson()
       promise.resolve(json)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  // Inbox
+
+  @ReactMethod
+  fun getMessages(clientId: String, paginationLimit: Int?, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      val res = client.inbox.getMessages(
+        paginationLimit = paginationLimit ?: 24,
+        startCursor = startCursor,
+      )
+      val json = res.toJson()
+      promise.resolve(json)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun getArchivedMessages(clientId: String, paginationLimit: Int?, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      val res = client.inbox.getArchivedMessages(
+        paginationLimit = paginationLimit ?: 24,
+        startCursor = startCursor,
+      )
+      val json = res.toJson()
+      promise.resolve(json)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun getMessageById(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      val res = client.inbox.getMessage(
+        messageId = messageId,
+      )
+      val json = res.toJson()
+      promise.resolve(json)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun getUnreadMessageCount(clientId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      val count = client.inbox.getUnreadMessageCount()
+      promise.resolve(count)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun openMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.inbox.open(
+        messageId = messageId,
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun readMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.inbox.read(
+        messageId = messageId,
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun unreadMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.inbox.unread(
+        messageId = messageId,
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun clickMessage(clientId: String, messageId: String, trackingId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.inbox.click(
+        messageId = messageId,
+        trackingId = trackingId,
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun archiveMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.inbox.archive(
+        messageId = messageId,
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun readAllMessages(clientId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.inbox.readAll()
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  // Preferences
+
+  @ReactMethod
+  fun getUserPreferences(clientId: String, paginationCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      val res = client.preferences.getUserPreferences(
+        paginationCursor = paginationCursor
+      )
+      val json = res.toJson()
+      promise.resolve(json)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun getUserPreferenceTopic(clientId: String, topicId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      val res = client.preferences.getUserPreferenceTopic(
+        topicId = topicId
+      )
+      val json = res.toJson()
+      promise.resolve(json)
+    } catch (e: Exception) {
+      promise.apiError(e)
+    }
+
+  }
+
+  @ReactMethod
+  fun putUserPreferenceTopic(clientId: String, topicId: String, status: String, hasCustomRouting: Boolean, customRouting: ReadableArray, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+
+    val client = clients[clientId]
+    if (client == null) {
+      promise.rejectMissingClient()
+      return@launch
+    }
+
+    try {
+      client.preferences.putUserPreferenceTopic(
+        topicId = topicId,
+        status = CourierPreferenceStatus.fromString(status),
+        hasCustomRouting = hasCustomRouting,
+        customRouting = customRouting.toArrayList().map { CourierPreferenceChannel.fromString(it as String) },
+      )
+      promise.resolve(null)
     } catch (e: Exception) {
       promise.apiError(e)
     }

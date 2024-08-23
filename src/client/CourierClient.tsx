@@ -7,6 +7,8 @@
 
 import { BrandClient } from "..";
 import { ClientModule } from "./ClientModule";
+import { InboxClient } from "./InboxClient";
+import { PreferenceClient } from "./PreferenceClient";
 import { TokenClient } from "./TokenClient";
 
 export interface CourierClientOptions {
@@ -23,7 +25,8 @@ export class CourierClient extends ClientModule {
   public readonly options: CourierClientOptions;
   public readonly tokens: TokenClient;
   public readonly brands: BrandClient;
-  // inbox: InboxClient;
+  public readonly inbox: InboxClient;
+  public readonly preferences: PreferenceClient;
   // preferences: PreferenceClient;
   // tracking: TrackingClient;
 
@@ -44,8 +47,8 @@ export class CourierClient extends ClientModule {
 
     this.tokens = new TokenClient(this.clientId);
     this.brands = new BrandClient(this.clientId);
-    // this.inbox = new InboxClient(this.options);
-    // this.preferences = new PreferenceClient(this.options);
+    this.inbox = new InboxClient(this.clientId);
+    this.preferences = new PreferenceClient(this.clientId);
     // this.tracking = new TrackingClient(this.options);
     
   }
