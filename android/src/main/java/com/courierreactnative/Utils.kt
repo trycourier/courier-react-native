@@ -16,6 +16,7 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.google.gson.GsonBuilder
 
 internal fun ReactContext.sendEvent(eventName: String, value: Any?) {
   getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java).emit(eventName, value)
@@ -108,12 +109,7 @@ internal fun InboxMessage.toWritableMap(): WritableMap {
   map.putBoolean("archived", isArchived)
 
   val trackingIds = Arguments.createMap()
-  trackingIds.putString("archiveTrackingId", archiveTrackingId)
-  trackingIds.putString("openTrackingId", openTrackingId)
   trackingIds.putString("clickTrackingId", clickTrackingId)
-  trackingIds.putString("deliverTrackingId", deliverTrackingId)
-  trackingIds.putString("unreadTrackingId", unreadTrackingId)
-  trackingIds.putString("readTrackingId", readTrackingId)
 
   map.putMap("trackingIds", trackingIds)
 
@@ -217,4 +213,8 @@ internal fun ReadableMap.toInfoViewStyle(context: Context): CourierStyles.InfoVi
     button = button?.toButton(context) ?: CourierStyles.Button()
   )
 
+}
+
+internal fun Any.toJson(): String {
+  return GsonBuilder().setPrettyPrinting().create().toJson(this)
 }

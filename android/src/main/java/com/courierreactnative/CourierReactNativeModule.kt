@@ -6,21 +6,14 @@ import com.courier.android.models.CourierAgent
 import com.courier.android.models.CourierAuthenticationListener
 import com.courier.android.models.CourierInboxListener
 import com.courier.android.models.CourierPreferenceChannel
-import com.courier.android.models.CourierPreferenceStatus
 import com.courier.android.models.InboxMessage
 import com.courier.android.models.remove
 import com.courier.android.modules.addAuthenticationListener
 import com.courier.android.modules.addInboxListener
 import com.courier.android.modules.clickMessage
-import com.courier.android.modules.fetchNextPageOfMessages
 import com.courier.android.modules.getToken
-import com.courier.android.modules.getUserPreferenceTopic
-import com.courier.android.modules.getUserPreferences
 import com.courier.android.modules.inboxPaginationLimit
-import com.courier.android.modules.isDebugging
 import com.courier.android.modules.isPushPermissionGranted
-import com.courier.android.modules.logListener
-import com.courier.android.modules.putUserPreferenceTopic
 import com.courier.android.modules.readAllInboxMessages
 import com.courier.android.modules.readMessage
 import com.courier.android.modules.refreshInbox
@@ -61,9 +54,9 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
     Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
 
     // Attach the log listener
-    Courier.shared.logListener = { data ->
-      reactContext.sendEvent(CourierEvents.Log.DEBUG_LOG, data)
-    }
+//    Courier.shared.logListener = { data ->
+//      reactContext.sendEvent(CourierEvents.Log.DEBUG_LOG, data)
+//    }
 
   }
 
@@ -79,8 +72,9 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun setDebugMode(isDebugging: Boolean): Boolean {
-    Courier.shared.isDebugging = isDebugging
-    return Courier.shared.isDebugging
+//    Courier.shared.isDebugging = isDebugging
+//    return Courier.shared.isDebugging
+    return false
   }
 
   @ReactMethod
@@ -324,14 +318,14 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
   @ReactMethod
   fun fetchNextPageOfMessages(promise: Promise) {
-    Courier.shared.fetchNextPageOfMessages(
-      onSuccess = { messages ->
-        promise.resolve(messages.toWritableArray())
-      },
-      onFailure = { e ->
-        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
-      }
-    )
+//    Courier.shared.fetchNextPageOfMessages(
+//      onSuccess = { messages ->
+//        promise.resolve(messages.toWritableArray())
+//      },
+//      onFailure = { e ->
+//        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
+//      }
+//    )
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
@@ -345,29 +339,29 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
     val cursor = if (paginationCursor != "") paginationCursor else null
 
-    Courier.shared.getUserPreferences(
-      paginationCursor = cursor,
-      onSuccess = { preferences ->
-        promise.resolve(preferences.toWritableMap())
-      },
-      onFailure = { e ->
-        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
-      }
-    )
+//    Courier.shared.getUserPreferences(
+//      paginationCursor = cursor,
+//      onSuccess = { preferences ->
+//        promise.resolve(preferences.toWritableMap())
+//      },
+//      onFailure = { e ->
+//        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
+//      }
+//    )
 
   }
 
   @ReactMethod
   fun getUserPreferencesTopic(topicId: String, promise: Promise) {
-    Courier.shared.getUserPreferenceTopic(
-      topicId = topicId,
-      onSuccess = { topic ->
-        promise.resolve(topic.toWritableMap())
-      },
-      onFailure = { e ->
-        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
-      }
-    )
+//    Courier.shared.getUserPreferenceTopic(
+//      topicId = topicId,
+//      onSuccess = { topic ->
+//        promise.resolve(topic.toWritableMap())
+//      },
+//      onFailure = { e ->
+//        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
+//      }
+//    )
   }
 
   @ReactMethod
@@ -375,18 +369,18 @@ class CourierReactNativeModule(reactContext: ReactApplicationContext) : ReactCon
 
     val routing = customRouting.toArrayList().map { CourierPreferenceChannel.fromString(it as String) }
 
-    Courier.shared.putUserPreferenceTopic(
-      topicId = topicId,
-      status = CourierPreferenceStatus.fromString(status),
-      hasCustomRouting = hasCustomRouting,
-      customRouting = routing,
-      onSuccess = {
-        promise.resolve(null)
-      },
-      onFailure = { e ->
-        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
-      }
-    )
+//    Courier.shared.putUserPreferenceTopic(
+//      topicId = topicId,
+//      status = CourierPreferenceStatus.fromString(status),
+//      hasCustomRouting = hasCustomRouting,
+//      customRouting = routing,
+//      onSuccess = {
+//        promise.resolve(null)
+//      },
+//      onFailure = { e ->
+//        promise.reject(CourierEvents.COURIER_ERROR_TAG, e)
+//      }
+//    )
 
   }
 
