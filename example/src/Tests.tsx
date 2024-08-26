@@ -43,17 +43,17 @@ export class Tests {
 
     // Inbox
 
-    const allMessages = await client.inbox.getMessages({
-      paginationLimit: 123,
-      startCursor: undefined,
-    });
-    console.log(JSON.stringify(allMessages));
-
     const archivedMessages = await client.inbox.getArchivedMessages({
       paginationLimit: 123,
       startCursor: undefined,
     });
     console.log(JSON.stringify(archivedMessages));
+
+    const allMessages = await client.inbox.getMessages({
+      paginationLimit: 123,
+      startCursor: undefined,
+    });
+    console.log(JSON.stringify(allMessages));
 
     const messageId = '1-666c88e3-2195b5495611a5b57ce0b134';
 
@@ -112,9 +112,9 @@ export class Tests {
     // Tracking
 
     await client.tracking.postTrackingUrl({
-      url: "https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy",
+      url: 'https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy',
       event: CourierTrackingEvent.Delivered,
-    })
+    });
 
     client.remove();
 

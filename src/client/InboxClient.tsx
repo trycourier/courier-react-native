@@ -10,12 +10,12 @@ export class InboxClient {
   }
 
   public async getMessages(props: { paginationLimit?: number, startCursor?: string }): Promise<CourierGetInboxMessagesResponse> {
-    const json = await Modules.Client.getMessages(this.clientId, props.paginationLimit, props.startCursor);
+    const json = await Modules.Client.getMessages(this.clientId, props.paginationLimit ?? 24, props.startCursor);
     return JSON.parse(json);
   }
 
   public async getArchivedMessages(props: { paginationLimit?: number, startCursor?: string }): Promise<CourierGetInboxMessagesResponse> {
-    const json = await Modules.Client.getArchivedMessages(this.clientId, props.paginationLimit, props.startCursor);
+    const json = await Modules.Client.getArchivedMessages(this.clientId, props.paginationLimit ?? 24, props.startCursor);
     return JSON.parse(json);
   }
 

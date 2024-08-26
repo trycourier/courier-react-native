@@ -153,8 +153,127 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
 )
 
 RCT_EXTERN_METHOD(
+  putUserToken: (NSString*)clientId
+  withToken: (NSString*)token
+  withProvider: (NSString*)provider
+  withDevice: (NSDictionary*)device
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  deleteUserToken: (NSString*)clientId
+  withToken: (NSString*)token
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
   getBrand: (NSString*)clientId
   withBrandId: (NSString*)brandId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getMessages: (NSString*)clientId
+  withPaginationLimit: (double)paginationLimit
+  withStartCursor: (NSString*)startCursor
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getArchivedMessages: (NSString*)clientId
+  withPaginationLimit: (double)paginationLimit
+  withStartCursor: (NSString*)startCursor
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getMessageById: (NSString*)clientId
+  withMessageId: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getUnreadMessageCount: (NSString*)clientId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  openMessage: (NSString*)clientId
+  withMessageId: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  readMessage: (NSString*)clientId
+  withMessageId: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  unreadMessage: (NSString*)clientId
+  withMessageId: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  clickMessage: (NSString*)clientId
+  withMessageId: (NSString*)messageId
+  withTrackingId: (NSString*)trackingId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  archiveMessage: (NSString*)clientId
+  withMessageId: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  readAllMessages: (NSString*)clientId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getUserPreferences: (NSString*)clientId
+  withPaginationCursor: (NSString*)paginationCursor
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getUserPreferenceTopic: (NSString*)clientId
+  withTopicId: (NSString*)topicId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  putUserPreferenceTopic: (NSString*)clientId
+  withTopicId: (NSString*)topicId
+  withStatus: (NSString*)status
+  withHasCustomRouting: (BOOL)hasCustomRouting
+  withCustomRouting: (NSArray<NSString*>*)customRouting
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  postTrackingUrl: (NSString*)clientId
+  withUrl: (NSString*)url
+  withEvent: (NSString*)event
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )

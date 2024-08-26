@@ -137,7 +137,7 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
   // Inbox
 
   @ReactMethod
-  fun getMessages(clientId: String, paginationLimit: Int?, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getMessages(clientId: String, paginationLimit: Int, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
 
     val client = clients[clientId]
     if (client == null) {
@@ -147,7 +147,7 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
 
     try {
       val res = client.inbox.getMessages(
-        paginationLimit = paginationLimit ?: 24,
+        paginationLimit = paginationLimit,
         startCursor = startCursor,
       )
       val json = res.toJson()
@@ -159,7 +159,7 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod
-  fun getArchivedMessages(clientId: String, paginationLimit: Int?, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getArchivedMessages(clientId: String, paginationLimit: Int, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
 
     val client = clients[clientId]
     if (client == null) {
@@ -169,7 +169,7 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
 
     try {
       val res = client.inbox.getArchivedMessages(
-        paginationLimit = paginationLimit ?: 24,
+        paginationLimit = paginationLimit,
         startCursor = startCursor,
       )
       val json = res.toJson()
