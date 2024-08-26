@@ -349,17 +349,25 @@ class CourierReactNativeModule: RCTEventEmitter {
             },
             onMessagesChanged: { [weak self] messages, unreadMessageCount, totalMessageCount, canPaginate in
                 
-                let json: [String: Any] = [
-                    "messages": messages.map { $0.toDictionary() },
-                    "unreadMessageCount": unreadMessageCount,
-                    "totalMessageCount": totalMessageCount,
-                    "canPaginate": canPaginate
-                ]
-                
-                self?.broadcastEvent(
-                    name: messagesId,
-                    body: json
-                )
+                do {
+                    
+                    let json: [String: Any] = [
+                        "messages": try messages.map { try $0.toJson() ?? "" },
+                        "unreadMessageCount": unreadMessageCount,
+                        "totalMessageCount": totalMessageCount,
+                        "canPaginate": canPaginate
+                    ]
+                    
+                    self?.broadcastEvent(
+                        name: messagesId,
+                        body: json
+                    )
+                    
+                } catch {
+                    
+                    Courier.shared.client?.error(error.localizedDescription)
+                    
+                }
                 
             }
         )

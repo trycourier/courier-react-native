@@ -1,10 +1,3 @@
-// import { CourierFlutterChannels } from 'courier_flutter_channels';
-// import { TokenClient } from 'client/token_client';
-// import { BrandClient } from 'client/brand_client';
-// import { InboxClient } from 'client/inbox_client';
-// import { PreferenceClient } from 'client/preference_client';
-// import { TrackingClient } from 'client/tracking_client';
-
 import { BrandClient } from "..";
 import { ClientModule } from "./ClientModule";
 import { InboxClient } from "./InboxClient";

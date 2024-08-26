@@ -148,8 +148,8 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                     paginationLimit: limit,
                     startCursor: startCursor
                 )
-//                let json = try res.toJson()
-                resolve(nil)
+                let json = try res.toJson()
+                resolve(json)
             } catch {
                 Rejections.apiError(reject, error: error)
             }
@@ -173,8 +173,8 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                     paginationLimit: limit,
                     startCursor: startCursor
                 )
-//                let json = try res.toJson()
-                resolve(nil)
+                let json = try res.toJson()
+                resolve(json)
             } catch {
                 Rejections.apiError(reject, error: error)
             }
@@ -194,8 +194,8 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
         Task {
             do {
                 let res = try await client.inbox.getMessage(messageId: messageId)
-//                let json = try res.toJson()
-                resolve(nil)
+                let json = try res.toJson()
+                resolve(json)
             } catch {
                 Rejections.apiError(reject, error: error)
             }
