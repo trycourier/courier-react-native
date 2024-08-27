@@ -1,11 +1,16 @@
 
 import { ExampleServer } from "./Utils";
 import Env from "./Env";
-import { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
+import Courier, { CourierClient, CourierPushProvider, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
 
 export class Tests {
 
   public static async run() {
+    await Tests.clientTests();
+    await Tests.sharedTests();
+  }
+
+  static async clientTests() {
 
     const userId = 'test_1';
 
@@ -117,6 +122,93 @@ export class Tests {
     });
 
     client.remove();
+
+  }
+
+  static async sharedTests() {
+
+    const userId = 'test_1';
+
+    const token = await ExampleServer.generateJwt({
+      authKey: Env.authKey,
+      userId: userId,
+    });
+
+    // Authentication
+
+    const authListener = Courier.shared.addAuthenticationListener({
+      onUserChanged: (userId?: string) => {
+        console.log(`User Changed: ${userId}`);
+      }
+    });
+
+    await Courier.shared.signIn({
+      userId: userId,
+      accessToken: token,
+      clientKey: Env.clientKey,
+      showLogs: true,
+    });
+
+    console.log({
+      userId: Courier.shared.userId,
+      tenantId: Courier.shared.tenantId,
+      isUserSignedIn: Courier.shared.isUserSignedIn,
+    });
+
+    authListener.remove();
+
+    // Push
+
+    const pushListener = Courier.shared.addPushNotificationListener({
+      onPushNotificationClicked: (message) => {
+        console.log(message);
+      },
+      onPushNotificationDelivered: (message) => {
+        console.log(message);
+      }
+    });
+
+    await Courier.shared.setTokenForProvider({
+      provider: CourierPushProvider.FIREBASE_FCM,
+      token: 'example',
+    });
+
+    console.log({
+      tokens: await Courier.shared.getAllTokens(),
+      token: await Courier.shared.getTokenForProvider({ 
+        provider: CourierPushProvider.FIREBASE_FCM,
+      }),
+    });
+
+    pushListener.remove();
+
+    // Inbox
+
+    const messageId = '1-666c88e3-2195b5495611a5b57ce0b134';
+
+    await Courier.shared.openMessage({
+      messageId: messageId,
+    });
+
+    await Courier.shared.clickMessage({
+      messageId: messageId,
+    });
+
+    await Courier.shared.readMessage({
+      messageId: messageId,
+    });
+
+    await Courier.shared.unreadMessage({
+      messageId: messageId,
+    });
+
+    await Courier.shared.archiveMessage({
+      messageId: messageId,
+    });
+
+    await Courier.shared.readAllInboxMessages();
+
+    await Courier.shared.signOut();
 
   }
 

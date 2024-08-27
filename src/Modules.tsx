@@ -8,15 +8,20 @@ export class Modules {
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-  static readonly Client = NativeModules.CourierClientModule
-  ? NativeModules.CourierClientModule
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(Modules.LINKING_ERROR);
-        },
-      }
-    );
+  static readonly Client = Modules.getNativeModule(NativeModules.CourierClientModule);
+  static readonly Shared = Modules.getNativeModule(NativeModules.CourierSharedModule);
+
+  static getNativeModule<T>(nativeModule: T | undefined): T {
+    return nativeModule
+      ? nativeModule
+      : new Proxy(
+          {},
+          {
+            get() {
+              throw new Error(Modules.LINKING_ERROR);
+            },
+          }
+        ) as T;
+  }
 
 }

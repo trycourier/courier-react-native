@@ -174,14 +174,19 @@ internal extension Encodable {
 
 internal class Rejections {
     
-    private static let TAG = "Client Error"
+    private static let CLIENT_TAG = "Courier Client Error"
+    private static let SHARED_TAG = "Courier SDK Error"
     
     static func missingClient(_ reject: @escaping RCTPromiseRejectBlock) {
-        reject("Missing Client", Rejections.TAG, nil)
+        reject("Missing Client", Rejections.CLIENT_TAG, nil)
     }
     
-    static func apiError(_ reject: @escaping RCTPromiseRejectBlock, error: Error) {
-        reject(String(describing: error), Rejections.TAG, nil)
+    static func clientError(_ reject: @escaping RCTPromiseRejectBlock, error: Error) {
+        reject(String(describing: error), Rejections.CLIENT_TAG, nil)
+    }
+    
+    static func sharedError(_ reject: @escaping RCTPromiseRejectBlock, error: Error) {
+        reject(String(describing: error), Rejections.SHARED_TAG, nil)
     }
     
 }

@@ -75,7 +75,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
         
@@ -98,7 +98,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -123,7 +123,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 let json = try brand.toJson()
                 resolve(json)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
         
@@ -151,7 +151,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 let json = try res.toJson()
                 resolve(json)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -176,7 +176,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 let json = try res.toJson()
                 resolve(json)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -197,7 +197,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 let json = try res.toJson()
                 resolve(json)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -215,7 +215,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 let count = try await client.inbox.getUnreadMessageCount()
                 resolve(count)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -237,7 +237,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -259,7 +259,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -281,7 +281,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -305,7 +305,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -327,7 +327,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -345,7 +345,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 try await client.inbox.readAll()
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -368,7 +368,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 let json = try res.toJson()
                 resolve(json)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -391,7 +391,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 let json = try res.toJson()
                 resolve(json)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -418,7 +418,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }
@@ -442,7 +442,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 )
                 resolve(nil)
             } catch {
-                Rejections.apiError(reject, error: error)
+                Rejections.clientError(reject, error: error)
             }
         }
     }

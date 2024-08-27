@@ -124,9 +124,13 @@ const InboxStyled = () => {
           light: getTheme(false),
           dark: getTheme(true)
         }}
-        onClickInboxMessageAtIndex={(message, _index) => {
-          console.log(message)
-          message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
+        onClickInboxMessageAtIndex={async (message, _index) => {
+          console.log(message);
+          if (message.read) {
+            await Courier.shared.unreadMessage({ messageId: message.messageId });
+          } else {
+            await Courier.shared.readMessage({ messageId: message.messageId });
+          }
         }}
         onClickInboxActionForMessageAtIndex={(action, _message, _index) => {
           console.log(action);

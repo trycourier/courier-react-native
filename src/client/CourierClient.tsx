@@ -27,7 +27,7 @@ export class CourierClient extends ClientModule {
 
     const options = {
       userId: props.userId,
-      showLogs: props.showLogs ?? process.env.NODE_ENV === 'development',
+      showLogs: props.showLogs ?? __DEV__,
       jwt: props.jwt,
       clientKey: props.clientKey,
       connectionId: props.clientKey,

@@ -1,9 +1,7 @@
 import Courier_iOS
 
-@objc(CourierReactNativeModule)
-class CourierReactNativeModule: RCTEventEmitter {
-
-    private static let COURIER_ERROR_TAG = "Courier iOS SDK Error"
+@objc(CourierSharedModule)
+class CourierSharedModule: RCTEventEmitter {
     
     class LogEvents {
         internal static let DEBUG_LOG = "courierDebugEvent"
@@ -14,11 +12,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         internal static let DELIVERED_EVENT = "pushNotificationDelivered"
     }
     
-    private var events = [String]()
-    
-    // Listeners
-    private var authListeners: [String: CourierAuthenticationListener] = [:]
-    private var inboxListeners: [String: CourierInboxListener] = [:]
+    private var nativeEmitters = [String]()
     
     private var lastClickedMessage: [AnyHashable: Any]? = nil
     private var notificationCenter: NotificationCenter {
@@ -26,6 +20,10 @@ class CourierReactNativeModule: RCTEventEmitter {
             return NotificationCenter.default
         }
     }
+    
+    // Listeners
+    private var authenticationListeners: [String: CourierAuthenticationListener] = [:]
+    private var inboxListeners: [String: CourierInboxListener] = [:]
 
     override init() {
         super.init()
@@ -38,32 +36,10 @@ class CourierReactNativeModule: RCTEventEmitter {
         attachObservers()
                 
     }
-    
-    override func startObserving() {
-
-//        // Setup debug listeners
-//        Courier.shared.logListener = { log in
-//            self.broadcastEvent(
-//                name: CourierReactNativeModule.LogEvents.DEBUG_LOG,
-//                body: log
-//            )
-//        }
-
-    }
 
     override func stopObserving() {
-        removeAuthListeners()
+        removeAllAuthenticationListeners()
         removeInboxListeners()
-    }
-    
-    private func removeAuthListeners() {
-        
-        authListeners.forEach { key, value in
-            value.remove()
-        }
-        
-        authListeners.removeAll()
-        
     }
     
     private func removeInboxListeners() {
@@ -81,52 +57,15 @@ class CourierReactNativeModule: RCTEventEmitter {
         notificationCenter.addObserver(
             self,
             selector: #selector(pushNotificationClicked),
-            name: Notification.Name(rawValue: CourierReactNativeModule.PushEvents.CLICKED_EVENT),
+            name: Notification.Name(rawValue: CourierSharedModule.PushEvents.CLICKED_EVENT),
             object: nil
         )
         
         notificationCenter.addObserver(
             self,
             selector: #selector(pushNotificationDelivered),
-            name: Notification.Name(rawValue: CourierReactNativeModule.PushEvents.DELIVERED_EVENT),
+            name: Notification.Name(rawValue: CourierSharedModule.PushEvents.DELIVERED_EVENT),
             object: nil
-        )
-        
-    }
-    
-    @objc(setDebugMode:)
-    func setDebugMode(isDebugging: Bool) -> String {
-        return "TODO"
-//        Courier.shared.isDebugging = isDebugging
-//        return String(describing: Courier.shared.isDebugging)
-    }
-    
-    private func sendMessage(name: String, message: [AnyHashable: Any]?) {
-        
-        guard let message = message else {
-            return
-        }
-     
-        do {
-            broadcastEvent(
-                name: name,
-                body: try message.toString()
-            )
-        } catch {
-//            Courier.log(String(describing: error))
-        }
-        
-    }
-    
-    private func broadcastEvent(name: String, body: Any?) {
-        
-        if (!supportedEvents().contains(name)) {
-            return
-        }
-        
-        sendEvent(
-            withName: name,
-            body: body
         )
         
     }
@@ -135,7 +74,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
         lastClickedMessage = notification.userInfo
         sendMessage(
-            name: CourierReactNativeModule.PushEvents.CLICKED_EVENT,
+            name: CourierSharedModule.PushEvents.CLICKED_EVENT,
             message: lastClickedMessage
         )
         
@@ -144,7 +83,7 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc private func pushNotificationDelivered(notification: Notification) {
         
         sendMessage(
-            name: CourierReactNativeModule.PushEvents.DELIVERED_EVENT,
+            name: CourierSharedModule.PushEvents.DELIVERED_EVENT,
             message: notification.userInfo
         )
         
@@ -153,13 +92,13 @@ class CourierReactNativeModule: RCTEventEmitter {
     @objc func registerPushNotificationClickedOnKilledState() {
         
         sendMessage(
-            name: CourierReactNativeModule.PushEvents.CLICKED_EVENT,
+            name: CourierSharedModule.PushEvents.CLICKED_EVENT,
             message: lastClickedMessage
         )
         
     }
     
-    @objc(getNotificationPermissionStatus: withRejecter:)
+    @objc(getNotificationPermissionStatus:withRejecter:)
     func getNotificationPermissionStatus(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
         Courier.getNotificationPermissionStatus { status in
@@ -168,7 +107,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
 
-    @objc(requestNotificationPermission: withRejecter:)
+    @objc(requestNotificationPermission:withRejecter:)
     func requestNotificationPermission(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
         Courier.requestNotificationPermission { status in
@@ -176,104 +115,7 @@ class CourierReactNativeModule: RCTEventEmitter {
         }
         
     }
-
-    @objc(signIn: withClientKey: withUserId: withTenantId: withResolver: withRejecter:)
-    func signIn(accessToken: NSString, clientKey: NSString?, userId: NSString, tenantId: NSString?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-      
-//        Courier.shared.signIn(
-//           accessToken: accessToken as String,
-//           clientKey: clientKey as? String,
-//           userId: userId as String,
-//           tenantId: tenantId as? String
-//        ) {
-//            resolve(nil)
-//        }
-      
-    }
-
-    @objc(signOut: withRejecter:)
-    func signOut(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-//        Courier.shared.signOut {
-//            resolve(nil)
-//        }
-        
-    }
-
-    @objc func getUserId() -> String? {
-        return Courier.shared.userId
-    }
     
-    @objc func getTenantId() -> String? {
-        return Courier.shared.tenantId
-    }
-
-    @objc(addAuthenticationListener:)
-    func addAuthenticationListener(authId: String) -> String {
-        
-        events.append(authId)
-        
-        let listener = Courier.shared.addAuthenticationListener { [weak self] userId in
-            self?.broadcastEvent(
-                name: authId,
-                body: userId
-            )
-        }
-        
-        let id = UUID().uuidString
-        authListeners[id] = listener
-        
-        return id
-        
-    }
-    
-    @objc(removeAuthenticationListener:)
-    func removeAuthenticationListener(listenerId: NSString) -> String {
-        
-        let id = listenerId as String
-        
-        let listener = authListeners[id]
-        
-        // Disable the listener
-        listener?.remove()
-        
-        // Remove the id from the map
-        authListeners.removeValue(forKey: id)
-        
-        return id
-        
-    }
-
-    @objc(setToken: withToken: withResolver: withRejecter:)
-    func setToken(key: NSString, token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
-//        Courier.shared.setToken(
-//            providerKey: key as String,
-//            token: token as String,
-//            onSuccess: {
-//                resolve(nil)
-//            },
-//            onFailure: { error in
-//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-//            }
-//        )
-    
-    }
-    
-    @objc(getToken: withResolver: withRejecter:)
-    func getToken(key: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
-        let provider = key as String
-        
-        Task {
-            
-//            let token = await Courier.shared.getToken(providerKey: provider)
-//            resolve(token)
-            
-        }
-        
-    }
-
     @objc(iOSForegroundPresentationOptions:)
     func iOSForegroundPresentationOptions(params: NSDictionary) -> String {
         
@@ -288,38 +130,247 @@ class CourierReactNativeModule: RCTEventEmitter {
         
     }
     
-    @objc(clickMessage:)
-    func clickMessage(messageId: NSString) -> String {
-        let id = messageId as String
-//        Courier.shared.clickMessage(messageId: id)
-        return id
+    // MARK: Authentication
+    
+    @objc func getUserId() -> String? {
+        return Courier.shared.userId
     }
     
-    @objc(readMessage:)
-    func readMessage(messageId: NSString) -> String {
-        let id = messageId as String
-//        Courier.shared.readMessage(messageId: id)
-        return id
+    @objc func getTenantId() -> String? {
+        return Courier.shared.tenantId
     }
     
-    @objc(unreadMessage:)
-    func unreadMessage(messageId: NSString) -> String {
-        let id = messageId as String
-//        Courier.shared.unreadMessage(messageId: id)
-        return id
+    @objc func getIsUserSignedIn() -> String {
+        return String(Courier.shared.isUserSignedIn)
     }
-    
-    @objc(readAllInboxMessages: withRejecter:)
-    func readAllInboxMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+
+    @objc(signIn:withClientKey:withUserId:withTenantId:withShowLogs:withResolver:withRejecter:)
+    func signIn(accessToken: NSString, clientKey: NSString?, userId: NSString, tenantId: NSString?, showLogs: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-//        Courier.shared.readAllInboxMessages(
-//            onSuccess: {
-//                resolve(nil)
-//            },
-//            onFailure: { error in
-//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-//            }
-//        )
+        let userId = userId as String
+        let tenantId = tenantId as? String
+        let accessToken = accessToken as String
+        let clientKey = clientKey as? String
+        
+        Task {
+            
+            await Courier.shared.signIn(
+                userId: userId,
+                tenantId: tenantId,
+                accessToken: accessToken,
+                clientKey: clientKey,
+                showLogs: showLogs
+            )
+            
+            resolve(nil)
+            
+        }
+      
+    }
+
+    @objc(signOut:withRejecter:)
+    func signOut(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        
+        Task {
+            await Courier.shared.signOut()
+            resolve(nil)
+        }
+        
+    }
+
+    @objc(addAuthenticationListener:)
+    func addAuthenticationListener(listenerId: String) -> String {
+        
+        nativeEmitters.append(listenerId)
+        
+        let listener = Courier.shared.addAuthenticationListener { [weak self] userId in
+            self?.broadcastEvent(
+                name: listenerId,
+                body: userId
+            )
+        }
+        
+        authenticationListeners[listenerId] = listener
+        
+        return listenerId
+        
+    }
+    
+    @objc(removeAuthenticationListener:)
+    func removeAuthenticationListener(listenerId: NSString) -> String {
+        
+        let id = listenerId as String
+        
+        let listener = authenticationListeners[id]
+        
+        // Disable the listener
+        listener?.remove()
+        
+        // Remove the id from the map
+        authenticationListeners.removeValue(forKey: id)
+        
+        return id
+        
+    }
+    
+    @discardableResult @objc func removeAllAuthenticationListeners() -> String? {
+        
+        for value in authenticationListeners.values {
+            value.remove()
+        }
+        
+        authenticationListeners.removeAll()
+        
+        return nil
+        
+    }
+    
+    // MARK: Push
+    
+    @objc(getAllTokens:withRejecter:)
+    func getAllTokens(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        Task {
+            
+            let tokens = await Courier.shared.tokens
+            resolve(tokens)
+            
+        }
+        
+    }
+    
+    @objc(getToken:withResolver:withRejecter:)
+    func getToken(provider: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let provider = provider as String
+        
+        Task {
+            
+            let token = await Courier.shared.getToken(for: provider)
+            resolve(token)
+            
+        }
+        
+    }
+
+    @objc(setToken:withToken:withResolver:withRejecter:)
+    func setToken(provider: NSString, token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let provider = provider as String
+        let token = token as String
+        
+        Task {
+            
+            do {
+                
+                try await Courier.shared.setToken(
+                    for: provider,
+                    token: token
+                )
+                
+                resolve(nil)
+                
+            } catch {
+                
+                Rejections.sharedError(reject, error: error)
+                
+            }
+            
+        }
+    
+    }
+    
+    @objc(openMessage:withResolver:withRejecter:)
+    func openMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let id = messageId as String
+        
+        Task {
+            do {
+                try await Courier.shared.openMessage(id)
+                resolve(nil)
+            } catch {
+                Rejections.sharedError(reject, error: error)
+            }
+        }
+        
+    }
+    
+    @objc(archiveMessage:withResolver:withRejecter:)
+    func archiveMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let id = messageId as String
+        
+        Task {
+            do {
+                try await Courier.shared.archiveMessage(id)
+                resolve(nil)
+            } catch {
+                Rejections.sharedError(reject, error: error)
+            }
+        }
+        
+    }
+    
+    @objc(clickMessage:withResolver:withRejecter:)
+    func clickMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let id = messageId as String
+        
+        Task {
+            do {
+                try await Courier.shared.clickMessage(id)
+                resolve(nil)
+            } catch {
+                Rejections.sharedError(reject, error: error)
+            }
+        }
+        
+    }
+    
+    @objc(readMessage:withResolver:withRejecter:)
+    func readMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        let id = messageId as String
+        
+        Task {
+            do {
+                try await Courier.shared.readMessage(id)
+                resolve(nil)
+            } catch {
+                Rejections.sharedError(reject, error: error)
+            }
+        }
+        
+    }
+    
+    @objc(unreadMessage:withResolver:withRejecter:)
+    func unreadMessage(messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+
+        let id = messageId as String
+        
+        Task {
+            do {
+                try await Courier.shared.readMessage(id)
+                resolve(nil)
+            } catch {
+                Rejections.sharedError(reject, error: error)
+            }
+        }
+        
+    }
+    
+    @objc(readAllInboxMessages:withRejecter:)
+    func readAllInboxMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        
+        Task {
+            do {
+                try await Courier.shared.readAllInboxMessages()
+                resolve(nil)
+            } catch {
+                Rejections.sharedError(reject, error: error)
+            }
+        }
         
     }
     
@@ -327,7 +378,7 @@ class CourierReactNativeModule: RCTEventEmitter {
     func addInboxListener(loadingId: String, errorId: String, messagesId: String) -> String {
         
         // Add the events
-        events.append(contentsOf: [loadingId, errorId, messagesId])
+        nativeEmitters.append(contentsOf: [loadingId, errorId, messagesId])
         
         // Create the new listener
         let listener = Courier.shared.addInboxListener(
@@ -424,69 +475,16 @@ class CourierReactNativeModule: RCTEventEmitter {
         Courier.shared.inboxPaginationLimit = Int(limit)
         return String(describing: Courier.shared.inboxPaginationLimit)
     }
-    
-    @objc(getUserPreferences: withResolver: withRejecter:)
-    func getUserPreferences(paginationCursor: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
-        let cursor = paginationCursor != "" ? paginationCursor as String : nil
-        
-//        Courier.shared.getUserPreferences(
-//            paginationCursor: cursor,
-//            onSuccess: { preferences in
-//                resolve(preferences.toDictionary())
-//            },
-//            onFailure: { error in
-//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-//            }
-//        )
-        
-    }
-    
-    @objc(getUserPreferencesTopic: withResolver: withRejecter:)
-    func getUserPreferencesTopic(topicId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
-//        Courier.shared.getUserPreferencesTopic(
-//            topicId: topicId as String,
-//            onSuccess: { topic in
-//                resolve(topic.toDictionary())
-//            },
-//            onFailure: { error in
-//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-//            }
-//        )
-        
-    }
-    
-    @objc(putUserPreferencesTopic: withStatus: withHasCustomRouting: withCustomRouting: withResolver: withRejecter:)
-    func putUserPreferencesTopic(topicId: NSString, status: NSString, hasCustomRouting: Bool, customRouting: [NSString], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-
-//        Courier.shared.putUserPreferencesTopic(
-//            topicId: topicId as String,
-//            status: CourierUserPreferencesStatus(rawValue: status as String) ?? .unknown,
-//            hasCustomRouting: hasCustomRouting,
-//            customRouting: customRouting.map { CourierUserPreferencesChannel(rawValue: $0 as String) ?? .unknown },
-//            onSuccess: {
-//                resolve(nil)
-//            },
-//            onFailure: { error in
-//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-//            }
-//        )
-        
-    }
 
     override func supportedEvents() -> [String]! {
         
-        // Built in events
         var allEvents = [
-            CourierReactNativeModule.LogEvents.DEBUG_LOG,
-            CourierReactNativeModule.PushEvents.CLICKED_EVENT,
-            CourierReactNativeModule.PushEvents.DELIVERED_EVENT
+            CourierSharedModule.LogEvents.DEBUG_LOG,
+            CourierSharedModule.PushEvents.CLICKED_EVENT,
+            CourierSharedModule.PushEvents.DELIVERED_EVENT
         ]
         
-        allEvents.append(contentsOf: events)
-//        let authIds = authListeners.map { $0.value.authId }
-//        events.append(contentsOf: authIds)
+        allEvents.append(contentsOf: nativeEmitters)
         
         return allEvents
         
@@ -494,6 +492,38 @@ class CourierReactNativeModule: RCTEventEmitter {
     
     @objc override static func requiresMainQueueSetup() -> Bool {
         return true
+    }
+    
+    // MARK: Broadcasting
+    
+    private func sendMessage(name: String, message: [AnyHashable: Any]?) {
+        
+        guard let message = message else {
+            return
+        }
+     
+        do {
+            broadcastEvent(
+                name: name,
+                body: try message.toString()
+            )
+        } catch {
+            Courier.shared.client?.log(String(describing: error))
+        }
+        
+    }
+    
+    private func broadcastEvent(name: String, body: Any?) {
+        
+        if (!supportedEvents().contains(name)) {
+            return
+        }
+        
+        sendEvent(
+            withName: name,
+            body: body
+        )
+        
     }
     
 }

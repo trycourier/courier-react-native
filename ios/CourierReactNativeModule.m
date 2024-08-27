@@ -1,6 +1,6 @@
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(CourierReactNativeModule, NSObject)
+@interface RCT_EXTERN_MODULE(CourierSharedModule, NSObject)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   setDebugMode: (BOOL)isDebugging
@@ -15,6 +15,7 @@ RCT_EXTERN_METHOD(
   withClientKey: (NSString*)clientKey
   withUserId: (NSString*)userId
   withTenantId: (NSString*)tenantId
+  withShowLogs: (BOOL*)showLogs
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )
@@ -33,11 +34,37 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getIsUserSignedIn
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   addAuthenticationListener: (NSString*)authId
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   removeAuthenticationListener: (NSString*)listenerId
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  removeAllAuthenticationListeners
+)
+
+RCT_EXTERN_METHOD(
+  getAllTokens: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getToken: (NSString*)provider
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  setToken: (NSString*)provider
+  withToken: (NSString*)token
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
@@ -51,28 +78,33 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN_METHOD(
-  setToken: (NSString*)key
-  withToken: (NSString*)token
+  openMessage: (NSString*)messageId
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
-  getToken: (NSString*)key
+  archiveMessage: (NSString*)messageId
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   clickMessage: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   readMessage: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   unreadMessage: (NSString*)messageId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
@@ -102,33 +134,6 @@ RCT_EXTERN_METHOD(
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   setInboxPaginationLimit: (double)limit
-)
-
-RCT_EXTERN_METHOD(
-  getUserPreferences: (NSString*)paginationCursor
-  withResolver: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
-)
-
-RCT_EXTERN_METHOD(
-  getUserPreferencesTopic: (NSString*)topicId
-  withResolver: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
-)
-
-RCT_EXTERN_METHOD(
-  getUserPreferencesTopic: (NSString*)topicId
-  withResolver: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
-)
-
-RCT_EXTERN_METHOD(
-  putUserPreferencesTopic: (NSString*)topicId
-  withStatus: (NSString*)status
-  withHasCustomRouting: (BOOL*)hasCustomRouting
-  withCustomRouting: (NSArray*)customRouting
-  withResolver: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
@@ -277,6 +282,11 @@ RCT_EXTERN_METHOD(
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )
+
++ (BOOL)requiresMainQueueSetup
+{
+  return YES;
+}
 
 @end
 

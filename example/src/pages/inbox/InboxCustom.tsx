@@ -59,10 +59,10 @@ const InboxCustom = () => {
 
     const isRead = props.message.read;
 
-    function toggleMessage() {
+    async function toggleMessage() {
       const messageId = props.message.messageId;
-      Courier.shared.clickMessage({ messageId: messageId });
-      const message = isRead ? Courier.shared.unreadMessage({ messageId: messageId }) : Courier.shared.readMessage({ messageId: messageId });
+      await Courier.shared.clickMessage({ messageId: messageId });
+      const message = isRead ? await Courier.shared.unreadMessage({ messageId: messageId }) : await Courier.shared.readMessage({ messageId: messageId });
       console.log(message);
     }
 
