@@ -1,7 +1,7 @@
 import Courier, { CourierUserPreferencesTopic } from "@trycourier/courier-react-native";
 import { addListener } from "../../Emitter";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, Platform, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => void }) => {
 
@@ -12,7 +12,12 @@ const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => vo
       width: SCREEN_WIDTH,
     },
     text: {
-      fontFamily: 'monospace'
+      fontFamily: Platform.select({
+        ios: 'Courier',
+        android: 'monospace',
+        default: 'monospace',
+      }),
+      fontSize: 16,
     }
   });
   

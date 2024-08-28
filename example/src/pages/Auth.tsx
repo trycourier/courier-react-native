@@ -1,6 +1,6 @@
 import Courier from "@trycourier/courier-react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Button, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Button, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Env from "../Env";
 import { ExampleServer } from "../Utils";
 
@@ -124,6 +124,12 @@ const Auth = () => {
     },
     text: {
       marginBottom: 10,
+      fontFamily: Platform.select({
+        ios: 'Courier',
+        android: 'monospace',
+        default: 'monospace',
+      }),
+      fontSize: 16,
     },
   });
 
@@ -142,6 +148,11 @@ const Auth = () => {
       },
       buttonText: {
         fontSize: 16,
+        fontFamily: Platform.select({
+          ios: 'Courier',
+          android: 'monospace',
+          default: 'monospace',
+        }),
       },
       modalContainer: {
         flex: 1,

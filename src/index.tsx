@@ -134,7 +134,7 @@ class Courier {
       connectionId: clientObj.connectionId,
       tenantId: clientObj.tenantId,
     });
-    
+
   }
 
   // Authentication
@@ -221,7 +221,12 @@ class Courier {
   // Push
 
   public async getAllTokens(): Promise<Map<string, string>> {
-    return await Modules.Shared.getAllTokens();
+    const tokensObject = await Modules.Shared.getAllTokens();
+    const tokensMap = new Map<string, string>();
+    for (const [key, value] of Object.entries(tokensObject)) {
+      tokensMap.set(key, value as string);
+    }
+    return tokensMap;
   }
 
   // TODO: Describe 
@@ -286,6 +291,13 @@ class Courier {
       this.pushListeners.delete(props.listenerId);
     }
     return props.listenerId;
+  }
+
+  public removeAllPushNotificationListeners() {
+    this.pushListeners.forEach((listener) => {
+      listener.remove();
+    });
+    this.pushListeners.clear();
   }
 
   // Inbox

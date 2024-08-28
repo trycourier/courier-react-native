@@ -6,8 +6,8 @@ import Courier, { CourierClient, CourierPushProvider, CourierTrackingEvent, Cour
 export class Tests {
 
   public static async run() {
-    // await Tests.clientTests();
-    // await Tests.sharedTests();
+    await Tests.clientTests();
+    await Tests.sharedTests();
   }
 
   static async clientTests() {
@@ -163,7 +163,7 @@ export class Tests {
     const client = Courier.shared.client;
     console.log(client?.options);
 
-    const preferences = await client?.preferences.getUserPreferences({});
+    const preferences = await client?.preferences.getUserPreferences();
     console.log(JSON.stringify(preferences));
 
     // Push
@@ -234,15 +234,15 @@ export class Tests {
       },
       onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
         console.log('onMessagesChanged');
-        console.log(messages);
+        console.log(messages.length > 0 ? messages[0]?.messageId : 'No messages');
         console.log(unreadMessageCount);
         console.log(totalMessageCount);
         console.log(canPaginate);
       },
     });
 
-    inboxListener.remove();
-    Courier.shared.removeAllInboxListeners();
+    // inboxListener.remove();
+    // Courier.shared.removeAllInboxListeners();
 
     // Reset
 

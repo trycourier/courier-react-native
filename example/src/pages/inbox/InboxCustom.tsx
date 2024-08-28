@@ -53,7 +53,12 @@ const InboxCustom = () => {
       },
       text: {
         width: Platform.OS === 'ios' ? undefined : '100%',
-        fontFamily: 'monospace',
+        fontFamily: Platform.select({
+          ios: 'Courier',
+          android: 'monospace',
+          default: 'monospace',
+        }),
+        fontSize: 16,
       },
     });
 

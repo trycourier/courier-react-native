@@ -17,7 +17,7 @@ const Home = () => {
 
   useEffect(() => {
 
-    Tests.run();
+    // Tests.run();
 
     // Setup Push
 

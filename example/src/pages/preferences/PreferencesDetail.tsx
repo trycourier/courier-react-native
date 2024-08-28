@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Button, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { ActivityIndicator, Button, Platform, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
 import Courier, { CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
 import { emitEvent } from "../../Emitter";
@@ -20,7 +20,12 @@ const PreferencesDetail = ({ route, navigation }: any) => {
       borderBottomColor: '#ccc',
     },
     text: {
-      fontFamily: 'monospace'
+      fontFamily: Platform.select({
+        ios: 'Courier',
+        android: 'monospace',
+        default: 'monospace',
+      }),
+      fontSize: 16,
     },
     section: {
       marginBottom: 20,

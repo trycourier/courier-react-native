@@ -52,27 +52,39 @@ class CourierSystemModule: RCTEventEmitter {
         // Cache the last clicked message
         lastClickedMessage = notification.userInfo
         
+        guard let message = lastClickedMessage else {
+            return
+        }
+        
         self.broadcast(
             name: PushEvents.CLICKED_EVENT,
-            message: lastClickedMessage
+            message: message
         )
         
     }
 
     @objc private func pushNotificationDelivered(notification: Notification) {
         
+        guard let message = notification.userInfo else {
+            return
+        }
+        
         self.broadcast(
             name: PushEvents.DELIVERED_EVENT,
-            message: notification.userInfo
+            message: message
         )
         
     }
     
     @objc func registerPushNotificationClickedOnKilledState() {
         
+        guard let message = lastClickedMessage else {
+            return
+        }
+        
         broadcast(
             name: PushEvents.CLICKED_EVENT,
-            message: lastClickedMessage
+            message: message
         )
         
     }
