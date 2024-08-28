@@ -284,7 +284,7 @@ class CourierSharedModule: RCTEventEmitter {
         
         Task {
             do {
-                try await Courier.shared.readMessage(id)
+                try await Courier.shared.unreadMessage(id)
                 resolve(nil)
             } catch {
                 Rejections.sharedError(reject, error: error)
