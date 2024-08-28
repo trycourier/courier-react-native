@@ -33,9 +33,9 @@ const Push = () => {
 
     setIsLoading(true);
 
-    const requestStatus = await Courier.shared.requestNotificationPermission();
+    const requestStatus = await Courier.requestNotificationPermission();
     console.log('Request Notification Status: ' + requestStatus);
-    console.log('Get Notification Status: ' + await Courier.shared.getNotificationPermissionStatus());
+    console.log('Get Notification Status: ' + await Courier.getNotificationPermissionStatus());
 
     // Example of setting an expo token
     await Courier.shared.setTokenForProvider({
@@ -86,7 +86,7 @@ const Push = () => {
   };
 
   const handleButtonPress = () => {
-    Courier.shared.requestNotificationPermission();
+    Courier.requestNotificationPermission();
   };
   
   return (

@@ -57,9 +57,14 @@ const PreferencesDetail = ({ route, navigation }: any) => {
   }, []);
 
   async function getTopic(topicId: string) {
+
+    if (!Courier.shared.client) {
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const topic = await Courier.shared.getUserPreferencesTopic({ topicId });
+      const topic = await Courier.shared.client.preferences.getUserPreferenceTopic({ topicId });
       setStatusIndex(statuses.findIndex(status => status.status === topic.status) || 0);
       setUseCustomRouting(topic.hasCustomRouting || false);
       setRoutingChannels(topic.customRouting || []);
@@ -71,10 +76,15 @@ const PreferencesDetail = ({ route, navigation }: any) => {
   }
 
   async function savePreferences() {
+
+    if (!Courier.shared.client) {
+      return;
+    }
+
     setIsLoading(true);
     try {
 
-      await Courier.shared.putUserPreferencesTopic({
+      await Courier.shared.client.preferences.putUserPreferenceTopic({
         topicId: id,
         status: statuses[statusIndex]?.status || CourierUserPreferencesStatus.OptedIn,
         hasCustomRouting: useCustomRouting,

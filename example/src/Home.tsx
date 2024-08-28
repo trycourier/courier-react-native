@@ -19,13 +19,9 @@ const Home = () => {
 
     Tests.run();
 
-    // Debugging
-
-    // Courier.shared.setIsDebugging(false);
-
     // Setup Push
 
-    Courier.shared.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
+    Courier.setIOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
 
     const pushListener = Courier.shared.addPushNotificationListener({
       onPushNotificationClicked(push) {
@@ -40,7 +36,7 @@ const Home = () => {
 
     // Setup Inbox
 
-    Courier.shared.setInboxPaginationLimit({ limit: 100 });
+    Courier.shared.inboxPaginationLimit = 100;
 
     const inboxListener = Courier.shared.addInboxListener({
       onError(_error) {

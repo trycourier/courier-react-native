@@ -190,3 +190,76 @@ internal class Rejections {
     }
     
 }
+
+extension [AnyHashable: Any] {
+    
+    func toString() throws -> String {
+        let json = try JSONSerialization.data(withJSONObject: self)
+        let str = String(data: json, encoding: .utf8)
+        return str ?? "Invalid JSON"
+    }
+    
+}
+
+extension NSDictionary {
+    
+    func toPresentationOptions() -> UNNotificationPresentationOptions {
+        
+        var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+
+        if let options = self["options"] as? [String] {
+            options.forEach { option in
+                switch option {
+                case "sound": foregroundPresentationOptions.insert(.sound)
+                case "badge": foregroundPresentationOptions.insert(.badge)
+                case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+                case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+                default: break
+                }
+            }
+        }
+
+        return foregroundPresentationOptions
+        
+    }
+    
+}
+
+internal class LogEvents {
+    static let DEBUG_LOG = "courierDebugEvent"
+}
+
+internal class PushEvents {
+    static let CLICKED_EVENT = "pushNotificationClicked"
+    static let DELIVERED_EVENT = "pushNotificationDelivered"
+}
+
+// MARK: Broadcasting
+
+internal extension RCTEventEmitter {
+    
+    func broadcast(name: String, body: Any? = nil) {
+        
+        let events: [String]? = supportedEvents()
+        if (events?.contains(name) != true) {
+            return
+        }
+        
+        sendEvent(
+            withName: name,
+            body: body
+        )
+        
+    }
+    
+    func broadcast(name: String, message: [AnyHashable: Any]? = nil) {
+        
+        do {
+            broadcast(name: name, body: try message?.toString())
+        } catch {
+            Courier.shared.client?.log(String(describing: error))
+        }
+        
+    }
+    
+}

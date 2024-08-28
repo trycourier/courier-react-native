@@ -1,5 +1,5 @@
 import { Modules } from "../Modules";
-import { CourierUserPreferences, CourierUserPreferencesChannel, CourierUserPreferencesStatus, GetCourierUserPreferencesTopic } from "../models/CourierUserPreferences";
+import { CourierUserPreferences, CourierUserPreferencesChannel, CourierUserPreferencesStatus, CourierUserPreferencesTopic } from "../models/CourierUserPreferences";
 
 export class PreferenceClient {
 
@@ -9,14 +9,43 @@ export class PreferenceClient {
     this.clientId = clientId;
   }
 
-  public async getUserPreferences(props: { paginationCursor?: string }): Promise<CourierUserPreferences> {
-    const json = await Modules.Client.getUserPreferences(this.clientId, props.paginationCursor);
-    return JSON.parse(json);
+  public async getUserPreferences(props?: { paginationCursor?: string }): Promise<CourierUserPreferences> {
+    const json = await Modules.Client.getUserPreferences(this.clientId, props?.paginationCursor);
+    const rawData = JSON.parse(json);
+    
+    const convertedPreferences: CourierUserPreferences = {
+      items: rawData.items.map((item: any) => ({
+        defaultStatus: item.default_status as CourierUserPreferencesStatus,
+        hasCustomRouting: item.has_custom_routing,
+        customRouting: item.custom_routing.map((channel: string) => channel as CourierUserPreferencesChannel),
+        status: item.status as CourierUserPreferencesStatus,
+        topicId: item.topic_id,
+        topicName: item.topic_name,
+        sectionName: item.section_name,
+        sectionId: item.section_id
+      })),
+      paging: rawData.paging
+    };
+  
+    return convertedPreferences;
   }
 
-  public async getUserPreferenceTopic(props: { topicId: string }): Promise<GetCourierUserPreferencesTopic> {
+  public async getUserPreferenceTopic(props: { topicId: string }): Promise<CourierUserPreferencesTopic> {
     const json = await Modules.Client.getUserPreferenceTopic(this.clientId, props.topicId);
-    return JSON.parse(json);
+    const rawData = JSON.parse(json);
+  
+    const convertedTopic: CourierUserPreferencesTopic = {
+      defaultStatus: rawData.default_status as CourierUserPreferencesStatus,
+      hasCustomRouting: rawData.has_custom_routing,
+      customRouting: rawData.custom_routing.map((channel: string) => channel as CourierUserPreferencesChannel),
+      status: rawData.status as CourierUserPreferencesStatus,
+      topicId: rawData.topic_id,
+      topicName: rawData.topic_name,
+      sectionName: rawData.section_name,
+      sectionId: rawData.section_id
+    };
+  
+    return convertedTopic;
   }
 
   public async putUserPreferenceTopic(props: { topicId: string, status: CourierUserPreferencesStatus, hasCustomRouting: boolean, customRouting: CourierUserPreferencesChannel[] }): Promise<void> {

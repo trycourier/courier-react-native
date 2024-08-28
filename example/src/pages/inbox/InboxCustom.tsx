@@ -12,7 +12,7 @@ const InboxCustom = () => {
 
   useEffect(() => {
 
-    Courier.shared.setInboxPaginationLimit({ limit: 100 });
+    Courier.shared.inboxPaginationLimit = 100;
 
     const inboxListener = Courier.shared.addInboxListener({
       onInitialLoad() {

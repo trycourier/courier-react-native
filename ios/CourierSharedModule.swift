@@ -3,25 +3,7 @@ import Courier_iOS
 @objc(CourierSharedModule)
 class CourierSharedModule: RCTEventEmitter {
     
-    class LogEvents {
-        internal static let DEBUG_LOG = "courierDebugEvent"
-    }
-    
-    class PushEvents {
-        internal static let CLICKED_EVENT = "pushNotificationClicked"
-        internal static let DELIVERED_EVENT = "pushNotificationDelivered"
-    }
-    
     private var nativeEmitters = [String]()
-    
-    private var lastClickedMessage: [AnyHashable: Any]? = nil
-    private var notificationCenter: NotificationCenter {
-        get {
-            return NotificationCenter.default
-        }
-    }
-    
-    // Listeners
     private var authenticationListeners: [String: CourierAuthenticationListener] = [:]
     private var inboxListeners: [String: CourierInboxListener] = [:]
 
@@ -31,102 +13,48 @@ class CourierSharedModule: RCTEventEmitter {
         // Set the user agent
         // Used to know the platform performing requests
         Courier.agent = CourierAgent.react_native_ios
-        
-        // Attach the listeners
-        attachObservers()
                 
     }
 
     override func stopObserving() {
         removeAllAuthenticationListeners()
-        removeInboxListeners()
+        removeAllInboxListeners()
     }
     
-    private func removeInboxListeners() {
+    // MARK: Client
+    
+    @objc func getClient() -> String? {
         
-        inboxListeners.forEach { key, value in
-            value.remove()
+        guard let options = Courier.shared.client?.options else {
+            return nil
         }
         
-        inboxListeners.removeAll()
-        
-    }
-    
-    private func attachObservers() {
-        
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(pushNotificationClicked),
-            name: Notification.Name(rawValue: CourierSharedModule.PushEvents.CLICKED_EVENT),
-            object: nil
-        )
-        
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(pushNotificationDelivered),
-            name: Notification.Name(rawValue: CourierSharedModule.PushEvents.DELIVERED_EVENT),
-            object: nil
-        )
-        
-    }
-
-    @objc private func pushNotificationClicked(notification: Notification) {
-        
-        lastClickedMessage = notification.userInfo
-        sendMessage(
-            name: CourierSharedModule.PushEvents.CLICKED_EVENT,
-            message: lastClickedMessage
-        )
-        
-    }
-
-    @objc private func pushNotificationDelivered(notification: Notification) {
-        
-        sendMessage(
-            name: CourierSharedModule.PushEvents.DELIVERED_EVENT,
-            message: notification.userInfo
-        )
-        
-    }
-    
-    @objc func registerPushNotificationClickedOnKilledState() {
-        
-        sendMessage(
-            name: CourierSharedModule.PushEvents.CLICKED_EVENT,
-            message: lastClickedMessage
-        )
-        
-    }
-    
-    @objc(getNotificationPermissionStatus:withRejecter:)
-    func getNotificationPermissionStatus(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        Courier.getNotificationPermissionStatus { status in
-            resolve(status.name)
+        do {
+            
+            let dictionary = [
+                "jwt": options.jwt as Any,
+                "clientKey": options.clientKey as Any,
+                "userId": options.userId as Any,
+                "connectionId": options.connectionId as Any,
+                "tenantId": options.tenantId as Any,
+                "showLogs": options.showLogs as Any
+            ]
+            .compactMapValues { $0 }
+            
+            let jsonData = try JSONSerialization.data(
+                withJSONObject: dictionary,
+                options: .prettyPrinted
+            )
+            
+            guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+                return nil
+            }
+            
+            return jsonString
+            
+        } catch {
+            return nil
         }
-        
-    }
-
-    @objc(requestNotificationPermission:withRejecter:)
-    func requestNotificationPermission(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        Courier.requestNotificationPermission { status in
-            resolve(status.name)
-        }
-        
-    }
-    
-    @objc(iOSForegroundPresentationOptions:)
-    func iOSForegroundPresentationOptions(params: NSDictionary) -> String {
-        
-        let rawValue = params.toPresentationOptions().rawValue
-        NotificationCenter.default.post(
-            name: Notification.Name("iosForegroundNotificationPresentationOptions"),
-            object: nil,
-            userInfo: ["options": rawValue]
-        )
-        
-        return String(describing: rawValue)
         
     }
     
@@ -184,7 +112,7 @@ class CourierSharedModule: RCTEventEmitter {
         nativeEmitters.append(listenerId)
         
         let listener = Courier.shared.addAuthenticationListener { [weak self] userId in
-            self?.broadcastEvent(
+            self?.broadcast(
                 name: listenerId,
                 body: userId
             )
@@ -260,24 +188,29 @@ class CourierSharedModule: RCTEventEmitter {
         let token = token as String
         
         Task {
-            
             do {
-                
                 try await Courier.shared.setToken(
                     for: provider,
                     token: token
                 )
-                
                 resolve(nil)
-                
             } catch {
-                
                 Rejections.sharedError(reject, error: error)
-                
             }
-            
         }
     
+    }
+    
+    // MARK: Inbox
+    
+    @objc func getInboxPaginationLimit() -> String {
+        return String(describing: Courier.shared.inboxPaginationLimit)
+    }
+    
+    @objc(setInboxPaginationLimit:)
+    func setInboxPaginationLimit(limit: Double) -> String {
+        Courier.shared.inboxPaginationLimit = Int(limit)
+        return String(describing: Courier.shared.inboxPaginationLimit)
     }
     
     @objc(openMessage:withResolver:withRejecter:)
@@ -383,20 +316,16 @@ class CourierSharedModule: RCTEventEmitter {
         // Create the new listener
         let listener = Courier.shared.addInboxListener(
             onInitialLoad: { [weak self] in
-                
-                self?.broadcastEvent(
+                self?.broadcast(
                     name: loadingId,
                     body: nil
                 )
-                
             },
             onError: { [weak self] error in
-                     
-                self?.broadcastEvent(
+                self?.broadcast(
                     name: errorId,
                     body: String(describing: error)
                 )
-                
             },
             onMessagesChanged: { [weak self] messages, unreadMessageCount, totalMessageCount, canPaginate in
                 
@@ -409,7 +338,7 @@ class CourierSharedModule: RCTEventEmitter {
                         "canPaginate": canPaginate
                     ]
                     
-                    self?.broadcastEvent(
+                    self?.broadcast(
                         name: messagesId,
                         body: json
                     )
@@ -447,117 +376,50 @@ class CourierSharedModule: RCTEventEmitter {
         
     }
     
+    @discardableResult @objc func removeAllInboxListeners() -> String? {
+        
+        for value in inboxListeners.values {
+            value.remove()
+        }
+        
+        inboxListeners.removeAll()
+        
+        return nil
+        
+    }
+    
     @objc(refreshInbox: withRejecter:)
     func refreshInbox(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-//        Courier.shared.refreshInbox {
-//            resolve(nil)
-//        }
+        Task {
+            await Courier.shared.refreshInbox()
+            resolve(nil)
+        }
         
     }
     
     @objc(fetchNextPageOfMessages: withRejecter:)
     func fetchNextPageOfMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
-//        Courier.shared.fetchNextPageOfMessages(
-//            onSuccess: { messages in
-//                resolve(messages.map { $0.toDictionary() })
-//            },
-//            onFailure: { error in
-//                reject(String(describing: error), CourierReactNativeModule.COURIER_ERROR_TAG, nil)
-//            }
-//        )
+        Task {
+            
+            do {
+                let messages = try await Courier.shared.fetchNextInboxPage()
+                resolve(try messages.map { try $0.toJson() ?? "" })
+            } catch {
+                Rejections.sharedError(reject, error: error)
+            }
+            
+        }
         
-    }
-    
-    @objc(setInboxPaginationLimit:)
-    func setInboxPaginationLimit(limit: Double) -> String {
-        Courier.shared.inboxPaginationLimit = Int(limit)
-        return String(describing: Courier.shared.inboxPaginationLimit)
     }
 
     override func supportedEvents() -> [String]! {
-        
-        var allEvents = [
-            CourierSharedModule.LogEvents.DEBUG_LOG,
-            CourierSharedModule.PushEvents.CLICKED_EVENT,
-            CourierSharedModule.PushEvents.DELIVERED_EVENT
-        ]
-        
-        allEvents.append(contentsOf: nativeEmitters)
-        
-        return allEvents
-        
+        return nativeEmitters
     }
     
     @objc override static func requiresMainQueueSetup() -> Bool {
         return true
-    }
-    
-    // MARK: Broadcasting
-    
-    private func sendMessage(name: String, message: [AnyHashable: Any]?) {
-        
-        guard let message = message else {
-            return
-        }
-     
-        do {
-            broadcastEvent(
-                name: name,
-                body: try message.toString()
-            )
-        } catch {
-            Courier.shared.client?.log(String(describing: error))
-        }
-        
-    }
-    
-    private func broadcastEvent(name: String, body: Any?) {
-        
-        if (!supportedEvents().contains(name)) {
-            return
-        }
-        
-        sendEvent(
-            withName: name,
-            body: body
-        )
-        
-    }
-    
-}
-
-extension [AnyHashable: Any] {
-    
-    func toString() throws -> String {
-        let json = try JSONSerialization.data(withJSONObject: self)
-        let str = String(data: json, encoding: .utf8)
-        return str ?? "Invalid JSON"
-    }
-    
-}
-
-extension NSDictionary {
-    
-    func toPresentationOptions() -> UNNotificationPresentationOptions {
-        
-        var foregroundPresentationOptions: UNNotificationPresentationOptions = []
-
-        if let options = self["options"] as? [String] {
-            options.forEach { option in
-                switch option {
-                case "sound": foregroundPresentationOptions.insert(.sound)
-                case "badge": foregroundPresentationOptions.insert(.badge)
-                case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
-                case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
-                default: break
-                }
-            }
-        }
-
-        return foregroundPresentationOptions
-        
     }
     
 }

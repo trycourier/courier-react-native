@@ -1,8 +1,7 @@
-import Courier, {  } from "@trycourier/courier-react-native";
-import { addListener, removeListener } from "../../Emitter";
+import Courier, { CourierUserPreferencesTopic } from "@trycourier/courier-react-native";
+import { addListener } from "../../Emitter";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { CourierUserPreferencesTopic } from "src/models/CourierUserPreferencesTopic";
 
 const ListItem = (props: { topic: CourierUserPreferencesTopic, onClick: () => void }) => {
 
@@ -38,7 +37,7 @@ const PreferencesCustom = ({ navigation }: any) => {
 
     setUserId(Courier.shared.userId);
 
-    const handleSaveClicked = (eventData?: any) => {
+    const handleSaveClicked = (_: any) => {
       if (userId) {
         getPrefs();
       }
@@ -59,6 +58,10 @@ const PreferencesCustom = ({ navigation }: any) => {
 
   async function getPrefs(refresh: boolean = false) {
 
+    if (!Courier.shared.client) {
+      return;
+    }
+
     if (refresh) {
       setIsRefreshing(true);
     } else {
@@ -67,8 +70,8 @@ const PreferencesCustom = ({ navigation }: any) => {
 
     try {
 
-      const preferences = await Courier.shared.getUserPreferences();
-      setTopics(preferences.items ?? []);
+      const res = await Courier.shared.client.preferences.getUserPreferences();
+      setTopics(res.items);
 
     } catch (e) {
 

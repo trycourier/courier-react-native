@@ -1,11 +1,12 @@
+import { NativeModule } from "react-native";
 import { NativeEventEmitter, EmitterSubscription, Platform, DeviceEventEmitter } from "react-native";
 
 export default class Broadcaster {
 
   private emitter: NativeEventEmitter;
 
-  constructor(emitter: NativeEventEmitter) {
-    this.emitter = emitter;
+  constructor(module: NativeModule) {
+    this.emitter = new NativeEventEmitter(module);
   }
 
   /**

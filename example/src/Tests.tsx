@@ -6,8 +6,8 @@ import Courier, { CourierClient, CourierPushProvider, CourierTrackingEvent, Cour
 export class Tests {
 
   public static async run() {
-    await Tests.clientTests();
-    await Tests.sharedTests();
+    // await Tests.clientTests();
+    // await Tests.sharedTests();
   }
 
   static async clientTests() {
@@ -88,7 +88,7 @@ export class Tests {
     });
 
     await client.inbox.archive({
-      messageId: messageId,
+      messageId: '1-6633983a-3ee47af69c6147d41b85d91c',
     });
 
     await client.inbox.readAll();
@@ -157,13 +157,24 @@ export class Tests {
 
     authListener.remove();
 
+    // Client
+
+    console.log('client');
+    const client = Courier.shared.client;
+    console.log(client?.options);
+
+    const preferences = await client?.preferences.getUserPreferences({});
+    console.log(JSON.stringify(preferences));
+
     // Push
 
     const pushListener = Courier.shared.addPushNotificationListener({
       onPushNotificationClicked: (message) => {
+        console.log('onPushNotificationClicked');
         console.log(message);
       },
       onPushNotificationDelivered: (message) => {
+        console.log('onPushNotificationDelivered');
         console.log(message);
       }
     });
@@ -183,6 +194,11 @@ export class Tests {
     pushListener.remove();
 
     // Inbox
+
+    Courier.shared.inboxPaginationLimit = 26;
+
+    console.log('inboxPaginationLimit')
+    console.log(Courier.shared.inboxPaginationLimit)
 
     const messageId = '1-666c88e3-2195b5495611a5b57ce0b134';
 
@@ -208,7 +224,29 @@ export class Tests {
 
     await Courier.shared.readAllInboxMessages();
 
-    await Courier.shared.signOut();
+    const inboxListener = Courier.shared.addInboxListener({
+      onInitialLoad: () => {
+        console.log('onInitialLoad');
+      },
+      onError: (error) => {
+        console.log('onError');
+        console.log(error);
+      },
+      onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
+        console.log('onMessagesChanged');
+        console.log(messages);
+        console.log(unreadMessageCount);
+        console.log(totalMessageCount);
+        console.log(canPaginate);
+      },
+    });
+
+    inboxListener.remove();
+    Courier.shared.removeAllInboxListeners();
+
+    // Reset
+
+    // await Courier.shared.signOut();
 
   }
 

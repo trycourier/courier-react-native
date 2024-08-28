@@ -3,11 +3,19 @@
 @interface RCT_EXTERN_MODULE(CourierSharedModule, NSObject)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  setDebugMode: (BOOL)isDebugging
+  getClient
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  iOSForegroundPresentationOptions: (NSDictionary*)params
+  getUserId
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getTenantId
+)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getIsUserSignedIn
 )
 
 RCT_EXTERN_METHOD(
@@ -23,18 +31,6 @@ RCT_EXTERN_METHOD(
 RCT_EXTERN_METHOD(
   signOut: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
-)
-
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getUserId
-)
-
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getTenantId
-)
-
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getIsUserSignedIn
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
@@ -67,14 +63,12 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN_METHOD(
-  getNotificationPermissionStatus: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  getInboxPaginationLimit
 )
 
-RCT_EXTERN_METHOD(
-  requestNotificationPermission: (RCTPromiseResolveBlock)resolve
-  withRejecter: (RCTPromiseRejectBlock)reject
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  setInboxPaginationLimit: (double)limit
 )
 
 RCT_EXTERN_METHOD(
@@ -122,6 +116,10 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   removeInboxListener: (NSString*)listenerId
 )
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  removeAllInboxListeners
+)
+
 RCT_EXTERN_METHOD(
   refreshInbox: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
@@ -130,14 +128,6 @@ RCT_EXTERN_METHOD(
 RCT_EXTERN_METHOD(
   fetchNextPageOfMessages: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
-)
-
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  setInboxPaginationLimit: (double)limit
-)
-
-RCT_EXTERN_METHOD(
-  registerPushNotificationClickedOnKilledState
 )
 
 + (BOOL)requiresMainQueueSetup
@@ -290,3 +280,29 @@ RCT_EXTERN_METHOD(
 
 @end
 
+@interface RCT_EXTERN_MODULE(CourierSystemModule, NSObject)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+  setIOSForegroundPresentationOptions: (NSDictionary*)params
+)
+
+RCT_EXTERN_METHOD(
+  getNotificationPermissionStatus: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  requestNotificationPermission: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  registerPushNotificationClickedOnKilledState
+)
+
++ (BOOL)requiresMainQueueSetup
+{
+  return YES;
+}
+
+@end

@@ -10,6 +10,7 @@ export class Modules {
 
   static readonly Client = Modules.getNativeModule(NativeModules.CourierClientModule);
   static readonly Shared = Modules.getNativeModule(NativeModules.CourierSharedModule);
+  static readonly System = Modules.getNativeModule(NativeModules.CourierSystemModule);
 
   static getNativeModule<T>(nativeModule: T | undefined): T {
     return nativeModule
