@@ -1,6 +1,5 @@
 import {
   Platform,
-  NativeEventEmitter,
   EmitterSubscription,
 } from 'react-native';
 
@@ -9,10 +8,6 @@ import { CourierInboxListener } from './models/CourierInboxListener';
 import { CourierPushListener } from './models/CourierPushListener';
 import { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
 import { InboxMessage } from './models/InboxMessage';
-import { CourierUserPreferences } from './models/CourierUserPreferences';
-import { CourierUserPreferencesTopic } from './models/CourierUserPreferences';
-import { CourierUserPreferencesChannel } from './models/CourierUserPreferences';
-import { CourierUserPreferencesStatus } from './models/CourierUserPreferences';
 import { CourierPushProvider } from './models/CourierPushProvider';
 import { Modules } from './Modules';
 import Broadcaster from './Broadcaster';
