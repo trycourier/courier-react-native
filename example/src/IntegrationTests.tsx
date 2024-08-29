@@ -28,15 +28,15 @@ export class IntegrationTests {
 
   }
 
-  public static async testPutToken() {
+  public static async testPutToken(token: string = 'example', provider: string = 'expo') {
 
     if (!IntegrationTests.client) {
       throw new Error("Client is undefined");
     }
 
     await IntegrationTests.client.tokens.putUserToken({
-      token: 'example',
-      provider: 'expo',
+      token,
+      provider,
     });
 
   }

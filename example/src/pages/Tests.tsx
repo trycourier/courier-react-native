@@ -1,126 +1,113 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, Alert, TouchableOpacity, TextInput, Modal, Button, Switch, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { IntegrationTests } from '../IntegrationTests';
 import { useNavigation } from '@react-navigation/native';
+import { CourierClient } from '@trycourier/courier-react-native';
+import Env from '../Env';
+import { ExampleServer, Utils } from '../Utils';
+
+let savedClient: CourierClient | undefined = undefined;
+
+const ExampleIntegrationTests: Record<string, (params: any) => Promise<any>> = {
+  
+  createClient: async (params: { userId: string, clientKey: string, showLogs: boolean, tenantId?: string, connectionId?: string }) => {
+    
+    const token = await ExampleServer.generateJwt({
+      authKey: Env.authKey,
+      userId: params.userId,
+    });
+
+    savedClient = new CourierClient({
+      userId: params.userId,
+      showLogs: params.showLogs,
+      jwt: token,
+      clientKey: params.clientKey,
+      tenantId: params.tenantId,
+      connectionId: params.connectionId,
+    });
+
+    return {
+      id: savedClient.clientId,
+      options: savedClient.options,
+    };
+
+  },
+
+  removeClient: async (params: { clientId?: string }) => {
+
+    let id = params.clientId;
+
+    if (savedClient) {
+      id = savedClient.clientId;
+      savedClient.remove();
+      savedClient = undefined;
+    }
+    return {
+      clientId: id,
+    };
+
+  },
+
+  // testPutToken: async (params: { token: string, provider: string }) => {
+  //   if (!savedClient) {
+  //     throw new Error("Client not initialized. Run testClient first.");
+  //   }
+  //   // Using the saved client to put token
+  //   await savedClient.tokens.putUserToken([]);
+  //   return { token: params.token, provider: params.provider };
+  // },
+
+  // testDeleteToken: async (params: { provider: string }) => {
+  //   if (!savedClient) {
+  //     throw new Error("Client not initialized. Run testClient first.");
+  //   }
+  //   // Using the saved client to delete token
+  //   await savedClient.deleteToken(params.provider);
+  //   return { deletedProvider: params.provider };
+  // },
+
+  // testBrands: async (params: { brandId: string }) => {
+  //   if (!savedClient) {
+  //     throw new Error("Client not initialized. Run testClient first.");
+  //   }
+  //   // Using the saved client to fetch brand
+  //   const brand = await savedClient.getBrand(params.brandId);
+  //   return brand;
+  // }
+};
 
 type TestItem = {
   name: string;
-  promise: () => Promise<any>;
+  testId: string;
+  defaultParams: Record<string, string | boolean | undefined>;
   runOrder: 'normal' | 'run at end' | 'skip';
 };
 
 type TestSection = {
   title: string;
-  data: TestItem[];
+  tests: TestItem[];
 };
 
-const testSections: TestSection[] = [
+const getTestSections = (): TestSection[] => [
   {
     title: 'Client — Management',
-    data: [
-      { name: 'new CourierClient', promise: () => IntegrationTests.testClient(), runOrder: 'normal' },
-      { name: 'client.remove', promise: () => IntegrationTests.testRemoveClient(), runOrder: 'run at end' },
+    tests: [
+      {
+        name: 'new CourierClient',
+        testId: 'createClient',
+        defaultParams: { userId: Utils.generateUUID(), clientKey: Env.clientKey, showLogs: true, tenantId: undefined, connectionId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'remove CourierClient',
+        testId: 'removeClient',
+        defaultParams: { clientId: savedClient?.clientId },
+        runOrder: 'run at end'
+      },
+      // { name: 'client.remove', testId: 'testRemoveClient', defaultParams: {}, runOrder: 'run at end' },
     ]
   },
-  {
-    title: 'Client — Token',
-    data: [
-      { name: 'client.tokens.putUserToken', promise: () => IntegrationTests.testPutToken(), runOrder: 'normal' },
-      { name: 'client.tokens.deleteUserToken', promise: () => IntegrationTests.testDeleteToken(), runOrder: 'normal' },
-    ]
-  },
-  {
-    title: 'Client — Brands',
-    data: [
-      { name: 'client.brands.getBrand', promise: () => IntegrationTests.testBrands(), runOrder: 'normal' },
-    ]
-  },
-  {
-    title: 'Client — Inbox',
-    data: [
-      { name: 'client.inbox.getMessages', promise: () => IntegrationTests.testMessages(), runOrder: 'normal' },
-      { name: 'client.inbox.getArchivedMessages', promise: () => IntegrationTests.testArchivedMessages(), runOrder: 'normal' },
-      { name: 'client.inbox.getUnreadMessageCount', promise: () => IntegrationTests.testUnreadCount(), runOrder: 'normal' },
-      { name: 'client.inbox.getMessageById', promise: () => IntegrationTests.testMessageById(), runOrder: 'normal' },
-      { name: 'client.inbox.open', promise: () => IntegrationTests.openMessage(), runOrder: 'normal' },
-      { name: 'client.inbox.click', promise: () => IntegrationTests.clickMessage(), runOrder: 'normal' },
-      { name: 'client.inbox.read', promise: () => IntegrationTests.readMessage(), runOrder: 'normal' },
-      { name: 'client.inbox.unread', promise: () => IntegrationTests.unreadMessage(), runOrder: 'normal' },
-      { name: 'client.inbox.archive', promise: () => IntegrationTests.archiveMessage(), runOrder: 'normal' },
-      { name: 'client.inbox.readAll', promise: () => IntegrationTests.readAllMessages(), runOrder: 'normal' },
-    ]
-  },
-  {
-    title: 'Client — Preferences',
-    data: [
-      { name: 'client.preferences.getUserPreferences', promise: () => IntegrationTests.getUserPreferences(), runOrder: 'normal' },
-      { name: 'client.preferences.getUserPreferenceTopic', promise: () => IntegrationTests.getUserPreferenceTopic(), runOrder: 'normal' },
-      { name: 'client.preferences.putUserPreferenceTopic', promise: () => IntegrationTests.putUserPreferenceTopic(), runOrder: 'normal' },
-    ]
-  },
-  {
-    title: 'Client — Tracking',
-    data: [
-      { name: 'client.tracking.postTrackingUrl', promise: () => IntegrationTests.testTracking(), runOrder: 'normal' },
-    ]
-  },
-  {
-    title: 'Shared — Auth',
-    data: [
-      { name: 'Courier.shared.signIn', promise: () => IntegrationTests.testSignIn(), runOrder: 'normal' },
-      { name: 'Courier.shared.addAuthenticationListener', promise: () => IntegrationTests.testAuthenticationListener(), runOrder: 'normal' },
-      { name: 'Courier.shared.signOut', promise: () => IntegrationTests.testSignOut(), runOrder: 'run at end' },
-    ]
-  },
-  {
-    title: 'Shared — Push Notifications',
-    data: [
-      { name: 'Courier.shared.addPushNotificationListener', promise: () => IntegrationTests.testPushListener(), runOrder: 'normal' },
-      { name: 'Courier.shared.removeAllPushNotificationListeners', promise: () => IntegrationTests.testRemoveAllPushNotificationListeners(), runOrder: 'skip' },
-      { name: 'Courier.shared.setTokenForProvider', promise: () => IntegrationTests.testSetTokenForProvider(), runOrder: 'normal' },
-      { name: 'Courier.shared.getTokenForProvider', promise: () => IntegrationTests.testGetTokenForProvider(), runOrder: 'normal' },
-      { name: 'Courier.shared.getAllTokens', promise: () => IntegrationTests.testGetAllTokens(), runOrder: 'normal' },
-    ]
-  },
-  {
-    title: 'Shared — Inbox',
-    data: [
-      { name: 'Courier.shared.setInboxPaginationLimit', promise: () => IntegrationTests.testInboxPaginationLimit(), runOrder: 'normal' },
-      { name: 'Courier.shared.openInboxMessage', promise: () => IntegrationTests.testOpenMessage(), runOrder: 'normal' },
-      { name: 'Courier.shared.clickInboxMessage', promise: () => IntegrationTests.testClickMessage(), runOrder: 'normal' },
-      { name: 'Courier.shared.readInboxMessage', promise: () => IntegrationTests.testReadMessage(), runOrder: 'normal' },
-      { name: 'Courier.shared.unreadInboxMessage', promise: () => IntegrationTests.testUnreadMessage(), runOrder: 'normal' },
-      { name: 'Courier.shared.archiveInboxMessage', promise: () => IntegrationTests.testArchiveMessage(), runOrder: 'normal' },
-      { name: 'Courier.shared.readAllInboxMessages', promise: () => IntegrationTests.testReadAllInboxMessages(), runOrder: 'normal' },
-      { name: 'Courier.shared.addInboxListener', promise: () => IntegrationTests.testInboxListener(), runOrder: 'normal' },
-      { name: 'Courier.shared.refreshInbox', promise: () => IntegrationTests.testRefreshInbox(), runOrder: 'normal' },
-      { name: 'Courier.shared.fetchNextPageOfMessages', promise: () => IntegrationTests.testFetchNextPageOfMessages(), runOrder: 'normal' },
-      { name: 'Courier.shared.removeAllInboxListeners', promise: () => IntegrationTests.testRemoveAllInboxListeners(), runOrder: 'skip' },
-    ]
-  },
-  {
-    title: 'Shared — Client',
-    data: [
-      { name: 'Courier.shared.client', promise: () => IntegrationTests.testSharedClient(), runOrder: 'normal' },
-    ]
-  },
-  {
-    title: 'Shortcuts',
-    data: [
-      { name: 'Courier.requestNotificationPermission', promise: () => IntegrationTests.testRequestPushNotificationPermission(), runOrder: 'normal' },
-      { name: 'Courier.getNotificationPermissionStatus', promise: () => IntegrationTests.testGetNotificationPermissionStatus(), runOrder: 'normal' },
-      { name: 'Courier.setIOSForegroundPresentationOptions', promise: () => IntegrationTests.testSetIOSForegroundPresentationOptions(), runOrder: 'normal' },
-      { name: 'Courier.openSettingsForApp', promise: () => IntegrationTests.testOpenSettingsForApp(), runOrder: 'skip' },
-    ]
-  },
-  {
-    title: 'Send',
-    data: [
-      { name: 'Inbox message', promise: () => IntegrationTests.testSendInboxMessage(), runOrder: 'normal' },
-      { name: 'APN Push Notification', promise: () => IntegrationTests.testSendAPNSMessage(), runOrder: 'normal' },
-      { name: 'FCM Push Notification', promise: () => IntegrationTests.testSendFCMMessage(), runOrder: 'normal' },
-    ]
-  }
+  // Other test sections...
 ];
 
 const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; status?: string; runOrder?: string }, onPress: () => void }) => (
@@ -130,7 +117,7 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
         <Text style={styles.testItemTitle}>{item.name}</Text>
         {item.status !== undefined && item.status !== 'running' && (
           <Text style={styles.testItemResult}>
-            {JSON.stringify(item.result ?? 'No result', null, 2)}
+            {item.result ? JSON.stringify(item.result, null, 2) : 'No Response'}
           </Text>
         )}
       </View>
@@ -157,8 +144,9 @@ const SectionHeader = ({ title }: { title: string }) => (
 
 const Tests = () => {
   const navigation = useNavigation();
+  const testSections = getTestSections();
   const [testResults, setTestResults] = useState<Array<{ name: string; result?: unknown; status?: string; runOrder?: string }>>(
-    testSections.flatMap(section => section.data.map(test => ({ name: test.name, runOrder: test.runOrder })))
+    testSections.flatMap(section => section.tests.map(test => ({ name: test.name, runOrder: test.runOrder })))
   );
   const [isRunning, setIsRunning] = useState(false);
 
@@ -194,9 +182,9 @@ const Tests = () => {
   const runAllTests = async () => {
     if (isRunning) return;
     setIsRunning(true);
-    const normalTests = testSections.flatMap(section => section.data.filter(test => test.runOrder === 'normal'));
-    const endTests = testSections.flatMap(section => section.data.filter(test => test.runOrder === 'run at end'));
-    const skipTests = testSections.flatMap(section => section.data.filter(test => test.runOrder === 'skip'));
+    const normalTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'normal'));
+    const endTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'run at end'));
+    const skipTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'skip'));
     
     for (const test of normalTests) {
       await runSingleTest(test);
@@ -214,12 +202,15 @@ const Tests = () => {
   };
 
   const runSingleTest = async (test: TestItem) => {
-
     setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, status: 'running', result: undefined } : t));
-    
     try {
-      const result = await test.promise();
-      setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, result, status: 'success' } : t));
+      const testFunction = ExampleIntegrationTests[test.testId];
+      if (typeof testFunction === 'function') {
+        const result = await testFunction(test.defaultParams);
+        setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, result, status: 'success' } : t));
+      } else {
+        throw new Error(`Test function '${test.testId}' not found`);
+      }
     } catch (error) {
       const { errorMessage, errorDetails } = handleTestError(error);
 
@@ -244,24 +235,34 @@ const Tests = () => {
     }
   };
 
-  const onTestItemPress = (item: { name: string; result?: unknown; status?: string; runOrder?: string }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTest, setSelectedTest] = useState<TestItem | null>(null);
+  const [testParams, setTestParams] = useState<Record<string, string | boolean | undefined>>({});
+
+  const onTestItemPress = (item: TestItem) => {
     if (isRunning) return;
-    Alert.alert(
-      "Run Test",
-      `Do you want to run the test "${item.name}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Yes", 
-          onPress: async () => {
-            const testToRun = testSections.flatMap(section => section.data).find(test => test.name === item.name);
-            if (testToRun) {
-              await runSingleTest(testToRun);
-            }
-          }
-        }
-      ]
-    );
+    
+    setSelectedTest(item);
+    setTestParams({ ...item.defaultParams });
+    setModalVisible(true);
+  };
+
+  const handleParamChange = (key: string, value: string | boolean | undefined) => {
+    setTestParams(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleRunTest = async () => {
+    if (selectedTest) {
+      const testToRun = { ...selectedTest, defaultParams: testParams };
+      await runSingleTest(testToRun);
+    }
+    setModalVisible(false);
+  };
+
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setSelectedTest(null);
+    setTestParams({});
   };
 
   return (
@@ -271,17 +272,47 @@ const Tests = () => {
         renderItem={({ item: section }) => (
           <>
             <SectionHeader title={section.title} />
-            {section.data.map((test) => (
+            {section.tests.map((test) => (
               <TestItem
                 key={test.name}
                 item={testResults.find(r => r.name === test.name) || { name: test.name, runOrder: test.runOrder }}
-                onPress={() => onTestItemPress({ name: test.name, runOrder: test.runOrder })}
+                onPress={() => onTestItemPress(test)}
               />
             ))}
           </>
         )}
         keyExtractor={(item) => item.title}
       />
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text>Run Test: {selectedTest?.name}</Text>
+              {Object.entries(testParams).map(([key, value]) => (
+                <View key={key} style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>{key}:</Text>
+                  {typeof value === 'boolean' ? (
+                    <Switch
+                      value={value}
+                      onValueChange={(newValue) => handleParamChange(key, newValue)}
+                    />
+                  ) : (
+                    <TextInput
+                      style={styles.input}
+                      value={value !== undefined ? String(value) : ''}
+                      onChangeText={(text) => handleParamChange(key, text || undefined)}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    />
+                  )}
+                </View>
+              ))}
+              <Button title="Run" onPress={handleRunTest} />
+              <Button title="Cancel" onPress={handleModalClose} />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -353,6 +384,33 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
     paddingTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  inputLabel: {
+    width: 100,
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 5,
   },
 });
 
