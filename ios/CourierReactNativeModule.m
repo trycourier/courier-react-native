@@ -282,6 +282,10 @@ RCT_EXTERN_METHOD(
 
 @interface RCT_EXTERN_MODULE(CourierSystemModule, NSObject)
 
+RCT_EXTERN_METHOD(
+  openSettingsForApp
+)
+
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   setIOSForegroundPresentationOptions: (NSDictionary*)params
 )

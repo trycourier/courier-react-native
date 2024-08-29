@@ -6,53 +6,126 @@ import { useNavigation } from '@react-navigation/native';
 type TestItem = {
   name: string;
   promise: () => Promise<any>;
+  runOrder: 'normal' | 'run at end' | 'skip';
 };
 
-const tests: TestItem[] = [
-  { name: 'Client — Setup', promise: () => IntegrationTests.testClient() },
-  { name: 'Client — Token Updates', promise: () => IntegrationTests.testTokens() },
-  { name: 'Client — Get Brand', promise: () => IntegrationTests.testBrands() },
-  { name: 'Client — Inbox Messages', promise: () => IntegrationTests.testMessages() },
-  { name: 'Client — Inbox Archived Messages', promise: () => IntegrationTests.testArchivedMessages() },
-  { name: 'Client — Inbox Unread Count', promise: () => IntegrationTests.testUnreadCount() },
-  { name: 'Client — Inbox Message By Id', promise: () => IntegrationTests.testMessageById() },
-  { name: 'Client — Inbox Open Message', promise: () => IntegrationTests.openMessage() },
-  { name: 'Client — Inbox Click Message', promise: () => IntegrationTests.clickMessage() },
-  { name: 'Client — Inbox Read Message', promise: () => IntegrationTests.readMessage() },
-  { name: 'Client — Inbox Unread Message', promise: () => IntegrationTests.unreadMessage() },
-  { name: 'Client — Inbox Archive Message', promise: () => IntegrationTests.archiveMessage() },
-  { name: 'Client — Inbox Read All Messages', promise: () => IntegrationTests.readAllMessages() },
-  { name: 'Client — Get User Preferences', promise: () => IntegrationTests.getUserPreferences() },
-  { name: 'Client — Get User Preference Topic', promise: () => IntegrationTests.getUserPreferenceTopic() },
-  { name: 'Client — Update User Preference Topic', promise: () => IntegrationTests.putUserPreferenceTopic() },
-  { name: 'Client — Test Tracking', promise: () => IntegrationTests.testTracking() },
-  { name: 'Client — Remove Client', promise: () => IntegrationTests.testRemoveClient() },
-  { name: 'Shared — Sign In', promise: () => IntegrationTests.testSignIn() },
-  { name: 'Shared — Authentication Listener', promise: () => IntegrationTests.testAuthenticationListener() },
-  { name: 'Shared — Get Shared Client', promise: () => IntegrationTests.testSharedClient() },
-  { name: 'Shared — Push Notification Listener', promise: () => IntegrationTests.testPushListener() },
-  { name: 'Shared — Remove Push Listener', promise: () => IntegrationTests.testRemovePushListener() },
-  { name: 'Shared — Set Token For Provider', promise: () => IntegrationTests.testSetTokenForProvider() },
-  { name: 'Shared — Get Token For Provider', promise: () => IntegrationTests.testGetTokenForProvider() },
-  { name: 'Shared — Get All Tokens', promise: () => IntegrationTests.testGetAllTokens() },
-  { name: 'Shared — Set Inbox Pagination Limit', promise: () => IntegrationTests.testInboxPaginationLimit() },
-  { name: 'Shared — Open Message', promise: () => IntegrationTests.testOpenMessage() },
-  { name: 'Shared — Click Message', promise: () => IntegrationTests.testClickMessage() },
-  { name: 'Shared — Read Message', promise: () => IntegrationTests.testReadMessage() },
-  { name: 'Shared — Unread Message', promise: () => IntegrationTests.testUnreadMessage() },
-  { name: 'Shared — Archive Message', promise: () => IntegrationTests.testArchiveMessage() },
-  { name: 'Shared — Read All Inbox Messages', promise: () => IntegrationTests.testReadAllInboxMessages() },
-  { name: 'Shared — Inbox Listener', promise: () => IntegrationTests.testInboxListener() },
-  { name: 'Shared — Remove All Inbox Listeners', promise: () => IntegrationTests.testRemoveAllInboxListeners() },
-  { name: 'Shared — Sign Out', promise: () => IntegrationTests.testSignOut() },
-  { name: 'Shared — Send Inbox Message', promise: () => IntegrationTests.testSendInboxMessage() },
-  { name: 'Shared — Send APNS Message', promise: () => IntegrationTests.testSendAPNSMessage() },
-  { name: 'Shared — Send FCM Message', promise: () => IntegrationTests.testSendFCMMessage() },
+type TestSection = {
+  title: string;
+  data: TestItem[];
+};
+
+const testSections: TestSection[] = [
+  {
+    title: 'Client — Management',
+    data: [
+      { name: 'new CourierClient', promise: () => IntegrationTests.testClient(), runOrder: 'normal' },
+      { name: 'client.remove', promise: () => IntegrationTests.testRemoveClient(), runOrder: 'run at end' },
+    ]
+  },
+  {
+    title: 'Client — Token',
+    data: [
+      { name: 'client.tokens.putUserToken', promise: () => IntegrationTests.testPutToken(), runOrder: 'normal' },
+      { name: 'client.tokens.deleteUserToken', promise: () => IntegrationTests.testDeleteToken(), runOrder: 'normal' },
+    ]
+  },
+  {
+    title: 'Client — Brands',
+    data: [
+      { name: 'client.brands.getBrand', promise: () => IntegrationTests.testBrands(), runOrder: 'normal' },
+    ]
+  },
+  {
+    title: 'Client — Inbox',
+    data: [
+      { name: 'client.inbox.getMessages', promise: () => IntegrationTests.testMessages(), runOrder: 'normal' },
+      { name: 'client.inbox.getArchivedMessages', promise: () => IntegrationTests.testArchivedMessages(), runOrder: 'normal' },
+      { name: 'client.inbox.getUnreadMessageCount', promise: () => IntegrationTests.testUnreadCount(), runOrder: 'normal' },
+      { name: 'client.inbox.getMessageById', promise: () => IntegrationTests.testMessageById(), runOrder: 'normal' },
+      { name: 'client.inbox.open', promise: () => IntegrationTests.openMessage(), runOrder: 'normal' },
+      { name: 'client.inbox.click', promise: () => IntegrationTests.clickMessage(), runOrder: 'normal' },
+      { name: 'client.inbox.read', promise: () => IntegrationTests.readMessage(), runOrder: 'normal' },
+      { name: 'client.inbox.unread', promise: () => IntegrationTests.unreadMessage(), runOrder: 'normal' },
+      { name: 'client.inbox.archive', promise: () => IntegrationTests.archiveMessage(), runOrder: 'normal' },
+      { name: 'client.inbox.readAll', promise: () => IntegrationTests.readAllMessages(), runOrder: 'normal' },
+    ]
+  },
+  {
+    title: 'Client — Preferences',
+    data: [
+      { name: 'client.preferences.getUserPreferences', promise: () => IntegrationTests.getUserPreferences(), runOrder: 'normal' },
+      { name: 'client.preferences.getUserPreferenceTopic', promise: () => IntegrationTests.getUserPreferenceTopic(), runOrder: 'normal' },
+      { name: 'client.preferences.putUserPreferenceTopic', promise: () => IntegrationTests.putUserPreferenceTopic(), runOrder: 'normal' },
+    ]
+  },
+  {
+    title: 'Client — Tracking',
+    data: [
+      { name: 'client.tracking.postTrackingUrl', promise: () => IntegrationTests.testTracking(), runOrder: 'normal' },
+    ]
+  },
+  {
+    title: 'Shared — Auth',
+    data: [
+      { name: 'Courier.shared.signIn', promise: () => IntegrationTests.testSignIn(), runOrder: 'normal' },
+      { name: 'Courier.shared.addAuthenticationListener', promise: () => IntegrationTests.testAuthenticationListener(), runOrder: 'normal' },
+      { name: 'Courier.shared.signOut', promise: () => IntegrationTests.testSignOut(), runOrder: 'run at end' },
+    ]
+  },
+  {
+    title: 'Shared — Push Notifications',
+    data: [
+      { name: 'Courier.shared.addPushNotificationListener', promise: () => IntegrationTests.testPushListener(), runOrder: 'normal' },
+      { name: 'Courier.shared.removeAllPushNotificationListeners', promise: () => IntegrationTests.testRemoveAllPushNotificationListeners(), runOrder: 'skip' },
+      { name: 'Courier.shared.setTokenForProvider', promise: () => IntegrationTests.testSetTokenForProvider(), runOrder: 'normal' },
+      { name: 'Courier.shared.getTokenForProvider', promise: () => IntegrationTests.testGetTokenForProvider(), runOrder: 'normal' },
+      { name: 'Courier.shared.getAllTokens', promise: () => IntegrationTests.testGetAllTokens(), runOrder: 'normal' },
+    ]
+  },
+  {
+    title: 'Shared — Inbox',
+    data: [
+      { name: 'Courier.shared.setInboxPaginationLimit', promise: () => IntegrationTests.testInboxPaginationLimit(), runOrder: 'normal' },
+      { name: 'Courier.shared.openInboxMessage', promise: () => IntegrationTests.testOpenMessage(), runOrder: 'normal' },
+      { name: 'Courier.shared.clickInboxMessage', promise: () => IntegrationTests.testClickMessage(), runOrder: 'normal' },
+      { name: 'Courier.shared.readInboxMessage', promise: () => IntegrationTests.testReadMessage(), runOrder: 'normal' },
+      { name: 'Courier.shared.unreadInboxMessage', promise: () => IntegrationTests.testUnreadMessage(), runOrder: 'normal' },
+      { name: 'Courier.shared.archiveInboxMessage', promise: () => IntegrationTests.testArchiveMessage(), runOrder: 'normal' },
+      { name: 'Courier.shared.readAllInboxMessages', promise: () => IntegrationTests.testReadAllInboxMessages(), runOrder: 'normal' },
+      { name: 'Courier.shared.addInboxListener', promise: () => IntegrationTests.testInboxListener(), runOrder: 'normal' },
+      { name: 'Courier.shared.refreshInbox', promise: () => IntegrationTests.testRefreshInbox(), runOrder: 'normal' },
+      { name: 'Courier.shared.fetchNextPageOfMessages', promise: () => IntegrationTests.testFetchNextPageOfMessages(), runOrder: 'normal' },
+      { name: 'Courier.shared.removeAllInboxListeners', promise: () => IntegrationTests.testRemoveAllInboxListeners(), runOrder: 'skip' },
+    ]
+  },
+  {
+    title: 'Shared — Client',
+    data: [
+      { name: 'Courier.shared.client', promise: () => IntegrationTests.testSharedClient(), runOrder: 'normal' },
+    ]
+  },
+  {
+    title: 'Shortcuts',
+    data: [
+      { name: 'Courier.requestNotificationPermission', promise: () => IntegrationTests.testRequestPushNotificationPermission(), runOrder: 'normal' },
+      { name: 'Courier.getNotificationPermissionStatus', promise: () => IntegrationTests.testGetNotificationPermissionStatus(), runOrder: 'normal' },
+      { name: 'Courier.setIOSForegroundPresentationOptions', promise: () => IntegrationTests.testSetIOSForegroundPresentationOptions(), runOrder: 'normal' },
+      { name: 'Courier.openSettingsForApp', promise: () => IntegrationTests.testOpenSettingsForApp(), runOrder: 'skip' },
+    ]
+  },
+  {
+    title: 'Send',
+    data: [
+      { name: 'Inbox message', promise: () => IntegrationTests.testSendInboxMessage(), runOrder: 'normal' },
+      { name: 'APN Push Notification', promise: () => IntegrationTests.testSendAPNSMessage(), runOrder: 'normal' },
+      { name: 'FCM Push Notification', promise: () => IntegrationTests.testSendFCMMessage(), runOrder: 'normal' },
+    ]
+  }
 ];
 
-const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; status?: string }, onPress: () => void }) => (
+const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; status?: string; runOrder?: string }, onPress: () => void }) => (
   <TouchableOpacity onPress={onPress}>
-    <View style={styles.testItem}>
+    <View style={[styles.testItem, item.status === 'running' && styles.runningTestItem]}>
       <View style={styles.testItemContent}>
         <Text style={styles.testItemTitle}>{item.name}</Text>
         {item.status !== undefined && item.status !== 'running' && (
@@ -66,6 +139,8 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
           <Text style={styles.statusEmoji}>🧪</Text>
         ) : item.status === 'running' ? (
           <ActivityIndicator size="small" />
+        ) : item.status === 'skipped' ? (
+          <Text style={styles.statusEmoji}>⚠️</Text>
         ) : (
           <Text style={styles.statusEmoji}>{item.status === 'success' ? '✅' : '❌'}</Text>
         )}
@@ -74,10 +149,16 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
   </TouchableOpacity>
 );
 
+const SectionHeader = ({ title }: { title: string }) => (
+  <View style={styles.sectionHeader}>
+    <Text style={styles.sectionHeaderText}>{title}</Text>
+  </View>
+);
+
 const Tests = () => {
   const navigation = useNavigation();
-  const [testResults, setTestResults] = useState<Array<{ name: string; result?: unknown; status?: string }>>(
-    tests.map(test => ({ name: test.name }))
+  const [testResults, setTestResults] = useState<Array<{ name: string; result?: unknown; status?: string; runOrder?: string }>>(
+    testSections.flatMap(section => section.data.map(test => ({ name: test.name, runOrder: test.runOrder })))
   );
   const [isRunning, setIsRunning] = useState(false);
 
@@ -113,13 +194,27 @@ const Tests = () => {
   const runAllTests = async () => {
     if (isRunning) return;
     setIsRunning(true);
-    for (const test of tests) {
+    const normalTests = testSections.flatMap(section => section.data.filter(test => test.runOrder === 'normal'));
+    const endTests = testSections.flatMap(section => section.data.filter(test => test.runOrder === 'run at end'));
+    const skipTests = testSections.flatMap(section => section.data.filter(test => test.runOrder === 'skip'));
+    
+    for (const test of normalTests) {
       await runSingleTest(test);
     }
+    
+    for (const test of endTests) {
+      await runSingleTest(test);
+    }
+
+    for (const test of skipTests) {
+      setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, status: 'skipped' } : t));
+    }
+    
     setIsRunning(false);
   };
 
   const runSingleTest = async (test: TestItem) => {
+
     setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, status: 'running', result: undefined } : t));
     
     try {
@@ -149,7 +244,7 @@ const Tests = () => {
     }
   };
 
-  const onTestItemPress = (item: { name: string; result?: unknown; status?: string }) => {
+  const onTestItemPress = (item: { name: string; result?: unknown; status?: string; runOrder?: string }) => {
     if (isRunning) return;
     Alert.alert(
       "Run Test",
@@ -159,7 +254,7 @@ const Tests = () => {
         { 
           text: "Yes", 
           onPress: async () => {
-            const testToRun = tests.find(test => test.name === item.name);
+            const testToRun = testSections.flatMap(section => section.data).find(test => test.name === item.name);
             if (testToRun) {
               await runSingleTest(testToRun);
             }
@@ -172,9 +267,20 @@ const Tests = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={testResults}
-        renderItem={({ item }) => <TestItem item={item} onPress={() => onTestItemPress(item)} />}
-        keyExtractor={(item) => item.name}
+        data={testSections}
+        renderItem={({ item: section }) => (
+          <>
+            <SectionHeader title={section.title} />
+            {section.data.map((test) => (
+              <TestItem
+                key={test.name}
+                item={testResults.find(r => r.name === test.name) || { name: test.name, runOrder: test.runOrder }}
+                onPress={() => onTestItemPress({ name: test.name, runOrder: test.runOrder })}
+              />
+            ))}
+          </>
+        )}
+        keyExtractor={(item) => item.title}
       />
     </View>
   );
@@ -191,6 +297,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  runningTestItem: {
+    backgroundColor: '#e6f3ff',
   },
   testItemContent: {
     flex: 1,
@@ -230,6 +339,20 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5,
+  },
+  sectionHeader: {
+    backgroundColor: '#f0f0f0',
+    padding: 20,
+  },
+  sectionHeaderText: {
+    fontFamily: Platform.select({
+      ios: 'Courier',
+      android: 'monospace',
+      default: 'monospace',
+    }),
+    fontWeight: 'bold',
+    fontSize: 24,
+    paddingTop: 20,
   },
 });
 

@@ -1,4 +1,4 @@
-import Courier, { CourierClient, CourierUserPreferencesStatus, CourierUserPreferencesChannel, CourierTrackingEvent, CourierPushProvider } from "@trycourier/courier-react-native";
+import Courier, { CourierClient, CourierUserPreferencesStatus, CourierUserPreferencesChannel, CourierTrackingEvent, CourierPushProvider, iOSForegroundPresentationOptions } from "@trycourier/courier-react-native";
 import Env from "./Env";
 import { ExampleServer, Utils } from "./Utils";
 
@@ -28,7 +28,8 @@ export class IntegrationTests {
 
   }
 
-  public static async testTokens() {
+  public static async testPutToken() {
+
     if (!IntegrationTests.client) {
       throw new Error("Client is undefined");
     }
@@ -38,9 +39,18 @@ export class IntegrationTests {
       provider: 'expo',
     });
 
+  }
+
+  public static async testDeleteToken() {
+
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
+
     await IntegrationTests.client.tokens.deleteUserToken({
       token: 'example',
     });
+    
   }
 
   public static async testBrands() {
@@ -58,12 +68,6 @@ export class IntegrationTests {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
-
-    await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
-
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
     return await IntegrationTests.client.inbox.getMessages({
       paginationLimit: 123,
       startCursor: undefined,
@@ -75,12 +79,6 @@ export class IntegrationTests {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
-
-    await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
-
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
     return await IntegrationTests.client.inbox.getUnreadMessageCount();
   }
 
@@ -88,12 +86,6 @@ export class IntegrationTests {
     if (!IntegrationTests.client) {
       throw new Error("Client is undefined");
     }
-
-    const userId = IntegrationTests.client.options.userId ?? '';
-
-    await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
-
-    await new Promise(resolve => setTimeout(resolve, 5000));
 
     return await IntegrationTests.client.inbox.getArchivedMessages({
       paginationLimit: 123,
@@ -321,7 +313,7 @@ export class IntegrationTests {
 
   }
 
-  public static async testRemovePushListener() {
+  public static async testRemoveAllPushNotificationListeners() {
 
     Courier.shared.removeAllPushNotificationListeners();
     
@@ -357,7 +349,7 @@ export class IntegrationTests {
 
   public static async testInboxPaginationLimit() {
 
-    Courier.shared.inboxPaginationLimit = 26;
+    Courier.shared.inboxPaginationLimit = 1;
 
     return Courier.shared.inboxPaginationLimit;
 
@@ -464,9 +456,51 @@ export class IntegrationTests {
 
   }
 
+  public static async testRefreshInbox() {
+
+    return await Courier.shared.refreshInbox();
+
+  }
+
+  public static async testFetchNextPageOfMessages() {
+
+    return await Courier.shared.fetchNextPageOfMessages();
+
+  }
+
   public static async testSignOut() {
 
     await Courier.shared.signOut();
+
+  }
+
+  public static async testRequestPushNotificationPermission() {
+
+    return await Courier.requestNotificationPermission();
+
+  }
+
+  public static async testGetNotificationPermissionStatus() {
+
+    return await Courier.getNotificationPermissionStatus();
+
+  }
+
+  public static async testSetIOSForegroundPresentationOptions() {
+
+    const options: iOSForegroundPresentationOptions[] = ['banner']
+
+    Courier.setIOSForegroundPresentationOptions({
+      options: options
+    });
+
+    return options
+
+  }
+
+  public static async testOpenSettingsForApp() {
+
+    Courier.openSettingsForApp();
 
   }
 

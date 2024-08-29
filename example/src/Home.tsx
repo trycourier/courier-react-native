@@ -86,7 +86,7 @@ const Home = () => {
       <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
       <Tab.Screen name="Inbox" component={Inbox} options={inboxOptions()} />
       <Tab.Screen name="Preferences" component={PreferencesStack} options={{ ...icon('wrench'), headerShown: false }} />
-      <Tab.Screen name="Tests" component={Tests} options={icon('account-circle')} />
+      <Tab.Screen name="Tests" component={Tests} options={icon('test-tube')} />
     </Tab.Navigator>
   );
 };

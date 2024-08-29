@@ -89,6 +89,14 @@ class CourierSystemModule: RCTEventEmitter {
         
     }
     
+    // MARK: Open App
+    
+    @objc func openSettingsForApp() {
+        DispatchQueue.main.async {
+            Courier.openSettingsForApp()
+        }
+    }
+    
     // MARK: Notification Permissions
     
     @objc(getNotificationPermissionStatus:withRejecter:)

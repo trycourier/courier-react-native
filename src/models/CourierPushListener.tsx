@@ -1,20 +1,18 @@
-import { EmitterSubscription } from "react-native";
-import Courier from "..";
-
 export class CourierPushListener {
 
   readonly listenerId: string
-  public onNotificationClickedListener?: EmitterSubscription
-  public onNotificationDeliveredListener?: EmitterSubscription
+  public onPushNotificationClicked?: (push: any) => void
+  public onPushNotificationDelivered?: (push: any) => void
 
-  constructor(id: string) {
+  constructor(id: string, onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void) {
     this.listenerId = id;
+    this.onPushNotificationClicked = onPushNotificationClicked;
+    this.onPushNotificationDelivered = onPushNotificationDelivered;
   }
 
   public remove() {
-    Courier.shared.removePushNotificationListener({ listenerId: this.listenerId });
-    this.onNotificationClickedListener?.remove();
-    this.onNotificationDeliveredListener?.remove();
+    this.onPushNotificationClicked = undefined;
+    this.onPushNotificationDelivered = undefined;
   }
 
 }

@@ -1,6 +1,7 @@
 import {
   Platform,
   NativeEventEmitter,
+  EmitterSubscription,
 } from 'react-native';
 
 // Imports
@@ -56,6 +57,8 @@ class Courier {
   // Broadcasting
   private systemBroadcaster = new Broadcaster(Modules.System);
   private sharedBroadcaster = new Broadcaster(Modules.Shared);
+  private pushNotificationClickedEmitter: EmitterSubscription | undefined;
+  private pushNotificationDeliveredEmitter: EmitterSubscription | undefined;
 
   public constructor() {
 
@@ -64,6 +67,9 @@ class Courier {
     Courier.setIOSForegroundPresentationOptions({ 
       options: ['sound', 'badge', 'list', 'banner']
     });
+
+    // Attach the push notification listeners
+    this.attachPushNotificationListeners();
 
   }
 
@@ -91,6 +97,42 @@ class Courier {
 
   // System (Static)
 
+  private attachPushNotificationListeners() {
+
+    // Remove existing listeners
+    // Only allows one subscription to be active
+    this.pushNotificationClickedEmitter?.remove();
+    this.pushNotificationDeliveredEmitter?.remove();
+
+    // When a push notification is clicked
+    this.pushNotificationClickedEmitter = this.systemBroadcaster.addListener(Events.Push.CLICKED, (event) => {
+      try {
+        const message = JSON.parse(event);
+        this.pushListeners.forEach(listener => {
+          if (listener.onPushNotificationClicked) {
+            listener.onPushNotificationClicked(message);
+          }
+        });
+      } catch (error) {
+        Courier.log(`Error parsing push notification clicked event: ${error}`);
+      }
+    });
+
+    // When a push notification is delivered
+    this.pushNotificationDeliveredEmitter = this.systemBroadcaster.addListener(Events.Push.DELIVERED, (event) => {
+      try {
+        const message = JSON.parse(event);
+        this.pushListeners.forEach(listener => {
+          if (listener.onPushNotificationDelivered) {
+            listener.onPushNotificationDelivered(message);
+          }
+        });
+      } catch (error) {
+        Courier.log(`Error parsing push notification delivered event: ${error}`);
+      }
+    });
+  }
+
   // TODO: Describe
   public static setIOSForegroundPresentationOptions(props: { options: iOSForegroundPresentationOptions[] }): string {
 
@@ -112,6 +154,11 @@ class Courier {
   // TODO: Describe
   public static async requestNotificationPermission(): Promise<string> {
     return await Modules.System.requestNotificationPermission();
+  }
+
+  // TODO: Describe
+  public static openSettingsForApp() {
+    Modules.System.openSettingsForApp();
   }
 
   // Client
@@ -251,27 +298,12 @@ class Courier {
   public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
     
     const listenerId = `push_${Utils.generateUUID()}`;
-    const pushListener = new CourierPushListener(listenerId);
 
-    if (props.onPushNotificationClicked) {
-      pushListener.onNotificationClickedListener = this.systemBroadcaster.addListener(Events.Push.CLICKED, (event) => {
-        try {
-          props.onPushNotificationClicked!(JSON.parse(event));
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    }
-
-    if (props.onPushNotificationDelivered) {
-      pushListener.onNotificationDeliveredListener = this.systemBroadcaster.addListener(Events.Push.DELIVERED, (event) => {
-        try {
-          props.onPushNotificationDelivered!(JSON.parse(event));
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    }
+    const pushListener = new CourierPushListener(
+      listenerId,
+      props.onPushNotificationClicked,
+      props.onPushNotificationDelivered
+    );
 
     // Cache the listener
     this.pushListeners.set(listenerId, pushListener);
@@ -282,7 +314,7 @@ class Courier {
     // user launched the app by clicking on a notifications
     Modules.System.registerPushNotificationClickedOnKilledState();
 
-    return pushListener
+    return pushListener;
 
   }
 
