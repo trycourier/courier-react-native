@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Platform, RefreshControl, FlatList, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, Alert, TouchableOpacity } from 'react-native';
 import { IntegrationTests } from '../IntegrationTests';
+import { useNavigation } from '@react-navigation/native';
 
 type TestItem = {
   name: string;
@@ -44,6 +45,9 @@ const tests: TestItem[] = [
   { name: 'Shared — Inbox Listener', promise: () => IntegrationTests.testInboxListener() },
   { name: 'Shared — Remove All Inbox Listeners', promise: () => IntegrationTests.testRemoveAllInboxListeners() },
   { name: 'Shared — Sign Out', promise: () => IntegrationTests.testSignOut() },
+  { name: 'Shared — Send Inbox Message', promise: () => IntegrationTests.testSendInboxMessage() },
+  { name: 'Shared — Send APNS Message', promise: () => IntegrationTests.testSendAPNSMessage() },
+  { name: 'Shared — Send FCM Message', promise: () => IntegrationTests.testSendFCMMessage() },
 ];
 
 const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; status?: string }, onPress: () => void }) => (
@@ -51,7 +55,7 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
     <View style={styles.testItem}>
       <View style={styles.testItemContent}>
         <Text style={styles.testItemTitle}>{item.name}</Text>
-        {item.status !== undefined && (
+        {item.status !== undefined && item.status !== 'running' && (
           <Text style={styles.testItemResult}>
             {JSON.stringify(item.result ?? 'No result', null, 2)}
           </Text>
@@ -59,6 +63,8 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
       </View>
       <View style={styles.testItemStatus}>
         {item.status === undefined ? (
+          <Text style={styles.statusEmoji}>🧪</Text>
+        ) : item.status === 'running' ? (
           <ActivityIndicator size="small" />
         ) : (
           <Text style={styles.statusEmoji}>{item.status === 'success' ? '✅' : '❌'}</Text>
@@ -69,20 +75,44 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
 );
 
 const Tests = () => {
-  
-  const [completedTests, setCompletedTests] = useState<Array<{ name: string; result?: unknown; status?: string }>>([]);
+  const navigation = useNavigation();
+  const [testResults, setTestResults] = useState<Array<{ name: string; result?: unknown; status?: string }>>(
+    tests.map(test => ({ name: test.name }))
+  );
   const [isRunning, setIsRunning] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    runTests();
-  }, []);
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={runAllTests} disabled={isRunning}>
+          <Text style={[styles.runTestsButton, isRunning && styles.disabledButton]}>Run Tests</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [isRunning]);
 
-  const runTests = async () => {
+  const handleTestError = (error: unknown) => {
+    let errorMessage = 'An unknown error occurred';
+    let errorDetails = {};
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorDetails = {
+        name: error.name,
+      };
+    } else if (typeof error === 'object' && error !== null) {
+      errorMessage = String(error);
+      errorDetails = { ...error };
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    }
+
+    return { errorMessage, errorDetails };
+  };
+
+  const runAllTests = async () => {
     if (isRunning) return;
     setIsRunning(true);
-    setRefreshing(false);
-    setCompletedTests([]);
     for (const test of tests) {
       await runSingleTest(test);
     }
@@ -90,34 +120,40 @@ const Tests = () => {
   };
 
   const runSingleTest = async (test: TestItem) => {
-    setCompletedTests(prev => [{ name: test.name }, ...prev]);
+    setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, status: 'running', result: undefined } : t));
     
     try {
       const result = await test.promise();
-      setCompletedTests(prev => [
-        { name: test.name, result, status: 'success' },
-        ...prev.slice(1)
-      ]);
+      setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, result, status: 'success' } : t));
     } catch (error) {
-      console.log(error);
-      setCompletedTests(prev => [
-        { name: test.name, result: `${error}`, status: 'failure' },
-        ...prev.slice(1)
-      ]);
-    }
-  };
+      const { errorMessage, errorDetails } = handleTestError(error);
 
-  const onRefresh = () => {
-    if (!isRunning) {
-      setRefreshing(true);
-      runTests();
+      console.log('Test failed:', {
+        testName: test.name,
+        errorMessage,
+        errorDetails,
+      });
+
+      setTestResults(prev => prev.map(t => 
+        t.name === test.name 
+          ? { 
+              ...t, 
+              result: {
+                errorMessage,
+                errorDetails,
+              },
+              status: 'failure' 
+            } 
+          : t
+      ));
     }
   };
 
   const onTestItemPress = (item: { name: string; result?: unknown; status?: string }) => {
+    if (isRunning) return;
     Alert.alert(
-      "Rerun Test",
-      `Do you want to rerun the test "${item.name}"?`,
+      "Run Test",
+      `Do you want to run the test "${item.name}"?`,
       [
         { text: "Cancel", style: "cancel" },
         { 
@@ -125,7 +161,6 @@ const Tests = () => {
           onPress: async () => {
             const testToRun = tests.find(test => test.name === item.name);
             if (testToRun) {
-              setCompletedTests(prev => prev.map(t => t.name === item.name ? { name: item.name } : t));
               await runSingleTest(testToRun);
             }
           }
@@ -137,15 +172,9 @@ const Tests = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={completedTests}
+        data={testResults}
         renderItem={({ item }) => <TestItem item={item} onPress={() => onTestItemPress(item)} />}
-        keyExtractor={(item, index) => index.toString()}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
+        keyExtractor={(item) => item.name}
       />
     </View>
   );
@@ -193,6 +222,14 @@ const styles = StyleSheet.create({
   statusEmoji: {
     fontSize: 16,
     lineHeight: 24,
+  },
+  runTestsButton: {
+    fontSize: 16,
+    color: 'blue',
+    marginRight: 10,
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
 });
 

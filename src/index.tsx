@@ -222,7 +222,6 @@ class Courier {
 
   public async getAllTokens(): Promise<Map<string, string>> {
     const tokensObject = await Modules.Shared.getAllTokens();
-    console.log('tokensObject', tokensObject);
     const tokensMap = new Map<string, string>();
     for (const [key, value] of Object.entries(tokensObject)) {
       tokensMap.set(key, value as string);

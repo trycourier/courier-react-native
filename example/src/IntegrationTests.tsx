@@ -29,197 +29,229 @@ export class IntegrationTests {
   }
 
   public static async testTokens() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    await IntegrationTests.client?.tokens.putUserToken({
+    await IntegrationTests.client.tokens.putUserToken({
       token: 'example',
       provider: 'expo',
     });
 
-    await IntegrationTests.client?.tokens.deleteUserToken({
+    await IntegrationTests.client.tokens.deleteUserToken({
       token: 'example',
     });
-
   }
 
   public static async testBrands() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    return await IntegrationTests.client?.brands.getBrand({
+    return await IntegrationTests.client.brands.getBrand({
       brandId: Env.brandId,
     });
-
   }
 
   public static async testMessages() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    return await IntegrationTests.client?.inbox.getMessages({
+    return await IntegrationTests.client.inbox.getMessages({
       paginationLimit: 123,
       startCursor: undefined,
     });
-
   }
 
   public static async testUnreadCount() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    return await IntegrationTests.client?.inbox.getUnreadMessageCount();
-
+    return await IntegrationTests.client.inbox.getUnreadMessageCount();
   }
 
   public static async testArchivedMessages() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    return await IntegrationTests.client?.inbox.getArchivedMessages({
+    return await IntegrationTests.client.inbox.getArchivedMessages({
       paginationLimit: 123,
       startCursor: undefined,
     });
-
   }
 
   public static async testMessageById() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    return await IntegrationTests.client?.inbox.getMessageById({
+    return await IntegrationTests.client.inbox.getMessageById({
       messageId: messageId,
     });
-
   }
 
   public static async openMessage() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client?.inbox.open({
+    await IntegrationTests.client.inbox.open({
       messageId: messageId,
     });
-    
   }
 
   public static async clickMessage() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client?.inbox.click({
+    await IntegrationTests.client.inbox.click({
       messageId: messageId,
       trackingId: 'tracking_example',
     });
-    
   }
 
   public static async readMessage() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client?.inbox.read({
+    await IntegrationTests.client.inbox.read({
       messageId: messageId,
     });
-    
   }
 
   public static async unreadMessage() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client?.inbox.unread({
+    await IntegrationTests.client.inbox.unread({
       messageId: messageId,
     });
-    
   }
 
   public static async archiveMessage() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    const userId = IntegrationTests.client?.options.userId ?? '';
+    const userId = IntegrationTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client?.inbox.archive({
+    await IntegrationTests.client.inbox.archive({
       messageId: messageId,
     });
-    
   }
 
   public static async readAllMessages() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    await IntegrationTests.client?.inbox.readAll();
-    
+    await IntegrationTests.client.inbox.readAll();
   }
 
   public static async getUserPreferences() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    return await IntegrationTests.client?.preferences.getUserPreferences({
+    return await IntegrationTests.client.preferences.getUserPreferences({
       paginationCursor: undefined,
     });
-    
   }
 
   public static async getUserPreferenceTopic() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
     const topicId = '35K24W99WCME21MRG7X2BPDF6CK7';
 
-    return await IntegrationTests.client?.preferences.getUserPreferenceTopic({
+    return await IntegrationTests.client.preferences.getUserPreferenceTopic({
       topicId: topicId,
     });
-    
   }
 
   public static async putUserPreferenceTopic() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
     const topicId = '35K24W99WCME21MRG7X2BPDF6CK7';
 
-    return await IntegrationTests.client?.preferences.putUserPreferenceTopic({
+    return await IntegrationTests.client.preferences.putUserPreferenceTopic({
       topicId: topicId,
       status: CourierUserPreferencesStatus.OptedIn,
       hasCustomRouting: true,
       customRouting: [CourierUserPreferencesChannel.Email, CourierUserPreferencesChannel.Push]
     });
-    
   }
 
   public static async testTracking() {
+    if (!IntegrationTests.client) {
+      throw new Error("Client is undefined");
+    }
 
-    await IntegrationTests.client?.tracking.postTrackingUrl({
+    await IntegrationTests.client.tracking.postTrackingUrl({
       url: 'https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy',
       event: CourierTrackingEvent.Delivered,
     });
-
   }
 
   public static async testRemoveClient() {
@@ -318,9 +350,9 @@ export class IntegrationTests {
   }
 
   public static async testGetAllTokens() {
-
-    return await Courier.shared.getAllTokens();
-
+    const tokensMap = await Courier.shared.getAllTokens();
+    const tokensObject = Object.fromEntries(tokensMap);
+    return tokensObject;
   }
 
   public static async testInboxPaginationLimit() {
@@ -332,63 +364,68 @@ export class IntegrationTests {
   }
 
   public static async testOpenMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
 
     const userId = Courier.shared.userId ?? '';
-
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await Courier.shared.openMessage({
       messageId: messageId,
     });
-
   }
 
   public static async testClickMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
 
     const userId = Courier.shared.userId ?? '';
-
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await Courier.shared.clickMessage({
       messageId: messageId,
     });
-
   }
 
   public static async testReadMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
 
     const userId = Courier.shared.userId ?? '';
-
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await Courier.shared.readMessage({
       messageId: messageId,
     });
-    
   }
 
   public static async testUnreadMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
 
     const userId = Courier.shared.userId ?? '';
-
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await Courier.shared.unreadMessage({
       messageId: messageId,
     });
-    
   }
 
   public static async testArchiveMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
 
     const userId = Courier.shared.userId ?? '';
-
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await Courier.shared.unreadMessage({
       messageId: messageId,
     });
-    
   }
 
   public static async testReadAllInboxMessages() {
@@ -431,6 +468,36 @@ export class IntegrationTests {
 
     await Courier.shared.signOut();
 
+  }
+
+  public static async testSendInboxMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
+
+    const userId = Courier.shared.userId ?? '';
+
+    return await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'inbox' });
+  }
+
+  public static async testSendAPNSMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
+
+    const userId = Courier.shared.userId ?? '';
+
+    return await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'apn' });
+  }
+
+  public static async testSendFCMMessage() {
+    if (!Courier.shared.isUserSignedIn) {
+      throw new Error("User is not signed in");
+    }
+
+    const userId = Courier.shared.userId ?? '';
+
+    return await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'firebase-fcm' });
   }
 
 }
