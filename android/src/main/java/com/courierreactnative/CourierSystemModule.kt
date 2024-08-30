@@ -1,9 +1,11 @@
 package com.courierreactnative
 
 import android.content.Intent
+import android.provider.Settings
 import com.courier.android.Courier
 import com.courier.android.modules.isPushPermissionGranted
 import com.courier.android.modules.requestNotificationPermission
+import com.courier.android.utils.error
 import com.courier.android.utils.pushNotification
 import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.bridge.Promise
@@ -69,6 +71,21 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
     promise.resolve("unknown")
 
+  }
+
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  fun openSettingsForApp(): String? {
+    // TODO: Move this to the native package in the future
+    val context = reactApplicationContext
+    try {
+      val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+      intent.data = android.net.Uri.parse("package:" + context.packageName)
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      context.startActivity(intent)
+    } catch (e: Exception) {
+      Courier.shared.client?.error(e.toString())
+    }
+    return null
   }
 
 }

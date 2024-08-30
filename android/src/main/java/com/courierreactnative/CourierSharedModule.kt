@@ -29,7 +29,6 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.WritableNativeMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -148,9 +147,11 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   @ReactMethod
   fun getAllTokens(promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
     val tokens = Courier.shared.tokens
-    promise.resolve(WritableNativeMap().apply {
-      tokens.forEach { (key, value) -> putString(key, value) }
-    })
+    val resultMap = Arguments.createMap()
+    tokens.forEach { (key, value) ->
+      resultMap.putString(key, value)
+    }
+    promise.resolve(resultMap)
   }
 
   @ReactMethod
@@ -295,7 +296,7 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
-  fun removeAllInboxListeners(promise: Promise): String? {
+  fun removeAllInboxListeners(): String? {
     inboxListeners.values.forEach { it.remove() }
     inboxListeners.clear()
     return null
@@ -311,7 +312,7 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   fun fetchNextPageOfMessages(promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
     try {
       val messages = Courier.shared.fetchNextInboxPage()
-      promise.resolve(messages.map { it.toJson() })
+      promise.resolve(messages.map { it.toJson() }.toWritableArray())
     } catch (e: Exception) {
       promise.apiError(e)
     }

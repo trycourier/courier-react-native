@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, TouchableOpacity, TextInput, Modal, Button, Switch, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from '@trycourier/courier-react-native';
+import Courier, { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus, iOSForegroundPresentationOptions } from '@trycourier/courier-react-native';
 import Env from '../Env';
 import { ExampleServer, Utils } from '../Utils';
 
@@ -9,9 +9,9 @@ let savedClient: CourierClient | undefined = undefined;
 
 const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   
-  createClient: async (params: { userId: string, clientKey: string, showLogs: boolean, tenantId?: string, connectionId?: string }) => {
+  createClient: async (params: { userId: string, clientKey: string, jwt?: string, showLogs: boolean, tenantId?: string, connectionId?: string }) => {
     
-    const token = await ExampleServer.generateJwt({
+    const token = params.jwt ?? await ExampleServer.generateJwt({
       authKey: Env.authKey,
       userId: params.userId,
     });
@@ -166,7 +166,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   },
 
-  readMessage: async (params: { messageId: string }) => {
+  readMessage: async (params: { messageId?: string }) => {
     if (!savedClient) {
       throw new Error("Client not initialized. Run createClient first.");
     }
@@ -187,7 +187,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     return { messageId: messageId };
   },
 
-  unreadMessage: async (params: { messageId: string }) => {
+  unreadMessage: async (params: { messageId?: string }) => {
     if (!savedClient) {
       throw new Error("Client not initialized. Run createClient first.");
     }
@@ -209,7 +209,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   },
 
-  archiveMessage: async (params: { messageId: string }) => {
+  archiveMessage: async (params: { messageId?: string }) => {
     if (!savedClient) {
       throw new Error("Client not initialized. Run createClient first.");
     }
@@ -274,6 +274,240 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     });
   },
 
+  testSignIn: async (params: { userId: string, accessToken?: string, clientKey: string, tenantId: string, showLogs: boolean }) => {
+
+    const token = params.accessToken ?? await ExampleServer.generateJwt({
+      authKey: Env.authKey,
+      userId: params.userId,
+    });
+
+    await Courier.shared.signIn({
+      userId: params.userId,
+      accessToken: token,
+      clientKey: params.clientKey,
+      tenantId: params.tenantId,
+      showLogs: params.showLogs,
+    });
+    return Courier.shared.client?.options;
+  },
+
+  testGetUserId: async () => {
+    return Courier.shared.userId;
+  },
+
+  testGetTenantId: async () => {
+    return Courier.shared.tenantId;
+  },
+
+  testGetIsUserSignedIn: async () => {
+    return Courier.shared.isUserSignedIn;
+  },
+
+  testAuthenticationListener: async () => {
+    const listener = Courier.shared.addAuthenticationListener({
+      onUserChanged: (userId) => {
+        console.log('User changed:', userId);
+      },
+    });
+    listener.remove();
+    return listener.listenerId;
+  },
+
+  testRemoveAllAuthenticationListeners: async () => {
+    return Courier.shared.removeAllAuthenticationListeners();
+  },
+
+  testSignOut: async () => {
+    await Courier.shared.signOut();
+  },
+
+  testGetClient: async () => {
+    const client = Courier.shared.client;
+    return {
+      clientId: client?.clientId,
+      options: client?.options,
+    };
+  },
+
+  testGetAllTokens: async () => {
+    const tokens = await Courier.shared.getAllTokens();
+    const tokenObject: Record<string, string> = {};
+    tokens.forEach((value, key) => {
+      tokenObject[key] = value;
+    });
+    return tokenObject
+  },
+
+  testGetToken: async (params: { provider: string }) => {
+    return await Courier.shared.getToken({ key: params.provider });
+  },
+
+  testSetToken: async (params: { provider: string, token: string }) => {
+    return await Courier.shared.setToken({ key: params.provider, token: params.token });
+  },
+
+  testAddPushNotificationListener: async () => {
+    const listener = Courier.shared.addPushNotificationListener({
+      onPushNotificationClicked: (push) => {
+        console.log('Push notification clicked:', push);
+      },
+    });
+    listener.remove();
+    return listener.listenerId;
+  },
+
+  testRemoveAllPushNotificationListeners: async () => {
+    return Courier.shared.removeAllPushNotificationListeners();
+  },
+
+  testSetInboxPaginationLimit: async (params: { limit: number }) => {
+    Courier.shared.inboxPaginationLimit = params.limit;
+  },
+
+  testGetInboxPaginationLimit: async () => {
+    return Courier.shared.inboxPaginationLimit;
+  },
+
+  testOpenMessage: async (params: { messageId?: string }) => {
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: Courier.shared.userId!,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+    await Courier.shared.openMessage({ messageId: messageId });
+    return { messageId: messageId };
+  },
+
+  testClickMessage: async (params: { messageId?: string }) => {
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: Courier.shared.userId!,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+    await Courier.shared.openMessage({ messageId: messageId });
+    return { messageId: messageId };
+  },
+  
+  testReadMessage: async (params: { messageId?: string }) => {
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: Courier.shared.userId!,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+    await Courier.shared.readMessage({ messageId: messageId });
+    return { messageId: messageId };
+  },
+
+  testUnreadMessage: async (params: { messageId?: string }) => {
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: Courier.shared.userId!,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+    await Courier.shared.unreadMessage({ messageId: messageId });
+    return { messageId: messageId };
+  },
+  
+  testArchiveMessage: async (params: { messageId?: string }) => {
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: Courier.shared.userId!,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+    await Courier.shared.archiveMessage({ messageId: messageId });
+    return { messageId: messageId };
+  },
+
+  testReadAllInboxMessages: async () => {
+    return await Courier.shared.readAllInboxMessages();
+  },
+
+  testAddInboxListener: async () => {
+    const listener = Courier.shared.addInboxListener({
+      onInitialLoad: () => {
+        console.log('Inbox initial load');
+      },
+      onError: (error) => {
+        console.log('Inbox error:', error);
+      },
+      onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
+        console.log('Inbox messages changed:', messages, unreadMessageCount, totalMessageCount, canPaginate);
+      },
+    });
+    listener.remove();
+    return listener;
+  },
+
+  testRemoveAllInboxListeners: async () => {
+    return Courier.shared.removeAllInboxListeners();
+  },
+
+  testRefreshInbox: async () => {
+    return await Courier.shared.refreshInbox();
+  },
+
+  testFetchNextPageOfMessages: async () => {
+    return await Courier.shared.fetchNextPageOfMessages();
+  },
+
+  testRequestPushNotificationPermission: async () => {
+    return await Courier.requestNotificationPermission();
+  },
+
+  testGetPushNotificationPermissionStatus: async () => {
+    return await Courier.getNotificationPermissionStatus();
+  },
+
+  testSetIOSForegroundPresentationOptions: async (params: { options: iOSForegroundPresentationOptions[] }) => {
+    return Courier.setIOSForegroundPresentationOptions({ options: params.options });
+  },
+
+  testOpenSettingsForApp: async () => {
+    return Courier.openSettingsForApp();
+  },
+
+  testSendInboxMessage: async (params: { userId: string }) => {
+    const messageId = await ExampleServer.sendTest({
+      authKey: Env.authKey,
+      userId: params.userId,
+      channel: 'inbox',
+    });
+    return { messageId: messageId };
+  },
+
+  testSendApnMessage: async (params: { userId: string }) => {
+    const messageId = await ExampleServer.sendTest({
+      authKey: Env.authKey,
+      userId: params.userId,
+      channel: 'apn',
+    });
+    return { messageId: messageId };
+  },
+
+    testSendFcmMessage: async (params: { userId: string }) => {
+    const messageId = await ExampleServer.sendTest({
+      authKey: Env.authKey,
+      userId: params.userId,
+      channel: 'firebase-fcm',
+    });
+    return { messageId: messageId };
+  },
+
 };
 
 type TestItem = {
@@ -290,19 +524,19 @@ type TestSection = {
 
 const getTestSections = (): TestSection[] => [
   {
-    title: 'Client — Management',
+    title: 'Client Management',
     tests: [
       {
-        name: 'new CourierClient',
+        name: 'Create Client',
         testId: 'createClient',
         defaultParams: { userId: Utils.generateUUID(), clientKey: Env.clientKey, showLogs: true, tenantId: undefined, connectionId: undefined },
         runOrder: 'normal'
       },
       {
-        name: 'remove CourierClient',
+        name: 'Remove Client',
         testId: 'removeClient',
         defaultParams: { clientId: savedClient?.clientId },
-        runOrder: 'run at end'
+        runOrder: 'skip'
       },
     ]
   },
@@ -420,6 +654,11 @@ const getTestSections = (): TestSection[] => [
         defaultParams: { topicId: Env.topicId },
         runOrder: 'normal'
       },
+    ]
+  },
+  {
+    title: 'Tracking',
+    tests: [
       {
         name: 'Post Tracking Url',
         testId: 'testPostTrackingUrl',
@@ -428,6 +667,228 @@ const getTestSections = (): TestSection[] => [
       },
     ]
   },
+  {
+    title: 'Shared Authentication',
+    tests: [
+      {
+        name: 'Sign In',
+        testId: 'testSignIn',
+        defaultParams: { userId: Utils.generateUUID(), accessToken: undefined, clientKey: Env.clientKey, tenantId: undefined, showLogs: true },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get User ID',
+        testId: 'testGetUserId',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Tenant ID',
+        testId: 'testGetTenantId',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Is User Signed In',
+        testId: 'testGetIsUserSignedIn',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Add Authentication Listener',
+        testId: 'testAuthenticationListener',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Remove All Authentication Listeners',
+        testId: 'testRemoveAllAuthenticationListeners',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Sign Out',
+        testId: 'testSignOut',
+        defaultParams: {},
+        runOrder: 'skip'
+      }
+    ]
+  },
+  {
+    title: 'Shared Client',
+    tests: [
+      {
+        name: 'Get Client',
+        testId: 'testGetClient',
+        defaultParams: {},
+        runOrder: 'normal'
+      }
+    ]
+  },
+  {
+    title: 'Shared Push',
+    tests: [
+      {
+        name: 'Set Token',
+        testId: 'testSetToken',
+        defaultParams: { provider: 'expo', token: 'test-token' },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Token',
+        testId: 'testGetToken',
+        defaultParams: { provider: 'expo' },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get All Tokens',
+        testId: 'testGetAllTokens',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Add Push Notification Listener',
+        testId: 'testAddPushNotificationListener',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Remove All Push Notification Listeners',
+        testId: 'testRemoveAllPushNotificationListeners',
+        defaultParams: {},
+        runOrder: 'skip'
+      }
+    ]
+  },
+  {
+    title: 'Shared Inbox',
+    tests: [
+      {
+        name: 'Set Inbox Pagination Limit',
+        testId: 'testSetInboxPaginationLimit',
+        defaultParams: { limit: 20 },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Inbox Pagination Limit',
+        testId: 'testGetInboxPaginationLimit',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Open Message',
+        testId: 'testOpenMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Click Message',
+        testId: 'testClickMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Read Message',
+        testId: 'testReadMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Unread Message',
+        testId: 'testUnreadMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Archive Message',
+        testId: 'testArchiveMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Read All Inbox Messages',
+        testId: 'testReadAllInboxMessages',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Add Inbox Listener',
+        testId: 'testAddInboxListener',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Remove All Inbox Listeners',
+        testId: 'testRemoveAllInboxListeners',
+        defaultParams: {},
+        runOrder: 'skip'
+      },
+      {
+        name: 'Refresh Inbox',
+        testId: 'testRefreshInbox',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Fetch Next Page of Messages',
+        testId: 'testFetchNextPageOfMessages',
+        defaultParams: {},
+        runOrder: 'normal'
+      }
+    ]
+  },
+  {
+    title: 'System',
+    tests: [
+      {
+        name: 'Request Push Notification Permission',
+        testId: 'testRequestPushNotificationPermission',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Push Notification Permission Status',
+        testId: 'testGetPushNotificationPermissionStatus',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Set iOS Foreground Presentation Options',
+        testId: 'testSetIOSForegroundPresentationOptions',
+        defaultParams: { options: 'badge,sound,list,banner' },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Open Settings for App',
+        testId: 'testOpenSettingsForApp',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+    ]
+  },
+  {
+    title: 'Send',
+    tests: [
+      {
+        name: 'Send Inbox Message',
+        testId: 'testSendInboxMessage',
+        defaultParams: { userId: Courier.shared.userId ?? savedClient?.options.userId },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Send APN Message',
+        testId: 'testSendApnMessage',
+        defaultParams: { userId: Courier.shared.userId ?? savedClient?.options.userId },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Send FCM Message',
+        testId: 'testSendFcmMessage',
+        defaultParams: { userId: Courier.shared.userId ?? savedClient?.options.userId },
+        runOrder: 'normal'
+      }
+    ]
+  }
 ];
 
 const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; status?: string; runOrder?: string }, onPress: () => void }) => (

@@ -479,7 +479,8 @@ class Courier {
    * Returns the fetched inbox messages
    */
   public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
-    return Modules.Shared.fetchNextPageOfMessages();
+    const messages = await Modules.Shared.fetchNextPageOfMessages();
+    return messages.map((message: string) => JSON.parse(message));
   }
   
 }
