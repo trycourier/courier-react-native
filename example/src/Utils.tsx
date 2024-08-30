@@ -34,4 +34,54 @@ export class ExampleServer {
 
   }
 
+  public static async sendTest(props: { authKey: string, userId: string, channel: string }): Promise<string> {
+    const url = 'https://api.courier.com/send';
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${props.authKey}`,
+    };
+    const body = JSON.stringify({
+      'message': {
+        'to': {
+          'user_id': props.userId
+        },
+        'content': {
+          'title': 'Test',
+          'body': 'Body',
+        },
+        'routing': {
+          'method': 'all',
+          'channels': [props.channel],
+        },
+      },
+    });
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: body,
+    });
+
+    if (response.status === 202) {
+      const json = await response.json();
+      return json['requestId'] ?? 'Error';
+    } else {
+      throw new Error('Failed to send test message');
+    }
+  }
+
+}
+
+export class Utils {
+
+  static generateUUID(): string {
+    let uuid = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 16; i++) {
+      uuid += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return uuid;
+  }
+
 }

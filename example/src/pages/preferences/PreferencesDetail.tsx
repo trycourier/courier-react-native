@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Button, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { ActivityIndicator, Button, Platform, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
 import Courier, { CourierUserPreferencesChannel, CourierUserPreferencesStatus } from "@trycourier/courier-react-native";
 import { emitEvent } from "../../Emitter";
@@ -20,7 +20,12 @@ const PreferencesDetail = ({ route, navigation }: any) => {
       borderBottomColor: '#ccc',
     },
     text: {
-      fontFamily: 'monospace'
+      fontFamily: Platform.select({
+        ios: 'Courier',
+        android: 'monospace',
+        default: 'monospace',
+      }),
+      fontSize: 16,
     },
     section: {
       marginBottom: 20,
@@ -57,9 +62,14 @@ const PreferencesDetail = ({ route, navigation }: any) => {
   }, []);
 
   async function getTopic(topicId: string) {
+
+    if (!Courier.shared.client) {
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const topic = await Courier.shared.getUserPreferencesTopic({ topicId });
+      const topic = await Courier.shared.client.preferences.getUserPreferenceTopic({ topicId });
       setStatusIndex(statuses.findIndex(status => status.status === topic.status) || 0);
       setUseCustomRouting(topic.hasCustomRouting || false);
       setRoutingChannels(topic.customRouting || []);
@@ -71,10 +81,15 @@ const PreferencesDetail = ({ route, navigation }: any) => {
   }
 
   async function savePreferences() {
+
+    if (!Courier.shared.client) {
+      return;
+    }
+
     setIsLoading(true);
     try {
 
-      await Courier.shared.putUserPreferencesTopic({
+      await Courier.shared.client.preferences.putUserPreferenceTopic({
         topicId: id,
         status: statuses[statusIndex]?.status || CourierUserPreferencesStatus.OptedIn,
         hasCustomRouting: useCustomRouting,

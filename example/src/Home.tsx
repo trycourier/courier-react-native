@@ -7,6 +7,7 @@ import Push from './pages/Push';
 import Inbox from './pages/Inbox';
 import Courier from '@trycourier/courier-react-native';
 import PreferencesStack from './pages/PreferencesStack';
+import Tests from './pages/Tests';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,13 +17,9 @@ const Home = () => {
 
   useEffect(() => {
 
-    // Debugging
-
-    // Courier.shared.setIsDebugging(false);
-
     // Setup Push
 
-    Courier.shared.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
+    Courier.setIOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
 
     const pushListener = Courier.shared.addPushNotificationListener({
       onPushNotificationClicked(push) {
@@ -37,7 +34,7 @@ const Home = () => {
 
     // Setup Inbox
 
-    Courier.shared.setInboxPaginationLimit({ limit: 100 });
+    Courier.shared.inboxPaginationLimit = 100;
 
     const inboxListener = Courier.shared.addInboxListener({
       onError(_error) {
@@ -89,6 +86,7 @@ const Home = () => {
       <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
       <Tab.Screen name="Inbox" component={Inbox} options={inboxOptions()} />
       <Tab.Screen name="Preferences" component={PreferencesStack} options={{ ...icon('wrench'), headerShown: false }} />
+      <Tab.Screen name="Tests" component={Tests} options={icon('test-tube')} />
     </Tab.Navigator>
   );
 };

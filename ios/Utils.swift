@@ -23,121 +23,6 @@ extension UNAuthorizationStatus {
 
 }
 
-internal extension [String: Any?] {
-    
-    func clean() -> NSMutableDictionary {
-        
-        let mutableDictionary = NSMutableDictionary()
-        for (key, value) in self {
-            if let unwrappedValue = value {
-                mutableDictionary[key] = unwrappedValue
-            }
-        }
-        
-        return mutableDictionary
-        
-    }
-    
-}
-
-internal extension CourierUserPreferences {
-    
-    @objc func toDictionary() -> NSDictionary {
-        
-        let dictionary: [String: Any?] = [
-            "items": items.map { $0.toDictionary() },
-            "paging": paging.toDictionary(),
-        ]
-
-        return dictionary.clean()
-        
-    }
-    
-}
-
-internal extension CourierUserPreferencesTopic {
-    
-    @objc func toDictionary() -> NSDictionary {
-        
-        let dictionary: [String: Any?] = [
-            "defaultStatus": defaultStatus.rawValue,
-            "hasCustomRouting": hasCustomRouting,
-            "customRouting": customRouting.map { $0.rawValue },
-            "status": status,
-            "topicId": topicId,
-            "topicName": topicName,
-            "sectionName": sectionName,
-            "sectionId": sectionId,
-        ]
-
-        return dictionary.clean()
-        
-    }
-    
-}
-
-internal extension CourierUserPreferencesPaging {
-    
-    @objc func toDictionary() -> NSDictionary {
-        
-        let dictionary: [String: Any?] = [
-            "cursor": cursor,
-            "more": more,
-        ]
-
-        return dictionary.clean()
-        
-    }
-    
-}
-
-internal extension InboxMessage {
-    
-    @objc func toDictionary() -> NSDictionary {
-        
-        let dictionary: [String: Any?] = [
-            "messageId": messageId,
-            "title": title,
-            "body": body,
-            "preview": preview,
-            "created": created,
-            "actions": actions?.map { $0.toDictionary() },
-            "data": data,
-            "read": isRead,
-            "opened": isOpened,
-            "archived": isArchived,
-            "trackingIds": [
-                "archiveTrackingId": trackingIds?.archiveTrackingId,
-                "openTrackingId": trackingIds?.openTrackingId,
-                "clickTrackingId": trackingIds?.clickTrackingId,
-                "deliverTrackingId": trackingIds?.deliverTrackingId,
-                "unreadTrackingId": trackingIds?.unreadTrackingId,
-                "readTrackingId": trackingIds?.readTrackingId,
-            ]
-        ]
-        
-        return dictionary.clean()
-        
-    }
-    
-}
-
-internal extension InboxAction {
-    
-    @objc func toDictionary() -> NSDictionary {
-        
-        let dictionary: [String: Any?] = [
-            "content": content,
-            "href": href,
-            "data": data
-        ]
-
-        return dictionary.clean()
-        
-    }
-    
-}
-
 internal extension String {
     
     func toRowAnimation() -> UITableView.RowAnimation {
@@ -271,6 +156,109 @@ internal extension NSDictionary {
             font: font?.toFont() ?? fallback.font,
             button: button?.toButton(fallback: fallback.button) ?? fallback.button
         )
+        
+    }
+    
+}
+
+internal extension Encodable {
+    
+    func toJson() throws -> String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        let data = try encoder.encode(self)
+        return String(data: data, encoding: .utf8) ?? nil
+    }
+    
+}
+
+internal class Rejections {
+    
+    private static let CLIENT_TAG = "Courier Client Error"
+    private static let SHARED_TAG = "Courier SDK Error"
+    
+    static func missingClient(_ reject: @escaping RCTPromiseRejectBlock) {
+        reject("Missing Client", Rejections.CLIENT_TAG, nil)
+    }
+    
+    static func clientError(_ reject: @escaping RCTPromiseRejectBlock, error: Error) {
+        reject(String(describing: error), Rejections.CLIENT_TAG, nil)
+    }
+    
+    static func sharedError(_ reject: @escaping RCTPromiseRejectBlock, error: Error) {
+        reject(String(describing: error), Rejections.SHARED_TAG, nil)
+    }
+    
+}
+
+extension [AnyHashable: Any] {
+    
+    func toString() throws -> String {
+        let json = try JSONSerialization.data(withJSONObject: self)
+        let str = String(data: json, encoding: .utf8)
+        return str ?? "Invalid JSON"
+    }
+    
+}
+
+extension NSDictionary {
+    
+    func toPresentationOptions() -> UNNotificationPresentationOptions {
+        
+        var foregroundPresentationOptions: UNNotificationPresentationOptions = []
+
+        if let options = self["options"] as? [String] {
+            options.forEach { option in
+                switch option {
+                case "sound": foregroundPresentationOptions.insert(.sound)
+                case "badge": foregroundPresentationOptions.insert(.badge)
+                case "list": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.list) } else { foregroundPresentationOptions.insert(.alert) }
+                case "banner": if #available(iOS 14.0, *) { foregroundPresentationOptions.insert(.banner) } else { foregroundPresentationOptions.insert(.alert) }
+                default: break
+                }
+            }
+        }
+
+        return foregroundPresentationOptions
+        
+    }
+    
+}
+
+internal class LogEvents {
+    static let DEBUG_LOG = "courierDebugEvent"
+}
+
+internal class PushEvents {
+    static let CLICKED_EVENT = "pushNotificationClicked"
+    static let DELIVERED_EVENT = "pushNotificationDelivered"
+}
+
+// MARK: Broadcasting
+
+internal extension RCTEventEmitter {
+    
+    func broadcast(name: String, body: Any? = nil) {
+        
+        let events: [String]? = supportedEvents()
+        if (events?.contains(name) != true) {
+            return
+        }
+        
+        sendEvent(
+            withName: name,
+            body: body
+        )
+        
+    }
+    
+    func broadcast(name: String, message: [AnyHashable: Any]? = nil) {
+        
+        do {
+            broadcast(name: name, body: try message?.toString())
+        } catch {
+            Courier.shared.client?.log(String(describing: error))
+        }
         
     }
     

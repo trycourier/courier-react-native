@@ -6,7 +6,7 @@ import PreferencesStyled from './preferences/PreferencesStyled';
 
 const Tab = createMaterialTopTabNavigator();
 
-const Preferences = () => {
+const PreferencesTab = () => {
 
   return (
     <Tab.Navigator>
@@ -18,4 +18,4 @@ const Preferences = () => {
 
 };
 
-export default Preferences;
+export default PreferencesTab;

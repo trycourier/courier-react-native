@@ -1,8 +1,6 @@
 import {
-  EmitterSubscription,
   Platform,
-  NativeModules,
-  NativeEventEmitter,
+  EmitterSubscription,
 } from 'react-native';
 
 // Imports
@@ -10,21 +8,27 @@ import { CourierInboxListener } from './models/CourierInboxListener';
 import { CourierPushListener } from './models/CourierPushListener';
 import { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
 import { InboxMessage } from './models/InboxMessage';
-import { CourierUserPreferences } from './models/CourierUserPreferences';
-import { CourierUserPreferencesTopic } from './models/CourierUserPreferencesTopic';
-import { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
-import { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
 import { CourierPushProvider } from './models/CourierPushProvider';
-import { Events, Utils } from './utils';
+import { Modules } from './Modules';
+import Broadcaster from './Broadcaster';
+import { Events, Utils } from './Utils';
+import { CourierClient } from './client/CourierClient';
+
+export { CourierClient } from './client/CourierClient';
+export { BrandClient } from './client/BrandClient';
+export { CourierBrandResponse } from './models/CourierBrand';
+export { CourierDevice } from './models/CourierDevice';
 
 // Exports
 export { CourierInboxView } from './views/CourierInboxView';
 export { CourierPreferencesView } from './views/CourierPreferencesView';
 export { CourierInboxListener } from './models/CourierInboxListener';
 export { CourierPushListener } from './models/CourierPushListener';
+export { CourierUserPreferencesTopic } from './models/CourierUserPreferences';
 export { CourierAuthenticationListener } from './models/CourierAuthenticationListener';
-export { CourierUserPreferencesChannel } from './models/CourierUserPreferencesChannel';
-export { CourierUserPreferencesStatus } from './models/CourierUserPreferencesStatus';
+export { CourierUserPreferencesChannel } from './models/CourierUserPreferences';
+export { CourierUserPreferencesStatus } from './models/CourierUserPreferences';
+export { CourierTrackingEvent } from './models/CourierTrackingEvent';
 export { CourierPushProvider } from './models/CourierPushProvider';
 export { CourierFont } from './models/CourierFont';
 export { CourierButton } from './models/CourierButton';
@@ -35,42 +39,32 @@ export { CourierInboxButtonStyle, CourierInboxTextStyle, CourierInboxUnreadIndic
 export { CourierPreferencesTheme, CourierPreferencesMode, CourierPreferencesChannel } from './models/CourierPreferencesTheme';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
 
-const LINKING_ERROR =
-  `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
-
-const CourierReactNativeModules = NativeModules.CourierReactNativeModule
-  ? NativeModules.CourierReactNativeModule
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
-
-const CourierEventEmitter = new NativeEventEmitter(
-  NativeModules.CourierReactNativeModule
-);
-
 class Courier {
 
+  // Singleton
   private static _sharedInstance: Courier;
-  private _isDebugging = false;
-  private debugListener: EmitterSubscription | undefined;
 
-  private authListeners: Map<string, CourierAuthenticationListener> = new Map<string, CourierAuthenticationListener>();
-  private inboxListeners: Map<string, CourierInboxListener> = new Map<string, CourierInboxListener>();
+  // Listeners
+  private authenticationListeners = new Map<string, CourierAuthenticationListener>();
+  private inboxListeners = new Map<string, CourierInboxListener>();
+  private pushListeners = new Map<string, CourierPushListener>();
+
+  // Broadcasting
+  private systemBroadcaster = new Broadcaster(Modules.System);
+  private sharedBroadcaster = new Broadcaster(Modules.Shared);
+  private pushNotificationClickedEmitter: EmitterSubscription | undefined;
+  private pushNotificationDeliveredEmitter: EmitterSubscription | undefined;
 
   public constructor() {
 
     // Sets the initial SDK values
-    // Defaults to React Native level debugging
-    // and will show all foreground notification styles in iOS
-    this.setDefaults();
+    // will show all foreground notification styles in iOS
+    Courier.setIOSForegroundPresentationOptions({ 
+      options: ['sound', 'badge', 'list', 'banner']
+    });
+
+    // Attach the push notification listeners
+    this.attachPushNotificationListeners();
 
   }
 
@@ -85,205 +79,217 @@ class Courier {
 
   }
 
-  private async setDefaults() {
-    this.setIsDebugging(__DEV__);
-    this.iOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
-  }
+  // Debugging
 
-  /**
-   * Tells native Courier SDKs to show or hide logs.
-   * Defaults to the React __DEV__ mode
-   */
-  public setIsDebugging(isDebugging: boolean): boolean {
+  private isDebugging = __DEV__;
 
-    // Remove the existing listener if needed
-    this.debugListener?.remove();
-
-    // Set a new listener
-    // listener needs to be registered first to catch the event
-    if (isDebugging) {
-      this.debugListener = CourierEventEmitter.addListener(Events.Log.DEBUG_LOG, event => {
-        console.log('\x1b[36m%s\x1b[0m', 'COURIER', event);
-      });
+  // Show a log to the console
+  static log(message: string): void {
+    if (Courier.shared.isDebugging) {
+      console.log(message);
     }
+  }
 
-    CourierReactNativeModules.setDebugMode(isDebugging);
+  // System (Static)
 
-    this._isDebugging = isDebugging
+  private attachPushNotificationListeners() {
 
-    return this._isDebugging;
+    // Remove existing listeners
+    // Only allows one subscription to be active
+    this.pushNotificationClickedEmitter?.remove();
+    this.pushNotificationDeliveredEmitter?.remove();
 
+    // When a push notification is clicked
+    this.pushNotificationClickedEmitter = this.systemBroadcaster.addListener(Events.Push.CLICKED, (event) => {
+      try {
+        const message = JSON.parse(event);
+        this.pushListeners.forEach(listener => {
+          if (listener.onPushNotificationClicked) {
+            listener.onPushNotificationClicked(message);
+          }
+        });
+      } catch (error) {
+        Courier.log(`Error parsing push notification clicked event: ${error}`);
+      }
+    });
+
+    // When a push notification is delivered
+    this.pushNotificationDeliveredEmitter = this.systemBroadcaster.addListener(Events.Push.DELIVERED, (event) => {
+      try {
+        const message = JSON.parse(event);
+        this.pushListeners.forEach(listener => {
+          if (listener.onPushNotificationDelivered) {
+            listener.onPushNotificationDelivered(message);
+          }
+        });
+      } catch (error) {
+        Courier.log(`Error parsing push notification delivered event: ${error}`);
+      }
+    });
   }
 
   /**
-   * Returns the status of debugging
+   * Sets the iOS foreground presentation options for push notifications.
+   * This method only works on iOS devices.
+   * @param props An object containing an array of iOSForegroundPresentationOptions.
+   * @returns A string indicating the result of the operation. Returns 'unsupported' on non-iOS platforms.
    */
-  get isDebugging(): boolean {
-    return this._isDebugging;
-  }
-
-  /**
-   * Sets the notification presentation options for iOS
-   */
-  public iOSForegroundPresentationOptions(props: { options: iOSForegroundPresentationOptions[] }): string {
+  public static setIOSForegroundPresentationOptions(props: { options: iOSForegroundPresentationOptions[] }): string {
 
     // Only works on iOS
     if (Platform.OS !== 'ios') return 'unsupported';
 
     const normalizedParams = Array.from(new Set(props.options));
-    return CourierReactNativeModules.iOSForegroundPresentationOptions({
+    return Modules.System.setIOSForegroundPresentationOptions({
       options: normalizedParams,
     });
 
   }
 
   /**
-   * Gets a token for key
+   * Retrieves the current notification permission status.
+   * @returns A Promise that resolves to a string representing the current notification permission status.
    */
-  public getToken(props: { key: string }): Promise<string | undefined> {
-    return CourierReactNativeModules.getToken(props.key);
-  }
-
-  public getTokenForProvider(props: { provider: CourierPushProvider }): Promise<string | undefined> {
-    return CourierReactNativeModules.getToken(props.provider);
+  public static async getNotificationPermissionStatus(): Promise<string> {
+    return await Modules.System.getNotificationPermissionStatus();
   }
 
   /**
-   * Sets the fcm token to be used by Courier
+   * Requests permission to send push notifications to the user.
+   * @returns A Promise that resolves to a string indicating the result of the permission request.
    */
-  public setToken(props: { key: string, token: string }): Promise<void> {
-    return CourierReactNativeModules.setToken(props.key, props.token);
-  }
-
-  public setTokenForProvider(props: { provider: CourierPushProvider, token: string }): Promise<void> {
-    return CourierReactNativeModules.setToken(props.provider, props.token);
+  public static async requestNotificationPermission(): Promise<string> {
+    return await Modules.System.requestNotificationPermission();
   }
 
   /**
-   * Returns the notification permission status
-   * Only supported on iOS
+   * Opens the settings page for the current app.
+   * This can be used to direct users to enable notifications if they've previously denied permission.
    */
-  public getNotificationPermissionStatus(): Promise<string> {
-    return CourierReactNativeModules.getNotificationPermissionStatus();
+  public static openSettingsForApp() {
+    Modules.System.openSettingsForApp();
   }
 
-  /**
-   * Requests notification permissions
-   * This will show a dialog asking the user for permission
-   * Only supported on iOS
-   */
-  public requestNotificationPermission(): Promise<string> {
-    return CourierReactNativeModules.requestNotificationPermission();
-  }
+  // Client
 
   /**
-   * Listens to push notification clicked and delivered messages
+   * Gets the current CourierClient instance.
+   * @returns {CourierClient | undefined} The current CourierClient instance, or undefined if not initialized.
    */
-  public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
-    
-    const pushListener = new CourierPushListener();
+  public get client(): CourierClient | undefined {
 
-    if (props.onPushNotificationClicked) {
-      pushListener.onNotificationClickedListener = Utils.addEventListener(Events.Push.CLICKED, CourierEventEmitter, (event) => {
-        try {
-          props.onPushNotificationClicked!(JSON.parse(event));
-        } catch (error) {
-          console.log(error);
-        }
-      });
+    const client = Modules.Shared.getClient() ?? undefined;
+
+    if (!client) {
+      return undefined;
     }
 
-    if (props.onPushNotificationDelivered) {
-      pushListener.onNotificationDeliveredListener = Utils.addEventListener(Events.Push.DELIVERED, CourierEventEmitter, (event) => {
-        try {
-          props.onPushNotificationDelivered!(JSON.parse(event));
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    }
+    const clientObj = JSON.parse(client);
 
-    // When listener is registered
-    // Attempt to fetch the last message that was clicked
-    // This is needed for when the app is killed and the
-    // user launched the app by clicking on a notifications
-    CourierReactNativeModules.registerPushNotificationClickedOnKilledState();
-
-    return pushListener
+    return new CourierClient({
+      userId: clientObj.userId,
+      showLogs: clientObj.showLogs,
+      jwt: clientObj.jwt,
+      clientKey: clientObj.clientKey,
+      connectionId: clientObj.connectionId,
+      tenantId: clientObj.tenantId,
+    });
 
   }
 
+  // Authentication
+
   /**
-   * Gets the user id that is currently being used.
-   * This is the user id associated with the network requests the sdk does.
+   * Gets the current user ID.
+   * @returns {string | undefined} The current user ID, or undefined if not set.
    */
-  get userId(): string | undefined {
-    return CourierReactNativeModules.getUserId() ?? undefined
+  public get userId(): string | undefined {
+    return Modules.Shared.getUserId() ?? undefined;
   }
 
   /**
-   * Gets the tenant id that is currently being used
+   * Gets the current tenant ID.
+   * @returns {string | undefined} The current tenant ID, or undefined if not set.
    */
-  get tenantId(): string | undefined {
-    return CourierReactNativeModules.getTenantId() ?? undefined
+  public get tenantId(): string | undefined {
+    return Modules.Shared.getTenantId() ?? undefined;
   }
 
   /**
-   * Registers the auth token, client key and user id the sdk should use for requests
+   * Checks if a user is currently signed in.
+   * @returns {boolean} True if a user is signed in, false otherwise.
    */
-  public signIn(props: { accessToken: string, clientKey?: string, userId: string, tenantId?: string }): Promise<void> {
-    return CourierReactNativeModules.signIn(props.accessToken, props.clientKey ?? null, props.userId, props.tenantId ?? null);
+  public get isUserSignedIn(): boolean {
+    const isSignedIn: string = Modules.Shared.getIsUserSignedIn() ?? 'false';
+    return isSignedIn.toLowerCase() === 'true';
   }
 
   /**
-   * Removes the current user and credentials from the sdk
+   * Signs out the current user.
+   * @returns {Promise<void>} A promise that resolves when the sign out process is complete.
    */
-  public signOut(): Promise<void> {
-    return CourierReactNativeModules.signOut();
+  public async signOut(): Promise<void> {
+    return await Modules.Shared.signOut();
   }
 
   /**
-   * Listens to authentication changes for the current user
+   * Signs in a user with the provided credentials.
+   * @param {Object} props - The sign-in properties.
+   * @param {string} props.accessToken - The access token for authentication.
+   * @param {string} [props.clientKey] - The client key (optional).
+   * @param {string} props.userId - The user ID.
+   * @param {string} [props.tenantId] - The tenant ID (optional).
+   * @param {boolean} [props.showLogs] - Whether to show debug logs (defaults to __DEV__).
+   * @returns {Promise<void>} A promise that resolves when the sign-in process is complete.
    */
-   public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
+  public async signIn(props: { accessToken: string, clientKey?: string, userId: string, tenantId?: string, showLogs?: boolean }): Promise<void> {
+    this.isDebugging = props.showLogs ?? __DEV__;
+    return await Modules.Shared.signIn(
+      props.accessToken, 
+      props.clientKey ?? null,
+      props.userId,
+      props.tenantId ?? null,
+      this.isDebugging
+    );
+  }
 
-    // Event listener id
-    const authId = `authentication_${Utils.generateUUID()}`;
+  /**
+   * Adds an authentication listener to monitor user changes.
+   * @param {Object} props - The listener properties.
+   * @param {function} props.onUserChanged - Callback function triggered when the user changes.
+   * @returns {CourierAuthenticationListener} The created authentication listener.
+   */
+  public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
 
-    // Get the id
-    const id = CourierReactNativeModules.addAuthenticationListener(authId);
+    // Create a listener
+    const listenerId = `authentication_${Utils.generateUUID()}`;
+    const id = Modules.Shared.addAuthenticationListener(listenerId);
 
-    // Create the listener
+    // Attach the listener
     const listener = new CourierAuthenticationListener(id);
-
-    // Add the event listener
-    listener.onUserChanged = Utils.addEventListener(authId, CourierEventEmitter, (event) => props.onUserChanged(event));
-
-    // Add listener to manager
-    this.authListeners.set(id, listener);
+    listener.onUserChanged = this.sharedBroadcaster.addListener(listenerId, (event) => props.onUserChanged(event));
+    this.authenticationListeners.set(id, listener);
 
     return listener;
 
   }
 
   /**
-   * Removes an authentication listener
+   * Removes a specific authentication listener.
+   * @param {Object} props - The removal properties.
+   * @param {string} props.listenerId - The ID of the listener to remove.
+   * @returns {string} The ID of the removed listener.
    */
   public removeAuthenticationListener(props: { listenerId: string }): string {
 
     // Remove the native listener
-    CourierReactNativeModules.removeAuthenticationListener(props.listenerId);
+    Modules.Shared.removeAuthenticationListener(props.listenerId);
 
     // Remove the listener
-    if (this.authListeners.has(props.listenerId)) {
-
-      // Get the listener
-      const listener = this.authListeners.get(props.listenerId);
+    if (this.authenticationListeners.has(props.listenerId)) {
+      const listener = this.authenticationListeners.get(props.listenerId);
       listener?.onUserChanged?.remove();
-
-      // Remove the listener
-      this.authListeners.delete(props.listenerId);
-
+      this.authenticationListeners.delete(props.listenerId);
     }
 
     return props.listenerId;
@@ -291,35 +297,217 @@ class Courier {
   }
 
   /**
-   * Click an inbox message
+   * Removes all authentication listeners.
+   * This method clears all registered authentication listeners, both native and JavaScript.
    */
-  public clickMessage(props: { messageId: string }): string {
-    return CourierReactNativeModules.clickMessage(props.messageId);
+  public removeAllAuthenticationListeners() {
+
+    // Remove all native listeners
+    Modules.Shared.removeAllAuthenticationListeners();
+
+    // Iterate through all authentication listeners
+    this.authenticationListeners.forEach((listener) => {
+      listener.onUserChanged?.remove();
+    });
+
+    // Clear the map of authentication listeners
+    this.authenticationListeners.clear();
+
+  }
+
+  // Push
+
+  /**
+   * Retrieves all push notification tokens.
+   * @returns {Promise<Map<string, string>>} A promise that resolves to a Map of provider keys to tokens.
+   */
+  public async getAllTokens(): Promise<Map<string, string>> {
+    const tokensObject = await Modules.Shared.getAllTokens();
+    const tokensMap = new Map<string, string>();
+    for (const [key, value] of Object.entries(tokensObject)) {
+      tokensMap.set(key, value as string);
+    }
+    return tokensMap;
   }
 
   /**
-   * Reads an inbox message
+   * Retrieves the push notification token for a specific key.
+   * @param {Object} props - The properties object.
+   * @param {string} props.key - The key associated with the token.
+   * @returns {Promise<string | undefined>} A promise that resolves to the token or undefined if not found.
    */
-  public readMessage(props: { messageId: string }): string {
-    return CourierReactNativeModules.readMessage(props.messageId);
+  public async getToken(props: { key: string }): Promise<string | undefined> {
+    return await Modules.Shared.getToken(props.key);
   }
 
   /**
-   * Unreads an inbox message
+   * Retrieves the push notification token for a specific provider.
+   * @param {Object} props - The properties object.
+   * @param {CourierPushProvider} props.provider - The push notification provider.
+   * @returns {Promise<string | undefined>} A promise that resolves to the token or undefined if not found.
    */
-  public unreadMessage(props: { messageId: string }): string {
-    return CourierReactNativeModules.unreadMessage(props.messageId);
+  public async getTokenForProvider(props: { provider: CourierPushProvider }): Promise<string | undefined> {
+    return await Modules.Shared.getToken(props.provider);
   }
 
   /**
-   * Reads all the inbox messages
+   * Sets the push notification token for a specific key.
+   * @param {Object} props - The properties object.
+   * @param {string} props.key - The key to associate with the token.
+   * @param {string} props.token - The push notification token.
+   * @returns {Promise<void>} A promise that resolves when the token is set.
    */
-  public readAllInboxMessages(): Promise<void> {
-    return CourierReactNativeModules.readAllInboxMessages();
+  public async setToken(props: { key: string, token: string }): Promise<void> {
+    return await Modules.Shared.setToken(props.key, props.token);
   }
 
   /**
-   * Listens to changes for the inbox itself
+   * Sets the push notification token for a specific provider.
+   * @param {Object} props - The properties object.
+   * @param {CourierPushProvider} props.provider - The push notification provider.
+   * @param {string} props.token - The push notification token.
+   * @returns {Promise<void>} A promise that resolves when the token is set.
+   */
+  public async setTokenForProvider(props: { provider: CourierPushProvider, token: string }): Promise<void> {
+    return await Modules.Shared.setToken(props.provider, props.token);
+  }
+
+  /**
+   * Adds a push notification listener.
+   * @param {Object} props - The properties object.
+   * @param {function} [props.onPushNotificationClicked] - Callback function triggered when a push notification is clicked.
+   * @param {function} [props.onPushNotificationDelivered] - Callback function triggered when a push notification is delivered.
+   * @returns {CourierPushListener} The created push notification listener.
+   */
+  public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
+    
+    const listenerId = `push_${Utils.generateUUID()}`;
+
+    const pushListener = new CourierPushListener(
+      listenerId,
+      props.onPushNotificationClicked,
+      props.onPushNotificationDelivered
+    );
+
+    // Cache the listener
+    this.pushListeners.set(listenerId, pushListener);
+
+    // When listener is registered
+    // Attempt to fetch the last message that was clicked
+    // This is needed for when the app is killed and the
+    // user launched the app by clicking on a notifications
+    Modules.System.registerPushNotificationClickedOnKilledState();
+
+    return pushListener;
+
+  }
+
+  /**
+   * Removes a specific push notification listener.
+   * @param {Object} props - The properties object.
+   * @param {string} props.listenerId - The ID of the listener to remove.
+   * @returns {string} The ID of the removed listener.
+   */
+  public removePushNotificationListener(props: { listenerId: string }): string {
+    if (this.pushListeners.has(props.listenerId)) {
+      this.pushListeners.delete(props.listenerId);
+    }
+    return props.listenerId;
+  }
+
+  /**
+   * Removes all push notification listeners.
+   */
+  public removeAllPushNotificationListeners() {
+    this.pushListeners.forEach((listener) => {
+      listener.remove();
+    });
+    this.pushListeners.clear();
+  }
+
+  // Inbox
+
+  /**
+   * Gets the current pagination limit for inbox messages.
+   * @returns {number} The current pagination limit.
+   */
+  public get inboxPaginationLimit(): number {
+    return Modules.Shared.getInboxPaginationLimit();
+  }
+
+  /**
+   * Sets the pagination limit for inbox messages.
+   * @param {number} limit - The new pagination limit to set.
+   */
+  public set inboxPaginationLimit(limit: number) {
+    Modules.Shared.setInboxPaginationLimit(limit);
+  }
+
+  /**
+   * Opens a specific message in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to open.
+   * @returns {Promise<void>} A promise that resolves when the message is opened.
+   */
+  public async openMessage(props: { messageId: string }): Promise<void> {
+    return await Modules.Shared.openMessage(props.messageId);
+  }
+
+  /**
+   * Registers a click event for a specific message in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message that was clicked.
+   * @returns {Promise<void>} A promise that resolves when the click is registered.
+   */
+  public async clickMessage(props: { messageId: string }): Promise<void> {
+    return await Modules.Shared.clickMessage(props.messageId);
+  }
+
+  /**
+   * Marks a specific message as read in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to mark as read.
+   * @returns {Promise<void>} A promise that resolves when the message is marked as read.
+   */
+  public async readMessage(props: { messageId: string }): Promise<void> {
+    return await Modules.Shared.readMessage(props.messageId);
+  }
+
+  /**
+   * Marks a specific message as unread in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to mark as unread.
+   * @returns {Promise<void>} A promise that resolves when the message is marked as unread.
+   */
+  public async unreadMessage(props: { messageId: string }): Promise<void> {
+    return await Modules.Shared.unreadMessage(props.messageId);
+  }
+
+  /**
+   * Archives a specific message in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to archive.
+   * @returns {Promise<void>} A promise that resolves when the message is archived.
+   */
+  public async archiveMessage(props: { messageId: string }): Promise<void> {
+    return await Modules.Shared.archiveMessage(props.messageId);
+  }
+
+  /**
+   * Marks all messages in the inbox as read.
+   * @returns {Promise<void>} A promise that resolves when all messages are marked as read.
+   */
+  public async readAllInboxMessages(): Promise<void> {
+    return await Modules.Shared.readAllInboxMessages();
+  }
+
+  /**
+   * Adds a listener for inbox changes.
+   * @param {Object} props - The properties object.
+   * @param {Function} [props.onInitialLoad] - Callback function called when the inbox is initially loaded.
+   * @param {Function} [props.onError] - Callback function called when an error occurs. Receives the error message as a parameter.
+   * @param {Function} [props.onMessagesChanged] - Callback function called when messages change. Receives updated messages, unread count, total count, and pagination status.
+   * @returns {CourierInboxListener} A listener object that can be used to remove the listener later.
    */
   public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
@@ -330,7 +518,7 @@ class Courier {
     }
 
     // Set the listener id
-    const id = CourierReactNativeModules.addInboxListener(
+    const id = Modules.Shared.addInboxListener(
       listenerIds.loading,
       listenerIds.error,
       listenerIds.messages
@@ -339,17 +527,29 @@ class Courier {
     // Create the initial listeners
     const listener = new CourierInboxListener(id);
 
-    listener.onInitialLoad = Utils.addEventListener(listenerIds.loading, CourierEventEmitter, (_: any) => {
+    listener.onInitialLoad = this.sharedBroadcaster.addListener(listenerIds.loading, (_: any) => {
       props.onInitialLoad?.();
     });
 
-    listener.onError = Utils.addEventListener(listenerIds.error, CourierEventEmitter, (event: any) => {
+    listener.onError = this.sharedBroadcaster.addListener(listenerIds.error, (event: any) => {
       props.onError?.(event);
     });
 
-    listener.onMessagesChanged = Utils.addEventListener(listenerIds.messages, CourierEventEmitter, (event: any) => {
+    listener.onMessagesChanged = this.sharedBroadcaster.addListener(listenerIds.messages, (event: any) => {
+
+      // Convert JSON strings to InboxMessage objects
+      const convertedMessages: InboxMessage[] = event.messages.map((jsonString: string) => {
+        try {
+          const parsedMessage = JSON.parse(jsonString);
+          return parsedMessage as InboxMessage;
+        } catch (error) {
+          Courier.log(`Error parsing message: ${error}`);
+          return null;
+        }
+      }).filter((message: InboxMessage | null): message is InboxMessage => message !== null);
+
       props.onMessagesChanged?.(
-        event.messages,
+        convertedMessages,
         event.unreadMessageCount,
         event.totalMessageCount,
         event.canPaginate,
@@ -364,12 +564,15 @@ class Courier {
   }
 
   /**
-   * Removes an inbox listener
+   * Removes a specific inbox listener.
+   * @param {Object} props - The properties object.
+   * @param {string} props.listenerId - The ID of the listener to remove.
+   * @returns {string} The ID of the removed listener.
    */
   public removeInboxListener(props: { listenerId: string }): string {
 
     // Call native code
-    CourierReactNativeModules.removeInboxListener(props.listenerId);
+    Modules.Shared.removeInboxListener(props.listenerId);
 
     // Remove the listener
     if (this.inboxListeners.has(props.listenerId)) {
@@ -390,49 +593,39 @@ class Courier {
   }
 
   /**
-   * Refreshes the inbox
-   * Useful for pull to refresh
+   * Removes all inbox listeners.
+   */
+  public removeAllInboxListeners() {
+
+    // Call native code
+    Modules.Shared.removeAllInboxListeners();
+
+    // Remove all items from inboxListeners
+    this.inboxListeners.forEach((listener) => {
+      listener?.onInitialLoad?.remove();
+      listener?.onError?.remove();
+      listener?.onMessagesChanged?.remove();
+    });
+    this.inboxListeners.clear();
+
+  }
+
+  /**
+   * Refreshes the inbox.
+   * Useful for pull-to-refresh functionality.
+   * @returns {Promise<void>} A promise that resolves when the inbox is refreshed.
    */
   public async refreshInbox(): Promise<void> {
-    return CourierReactNativeModules.refreshInbox();
+    return Modules.Shared.refreshInbox();
   }
 
   /**
-   * Fetches the next page of inbox messages
-   * Returns the fetched inbox messages
+   * Fetches the next page of inbox messages.
+   * @returns {Promise<InboxMessage[]>} A promise that resolves with an array of fetched inbox messages.
    */
   public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
-    return CourierReactNativeModules.fetchNextPageOfMessages();
-  }
-
-  /**
-   * Sets the pagination limit
-   * Min = 1
-   * Max = 100
-   */
-  public setInboxPaginationLimit(props: { limit: number }): void {
-    CourierReactNativeModules.setInboxPaginationLimit(props.limit);
-  }
-  
-  /**
-   * Get all available preferences
-   */
-  public async getUserPreferences(props?: { paginationCursor: string }): Promise<CourierUserPreferences> {
-    return CourierReactNativeModules.getUserPreferences(props?.paginationCursor ?? "");
-  }
-
-  /**
-   * Get individual preferences topic
-   */
-  public async getUserPreferencesTopic(props: { topicId: string }): Promise<CourierUserPreferencesTopic> {
-    return CourierReactNativeModules.getUserPreferencesTopic(props.topicId);
-  }
-
-  /**
-   * Update individual preferences topic
-   */
-  public async putUserPreferencesTopic(props: { topicId: string, status: CourierUserPreferencesStatus, hasCustomRouting: boolean, customRouting: CourierUserPreferencesChannel[] }): Promise<void> {
-    return CourierReactNativeModules.putUserPreferencesTopic(props.topicId, props.status, props.hasCustomRouting, props.customRouting);
+    const messages = await Modules.Shared.fetchNextPageOfMessages();
+    return messages.map((message: string) => JSON.parse(message));
   }
   
 }

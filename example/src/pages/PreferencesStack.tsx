@@ -9,7 +9,7 @@ const PreferencesStack = () => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Preferences" component={Preferences} />
+      <Stack.Screen name="PreferencesTab" component={Preferences} />
       <Stack.Screen name="PreferencesDetail" component={PreferencesDetail} />
     </Stack.Navigator>
   );

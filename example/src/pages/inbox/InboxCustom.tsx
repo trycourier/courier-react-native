@@ -12,7 +12,7 @@ const InboxCustom = () => {
 
   useEffect(() => {
 
-    Courier.shared.setInboxPaginationLimit({ limit: 100 });
+    Courier.shared.inboxPaginationLimit = 100;
 
     const inboxListener = Courier.shared.addInboxListener({
       onInitialLoad() {
@@ -53,16 +53,21 @@ const InboxCustom = () => {
       },
       text: {
         width: Platform.OS === 'ios' ? undefined : '100%',
-        fontFamily: 'monospace',
+        fontFamily: Platform.select({
+          ios: 'Courier',
+          android: 'monospace',
+          default: 'monospace',
+        }),
+        fontSize: 16,
       },
     });
 
     const isRead = props.message.read;
 
-    function toggleMessage() {
+    async function toggleMessage() {
       const messageId = props.message.messageId;
-      Courier.shared.clickMessage({ messageId: messageId });
-      const message = isRead ? Courier.shared.unreadMessage({ messageId: messageId }) : Courier.shared.readMessage({ messageId: messageId });
+      await Courier.shared.clickMessage({ messageId: messageId });
+      const message = isRead ? await Courier.shared.unreadMessage({ messageId: messageId }) : await Courier.shared.readMessage({ messageId: messageId });
       console.log(message);
     }
 

@@ -57,13 +57,11 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     UNNotificationContent *content = notification.request.content;
     NSDictionary *message = content.userInfo;
     
-    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventDelivered completionHandler:^(NSError *error)
-    {
-        if (error != nil) {
-            [self log:error];
+    [message trackMessageWithEvent:CourierTrackingEventDelivered completion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Error tracking message: %@", error.localizedDescription);
         }
-    }
-    ];
+    }];
     
     dispatch_async(dispatch_get_main_queue(), ^{
     
@@ -82,50 +80,35 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     UNNotificationContent *content = response.notification.request.content;
     NSDictionary *message = content.userInfo;
     
-    [[Courier shared] trackNotificationWithMessage:message event:CourierPushEventClicked completionHandler:^(NSError *error)
-    {
-        if (error != nil) {
-            [self log:error];
+    [message trackMessageWithEvent:CourierTrackingEventClicked completion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Error tracking message: %@", error.localizedDescription);
         }
-    }
-    ];
-    
+    }];
+
     dispatch_async(dispatch_get_main_queue(), ^{
-        
+
         NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
-        
+
         completionHandler();
-        
+
     });
     
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-    [self log:error];
+    NSLog(@"Failed to rgister for remote notification token: %@", error.localizedDescription);
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    
-    [[Courier shared]
-    setAPNSToken:deviceToken
-    onSuccess:^()
-    {
-        // Empty
-    }
-    onFailure:^(NSError *error)
-    {
-        [self log:error];
-    }
-    ];
-    
-}
-
-- (void)log: (NSError*)error {
-    NSString *err = [NSString stringWithFormat:@"%@", error];
-    [Courier log:err];
+    [[Courier shared] setAPNSTokenWithRawToken:deviceToken completion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Error setting APNS Token: %@", error.localizedDescription);
+        }
+    }];
 }
 
 @end

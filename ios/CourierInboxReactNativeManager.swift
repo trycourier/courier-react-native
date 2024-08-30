@@ -42,17 +42,25 @@ class CourierInboxView : UIView {
             lightTheme: lightTheme?.toInboxTheme() ?? .defaultLight,
             darkTheme: darkTheme?.toInboxTheme() ?? .defaultDark,
             didClickInboxMessageAtIndex: { [weak self] message, index in
-                self?.onClickInboxMessageAtIndex?([
-                    "message" : message.toDictionary(),
-                    "index" : index
-                ])
+                do {
+                    self?.onClickInboxMessageAtIndex?([
+                        "message" : try message.toJson() ?? "",
+                        "index" : index
+                    ])
+                } catch {
+                    Courier.shared.client?.error(error.localizedDescription)
+                }
             },
             didClickInboxActionForMessageAtIndex: { [weak self] action, message, index in
-                self?.onClickInboxActionForMessageAtIndex?([
-                    "action" : action.toDictionary(),
-                    "message" : message.toDictionary(),
-                    "index" : index
-                ])
+                do {
+                    self?.onClickInboxActionForMessageAtIndex?([
+                        "action" : try action.toJson() ?? "",
+                        "message" : try message.toJson() ?? "",
+                        "index" : index
+                    ])
+                } catch {
+                    Courier.shared.client?.error(error.localizedDescription)
+                }
             },
             didScrollInbox: { [weak self] scrollView in
                 self?.onScrollInbox?([

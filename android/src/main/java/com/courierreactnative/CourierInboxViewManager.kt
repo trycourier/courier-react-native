@@ -51,7 +51,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
 
     view.setOnClickMessageListener { message, index ->
       val map = Arguments.createMap()
-      map.putMap("message", message.toWritableMap())
+      map.putString("message", message.toJson())
       map.putInt("index", index)
       themedReactContext?.sendEvent(ON_CLICK_MESSAGE_AT_INDEX, map)
     }
@@ -64,7 +64,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
     view.setOnClickActionListener { action, message, index ->
       val map = Arguments.createMap()
       map.putMap("action", action.toWritableMap())
-      map.putMap("message", message.toWritableMap())
+      map.putString("message", message.toJson())
       map.putInt("index", index)
       themedReactContext?.sendEvent(ON_CLICK_ACTION_AT_INDEX, map)
     }

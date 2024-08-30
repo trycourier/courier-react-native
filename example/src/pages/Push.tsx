@@ -1,6 +1,6 @@
 import Courier, { CourierPushProvider } from '@trycourier/courier-react-native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Clipboard, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Clipboard, ActivityIndicator, Platform } from 'react-native';
 
 const Push = () => {
 
@@ -14,28 +14,17 @@ const Push = () => {
   }, []);
 
   const refreshTokens = async () => {
-
-    const pushProviderValues = Object.values(CourierPushProvider);
-    const tokensMap = new Map<string, string>();
-
-    for (const provider of pushProviderValues) {
-      const token = await Courier.shared.getTokenForProvider({ provider: provider });
-      if (token) {
-        tokensMap.set(provider, token);
-      }
-    }
-
+    const tokensMap = await Courier.shared.getAllTokens();
     setTokens(tokensMap);
-
   }
 
   const setExampleToken = async () => {
 
     setIsLoading(true);
 
-    const requestStatus = await Courier.shared.requestNotificationPermission();
+    const requestStatus = await Courier.requestNotificationPermission();
     console.log('Request Notification Status: ' + requestStatus);
-    console.log('Get Notification Status: ' + await Courier.shared.getNotificationPermissionStatus());
+    console.log('Get Notification Status: ' + await Courier.getNotificationPermissionStatus());
 
     // Example of setting an expo token
     await Courier.shared.setTokenForProvider({
@@ -64,6 +53,11 @@ const Push = () => {
     },
     buttonText: {
       fontSize: 16,
+      fontFamily: Platform.select({
+        ios: 'Courier',
+        android: 'monospace',
+        default: 'monospace',
+      }),
     },
     itemContainer: {
       flexDirection: 'row',
@@ -74,10 +68,23 @@ const Push = () => {
     keyText: {
       flex: 1,
       textAlign: 'left',
+      fontFamily: Platform.select({
+        ios: 'Courier',
+        android: 'monospace',
+        default: 'monospace',
+      }),
+      fontWeight: 'bold',
+      fontSize: 16,
     },
     valueText: {
       flex: 1,
       textAlign: 'right',
+      fontFamily: Platform.select({
+        ios: 'Courier',
+        android: 'monospace',
+        default: 'monospace',
+      }),
+      fontSize: 16,
     },
   });
 
@@ -86,7 +93,7 @@ const Push = () => {
   };
 
   const handleButtonPress = () => {
-    Courier.shared.requestNotificationPermission();
+    Courier.requestNotificationPermission();
   };
   
   return (
@@ -98,7 +105,7 @@ const Push = () => {
 
       {!isLoading && (
         <>
-          {[...tokens.entries()].map(([key, value]) => (
+          {Array.from(tokens).map(([key, value]) => (
             <TouchableOpacity key={key} onPress={() => handleCopyToClipboard(value)} style={styles.itemContainer}>
               <Text style={styles.keyText}>{key}</Text>
               <Text style={styles.valueText}>{value}</Text>
