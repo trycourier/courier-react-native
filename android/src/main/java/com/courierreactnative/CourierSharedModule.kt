@@ -50,6 +50,16 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   }
 
+  @ReactMethod
+  fun addListener(type: String?) {
+    // Keep: Required for RN built in Event Emitter Calls.
+  }
+
+  @ReactMethod
+  fun removeListeners(type: Int?) {
+    // Keep: Required for RN built in Event Emitter Calls.
+  }
+
   // Client
 
   @ReactMethod(isBlockingSynchronousMethod = true)
@@ -76,16 +86,7 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod
-  fun signIn(
-    accessToken: String,
-    clientKey: String?,
-    userId: String,
-    tenantId: String?,
-    showLogs: Boolean,
-    promise: Promise
-  ) = CoroutineScope(
-    Dispatchers.Main
-  ).launch {
+  fun signIn(accessToken: String, clientKey: String?, userId: String, tenantId: String?, showLogs: Boolean, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
     Courier.shared.signIn(
       userId = userId,
       tenantId = tenantId,

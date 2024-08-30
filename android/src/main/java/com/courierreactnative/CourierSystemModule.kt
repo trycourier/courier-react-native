@@ -15,6 +15,16 @@ import org.json.JSONObject
 class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeModule(tag = "System Error", name = "CourierSystemModule", reactContext = reactContext) {
 
   @ReactMethod
+  fun addListener(type: String?) {
+    // Keep: Required for RN built in Event Emitter Calls.
+  }
+
+  @ReactMethod
+  fun removeListeners(type: Int?) {
+    // Keep: Required for RN built in Event Emitter Calls.
+  }
+
+  @ReactMethod
   fun registerPushNotificationClickedOnKilledState() {
     reactActivity?.let { activity ->
       checkIntentForPushNotificationClick(activity.intent)
