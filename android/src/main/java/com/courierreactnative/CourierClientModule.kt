@@ -419,25 +419,13 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
     try {
       client.tracking.postTrackingUrl(
         url = url,
-        event = CourierTrackingEvent.valueOf(event),
+        event = CourierTrackingEvent.valueOf(event.uppercase()),
       )
       promise.resolve(null)
     } catch (e: Exception) {
       promise.apiError(e)
     }
 
-  }
-
-  private fun Promise.rejectMissingContext() {
-    reject("Missing Context", tag, null)
-  }
-
-  private fun Promise.rejectMissingClient() {
-    reject("Missing Client", tag, null)
-  }
-
-  private fun Promise.apiError(throwable: Throwable) {
-    reject(throwable.message, tag, throwable)
   }
 
 }

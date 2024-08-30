@@ -10,10 +10,12 @@ export class PreferenceClient {
   }
 
   public async getUserPreferences(props?: { paginationCursor?: string }): Promise<CourierUserPreferences> {
+
     const json = await Modules.Client.getUserPreferences(this.clientId, props?.paginationCursor);
-    const rawData = JSON.parse(json);
     
-    const convertedPreferences: CourierUserPreferences = {
+    const rawData = JSON.parse(json);
+  
+    return {
       items: rawData.items.map((item: any) => ({
         defaultStatus: item.default_status as CourierUserPreferencesStatus,
         hasCustomRouting: item.has_custom_routing,
@@ -26,8 +28,7 @@ export class PreferenceClient {
       })),
       paging: rawData.paging
     };
-  
-    return convertedPreferences;
+
   }
 
   public async getUserPreferenceTopic(props: { topicId: string }): Promise<CourierUserPreferencesTopic> {

@@ -2,7 +2,7 @@ import Courier, { CourierClient, CourierUserPreferencesStatus, CourierUserPrefer
 import Env from "./Env";
 import { ExampleServer, Utils } from "./Utils";
 
-export class IntegrationTests {
+export class OldTests {
 
   public static client: CourierClient | undefined;
 
@@ -15,7 +15,7 @@ export class IntegrationTests {
       userId: userId,
     });
 
-    IntegrationTests.client = new CourierClient({
+    OldTests.client = new CourierClient({
       userId: userId,
       showLogs: true,
       jwt: token,
@@ -24,17 +24,17 @@ export class IntegrationTests {
       connectionId: undefined,
     });
 
-    return IntegrationTests.client?.options;
+    return OldTests.client?.options;
 
   }
 
   public static async testPutToken(token: string = 'example', provider: string = 'expo') {
 
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    await IntegrationTests.client.tokens.putUserToken({
+    await OldTests.client.tokens.putUserToken({
       token,
       provider,
     });
@@ -43,191 +43,191 @@ export class IntegrationTests {
 
   public static async testDeleteToken() {
 
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    await IntegrationTests.client.tokens.deleteUserToken({
+    await OldTests.client.tokens.deleteUserToken({
       token: 'example',
     });
     
   }
 
   public static async testBrands() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    return await IntegrationTests.client.brands.getBrand({
+    return await OldTests.client.brands.getBrand({
       brandId: Env.brandId,
     });
   }
 
   public static async testMessages() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    return await IntegrationTests.client.inbox.getMessages({
+    return await OldTests.client.inbox.getMessages({
       paginationLimit: 123,
       startCursor: undefined,
     });
   }
 
   public static async testUnreadCount() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    return await IntegrationTests.client.inbox.getUnreadMessageCount();
+    return await OldTests.client.inbox.getUnreadMessageCount();
   }
 
   public static async testArchivedMessages() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    return await IntegrationTests.client.inbox.getArchivedMessages({
+    return await OldTests.client.inbox.getArchivedMessages({
       paginationLimit: 123,
       startCursor: undefined,
     });
   }
 
   public static async testMessageById() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
+    const userId = OldTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    return await IntegrationTests.client.inbox.getMessageById({
+    return await OldTests.client.inbox.getMessageById({
       messageId: messageId,
     });
   }
 
   public static async openMessage() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
+    const userId = OldTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client.inbox.open({
+    await OldTests.client.inbox.open({
       messageId: messageId,
     });
   }
 
   public static async clickMessage() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
+    const userId = OldTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client.inbox.click({
+    await OldTests.client.inbox.click({
       messageId: messageId,
       trackingId: 'tracking_example',
     });
   }
 
   public static async readMessage() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
+    const userId = OldTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client.inbox.read({
+    await OldTests.client.inbox.read({
       messageId: messageId,
     });
   }
 
   public static async unreadMessage() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
+    const userId = OldTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client.inbox.unread({
+    await OldTests.client.inbox.unread({
       messageId: messageId,
     });
   }
 
   public static async archiveMessage() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    const userId = IntegrationTests.client.options.userId ?? '';
+    const userId = OldTests.client.options.userId ?? '';
 
     const messageId = await ExampleServer.sendTest({ authKey: Env.authKey, userId: userId, channel: 'push' });
 
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    await IntegrationTests.client.inbox.archive({
+    await OldTests.client.inbox.archive({
       messageId: messageId,
     });
   }
 
   public static async readAllMessages() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    await IntegrationTests.client.inbox.readAll();
+    await OldTests.client.inbox.readAll();
   }
 
   public static async getUserPreferences() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    return await IntegrationTests.client.preferences.getUserPreferences({
+    return await OldTests.client.preferences.getUserPreferences({
       paginationCursor: undefined,
     });
   }
 
   public static async getUserPreferenceTopic() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
     const topicId = '35K24W99WCME21MRG7X2BPDF6CK7';
 
-    return await IntegrationTests.client.preferences.getUserPreferenceTopic({
+    return await OldTests.client.preferences.getUserPreferenceTopic({
       topicId: topicId,
     });
   }
 
   public static async putUserPreferenceTopic() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
     const topicId = '35K24W99WCME21MRG7X2BPDF6CK7';
 
-    return await IntegrationTests.client.preferences.putUserPreferenceTopic({
+    return await OldTests.client.preferences.putUserPreferenceTopic({
       topicId: topicId,
       status: CourierUserPreferencesStatus.OptedIn,
       hasCustomRouting: true,
@@ -236,11 +236,11 @@ export class IntegrationTests {
   }
 
   public static async testTracking() {
-    if (!IntegrationTests.client) {
+    if (!OldTests.client) {
       throw new Error("Client is undefined");
     }
 
-    await IntegrationTests.client.tracking.postTrackingUrl({
+    await OldTests.client.tracking.postTrackingUrl({
       url: 'https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy',
       event: CourierTrackingEvent.Delivered,
     });
@@ -248,7 +248,7 @@ export class IntegrationTests {
 
   public static async testRemoveClient() {
 
-    IntegrationTests.client?.remove();
+    OldTests.client?.remove();
 
   }
 

@@ -75,6 +75,8 @@ const PreferencesCustom = ({ navigation }: any) => {
 
     try {
 
+      console.log('getPrefs');
+
       const res = await Courier.shared.client.preferences.getUserPreferences();
       setTopics(res.items);
 

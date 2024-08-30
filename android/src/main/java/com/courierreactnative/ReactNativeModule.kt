@@ -3,6 +3,7 @@ package com.courierreactnative
 import com.courier.android.Courier
 import com.courier.android.models.CourierAgent
 import com.facebook.react.ReactActivity
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -29,6 +30,18 @@ abstract class ReactNativeModule(val tag: String, private val name: String, reac
   @ReactMethod
   fun removeListeners(type: Int?) {
     // Keep: Required for RN built in Event Emitter Calls.
+  }
+
+  internal fun Promise.rejectMissingContext() {
+    reject("Missing Context", tag, null)
+  }
+
+  internal fun Promise.rejectMissingClient() {
+    reject("Missing Client", tag, null)
+  }
+
+  internal fun Promise.apiError(throwable: Throwable) {
+    reject(throwable.message, tag, throwable)
   }
 
 }

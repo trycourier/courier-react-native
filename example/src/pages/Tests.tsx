@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, Alert, TouchableOpacity, TextInput, Modal, Button, Switch, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { IntegrationTests } from '../IntegrationTests';
+import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, TouchableOpacity, TextInput, Modal, Button, Switch, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { CourierClient } from '@trycourier/courier-react-native';
+import { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus } from '@trycourier/courier-react-native';
 import Env from '../Env';
 import { ExampleServer, Utils } from '../Utils';
 
 let savedClient: CourierClient | undefined = undefined;
 
-const ExampleIntegrationTests: Record<string, (params: any) => Promise<any>> = {
+const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   
   createClient: async (params: { userId: string, clientKey: string, showLogs: boolean, tenantId?: string, connectionId?: string }) => {
     
@@ -48,38 +47,239 @@ const ExampleIntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   },
 
-  // testPutToken: async (params: { token: string, provider: string }) => {
-  //   if (!savedClient) {
-  //     throw new Error("Client not initialized. Run testClient first.");
-  //   }
-  //   // Using the saved client to put token
-  //   await savedClient.tokens.putUserToken([]);
-  //   return { token: params.token, provider: params.provider };
-  // },
+  testPutToken: async (params: { token: string, provider: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    await savedClient.tokens.putUserToken({
+      provider: params.provider,
+      token: params.token,
+    });
+    return { token: params.token, provider: params.provider };
+  },
 
-  // testDeleteToken: async (params: { provider: string }) => {
-  //   if (!savedClient) {
-  //     throw new Error("Client not initialized. Run testClient first.");
-  //   }
-  //   // Using the saved client to delete token
-  //   await savedClient.deleteToken(params.provider);
-  //   return { deletedProvider: params.provider };
-  // },
+  testDeleteToken: async (params: { token: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    await savedClient.tokens.deleteUserToken({ token: params.token });
+  },
 
-  // testBrands: async (params: { brandId: string }) => {
-  //   if (!savedClient) {
-  //     throw new Error("Client not initialized. Run testClient first.");
-  //   }
-  //   // Using the saved client to fetch brand
-  //   const brand = await savedClient.getBrand(params.brandId);
-  //   return brand;
-  // }
+  testGetBrands: async (params: { brandId: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    const brand = await savedClient.brands.getBrand({ brandId: params.brandId });
+    return brand;
+  },
+
+  testMessages: async (params: { paginationLimit: number, startCursor?: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    return await savedClient.inbox.getMessages({
+      paginationLimit: params.paginationLimit,
+      startCursor: params.startCursor,
+    });
+  },
+
+  testUnreadCount: async () => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    const count = await savedClient.inbox.getUnreadMessageCount();
+    console.log('Unread Count:', count);
+    return count;
+  },
+
+  testArchivedMessages: async (params: { paginationLimit: number, startCursor?: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    return await savedClient.inbox.getArchivedMessages({
+      paginationLimit: params.paginationLimit,
+      startCursor: params.startCursor,
+    });
+  },
+
+  testMessageById: async (params: { messageId?: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: savedClient!.options.userId,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+
+    return await savedClient.inbox.getMessageById({
+      messageId: messageId,
+    });
+  },
+
+  openMessage: async (params: { messageId?: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: savedClient!.options.userId,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+
+    await savedClient.inbox.open({
+      messageId: messageId,
+    });
+
+    return { messageId: messageId };
+
+  },
+
+  clickMessage: async (params: { messageId?: string, trackingId?: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: savedClient!.options.userId,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+
+    await savedClient.inbox.click({
+      messageId: messageId,
+      trackingId: params.trackingId ?? 'test-tracking-id',
+    });
+
+    return { messageId: messageId };
+
+  },
+
+  readMessage: async (params: { messageId: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: savedClient!.options.userId,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+
+    await savedClient.inbox.read({
+      messageId: messageId,
+    });
+
+    return { messageId: messageId };
+  },
+
+  unreadMessage: async (params: { messageId: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: savedClient!.options.userId,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+
+    await savedClient.inbox.unread({
+      messageId: messageId,
+    });
+
+    return { messageId: messageId };
+
+  },
+
+  archiveMessage: async (params: { messageId: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+
+    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
+      const result = await ExampleServer.sendTest({
+        authKey: Env.authKey,
+        userId: savedClient!.options.userId,
+        channel: 'inbox',
+      });
+      setTimeout(() => resolve(result), 5000);
+    });
+
+    await savedClient.inbox.archive({
+      messageId: messageId,
+    });
+
+    return { messageId: messageId };
+
+  },
+
+  readAllMessages: async () => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    await savedClient.inbox.readAll();
+  },
+
+  testGetPreferences: async () => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    return await savedClient.preferences.getUserPreferences();
+  },
+
+  testUpdatePreferences: async (params: { topicId: string, status: string, hasCustomRouting: boolean, customRouting: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    await savedClient.preferences.putUserPreferenceTopic({
+      topicId: params.topicId,
+      status: params.status as CourierUserPreferencesStatus,
+      hasCustomRouting: params.hasCustomRouting,
+      customRouting: params.customRouting.split(',').map(channel => channel.trim() as CourierUserPreferencesChannel),
+    });
+  },
+
+  testGetPreferenceTopics: async (params: { topicId: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    return await savedClient.preferences.getUserPreferenceTopic({ topicId: params.topicId });
+  },
+
+  testPostTrackingUrl: async (params: { trackingUrl: string, event: string }) => {
+    if (!savedClient) {
+      throw new Error("Client not initialized. Run createClient first.");
+    }
+    return await savedClient.tracking.postTrackingUrl({
+      url: params.trackingUrl,
+      event: params.event as CourierTrackingEvent,
+    });
+  },
+
 };
 
 type TestItem = {
   name: string;
   testId: string;
-  defaultParams: Record<string, string | boolean | undefined>;
+  defaultParams: Record<string, string | boolean | number | undefined>;
   runOrder: 'normal' | 'run at end' | 'skip';
 };
 
@@ -104,10 +304,130 @@ const getTestSections = (): TestSection[] => [
         defaultParams: { clientId: savedClient?.clientId },
         runOrder: 'run at end'
       },
-      // { name: 'client.remove', testId: 'testRemoveClient', defaultParams: {}, runOrder: 'run at end' },
     ]
   },
-  // Other test sections...
+  {
+    title: 'Tokens',
+    tests: [
+      {
+        name: 'Put Token',
+        testId: 'testPutToken',
+        defaultParams: { token: 'test-token', provider: 'test-provider' },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Delete Token',
+        testId: 'testDeleteToken',
+        defaultParams: { token: 'test-token' },
+        runOrder: 'normal'
+      },
+    ]
+  },
+  {
+    title: 'Brands',
+    tests: [
+      {
+        name: 'Get Brand',
+        testId: 'testGetBrands',
+        defaultParams: { brandId: Env.brandId },
+        runOrder: 'normal'
+      },
+    ]
+  },
+  {
+    title: 'Inbox',
+    tests: [
+      {
+        name: 'Get Messages',
+        testId: 'testMessages',
+        defaultParams: { paginationLimit: 10, paginationCursor: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Unread Count',
+        testId: 'testUnreadCount',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Archived Messages',
+        testId: 'testArchivedMessages',
+        defaultParams: { paginationLimit: 10, paginationCursor: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Message By ID',
+        testId: 'testMessageById',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Open Message',
+        testId: 'openMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Click Message',
+        testId: 'clickMessage',
+        defaultParams: { messageId: undefined, trackingId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Read Message',
+        testId: 'readMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Unread Message',
+        testId: 'unreadMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Archive Message',
+        testId: 'archiveMessage',
+        defaultParams: { messageId: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Read All Messages',
+        testId: 'readAllMessages',
+        defaultParams: {},
+        runOrder: 'normal'
+      },
+    ]
+  },
+  {
+    title: 'Preferences',
+    tests: [
+      {
+        name: 'Get Preferences',
+        testId: 'testGetPreferences',
+        defaultParams: { paginationCursor: undefined },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Update Preferences',
+        testId: 'testUpdatePreferences',
+        defaultParams: { topicId: Env.topicId, status: 'OPTED_IN', hasCustomRouting: true, customRouting: 'push,sms,email' },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Get Preference Topics',
+        testId: 'testGetPreferenceTopics',
+        defaultParams: { topicId: Env.topicId },
+        runOrder: 'normal'
+      },
+      {
+        name: 'Post Tracking Url',
+        testId: 'testPostTrackingUrl',
+        defaultParams: { trackingUrl: 'https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy', event: 'delivered' },
+        runOrder: 'normal'
+      },
+    ]
+  },
 ];
 
 const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; status?: string; runOrder?: string }, onPress: () => void }) => (
@@ -117,7 +437,11 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
         <Text style={styles.testItemTitle}>{item.name}</Text>
         {item.status !== undefined && item.status !== 'running' && (
           <Text style={styles.testItemResult}>
-            {item.result ? JSON.stringify(item.result, null, 2) : 'No Response'}
+            {item.result !== undefined ? (
+              typeof item.result === 'number' ? 
+                item.result.toString() : 
+                JSON.stringify(item.result, null, 2)
+            ) : 'No Response'}
           </Text>
         )}
       </View>
@@ -150,15 +474,23 @@ const Tests = () => {
   );
   const [isRunning, setIsRunning] = useState(false);
 
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const totalTests = testSections.flatMap(section => section.tests).length;
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={runAllTests} disabled={isRunning}>
-          <Text style={[styles.runTestsButton, isRunning && styles.disabledButton]}>Run Tests</Text>
+        <TouchableOpacity onPress={runAllTests} disabled={isRunning} style={{ marginRight: 22 }}>
+          {isRunning ? (
+            <ActivityIndicator size="small" />
+          ) : (
+            <Text style={[styles.runTestsButton, isRunning && styles.disabledButton]}>Run Tests</Text>
+          )}
         </TouchableOpacity>
       ),
+      headerTitle: isRunning ? `Running Test ${currentTestIndex + 1}/${totalTests}` : 'Tests',
     });
-  }, [isRunning]);
+  }, [isRunning, currentTestIndex]);
 
   const handleTestError = (error: unknown) => {
     let errorMessage = 'An unknown error occurred';
@@ -181,17 +513,27 @@ const Tests = () => {
 
   const runAllTests = async () => {
     if (isRunning) return;
+
+    setTestResults(prev => prev.map(item => ({
+      ...item,
+      status: undefined,
+      result: undefined
+    })));
+
     setIsRunning(true);
+    setCurrentTestIndex(0);
     const normalTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'normal'));
     const endTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'run at end'));
     const skipTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'skip'));
     
-    for (const test of normalTests) {
-      await runSingleTest(test);
+    for (let i = 0; i < normalTests.length; i++) {
+      setCurrentTestIndex(i);
+      await runSingleTest(normalTests[i]!);
     }
     
-    for (const test of endTests) {
-      await runSingleTest(test);
+    for (let i = 0; i < endTests.length; i++) {
+      setCurrentTestIndex(normalTests.length + i);
+      await runSingleTest(endTests[i]!);
     }
 
     for (const test of skipTests) {
@@ -199,12 +541,14 @@ const Tests = () => {
     }
     
     setIsRunning(false);
+    setCurrentTestIndex(0);
   };
 
   const runSingleTest = async (test: TestItem) => {
     setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, status: 'running', result: undefined } : t));
+    setModalVisible(false);  // Close the modal when the test starts
     try {
-      const testFunction = ExampleIntegrationTests[test.testId];
+      const testFunction = IntegrationTests[test.testId];
       if (typeof testFunction === 'function') {
         const result = await testFunction(test.defaultParams);
         setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, result, status: 'success' } : t));
@@ -237,17 +581,16 @@ const Tests = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTest, setSelectedTest] = useState<TestItem | null>(null);
-  const [testParams, setTestParams] = useState<Record<string, string | boolean | undefined>>({});
+  const [testParams, setTestParams] = useState<Record<string, string | boolean | number | undefined>>({});
 
   const onTestItemPress = (item: TestItem) => {
     if (isRunning) return;
-    
     setSelectedTest(item);
     setTestParams({ ...item.defaultParams });
     setModalVisible(true);
   };
 
-  const handleParamChange = (key: string, value: string | boolean | undefined) => {
+  const handleParamChange = (key: string, value: string | boolean | number | undefined) => {
     setTestParams(prev => ({ ...prev, [key]: value }));
   };
 
@@ -295,6 +638,18 @@ const Tests = () => {
                     <Switch
                       value={value}
                       onValueChange={(newValue) => handleParamChange(key, newValue)}
+                    />
+                  ) : typeof value === 'number' ? (
+                    <TextInput
+                      style={styles.input}
+                      value={value !== undefined ? String(value) : ''}
+                      onChangeText={(text) => {
+                        const numValue = Number(text);
+                        handleParamChange(key, isNaN(numValue) ? undefined : numValue);
+                      }}
+                      keyboardType="numeric"
+                      autoCapitalize="none"
+                      autoCorrect={false}
                     />
                   ) : (
                     <TextInput
@@ -365,8 +720,6 @@ const styles = StyleSheet.create({
   },
   runTestsButton: {
     fontSize: 16,
-    color: 'blue',
-    marginRight: 10,
   },
   disabledButton: {
     opacity: 0.5,

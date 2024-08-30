@@ -438,7 +438,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
             do {
                 try await client.tracking.postTrackingUrl(
                     url: url,
-                    event: CourierTrackingEvent(rawValue: event) ?? .clicked
+                    event: CourierTrackingEvent(rawValue: event.uppercased()) ?? .clicked
                 )
                 resolve(nil)
             } catch {

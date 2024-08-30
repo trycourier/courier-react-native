@@ -10,7 +10,8 @@ class CourierReactNativePackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
     return listOf(
       CourierClientModule(reactContext),
-      CourierReactNativeModule(reactContext),
+      CourierSharedModule(reactContext),
+      CourierSystemModule(reactContext),
     )
   }
 
