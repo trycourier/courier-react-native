@@ -128,7 +128,12 @@ class Courier {
     });
   }
 
-  // TODO: Describe
+  /**
+   * Sets the iOS foreground presentation options for push notifications.
+   * This method only works on iOS devices.
+   * @param props An object containing an array of iOSForegroundPresentationOptions.
+   * @returns A string indicating the result of the operation. Returns 'unsupported' on non-iOS platforms.
+   */
   public static setIOSForegroundPresentationOptions(props: { options: iOSForegroundPresentationOptions[] }): string {
 
     // Only works on iOS
@@ -141,23 +146,36 @@ class Courier {
 
   }
 
-  // TODO: Describe
+  /**
+   * Retrieves the current notification permission status.
+   * @returns A Promise that resolves to a string representing the current notification permission status.
+   */
   public static async getNotificationPermissionStatus(): Promise<string> {
     return await Modules.System.getNotificationPermissionStatus();
   }
 
-  // TODO: Describe
+  /**
+   * Requests permission to send push notifications to the user.
+   * @returns A Promise that resolves to a string indicating the result of the permission request.
+   */
   public static async requestNotificationPermission(): Promise<string> {
     return await Modules.System.requestNotificationPermission();
   }
 
-  // TODO: Describe
+  /**
+   * Opens the settings page for the current app.
+   * This can be used to direct users to enable notifications if they've previously denied permission.
+   */
   public static openSettingsForApp() {
     Modules.System.openSettingsForApp();
   }
 
   // Client
 
+  /**
+   * Gets the current CourierClient instance.
+   * @returns {CourierClient | undefined} The current CourierClient instance, or undefined if not initialized.
+   */
   public get client(): CourierClient | undefined {
 
     const client = Modules.Shared.getClient() ?? undefined;
@@ -181,25 +199,49 @@ class Courier {
 
   // Authentication
 
+  /**
+   * Gets the current user ID.
+   * @returns {string | undefined} The current user ID, or undefined if not set.
+   */
   public get userId(): string | undefined {
     return Modules.Shared.getUserId() ?? undefined;
   }
 
+  /**
+   * Gets the current tenant ID.
+   * @returns {string | undefined} The current tenant ID, or undefined if not set.
+   */
   public get tenantId(): string | undefined {
     return Modules.Shared.getTenantId() ?? undefined;
   }
 
+  /**
+   * Checks if a user is currently signed in.
+   * @returns {boolean} True if a user is signed in, false otherwise.
+   */
   public get isUserSignedIn(): boolean {
     const isSignedIn: string = Modules.Shared.getIsUserSignedIn() ?? 'false';
     return isSignedIn.toLowerCase() === 'true';
   }
 
-  // TODO: Describe
+  /**
+   * Signs out the current user.
+   * @returns {Promise<void>} A promise that resolves when the sign out process is complete.
+   */
   public async signOut(): Promise<void> {
     return await Modules.Shared.signOut();
   }
 
-  // TODO: Describe
+  /**
+   * Signs in a user with the provided credentials.
+   * @param {Object} props - The sign-in properties.
+   * @param {string} props.accessToken - The access token for authentication.
+   * @param {string} [props.clientKey] - The client key (optional).
+   * @param {string} props.userId - The user ID.
+   * @param {string} [props.tenantId] - The tenant ID (optional).
+   * @param {boolean} [props.showLogs] - Whether to show debug logs (defaults to __DEV__).
+   * @returns {Promise<void>} A promise that resolves when the sign-in process is complete.
+   */
   public async signIn(props: { accessToken: string, clientKey?: string, userId: string, tenantId?: string, showLogs?: boolean }): Promise<void> {
     this.isDebugging = props.showLogs ?? __DEV__;
     return await Modules.Shared.signIn(
@@ -211,7 +253,12 @@ class Courier {
     );
   }
 
-  // TODO: Describe
+  /**
+   * Adds an authentication listener to monitor user changes.
+   * @param {Object} props - The listener properties.
+   * @param {function} props.onUserChanged - Callback function triggered when the user changes.
+   * @returns {CourierAuthenticationListener} The created authentication listener.
+   */
   public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
 
     // Create a listener
@@ -227,7 +274,12 @@ class Courier {
 
   }
 
-  // TODO: Describe
+  /**
+   * Removes a specific authentication listener.
+   * @param {Object} props - The removal properties.
+   * @param {string} props.listenerId - The ID of the listener to remove.
+   * @returns {string} The ID of the removed listener.
+   */
   public removeAuthenticationListener(props: { listenerId: string }): string {
 
     // Remove the native listener
@@ -244,7 +296,10 @@ class Courier {
 
   }
 
-  // Removes all authentication listeners
+  /**
+   * Removes all authentication listeners.
+   * This method clears all registered authentication listeners, both native and JavaScript.
+   */
   public removeAllAuthenticationListeners() {
 
     // Remove all native listeners
@@ -262,6 +317,10 @@ class Courier {
 
   // Push
 
+  /**
+   * Retrieves all push notification tokens.
+   * @returns {Promise<Map<string, string>>} A promise that resolves to a Map of provider keys to tokens.
+   */
   public async getAllTokens(): Promise<Map<string, string>> {
     const tokensObject = await Modules.Shared.getAllTokens();
     const tokensMap = new Map<string, string>();
@@ -271,25 +330,55 @@ class Courier {
     return tokensMap;
   }
 
-  // TODO: Describe 
+  /**
+   * Retrieves the push notification token for a specific key.
+   * @param {Object} props - The properties object.
+   * @param {string} props.key - The key associated with the token.
+   * @returns {Promise<string | undefined>} A promise that resolves to the token or undefined if not found.
+   */
   public async getToken(props: { key: string }): Promise<string | undefined> {
     return await Modules.Shared.getToken(props.key);
   }
 
+  /**
+   * Retrieves the push notification token for a specific provider.
+   * @param {Object} props - The properties object.
+   * @param {CourierPushProvider} props.provider - The push notification provider.
+   * @returns {Promise<string | undefined>} A promise that resolves to the token or undefined if not found.
+   */
   public async getTokenForProvider(props: { provider: CourierPushProvider }): Promise<string | undefined> {
     return await Modules.Shared.getToken(props.provider);
   }
 
-  // TODO: Describe
+  /**
+   * Sets the push notification token for a specific key.
+   * @param {Object} props - The properties object.
+   * @param {string} props.key - The key to associate with the token.
+   * @param {string} props.token - The push notification token.
+   * @returns {Promise<void>} A promise that resolves when the token is set.
+   */
   public async setToken(props: { key: string, token: string }): Promise<void> {
     return await Modules.Shared.setToken(props.key, props.token);
   }
 
+  /**
+   * Sets the push notification token for a specific provider.
+   * @param {Object} props - The properties object.
+   * @param {CourierPushProvider} props.provider - The push notification provider.
+   * @param {string} props.token - The push notification token.
+   * @returns {Promise<void>} A promise that resolves when the token is set.
+   */
   public async setTokenForProvider(props: { provider: CourierPushProvider, token: string }): Promise<void> {
     return await Modules.Shared.setToken(props.provider, props.token);
   }
 
-  // TODO: Describe
+  /**
+   * Adds a push notification listener.
+   * @param {Object} props - The properties object.
+   * @param {function} [props.onPushNotificationClicked] - Callback function triggered when a push notification is clicked.
+   * @param {function} [props.onPushNotificationDelivered] - Callback function triggered when a push notification is delivered.
+   * @returns {CourierPushListener} The created push notification listener.
+   */
   public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
     
     const listenerId = `push_${Utils.generateUUID()}`;
@@ -313,6 +402,12 @@ class Courier {
 
   }
 
+  /**
+   * Removes a specific push notification listener.
+   * @param {Object} props - The properties object.
+   * @param {string} props.listenerId - The ID of the listener to remove.
+   * @returns {string} The ID of the removed listener.
+   */
   public removePushNotificationListener(props: { listenerId: string }): string {
     if (this.pushListeners.has(props.listenerId)) {
       this.pushListeners.delete(props.listenerId);
@@ -320,6 +415,9 @@ class Courier {
     return props.listenerId;
   }
 
+  /**
+   * Removes all push notification listeners.
+   */
   public removeAllPushNotificationListeners() {
     this.pushListeners.forEach((listener) => {
       listener.remove();
@@ -329,48 +427,87 @@ class Courier {
 
   // Inbox
 
-  // TODO: Describe
+  /**
+   * Gets the current pagination limit for inbox messages.
+   * @returns {number} The current pagination limit.
+   */
   public get inboxPaginationLimit(): number {
     return Modules.Shared.getInboxPaginationLimit();
   }
 
-  // TODO: Describe
+  /**
+   * Sets the pagination limit for inbox messages.
+   * @param {number} limit - The new pagination limit to set.
+   */
   public set inboxPaginationLimit(limit: number) {
     Modules.Shared.setInboxPaginationLimit(limit);
   }
 
-  // TODO: Describe
+  /**
+   * Opens a specific message in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to open.
+   * @returns {Promise<void>} A promise that resolves when the message is opened.
+   */
   public async openMessage(props: { messageId: string }): Promise<void> {
     return await Modules.Shared.openMessage(props.messageId);
   }
 
-  // TODO: Describe
+  /**
+   * Registers a click event for a specific message in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message that was clicked.
+   * @returns {Promise<void>} A promise that resolves when the click is registered.
+   */
   public async clickMessage(props: { messageId: string }): Promise<void> {
     return await Modules.Shared.clickMessage(props.messageId);
   }
 
-  // TODO: Describe
+  /**
+   * Marks a specific message as read in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to mark as read.
+   * @returns {Promise<void>} A promise that resolves when the message is marked as read.
+   */
   public async readMessage(props: { messageId: string }): Promise<void> {
     return await Modules.Shared.readMessage(props.messageId);
   }
 
-  // TODO: Describe
+  /**
+   * Marks a specific message as unread in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to mark as unread.
+   * @returns {Promise<void>} A promise that resolves when the message is marked as unread.
+   */
   public async unreadMessage(props: { messageId: string }): Promise<void> {
     return await Modules.Shared.unreadMessage(props.messageId);
   }
 
-  // TODO: Describe
+  /**
+   * Archives a specific message in the inbox.
+   * @param {Object} props - The properties object.
+   * @param {string} props.messageId - The ID of the message to archive.
+   * @returns {Promise<void>} A promise that resolves when the message is archived.
+   */
   public async archiveMessage(props: { messageId: string }): Promise<void> {
     return await Modules.Shared.archiveMessage(props.messageId);
   }
 
-  // TODO: Describe
+  /**
+   * Marks all messages in the inbox as read.
+   * @returns {Promise<void>} A promise that resolves when all messages are marked as read.
+   */
   public async readAllInboxMessages(): Promise<void> {
     return await Modules.Shared.readAllInboxMessages();
   }
 
   /**
-   * Listens to changes for the inbox itself
+   * Adds a listener for inbox changes.
+   * @param {Object} props - The properties object.
+   * @param {Function} [props.onInitialLoad] - Callback function called when the inbox is initially loaded.
+   * @param {Function} [props.onError] - Callback function called when an error occurs. Receives the error message as a parameter.
+   * @param {Function} [props.onMessagesChanged] - Callback function called when messages change. Receives updated messages, unread count, total count, and pagination status.
+   * @returns {CourierInboxListener} A listener object that can be used to remove the listener later.
    */
   public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
 
@@ -426,7 +563,12 @@ class Courier {
 
   }
 
-  // TODO: Describe
+  /**
+   * Removes a specific inbox listener.
+   * @param {Object} props - The properties object.
+   * @param {string} props.listenerId - The ID of the listener to remove.
+   * @returns {string} The ID of the removed listener.
+   */
   public removeInboxListener(props: { listenerId: string }): string {
 
     // Call native code
@@ -450,7 +592,9 @@ class Courier {
 
   }
 
-  // TODO: Describe
+  /**
+   * Removes all inbox listeners.
+   */
   public removeAllInboxListeners() {
 
     // Call native code
@@ -467,16 +611,17 @@ class Courier {
   }
 
   /**
-   * Refreshes the inbox
-   * Useful for pull to refresh
+   * Refreshes the inbox.
+   * Useful for pull-to-refresh functionality.
+   * @returns {Promise<void>} A promise that resolves when the inbox is refreshed.
    */
   public async refreshInbox(): Promise<void> {
     return Modules.Shared.refreshInbox();
   }
 
   /**
-   * Fetches the next page of inbox messages
-   * Returns the fetched inbox messages
+   * Fetches the next page of inbox messages.
+   * @returns {Promise<InboxMessage[]>} A promise that resolves with an array of fetched inbox messages.
    */
   public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
     const messages = await Modules.Shared.fetchNextPageOfMessages();

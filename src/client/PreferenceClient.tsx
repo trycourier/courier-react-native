@@ -9,6 +9,12 @@ export class PreferenceClient {
     this.clientId = clientId;
   }
 
+  /**
+   * Retrieves user preferences.
+   * @param props - Optional properties for pagination.
+   * @param props.paginationCursor - Optional cursor for pagination.
+   * @returns A promise that resolves with CourierUserPreferences containing user preference items and paging information.
+   */
   public async getUserPreferences(props?: { paginationCursor?: string }): Promise<CourierUserPreferences> {
 
     const json = await Modules.Client.getUserPreferences(this.clientId, props?.paginationCursor);
@@ -31,6 +37,12 @@ export class PreferenceClient {
 
   }
 
+  /**
+   * Retrieves user preference for a specific topic.
+   * @param props - Properties for getting the user preference topic.
+   * @param props.topicId - The ID of the topic to retrieve preferences for.
+   * @returns A promise that resolves with CourierUserPreferencesTopic containing the topic preference details.
+   */
   public async getUserPreferenceTopic(props: { topicId: string }): Promise<CourierUserPreferencesTopic> {
     const json = await Modules.Client.getUserPreferenceTopic(this.clientId, props.topicId);
     const rawData = JSON.parse(json);
@@ -49,6 +61,15 @@ export class PreferenceClient {
     return convertedTopic;
   }
 
+  /**
+   * Updates user preference for a specific topic.
+   * @param props - Properties for updating the user preference topic.
+   * @param props.topicId - The ID of the topic to update preferences for.
+   * @param props.status - The new status for the topic preference.
+   * @param props.hasCustomRouting - Whether the topic has custom routing.
+   * @param props.customRouting - Array of custom routing channels.
+   * @returns A promise that resolves when the update is complete.
+   */
   public async putUserPreferenceTopic(props: { topicId: string, status: CourierUserPreferencesStatus, hasCustomRouting: boolean, customRouting: CourierUserPreferencesChannel[] }): Promise<void> {
     await Modules.Client.putUserPreferenceTopic(this.clientId, props.topicId, props.status, props.hasCustomRouting, props.customRouting);
   }
