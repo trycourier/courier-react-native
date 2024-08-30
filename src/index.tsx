@@ -11,8 +11,8 @@ import { InboxMessage } from './models/InboxMessage';
 import { CourierPushProvider } from './models/CourierPushProvider';
 import { Modules } from './Modules';
 import Broadcaster from './Broadcaster';
-import { Events, Utils } from './Utils';
 import { CourierClient } from './client/CourierClient';
+import { Events, Utils } from './utils';
 
 export { CourierClient } from './client/CourierClient';
 export { BrandClient } from './client/BrandClient';
