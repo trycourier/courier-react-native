@@ -28,8 +28,8 @@ major=${version_parts[0]}
 minor=${version_parts[1]}
 patch=${version_parts[2]}
 
-# Suggest the next version (increment minor version)
-suggested_version="$major.$((minor + 1)).0"
+# Suggest the next version (increment patch version)
+suggested_version="$major.$minor.$((patch + 1))"
 echo "Suggested next version: $suggested_version"
 
 # Prompt the user for the new version

@@ -15,6 +15,7 @@ declare -a steps=(
     "Update Build Version:sh update_version.sh"
     "Install Brew:sh install_homebrew.sh"
     "Create Git Release:sh git_release.sh"
+    "Release NPM Package:sh release_npm_package.sh"
 )
 
 # Display available steps with indices
