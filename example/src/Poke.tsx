@@ -1,17 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, StyleSheet, ViewStyle, Animated } from 'react-native';
 
 interface Touch {
-  id: number;
+  id: string;
   x: number;
   y: number;
   timestamp: number;
+  animation: Animated.Value;
 }
 
-const TOUCH_TIMEOUT = 500; // ms
+const TOUCH_TIMEOUT = 100; // ms
 
-export const TouchVisualizer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface TouchIndicatorStyle {
+  size?: number;
+  color?: string;
+}
+
+interface TouchVisualizerProps {
+  children: React.ReactNode;
+  indicatorStyle?: TouchIndicatorStyle;
+}
+
+export const TouchVisualizer: React.FC<TouchVisualizerProps> = ({ children, indicatorStyle }) => {
   const [touches, setTouches] = useState<Touch[]>([]);
+
+  const indicatorSize = indicatorStyle?.size || 50;
+  const indicatorColor = indicatorStyle?.color || 'rgba(0, 122, 255, 0.5)'; // Default blue color
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -25,13 +39,32 @@ export const TouchVisualizer: React.FC<{ children: React.ReactNode }> = ({ child
 
   const handleTouch = (event: any) => {
     const newTouches = event.nativeEvent.touches.map((touch: any) => ({
-      id: touch.identifier,
+      id: `${touch.identifier}-${Date.now()}`,
       x: touch.pageX,
       y: touch.pageY,
       timestamp: Date.now(),
+      animation: new Animated.Value(1),
     }));
+
+    newTouches.forEach((touch: Touch) => {
+      Animated.timing(touch.animation, {
+        toValue: 0,
+        duration: TOUCH_TIMEOUT,
+        useNativeDriver: true,
+      }).start();
+    });
+
     setTouches(prevTouches => [...prevTouches, ...newTouches]);
   };
+
+  const touchIndicatorStyle = useMemo(() => ({
+    position: 'absolute',
+    width: indicatorSize,
+    height: indicatorSize,
+    borderRadius: indicatorSize / 2,
+    backgroundColor: indicatorColor,
+    zIndex: 9999,
+  } as ViewStyle), [indicatorSize, indicatorColor]);
 
   return (
     <View 
@@ -42,25 +75,26 @@ export const TouchVisualizer: React.FC<{ children: React.ReactNode }> = ({ child
     >
       {children}
       {touches.map(touch => (
-        <View
+        <Animated.View
           key={touch.id}
           style={[
-            styles.touchIndicator,
-            { left: touch.x - 25, top: touch.y - 25 }
+            touchIndicatorStyle,
+            {
+              left: touch.x - indicatorSize / 2,
+              top: touch.y - indicatorSize / 2,
+              opacity: touch.animation,
+              transform: [
+                {
+                  scale: touch.animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.5, 1],
+                  }),
+                },
+              ],
+            },
           ]}
         />
       ))}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  touchIndicator: {
-    position: 'absolute',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(255, 0, 0, 0.5)',
-    zIndex: 9999,
-  },
-});
