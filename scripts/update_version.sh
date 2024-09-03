@@ -22,8 +22,14 @@ update_version() {
 current_version=$(get_current_version)
 echo "Current version: $current_version"
 
-# Suggest the next version
-suggested_version=$(npm version patch --no-git-tag-version)
+# Parse the current version
+IFS='.' read -ra version_parts <<< "$current_version"
+major=${version_parts[0]}
+minor=${version_parts[1]}
+patch=${version_parts[2]}
+
+# Suggest the next version (increment minor version)
+suggested_version="$major.$((minor + 1)).0"
 echo "Suggested next version: $suggested_version"
 
 # Prompt the user for the new version

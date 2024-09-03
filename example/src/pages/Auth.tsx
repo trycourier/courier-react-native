@@ -244,7 +244,7 @@ const Auth = () => {
     );
   };
   
-  const ToggleButton = (props: { buttonText: string }) => {
+  const ToggleTouchesButton = () => {
     const styles = StyleSheet.create({
       button: {
         backgroundColor: 'lightgray',
@@ -289,7 +289,7 @@ const Auth = () => {
           {userId && <Text style={styles.text}>{userId}</Text>}
           {tenantId && <Text style={styles.text}>{tenantId}</Text>}
           <AuthButton buttonText={userId ? 'Sign Out' : 'Sign In'} />
-          <ToggleButton buttonText="Toggle Poke" />
+          <ToggleTouchesButton />
         </>
       )}
 
