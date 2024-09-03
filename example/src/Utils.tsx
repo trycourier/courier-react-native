@@ -34,7 +34,7 @@ export class ExampleServer {
 
   }
 
-  public static async sendTest(props: { authKey: string, userId: string, channel: string }): Promise<string> {
+  public static async sendTest(props: { authKey: string, userId: string, channel: string, title?: string, body?: string }): Promise<string> {
     const url = 'https://api.courier.com/send';
     const headers = {
       'Content-Type': 'application/json',
@@ -46,8 +46,8 @@ export class ExampleServer {
           'user_id': props.userId
         },
         'content': {
-          'title': 'Test',
-          'body': 'Body',
+          'title': props.title ?? 'Test',
+          'body': props.body ?? 'Body',
         },
         'routing': {
           'method': 'all',

@@ -481,29 +481,35 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     return Courier.openSettingsForApp();
   },
 
-  testSendInboxMessage: async (params: { userId: string }) => {
+  testSendInboxMessage: async (params: { userId: string, title?: string, body?: string }) => {
     const messageId = await ExampleServer.sendTest({
       authKey: Env.authKey,
       userId: params.userId,
       channel: 'inbox',
+      title: params.title ?? 'Test',
+      body: params.body ?? 'Body',
     });
     return { messageId: messageId };
   },
 
-  testSendApnMessage: async (params: { userId: string }) => {
+  testSendApnMessage: async (params: { userId: string, title?: string, body?: string }) => {
     const messageId = await ExampleServer.sendTest({
       authKey: Env.authKey,
       userId: params.userId,
       channel: 'apn',
+      title: params.title ?? 'Test',
+      body: params.body ?? 'Body',
     });
     return { messageId: messageId };
   },
 
-    testSendFcmMessage: async (params: { userId: string }) => {
+  testSendFcmMessage: async (params: { userId: string, title?: string, body?: string }) => {
     const messageId = await ExampleServer.sendTest({
       authKey: Env.authKey,
       userId: params.userId,
       channel: 'firebase-fcm',
+      title: params.title ?? 'Test',
+      body: params.body ?? 'Body',
     });
     return { messageId: messageId };
   },
@@ -872,19 +878,31 @@ const getTestSections = (): TestSection[] => [
       {
         name: 'Send Inbox Message',
         testId: 'testSendInboxMessage',
-        defaultParams: { userId: Courier.shared.userId ?? savedClient?.options.userId },
+        defaultParams: { 
+          userId: Courier.shared.userId ?? savedClient?.options.userId,
+          title: 'Test',
+          body: 'Body'
+        },
         runOrder: 'normal'
       },
       {
         name: 'Send APN Message',
         testId: 'testSendApnMessage',
-        defaultParams: { userId: Courier.shared.userId ?? savedClient?.options.userId },
+        defaultParams: { 
+          userId: Courier.shared.userId ?? savedClient?.options.userId,
+          title: 'Test',
+          body: 'Body'
+        },
         runOrder: 'normal'
       },
       {
         name: 'Send FCM Message',
         testId: 'testSendFcmMessage',
-        defaultParams: { userId: Courier.shared.userId ?? savedClient?.options.userId },
+        defaultParams: { 
+          userId: Courier.shared.userId ?? savedClient?.options.userId,
+          title: 'Test',
+          body: 'Body'
+        },
         runOrder: 'normal'
       }
     ]

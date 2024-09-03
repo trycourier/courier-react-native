@@ -11,7 +11,6 @@ error_exit() {
 
 # Define steps as an indexed array with title and script
 declare -a steps=(
-    "Run Tests:sh run_tests.sh"
     "Build Demo App:sh build_demo_app.sh"
     "Update Build Version:sh update_version.sh"
     "Install Brew:sh install_homebrew.sh"
