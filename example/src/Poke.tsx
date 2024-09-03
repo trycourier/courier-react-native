@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { View, StyleSheet, ViewStyle, Animated } from 'react-native';
+import React, { useState, useEffect, useMemo, createContext, useContext } from 'react';
+import { View, StyleSheet, ViewStyle, Animated, Easing } from 'react-native';
 
 interface Touch {
   id: string;
@@ -9,52 +9,113 @@ interface Touch {
   animation: Animated.Value;
 }
 
-const TOUCH_TIMEOUT = 100; // ms
-
 interface TouchIndicatorStyle {
   size?: number;
   color?: string;
 }
 
-interface TouchVisualizerProps {
-  children: React.ReactNode;
-  indicatorStyle?: TouchIndicatorStyle;
+interface PokeContextType {
+  setEnabled: (enabled: boolean) => void;
+  setIndicatorStyle: (style: TouchIndicatorStyle) => void;
+  setTouchTimeout: (timeout: number) => void;
 }
 
-export const TouchVisualizer: React.FC<TouchVisualizerProps> = ({ children, indicatorStyle }) => {
-  const [touches, setTouches] = useState<Touch[]>([]);
+const PokeContext = createContext<PokeContextType | undefined>(undefined);
+
+export const usePoke = () => {
+  const context = useContext(PokeContext);
+  if (!context) {
+    throw new Error('usePoke must be used within a PokeProvider');
+  }
+  return context;
+};
+
+interface PokeProviderProps {
+  children: React.ReactNode;
+  initialEnabled?: boolean;
+  initialIndicatorStyle?: TouchIndicatorStyle;
+  initialTouchTimeout?: number;
+}
+
+export const Poke: React.FC<PokeProviderProps> = ({
+  children,
+  initialEnabled = true,
+  initialIndicatorStyle,
+  initialTouchTimeout = 150,
+}) => {
+  const [enabled, setEnabled] = useState(initialEnabled);
+  const [indicatorStyle, setIndicatorStyle] = useState<TouchIndicatorStyle>(initialIndicatorStyle || {});
+  const [touchTimeout, setTouchTimeout] = useState(initialTouchTimeout);
+
+  const contextValue = useMemo(() => ({
+    setEnabled,
+    setIndicatorStyle,
+    setTouchTimeout,
+  }), []);
+
+  return (
+    <PokeContext.Provider value={contextValue}>
+      <TouchIndicator
+        enabled={enabled}
+        indicatorStyle={indicatorStyle}
+        touchTimeout={touchTimeout}
+      >
+        {children}
+      </TouchIndicator>
+    </PokeContext.Provider>
+  );
+};
+
+interface TouchIndicatorProps {
+  children: React.ReactNode;
+  indicatorStyle?: TouchIndicatorStyle;
+  enabled: boolean;
+  touchTimeout: number;
+}
+
+const TouchIndicator: React.FC<TouchIndicatorProps> = ({ 
+  children, 
+  indicatorStyle, 
+  enabled, 
+  touchTimeout
+}) => {
+  const [latestTouch, setLatestTouch] = useState<Touch | null>(null);
 
   const indicatorSize = indicatorStyle?.size || 50;
-  const indicatorColor = indicatorStyle?.color || 'rgba(0, 122, 255, 0.5)'; // Default blue color
+  const indicatorColor = indicatorStyle?.color || 'rgba(0, 122, 255, 0.4)'; // Default blue color
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTouches(prevTouches => 
-        prevTouches.filter(touch => Date.now() - touch.timestamp < TOUCH_TIMEOUT)
-      );
-    }, 100);
+    if (latestTouch) {
+      const timer = setTimeout(() => {
+        setLatestTouch(null);
+      }, touchTimeout);
 
-    return () => clearInterval(timer);
-  }, []);
+      return () => clearTimeout(timer);
+    }
+    return () => {}; // Add this line
+  }, [latestTouch, touchTimeout]);
 
   const handleTouch = (event: any) => {
-    const newTouches = event.nativeEvent.touches.map((touch: any) => ({
-      id: `${touch.identifier}-${Date.now()}`,
-      x: touch.pageX,
-      y: touch.pageY,
-      timestamp: Date.now(),
-      animation: new Animated.Value(1),
-    }));
+    if (!enabled) return;
+    const touch = event.nativeEvent.touches[0]; // Get only the latest touch
+    if (touch) {
+      const newTouch: Touch = {
+        id: `${touch.identifier}-${Date.now()}`,
+        x: touch.pageX,
+        y: touch.pageY,
+        timestamp: Date.now(),
+        animation: new Animated.Value(1),
+      };
 
-    newTouches.forEach((touch: Touch) => {
-      Animated.timing(touch.animation, {
+      Animated.timing(newTouch.animation, {
         toValue: 0,
-        duration: TOUCH_TIMEOUT,
+        duration: touchTimeout,
         useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
       }).start();
-    });
 
-    setTouches(prevTouches => [...prevTouches, ...newTouches]);
+      setLatestTouch(newTouch);
+    }
   };
 
   const touchIndicatorStyle = useMemo(() => ({
@@ -74,27 +135,19 @@ export const TouchVisualizer: React.FC<TouchVisualizerProps> = ({ children, indi
       onTouchEnd={handleTouch}
     >
       {children}
-      {touches.map(touch => (
+      {enabled && latestTouch && (
         <Animated.View
-          key={touch.id}
+          key={latestTouch.id}
           style={[
             touchIndicatorStyle,
             {
-              left: touch.x - indicatorSize / 2,
-              top: touch.y - indicatorSize / 2,
-              opacity: touch.animation,
-              transform: [
-                {
-                  scale: touch.animation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.5, 1],
-                  }),
-                },
-              ],
+              left: latestTouch.x - indicatorSize / 2,
+              top: latestTouch.y - indicatorSize / 2,
+              opacity: latestTouch.animation,
             },
           ]}
         />
-      ))}
+      )}
     </View>
   );
 };

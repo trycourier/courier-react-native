@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Button, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Env from "../Env";
 import { ExampleServer } from "../Utils";
+import { usePoke } from '../Poke';
 
 const Auth = () => {
 
@@ -243,6 +244,39 @@ const Auth = () => {
     );
   };
   
+  const ToggleButton = (props: { buttonText: string }) => {
+    const styles = StyleSheet.create({
+      button: {
+        backgroundColor: 'lightgray',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10, // Add some space between buttons
+      },
+      buttonText: {
+        fontSize: 16,
+        fontFamily: Platform.select({
+          ios: 'Courier',
+          android: 'monospace',
+          default: 'monospace',
+        }),
+      },
+    });
+    const [enabled, setEnabledState] = useState(false);
+    const { setEnabled } = usePoke();
+
+    const handleToggle = () => {
+      const newEnabled = !enabled;
+      setEnabledState(newEnabled);
+      setEnabled(newEnabled);
+    };
+
+    return (
+      <TouchableOpacity style={styles.button} onPress={handleToggle}>
+        <Text style={styles.buttonText}>{enabled ? 'Hide Touches' : 'Show Touches'}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.container}>
 
@@ -255,6 +289,7 @@ const Auth = () => {
           {userId && <Text style={styles.text}>{userId}</Text>}
           {tenantId && <Text style={styles.text}>{tenantId}</Text>}
           <AuthButton buttonText={userId ? 'Sign Out' : 'Sign In'} />
+          <ToggleButton buttonText="Toggle Poke" />
         </>
       )}
 
