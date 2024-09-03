@@ -14,15 +14,6 @@ update_version() {
 
     # Update the version in package.json
     npm version "$new_version" --no-git-tag-version
-
-    # Run the build process to generate TypeScript definitions
-   yarn build
-
-    # Ensure the types file exists
-    if [ ! -f "lib/typescript/index.d.ts" ]; then
-        echo "Error: TypeScript definition file not generated"
-        exit 1
-    fi
 }
 
 # Main script execution

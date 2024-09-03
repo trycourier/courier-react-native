@@ -5,6 +5,6 @@ cd "$(dirname "$0")/.." || exit 1
 
 # Publish to NPM
 echo "🚀 Publishing to NPM..."
-npm publish
+yarn release
 
 echo "✅ NPM package released successfully"
