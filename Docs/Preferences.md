@@ -205,6 +205,6 @@ You can control your branding from the [`Courier Studio`](https://app.courier.co
 
 ---
 
-👋 `Branding APIs` can be found <a href="https://github.com/trycourier/courier-flutter/blob/master/Docs/Client.md#branding-apis"><code>here</code></a>
+👋 `Branding APIs` can be found <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Client.md#branding-apis"><code>here</code></a>
 
-👋 `Preference APIs` can be found <a href="https://github.com/trycourier/courier-flutter/blob/master/Docs/Client.md#preferences-apis"><code>here</code></a>
+👋 `Preference APIs` can be found <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Client.md#preferences-apis"><code>here</code></a>
