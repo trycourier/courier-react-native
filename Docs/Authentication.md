@@ -57,10 +57,11 @@ Put this code where you normally manage your user's state. The user's access to 
 import Courier from "@trycourier/courier-react-native";
 
 await Courier.shared.signIn({
-  accessToken: 'YOUR_AUTH_TOKEN',
-  clientKey: 'YOUR_CLIENT_KEY', // Optional
-  userId: 'YOUR_USERNAME',
-  tenantId: 'YOUR_TENANT_ID', // Optional: Only if using Tenants
+  userId: "...",
+  accessToken: "...",
+  clientKey: "...", // Optional
+  tenantId: "...", // Optional
+  showLogs: .. // Optional
 });
 
 await Courier.shared.signOut();
