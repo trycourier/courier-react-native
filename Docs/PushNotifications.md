@@ -420,70 +420,74 @@ public class YourExampleService extends CourierService {
 
 &emsp;
 
-# Authenticate and Test
+## **Support Notifications**
 
-1. Register for push notifications
+```typescript
+// Support the type of notifications you want to show on iOS
+Courier.setIOSForegroundPresentationOptions({
+  options: 'sound' | 'badge' | 'list' | 'banner'
+});
 
-```javascript
-import Courier from '@trycourier/courier-react-native';
+// Request / Get Notification Permissions
+final currentPermissionStatus = await Courier.getNotificationPermissionStatus();
+final requestPermissionStatus = await Courier.requestNotificationPermission();
 
-useEffect(() => {
+// Handle push events
+const pushListener = Courier.shared.addPushListener(
+  onPushClicked: (push) => {
+    console.log(push);
+  },
+  onPushDelivered: (push) => {
+    console.log(push);
+  },
+);
 
-  // Handle sign in
-  const signIn = async () => {
+// Remove the listener where makes sense to you
+pushListener.remove();
 
-    await Courier.shared.signIn({
-      accessToken: 'asdf',
-      userId: 'asdf'
-    });
-
-    const status = await Courier.shared.requestNotificationPermission();
-
-  }
-
-  signIn();
-
-  // Handle pushes
-  const pushListener = Courier.shared.addPushNotificationListener({
-    onPushNotificationDelivered: (push) => {
-      console.log(push);
-      Alert.alert('📬 Push Notification Delivery', JSON.stringify(push));
-    },
-    onPushNotificationClicked: (push) => {
-      console.log(push);
-      Alert.alert('👆 Push Notification Clicked', JSON.stringify(push));
-    }
-  });
-
-  return () => {
-    pushListener.remove();
-  }
-
-}, []);
+// Tokens
+await Courier.shared.setToken({ key: "...", token: "..." });
+await Courier.shared.getToken({ key: "..." });
+const tokens = await Courier.shared.getAllTokens();
 ```
 
-2. Send a test message
+## **Send a Message**
 
-```curl
-curl --request POST \
-  --url https://api.courier.com/send \
-  --header 'Authorization: Bearer YOUR_AUTH_KEY' \
-  --header 'Content-Type: application/json' \
-  --data '{
-	"message": {
-		"to": {
-			"user_id": "your_user_id"
-		},
-		"content": {
-			"title": "Hey there 👋",
-			"body": "Have a great day 😄"
-		},
-		"routing": {
-			"method": "all",
-			"channels": [
-				"apn", "firebase-fcm" // Depending on your providers
-			]
-		}
-	}
-}'
-```
+<table>
+    <thead>
+        <tr>
+            <th width="600px" align="left">Provider</th>
+            <th width="200px" align="center">Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://app.courier.com/channels/apn">
+                    <code>(APNS) - Apple Push Notification Service</code>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://www.courier.com/docs/platform/channels/push/apple-push-notification/#sending-messages">
+                    <code>Testing Docs</code>
+                </a>
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="left">
+                <a href="https://app.courier.com/channels/firebase-fcm">
+                    <code>(FCM) - Firebase Cloud Messaging</code>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://www.courier.com/docs/platform/channels/push/firebase-fcm/#sending-messages">
+                    <code>Testing Docs</code>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+---
+
+👋 `TokenManagement APIs` can be found <a href="https://github.com/trycourier/courier-flutter/blob/master/Docs/Client.md#token-management-apis"><code>here</code></a>
