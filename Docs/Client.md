@@ -32,12 +32,12 @@ All available APIs for Token Management
 // To customize the device of the token being saved
 // You do not need this
 const device = {
-  appId: "...", // Options
-  adId: "...", // Options
-  deviceId: "...", // Options
-  platform: "...", // Options
-  manufacturer?: "...", // Options
-  model: "...", // Options
+  appId: "...",        // Optional
+  adId: "...",         // Optional
+  deviceId: "...",     // Optional
+  platform: "...",     // Optional
+  manufacturer: "...", // Optional
+  model: "...",        // Optional
 }
 
 await client.tokens.putUserToken({
@@ -59,58 +59,27 @@ All available APIs for Inbox
 ```typescript
 // Get all inbox messages
 // Includes the total count in the response
-let messages = try await client.inbox.getMessages(
-    paginationLimit: 123, // Optional
-    startCursor: nil      // Optional
-)
+const messages = await client.inbox.getMessages({
+  paginationLimit: 123,   // Optional
+  startCursor: undefined, // Optional
+});
 
 // Returns only archived messages
 // Includes the total count of archived message in the response
-let archivedMessages = try await client.inbox.getArchivedMessages(
-    paginationLimit: 123, // Optional
-    startCursor: null     // Optional
+const archivedMessages = await client.inbox.getArchivedMessages(
+  paginationLimit: 123,   // Optional
+  startCursor: undefined, // Optional
 )
 
 // Gets the number of unread messages
-let unreadCount = client.inbox.getUnreadMessageCount()
+const unreadCount = await client.inbox.getUnreadMessageCount()
 
 // Tracking messages
-try await client.inbox.open(messageId = "...")
-try await client.inbox.read(messageId = "...")
-try await client.inbox.unread(messageId = "...")
-try await client.inbox.archive(messageId = "...")
-try await client.inbox.readAll()
-
-// Inbox Websocket
-let socket = client.inbox.socket
-
-socket.onOpen = {
-    print("Socket Opened")
-}
-
-socket.onClose = { code, reason in
-    print("Socket closed: \(code), \(String(describing: reason))")
-}
-
-socket.onError = { error in
-    print(error)
-}
-
-// Returns the event received
-// Note: This will not fire unless you provide a connectionId to the client and the event comes from another app using a different connectionId
-// Available events: .read, .unread, .markAllRead, .opened,.archive
-socket.receivedMessageEvent = { event in
-    print(event)
-}
-
-socket.receivedMessage = { message in
-    print(message)
-}
-
-try await socket.connect() // Connects the socket
-try await socket.sendSubscribe() // Subscribes to socket events for the user id in the client
-
-socket.disconnect() // Disconnects the socket
+await client.inbox.open({ messageId: "..." })
+await client.inbox.read({ messageId: "..." })
+await client.inbox.unread({ messageId: "..." })
+await client.inbox.archive({ messageId: "..." })
+await client.inbox.readAll()
 ```
 
 ## Preferences APIs
