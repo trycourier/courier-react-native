@@ -373,23 +373,28 @@ const Page = () => {
 
 ```javascript
 // Pagination limit
-Courier.shared.setInboxPaginationLimit({ limit: 100 });
+Courier.shared.inboxPaginationLimit = 100;
 
 // Inbox listener
-const inboxListener = Courier.shared.addInboxListener({
+const listener = Courier.shared.addInboxListener({
   onInitialLoad: () => {
-    // Handle loading
+    console.log('Inbox initial load');
   },
   onError: (error) => {
-    // Handle error
+    console.log('Inbox error:', error);
   },
   onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
-    // Handle data
-  }
+    console.log('Inbox messages changed:', messages, unreadMessageCount, totalMessageCount, canPaginate);
+  },
 });
+listener.remove();
 
 // Remove the listener
-Courier.shared.removeInboxListener({ messageId: 'asdf' });
+Courier.shared.removeInboxListener({ listenerId: 'asdf' });
+
+// Remove all listeners
+// Warning: This will remove ALL listeners. Use at own risk.
+Courier.shared.removeAllInboxListeners();
 
 // Refresh inbox
 await Courier.shared.refreshInbox();
@@ -397,12 +402,13 @@ await Courier.shared.refreshInbox();
 // Read all messages
 await Courier.shared.readAllInboxMessages();
 
-// Read a single message
+// Updating messages
+await Courier.shared.openMessage({ messageId: 'asdf' });
+await Courier.shared.clickMessage({ messageId: 'asdf' });
 await Courier.shared.readMessage({ messageId: 'asdf' });
-
-// Unread a single message
 await Courier.shared.unreadMessage({ messageId: 'asdf' });
+await Courier.shared.archiveMessage({ messageId: 'asdf' });
 
 // Fetch a new page of messages
-const messages = await Courier.shared.fetchNextPageOfMessages()
+cosnt newMessages = await Courier.shared.fetchNextPageOfMessages();
 ```
