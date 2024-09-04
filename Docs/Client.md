@@ -30,13 +30,14 @@ All available APIs for Token Management
 
 ```typescript
 // To customize the device of the token being saved
-let device = {
-  appId?: string;
-  adId?: string;
-  deviceId?: string;
-  platform?: string;
-  manufacturer?: string;
-  model?: string;
+// You do not need this
+const device = {
+  appId: "...", // Options
+  adId: "...", // Options
+  deviceId: "...", // Options
+  platform: "...", // Options
+  manufacturer?: "...", // Options
+  model: "...", // Options
 }
 
 await client.tokens.putUserToken({
