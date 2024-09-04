@@ -178,7 +178,11 @@ const theme = {
  />
 ```
 
-If you are interested in using a Courier "Brand", here is where you can adjust that: [`Courier Studio`](https://app.courier.com/designer/brands). 
+### Courier Studio Branding (Optional)
+
+<img width="782" alt="setting" src="https://user-images.githubusercontent.com/6370613/228931428-04dc2130-789a-4ac3-bf3f-0bbb49d5519a.png">
+
+You can control your branding from the [`Courier Studio`](https://app.courier.com/designer/brands).
 
 <table>
     <thead>
@@ -199,49 +203,8 @@ If you are interested in using a Courier "Brand", here is where you can adjust t
     </tbody>
 </table>
 
-&emsp;
+---
 
-## Custom Preferences APIs
+👋 `Branding APIs` can be found <a href="https://github.com/trycourier/courier-flutter/blob/master/Docs/Client.md#branding-apis"><code>here</code></a>
 
-The raw data you can use to build whatever UI you'd like.
-
-# Get All User Preferences
-
-Returns all the user's preferences. [`listAllUserPreferences`](https://www.courier.com/docs/reference/user-preferences/list-all-user-preferences/)
-
-```javascript
-const preferences = await Courier.shared.getUserPreferences({
-    paginationCursor: "asdf" // Optional
-});
-```
-
-&emsp;
-
-# Update Preference Topic
-
-Updates a specific user preference topic. [`updateUserSubscriptionTopic`](https://www.courier.com/docs/reference/user-preferences/update-subscription-topic-preferences/)
-
-```javascript
-await Courier.shared.putUserPreferencesTopic({
-    topicId: "9ADVWHD7Z1D4Q436SMECGDSDEWFA",
-    status: CourierUserPreferencesStatus.OptedOut,
-    hasCustomRouting: true,
-    customRouting: [
-        CourierUserPreferencesChannel.Push,
-        CourierUserPreferencesChannel.Email,
-        CourierUserPreferencesChannel.SMS
-    ]
-});
-```
-
-&emsp;
-
-# Get Preference Topic
-
-Gets a specific preference topic. [`getUserSubscriptionTopic`](https://www.courier.com/docs/reference/user-preferences/get-subscription-topic-preferences/)
-
-```javascript
-const topic = await Courier.shared.getUserPreferencesTopic({ 
-    topicId: "9ADVWHD7Z1D4Q436SMECGDSDEWFA"
-});
-```
+👋 `Preference APIs` can be found <a href="https://github.com/trycourier/courier-flutter/blob/master/Docs/Client.md#preferences-apis"><code>here</code></a>
