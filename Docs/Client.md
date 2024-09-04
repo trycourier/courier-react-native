@@ -6,24 +6,22 @@ Base layer Courier API wrapper.
 
 Creating a client stores request authentication credentials only for that specific client. You can create as many clients as you'd like. See the "Going to Production" section <a href="https://github.com/trycourier/courier-ios/blob/master/Docs/Authentication.md#going-to-production"><code>here</code></a> for more info.
 
-```swift
+```typescript
 // Creating a client
-let client = CourierClient(
-    jwt:           "...",          // Optional. Likely needed for your use case. See above for more authentication details
-    clientKey:     "...",          // Optional. Used only for Inbox
-    userId:        "your_user_id",
-    connectionId:  "...",          // Optional. Used for inbox websocket
-    tenantId:      "...",          // Optional. Used for scoping a client to a specific tenant
-    showLogs:      ..              // Optional. Defaults to your current BuildConfig
-)
+let client = new CourierClient({
+  userId:       "...",          // Optional. Likely needed for your use case. See above for more authentication details
+  showLogs:     "...",          // Optional. Defaults to your current BuildConfig
+  jwt:          "your_user_id",
+  clientKey:    "...",          // Optional. Used only for Inbox
+  tenantId:     ..              // Optional. Used for scoping a client to a specific tenant
+  connectionId: "...",          // Optional. Used for inbox websocket
+});
 
 // Details about the client
-let options = client.options
+let options = client.options;
 
-// Logging to the console
-client.log("...")
-client.warn("...")
-client.error("...")
+// Remove the api client
+client.remove();
 ```
 
 ## Token Management APIs
