@@ -56,7 +56,7 @@ Put this code where you normally manage your user's state. The user's access to 
 ```javascript
 import Courier from "@trycourier/courier-react-native";
 
-Courier.shared.signIn({
+await Courier.shared.signIn({
   accessToken: 'YOUR_AUTH_TOKEN',
   clientKey: 'YOUR_CLIENT_KEY', // Optional
   userId: 'YOUR_USERNAME',
