@@ -1,4 +1,4 @@
-<img width="1040" alt="banner-react-native" src="https://github.com/trycourier/courier-react-native/assets/6370613/2970316d-fdb2-4491-8578-cf4aec1bcfe6">
+<img width="1040" alt="banner-react-native" src="https://github.com/user-attachments/assets/c38f52d8-792f-4b51-a423-f1c5dd9f996b">
 
 &emsp;
 
