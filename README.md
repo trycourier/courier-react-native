@@ -4,8 +4,6 @@
 
 # Requirements & Support
 
-&emsp;
-
 <table>
     <thead>
         <tr>
@@ -197,6 +195,19 @@ These are all the available features of the SDK.
             </td>
             <td align="left">
                 Allow users to update which types of notifications they would like to receive.
+            </td>
+        </tr>
+        <tr width="600px">
+            <td align="center">
+                5
+            </td>
+            <td align="left">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Client.md">
+                    <code>CourierClient</code>
+                </a>
+            </td>
+            <td align="left">
+                The base level API wrapper around the Courier endpoints. Useful if you have a highly customized user experience or codebase requirements.
             </td>
         </tr>
     </tbody>
