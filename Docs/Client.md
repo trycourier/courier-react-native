@@ -28,44 +28,34 @@ client.remove();
 
 All available APIs for Token Management
 
-```swift
-// Saves a token into Courier Token Management
-try await client.tokens.putUserToken(
-    token: "...",
-    provider: "firebase-fcm"
-)
-
+```typescript
 // To customize the device of the token being saved
-let device = CourierDevice(
-    appId:         "APP_ID",    // Optional
-    adId:          "AD_ID",     // Optional
-    deviceId:      "DEVICE_ID", // Optional
-    platform:      "ios",       // Optional
-    manufacturer:  "Apple",     // Optional
-    model:         "iPhone 123" // Optional
-)
+let device = {
+  appId?: string;
+  adId?: string;
+  deviceId?: string;
+  platform?: string;
+  manufacturer?: string;
+  model?: string;
+}
 
-// The function defaults to device = CourierDevice().
-// This object will try and get as much information prefilled from
-// the existing device as possible.
-
-try await client.tokens.putUserToken(
-    token: "...",
-    provider: "firebase-fcm",
-    device: device // Optional
+await client.tokens.putUserToken({
+  token: "...",
+  provider: "firebase-fcm",
+  device: device // Optional
 )
 
 // Deletes the token from Courier Token Management
-try await client.tokens.deleteUserToken(
-    token: "..."
-)
+await client.tokens.deleteUserToken({
+  token: "..."
+})
 ```
 
 ## Inbox APIs
 
 All available APIs for Inbox
 
-```swift
+```typescript
 // Get all inbox messages
 // Includes the total count in the response
 let messages = try await client.inbox.getMessages(
