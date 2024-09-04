@@ -490,4 +490,4 @@ const tokens = await Courier.shared.getAllTokens();
 
 ---
 
-👋 `TokenManagement APIs` can be found <a href="https://github.com/trycourier/courier-flutter/blob/master/Docs/Client.md#token-management-apis"><code>here</code></a>
+👋 `TokenManagement APIs` can be found <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Client.md#token-management-apis"><code>here</code></a>
