@@ -66,54 +66,54 @@ const messages = await client.inbox.getMessages({
 
 // Returns only archived messages
 // Includes the total count of archived message in the response
-const archivedMessages = await client.inbox.getArchivedMessages(
+const archivedMessages = await client.inbox.getArchivedMessages({
   paginationLimit: 123,   // Optional
   startCursor: undefined, // Optional
-)
+});
 
 // Gets the number of unread messages
-const unreadCount = await client.inbox.getUnreadMessageCount()
+const unreadCount = await client.inbox.getUnreadMessageCount();
 
 // Tracking messages
-await client.inbox.open({ messageId: "..." })
-await client.inbox.read({ messageId: "..." })
-await client.inbox.unread({ messageId: "..." })
-await client.inbox.archive({ messageId: "..." })
-await client.inbox.readAll()
+await client.inbox.open({ messageId: "..." });
+await client.inbox.read({ messageId: "..." });
+await client.inbox.unread({ messageId: "..." });
+await client.inbox.archive({ messageId: "..." });
+await client.inbox.readAll();
 ```
 
 ## Preferences APIs
 
 All available APIs for Preferences
 
-```swift
+```typescript
 // Get all the available preference topics
-let preferences = try await client.preferences.getUserPreferences(
-    paginationCursor: nil // Optional
-)
+const preferences = await client.preferences.getUserPreferences({
+    paginationCursor: undefined // Optional
+});
 
 // Gets a specific preference topic
-let topic = try await client.preferences.getUserPreferenceTopic(
+const topic = await client.preferences.getUserPreferenceTopic({
     topicId: "..."
-)
+});
 
 // Updates a user preference topic
-try await client.preferences.putUserPreferenceTopic(
+await client.preferences.putUserPreferenceTopic({
     topicId: "...",
-    status: .optedIn,
+    status: CourierUserPreferencesStatus.OptedIn,
     hasCustomRouting: true,
-    customRouting: [.push]
-)
+    customRouting: [CourierUserPreferencesChannel.DirectMessage]
+});
 ```
 
 ## Branding APIs
 
 All available APIs for Branding
 
-```swift
-let brandRes = try await client.brands.getBrand(
+```typescript
+const brandRes = await client.brands.getBrand({
     brandId: "..."
-)
+});
 ```
 
 ## URL Tracking APIs
@@ -124,8 +124,8 @@ All available APIs for URL Tracking
 // Pass a trackingUrl, usually found inside of a push notification payload or Inbox message
 // Tell which event happened. 
 // All available events: .clicked, .delivered, .opened, .read, .unread
-try await client.tracking.postTrackingUrl(
+await client.tracking.postTrackingUrl({
     url: "courier_tracking_url",
-    event: .delivered
-)
+    event: CourierTrackingEvent.Clicked
+});
 ```
