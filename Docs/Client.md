@@ -13,7 +13,7 @@ let client = new CourierClient({
   showLogs:     "...",          // Optional. Defaults to your current BuildConfig
   jwt:          "your_user_id",
   clientKey:    "...",          // Optional. Used only for Inbox
-  tenantId:     ..              // Optional. Used for scoping a client to a specific tenant
+  tenantId:     ..,             // Optional. Used for scoping a client to a specific tenant
   connectionId: "...",          // Optional. Used for inbox websocket
 });
 
