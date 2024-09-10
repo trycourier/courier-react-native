@@ -1,7 +1,6 @@
 package com.courierreactnative
 
 import com.courier.android.Courier
-import com.courier.android.models.CourierAgent
 import com.courier.android.models.CourierAuthenticationListener
 import com.courier.android.models.CourierInboxListener
 import com.courier.android.models.InboxMessage
@@ -40,14 +39,6 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   // Listeners
   private var authenticationListeners = mutableMapOf<String, CourierAuthenticationListener>()
   private var inboxListeners = mutableMapOf<String, CourierInboxListener>()
-
-  init {
-
-    // User Agent is used to ensure we know the SDK
-    // the requests come from
-    Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
-
-  }
 
   @ReactMethod
   fun addListener(type: String?) {

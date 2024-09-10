@@ -25,7 +25,7 @@ update_swift_file() {
 update_kotlin_file() {
     local file=$1
     echo "Updating $file..."
-    sed -i '' "s/Courier\.agent = CourierAgent\.reactNativeAndroid(version = \"[^\"]*\")/Courier.agent = CourierAgent.reactNativeAndroid(version = \"$version\")/" "$file"
+    sed -i '' "s/Courier\.agent = CourierAgent\.ReactNativeAndroid(version = \"[^\"]*\")/Courier.agent = CourierAgent.ReactNativeAndroid(version = \"$version\")/" "$file"
     if [ $? -eq 0 ]; then
         echo "$file updated successfully."
     else
@@ -54,6 +54,7 @@ update_swift_file "../ios/CourierReactNativeEventEmitter.swift"
 update_objc_file "../ios/CourierReactNativeDelegate.m"
 
 # Update the Kotlin file
-# update_kotlin_file "../android/src/main/java/com/courier/courierreactnative/CourierReactNativeModule.kt"
+update_kotlin_file "../android/src/main/java/com/courierreactnative/ReactNativeModule.kt"
+update_kotlin_file "../android/src/main/java/com/courierreactnative/CourierReactNativeActivity.kt"
 
 echo "All files updated successfully with version $version."

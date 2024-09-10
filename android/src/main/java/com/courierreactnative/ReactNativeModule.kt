@@ -17,7 +17,7 @@ abstract class ReactNativeModule(val tag: String, private val name: String, reac
 
     // User Agent is used to ensure we know the SDK
     // the requests come from
-    Courier.USER_AGENT = CourierAgent.REACT_NATIVE_ANDROID
+    Courier.agent = CourierAgent.ReactNativeAndroid(version = "4.1.0")
 
   }
 
