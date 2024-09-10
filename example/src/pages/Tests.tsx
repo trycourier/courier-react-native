@@ -390,7 +390,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       });
       setTimeout(() => resolve(result), 5000);
     });
-    await Courier.shared.openMessage({ messageId: messageId });
+    await Courier.shared.clickMessage({ messageId: messageId });
     return { messageId: messageId };
   },
   

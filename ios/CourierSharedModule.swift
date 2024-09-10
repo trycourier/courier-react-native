@@ -1,20 +1,11 @@
 import Courier_iOS
 
 @objc(CourierSharedModule)
-class CourierSharedModule: RCTEventEmitter {
+class CourierSharedModule: CourierReactNativeEventEmitter {
     
     private var nativeEmitters = [String]()
     private var authenticationListeners: [String: CourierAuthenticationListener] = [:]
     private var inboxListeners: [String: CourierInboxListener] = [:]
-
-    override init() {
-        super.init()
-        
-        // Set the user agent
-        // Used to know the platform performing requests
-        Courier.agent = CourierAgent.react_native_ios
-                
-    }
 
     override func stopObserving() {
         removeAllAuthenticationListeners()
@@ -416,10 +407,6 @@ class CourierSharedModule: RCTEventEmitter {
 
     override func supportedEvents() -> [String]! {
         return nativeEmitters
-    }
-    
-    @objc override static func requiresMainQueueSetup() -> Bool {
-        return true
     }
     
 }

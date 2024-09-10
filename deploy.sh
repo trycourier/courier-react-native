@@ -13,6 +13,7 @@ error_exit() {
 declare -a steps=(
     "Build Demo App:sh build_demo_app.sh"
     "Update Build Version:sh update_version.sh"
+    "Update Native Module Version:sh update_native_module_version.sh"
     "Install Brew:sh install_homebrew.sh"
     "Create Git Release:sh git_release.sh"
     "Release NPM Package:sh release_npm_package.sh"

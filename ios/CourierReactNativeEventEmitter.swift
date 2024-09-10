@@ -14,8 +14,8 @@ internal class CourierReactNativeEventEmitter: RCTEventEmitter {
         
         // Set the user agent
         // Used to know the platform performing requests
-        Courier.agent = CourierAgent.react_native_ios
-                
+        Courier.agent = CourierAgent.reactNativeIOS("4.1.0")
+        
     }
     
     @objc override static func requiresMainQueueSetup() -> Bool {

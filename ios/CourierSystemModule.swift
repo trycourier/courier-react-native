@@ -8,7 +8,7 @@
 import Courier_iOS
 
 @objc(CourierSystemModule)
-class CourierSystemModule: RCTEventEmitter {
+class CourierSystemModule: CourierReactNativeEventEmitter {
     
     private var lastClickedMessage: [AnyHashable: Any]? = nil
     private var notificationCenter: NotificationCenter {
@@ -17,14 +17,7 @@ class CourierSystemModule: RCTEventEmitter {
 
     override init() {
         super.init()
-        
-        // Set the user agent
-        // Used to know the platform performing requests
-        Courier.agent = CourierAgent.react_native_ios
-        
-        // Attach the listeners
         attachObservers()
-                
     }
     
     // MARK: Push Interactions
@@ -138,10 +131,6 @@ class CourierSystemModule: RCTEventEmitter {
             PushEvents.CLICKED_EVENT,
             PushEvents.DELIVERED_EVENT
         ]
-    }
-    
-    @objc override static func requiresMainQueueSetup() -> Bool {
-        return true
     }
     
 }
