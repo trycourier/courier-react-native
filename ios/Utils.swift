@@ -51,7 +51,6 @@ internal extension String {
         switch self.lowercased() {
             case "none": return .none
             case "singleLine": return .singleLine
-            case "singleLineEtched": return .singleLineEtched
             default: return .singleLine
         }
         
@@ -60,7 +59,7 @@ internal extension String {
     func toSelectionStyle() -> UITableViewCell.SelectionStyle? {
         
         switch self.lowercased() {
-            case "none": return .none
+            case "none": return UITableViewCell.SelectionStyle.none
             case "blue": return .blue
             case "gray": return .gray
             case "default": return .default

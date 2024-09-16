@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { Platform, requireNativeComponent, UIManager, ViewStyle, DeviceEventEmitter, EmitterSubscription } from "react-native";
+import { Platform, ViewStyle, DeviceEventEmitter, EmitterSubscription } from "react-native";
 import { InboxAction } from "../models/InboxAction";
 import { InboxMessage } from "../models/InboxMessage";
 import { CourierInboxTheme } from "src/models/CourierInboxTheme";
+import { Modules } from "../Modules";
 
 type CourierInboxViewProps = {
   theme?: { 
@@ -15,20 +16,7 @@ type CourierInboxViewProps = {
   style?: ViewStyle;
 };
 
-const ComponentName = 'CourierInboxView';
-
-const LINKING_ERROR =
-  `The package '@trycourier/courier-react-native' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
-
-const CourierInbox =
-  UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<CourierInboxViewProps>(ComponentName)
-    : () => {
-        throw new Error(LINKING_ERROR);
-      };
+const CourierInbox = Modules.getNativeComponent('CourierInboxView');
 
 export const CourierInboxView = (props: CourierInboxViewProps) => {
 

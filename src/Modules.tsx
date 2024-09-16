@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from "react-native";
+import { NativeModules, Platform, UIManager, requireNativeComponent } from "react-native";
 
 export class Modules {
 
@@ -23,6 +23,14 @@ export class Modules {
             },
           }
         ) as T;
+  }
+
+  static getNativeComponent(componentName: string) {
+    return UIManager.getViewManagerConfig(componentName) != null
+      ? requireNativeComponent<any>(componentName)
+      : () => {
+          throw new Error(Modules.LINKING_ERROR);
+        };
   }
 
 }

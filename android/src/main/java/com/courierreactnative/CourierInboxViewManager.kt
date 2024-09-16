@@ -109,7 +109,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
     val timeStyle = getMap("timeStyle")
     val bodyStyle = getMap("bodyStyle")
     val infoViewStyle = getMap("infoViewStyle")
-    val buttonStyles = getMap("buttonStyles")
+    val buttonStyles = getMap("buttonStyle")
 
     val context = view.context
 
