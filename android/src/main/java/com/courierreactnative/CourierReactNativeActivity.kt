@@ -1,5 +1,6 @@
 package com.courierreactnative
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import com.courier.android.Courier
@@ -44,6 +45,7 @@ open class CourierReactNativeActivity : ReactActivity() {
     }
   }
 
+  @SuppressLint("VisibleForTests")
   private fun postPushNotificationDelivered(message: RemoteMessage) {
     reactInstanceManager.currentReactContext?.sendEvent(
       eventName = CourierEvents.Push.DELIVERED_EVENT,
@@ -51,6 +53,7 @@ open class CourierReactNativeActivity : ReactActivity() {
     )
   }
 
+  @SuppressLint("VisibleForTests")
   private fun postPushNotificationClicked(message: RemoteMessage) {
     reactInstanceManager.currentReactContext?.sendEvent(
       eventName = CourierEvents.Push.CLICKED_EVENT,
