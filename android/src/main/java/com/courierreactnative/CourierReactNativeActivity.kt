@@ -3,7 +3,6 @@ package com.courierreactnative
 import android.content.Intent
 import android.os.Bundle
 import com.courier.android.Courier
-import com.courier.android.models.CourierAgent
 import com.courier.android.utils.getLastDeliveredMessage
 import com.courier.android.utils.pushNotification
 import com.courier.android.utils.trackPushNotificationClick
@@ -15,12 +14,12 @@ open class CourierReactNativeActivity : ReactActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
 
+    // Update the user agent
+    Courier.agent = Utils.COURIER_AGENT
+
     // Starts the Courier SDK
     // Used to ensure shared preferences works properly
     Courier.initialize(this)
-
-    // Update the user agent
-    Courier.agent = CourierAgent.ReactNativeAndroid(version = "4.1.0")
 
     super.onCreate(savedInstanceState)
 
