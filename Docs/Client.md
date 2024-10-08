@@ -8,7 +8,7 @@ Creating a client stores request authentication credentials only for that specif
 
 ```typescript
 // Creating a client
-let client = new CourierClient({
+const client = new CourierClient({
   userId:       "...",          // Optional. Likely needed for your use case. See above for more authentication details
   showLogs:     "...",          // Optional. Defaults to your current BuildConfig
   jwt:          "your_user_id",
@@ -18,7 +18,7 @@ let client = new CourierClient({
 });
 
 // Details about the client
-let options = client.options;
+const options = client.options;
 
 // Remove the api client
 client.remove();
