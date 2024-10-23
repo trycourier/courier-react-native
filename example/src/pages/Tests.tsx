@@ -462,7 +462,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testFetchNextPageOfMessages: async () => {
-    return await Courier.shared.fetchNextPageOfMessages();
+    return await Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' });
   },
 
   testRequestPushNotificationPermission: async () => {

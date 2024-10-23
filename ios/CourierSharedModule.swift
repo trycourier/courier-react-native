@@ -306,41 +306,34 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         
         // Create the new listener
         let listener = Courier.shared.addInboxListener(
-            onInitialLoad: { [weak self] in
-                self?.broadcast(
-                    name: loadingId,
-                    body: nil
-                )
-            },
-            onError: { [weak self] error in
-                self?.broadcast(
-                    name: errorId,
-                    body: String(describing: error)
-                )
-            },
-            onMessagesChanged: { [weak self] messages, unreadMessageCount, totalMessageCount, canPaginate in
-                
-                do {
-                    
-                    let json: [String: Any] = [
-                        "messages": try messages.map { try $0.toJson() ?? "" },
-                        "unreadMessageCount": unreadMessageCount,
-                        "totalMessageCount": totalMessageCount,
-                        "canPaginate": canPaginate
-                    ]
-                    
-                    self?.broadcast(
-                        name: messagesId,
-                        body: json
-                    )
-                    
-                } catch {
-                    
-                    Courier.shared.client?.error(error.localizedDescription)
-                    
-                }
-                
+          onLoading: { [weak self] in
+            self?.broadcast(
+                name: loadingId,
+                body: nil
+            )
+          },
+          onError: { [weak self] error in
+              self?.broadcast(
+                  name: errorId,
+                  body: String(describing: error)
+              )
+          },
+          onFeedChanged: { [weak self] set in
+            do {
+              let json: [String: Any] = [
+                "messages": try set.messages.map { try $0.toJson() ?? "" },
+                "unreadMessageCount": 0, // TODO
+                "totalMessageCount": set.totalCount,
+                "canPaginate": set.canPaginate
+              ]
+              self?.broadcast(
+                  name: messagesId,
+                  body: json
+              )
+            } catch {
+              Courier.shared.client?.error(error.localizedDescription)
             }
+          }
         )
         
         let id = UUID().uuidString
@@ -389,20 +382,17 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         
     }
     
-    @objc(fetchNextPageOfMessages: withRejecter:)
-    func fetchNextPageOfMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        Task {
-            
-            do {
-                let messages = try await Courier.shared.fetchNextInboxPage()
-                resolve(try messages.map { try $0.toJson() ?? "" })
-            } catch {
-                Rejections.sharedError(reject, error: error)
-            }
-            
+    @objc(fetchNextPageOfMessages:withResolver:withRejecter:)
+    func fetchNextPageOfMessages(inboxMessageFeed: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+      Task {
+        do {
+          let value: InboxMessageFeed = inboxMessageFeed == "archived" ? .feed : .archived
+          let messages = try await Courier.shared.fetchNextInboxPage(value)
+          resolve(try messages.map { try $0.toJson() ?? "" })
+        } catch {
+          Rejections.sharedError(reject, error: error)
         }
-        
+      }
     }
 
     override func supportedEvents() -> [String]! {

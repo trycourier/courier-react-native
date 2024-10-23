@@ -13,6 +13,7 @@ import { Modules } from './Modules';
 import Broadcaster from './Broadcaster';
 import { CourierClient } from './client/CourierClient';
 import { Events, Utils } from './utils';
+import { InboxMessageFeed } from './models/InboxMessageFeed';
 
 export { CourierClient } from './client/CourierClient';
 export { BrandClient } from './client/BrandClient';
@@ -623,8 +624,8 @@ class Courier {
    * Fetches the next page of inbox messages.
    * @returns {Promise<InboxMessage[]>} A promise that resolves with an array of fetched inbox messages.
    */
-  public async fetchNextPageOfMessages(): Promise<InboxMessage[]> {
-    const messages = await Modules.Shared.fetchNextPageOfMessages();
+  public async fetchNextPageOfMessages(props: { inboxMessageFeed: InboxMessageFeed }): Promise<InboxMessage[]> {
+    const messages = await Modules.Shared.fetchNextPageOfMessages(props.inboxMessageFeed);
     return messages.map((message: string) => JSON.parse(message));
   }
   
