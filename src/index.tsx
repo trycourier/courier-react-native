@@ -507,22 +507,50 @@ class Courier {
    * @param {Object} props - The properties object.
    * @param {Function} [props.onInitialLoad] - Callback function called when the inbox is initially loaded.
    * @param {Function} [props.onError] - Callback function called when an error occurs. Receives the error message as a parameter.
-   * @param {Function} [props.onMessagesChanged] - Callback function called when messages change. Receives updated messages, unread count, total count, and pagination status.
+   * @param {Function} [props.onUnreadCountChanged] - Callback function called when the unread count changes.
+   * @param {Function} [props.onFeedChanged] - Callback function called when the feed changes.
+   * @param {Function} [props.onArchiveChanged] - Callback function called when the archive changes.
+   * @param {Function} [props.onPageAdded] - Callback function called when a new page is added.
+   * @param {Function} [props.onMessageChanged] - Callback function called when a message changes.
+   * @param {Function} [props.onMessageAdded] - Callback function called when a new message is added.
+   * @param {Function} [props.onMessageRemoved] - Callback function called when a message is removed.
    * @returns {CourierInboxListener} A listener object that can be used to remove the listener later.
    */
-  public addInboxListener(props: { onInitialLoad?: () => void, onError?: (error: string) => void, onMessagesChanged?: (messages: InboxMessage[], unreadMessageCount: number, totalMessageCount: number, canPaginate: boolean) => void }): CourierInboxListener {
+  public addInboxListener(props: {
+    onInitialLoad?: () => void,
+    onError?: (error: string) => void,
+    onUnreadCountChanged?: (unreadCount: number) => void,
+    onFeedChanged?: (messages: InboxMessage[], totalMessageCount: number, canPaginate: boolean) => void,
+    onArchiveChanged?: (messages: InboxMessage[], totalMessageCount: number, canPaginate: boolean) => void,
+    onPageAdded?: (feed: InboxMessageFeed, messages: InboxMessage[], totalMessageCount: number, canPaginate: boolean) => void,
+    onMessageChanged?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
+    onMessageAdded?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
+    onMessageRemoved?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void
+  }): CourierInboxListener {
 
     const listenerIds = {
       loading: `inbox_loading_${Utils.generateUUID()}`,
       error: `inbox_error_${Utils.generateUUID()}`,
-      messages: `inbox_messages_${Utils.generateUUID()}`
+      unreadCount: `inbox_unread_count_${Utils.generateUUID()}`,
+      feed: `inbox_feed_${Utils.generateUUID()}`,
+      archive: `inbox_archive_${Utils.generateUUID()}`,
+      pageAdded: `inbox_page_added_${Utils.generateUUID()}`,
+      messageChanged: `inbox_message_changed_${Utils.generateUUID()}`,
+      messageAdded: `inbox_message_added_${Utils.generateUUID()}`,
+      messageRemoved: `inbox_message_removed_${Utils.generateUUID()}`
     }
 
     // Set the listener id
     const id = Modules.Shared.addInboxListener(
       listenerIds.loading,
       listenerIds.error,
-      listenerIds.messages
+      listenerIds.unreadCount,
+      listenerIds.feed,
+      listenerIds.archive,
+      listenerIds.pageAdded,
+      listenerIds.messageChanged,
+      listenerIds.messageAdded,
+      listenerIds.messageRemoved
     );
 
     // Create the initial listeners
@@ -536,32 +564,64 @@ class Courier {
       props.onError?.(event);
     });
 
-    listener.onMessagesChanged = this.sharedBroadcaster.addListener(listenerIds.messages, (event: any) => {
+    listener.onUnreadCountChanged = this.sharedBroadcaster.addListener(listenerIds.unreadCount, (event: any) => {
+      props.onUnreadCountChanged?.(event);
+    });
 
-      // Convert JSON strings to InboxMessage objects
-      const convertedMessages: InboxMessage[] = event.messages.map((jsonString: string) => {
-        try {
-          const parsedMessage = JSON.parse(jsonString);
-          return parsedMessage as InboxMessage;
-        } catch (error) {
-          Courier.log(`Error parsing message: ${error}`);
-          return null;
-        }
-      }).filter((message: InboxMessage | null): message is InboxMessage => message !== null);
+    listener.onFeedChanged = this.sharedBroadcaster.addListener(listenerIds.feed, (event: any) => {
+      const convertedMessages = this.convertMessages(event.messages);
+      props.onFeedChanged?.(convertedMessages, event.totalMessageCount, event.canPaginate);
+    });
 
-      props.onMessagesChanged?.(
-        convertedMessages,
-        event.unreadMessageCount,
-        event.totalMessageCount,
-        event.canPaginate,
-      );
+    listener.onArchiveChanged = this.sharedBroadcaster.addListener(listenerIds.archive, (event: any) => {
+      const convertedMessages = this.convertMessages(event.messages);
+      props.onArchiveChanged?.(convertedMessages, event.totalMessageCount, event.canPaginate);
+    });
+
+    listener.onPageAdded = this.sharedBroadcaster.addListener(listenerIds.pageAdded, (event: any) => {
+      const convertedMessages = this.convertMessages(event.messages);
+      props.onPageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', convertedMessages, event.totalMessageCount, event.canPaginate);
+    });
+
+    listener.onMessageChanged = this.sharedBroadcaster.addListener(listenerIds.messageChanged, (event: any) => {
+      const convertedMessage = this.convertMessage(event.message);
+      props.onMessageChanged?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
+    });
+
+    listener.onMessageAdded = this.sharedBroadcaster.addListener(listenerIds.messageAdded, (event: any) => {
+      const convertedMessage = this.convertMessage(event.message);
+      props.onMessageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
+    });
+
+    listener.onMessageRemoved = this.sharedBroadcaster.addListener(listenerIds.messageRemoved, (event: any) => {
+      const convertedMessage = this.convertMessage(event.message);
+      props.onMessageRemoved?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
     });
 
     // Add listener to manager
     this.inboxListeners.set(id, listener);
 
     return listener;
+  }
 
+  private convertMessages(messages: string[]): InboxMessage[] {
+    return messages.map(jsonString => {
+      try {
+        return JSON.parse(jsonString) as InboxMessage;
+      } catch (error) {
+        Courier.log(`Error parsing message: ${error}`);
+        return null;
+      }
+    }).filter((message): message is InboxMessage => message !== null);
+  }
+
+  private convertMessage(message: string): InboxMessage {
+    try {
+      return JSON.parse(message) as InboxMessage;
+    } catch (error) {
+      Courier.log(`Error parsing message: ${error}`);
+      throw error;
+    }
   }
 
   /**
@@ -582,7 +642,13 @@ class Courier {
       const listener = this.inboxListeners.get(props.listenerId);
       listener?.onInitialLoad?.remove();
       listener?.onError?.remove();
-      listener?.onMessagesChanged?.remove();
+      listener?.onUnreadCountChanged?.remove();
+      listener?.onFeedChanged?.remove();
+      listener?.onArchiveChanged?.remove();
+      listener?.onPageAdded?.remove();
+      listener?.onMessageChanged?.remove();
+      listener?.onMessageAdded?.remove();
+      listener?.onMessageRemoved?.remove();
 
       // Remove the listener
       this.inboxListeners.delete(props.listenerId);
@@ -605,7 +671,13 @@ class Courier {
     this.inboxListeners.forEach((listener) => {
       listener?.onInitialLoad?.remove();
       listener?.onError?.remove();
-      listener?.onMessagesChanged?.remove();
+      listener?.onUnreadCountChanged?.remove();
+      listener?.onFeedChanged?.remove();
+      listener?.onArchiveChanged?.remove();
+      listener?.onPageAdded?.remove();
+      listener?.onMessageChanged?.remove();
+      listener?.onMessageAdded?.remove();
+      listener?.onMessageRemoved?.remove();
     });
     this.inboxListeners.clear();
 

@@ -445,8 +445,8 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       onError: (error) => {
         console.log('Inbox error:', error);
       },
-      onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
-        console.log('Inbox messages changed:', messages, unreadMessageCount, totalMessageCount, canPaginate);
+      onFeedChanged: (messages, totalMessageCount, canPaginate) => {
+        console.log('Inbox messages changed:', messages, totalMessageCount, canPaginate);
       },
     });
     listener.remove();

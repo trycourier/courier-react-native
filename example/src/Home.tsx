@@ -37,11 +37,8 @@ const Home = () => {
     Courier.shared.inboxPaginationLimit = 100;
 
     const inboxListener = Courier.shared.addInboxListener({
-      onError(_error) {
-        setUnreadCount(0);
-      },
-      onMessagesChanged(_messages, unreadMessageCount, _totalMessageCount, _canPaginate) {
-        setUnreadCount(unreadMessageCount);
+      onUnreadCountChanged(unreadCount) {
+        setUnreadCount(unreadCount);
       },
     });
 

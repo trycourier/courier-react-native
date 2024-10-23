@@ -22,12 +22,11 @@ const InboxCustom = () => {
         setIsLoading(false);
         setError(error);
       },
-      onMessagesChanged(messages, unreadMessageCount, totalMessageCount, canPaginate) {
+      onFeedChanged(messages, totalMessageCount, canPaginate) {
         setIsLoading(false);
         setError(null);
         setInbox({
           messages,
-          unreadMessageCount,
           totalMessageCount,
           canPaginate
         });

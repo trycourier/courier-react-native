@@ -109,7 +109,13 @@ RCT_EXTERN_METHOD(
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   addInboxListener: (NSString*)loadingId
   withErrorId: (NSString*)errorId
-  withMessagesId: (NSString*)messagesId
+  withUnreadCountId: (NSString*)unreadCountId
+  withFeedId: (NSString*)feedId
+  withArchiveId: (NSString*)archiveId
+  withPageAddedId: (NSString*)pageAddedId
+  withMessageChangedId: (NSString*)messageChangedId
+  withMessageAddedId: (NSString*)messageAddedId
+  withMessageRemovedId: (NSString*)messageRemovedId
 )
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
