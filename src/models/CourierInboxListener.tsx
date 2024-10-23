@@ -7,7 +7,14 @@ export class CourierInboxListener {
   public onInitialLoad?: EmitterSubscription
   public onError?: EmitterSubscription
   public onMessagesChanged?: EmitterSubscription
-
+  public onUnreadCountChanged?: EmitterSubscription
+  public onFeedChanged?: EmitterSubscription
+  public onArchiveChanged?: EmitterSubscription
+  public onPageAdded?: EmitterSubscription
+  public onMessageChanged?: EmitterSubscription
+  public onMessageAdded?: EmitterSubscription
+  public onMessageRemoved?: EmitterSubscription
+  
   constructor(id: string) {
     this.listenerId = id;
   }

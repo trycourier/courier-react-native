@@ -298,11 +298,11 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         
     }
     
-    @objc(addInboxListener: withErrorId: withMessagesId:)
-    func addInboxListener(loadingId: String, errorId: String, messagesId: String) -> String {
+    @objc(addInboxListener:withErrorId:withUnreadCountId:withFeedId:withArchiveId:withPageAddedId:withMessageChangedId:withMessageAddedId:withMessageRemovedId:)
+    func addInboxListener(loadingId: String, errorId: String, unreadCountId: String, feedId: String, archiveId: String, pageAddedId: String, messageChangedId: String, messageAddedId: String, messageRemovedId: String) -> String {
         
         // Add the events
-        nativeEmitters.append(contentsOf: [loadingId, errorId, messagesId])
+        nativeEmitters.append(contentsOf: [loadingId, errorId, unreadCountId, feedId, archiveId, pageAddedId, messageChangedId, messageAddedId, messageRemovedId])
         
         // Create the new listener
         let listener = Courier.shared.addInboxListener(
@@ -318,17 +318,98 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                   body: String(describing: error)
               )
           },
+          onUnreadCountChanged: { [weak self] unreadCount in
+            self?.broadcast(
+                name: unreadCountId,
+                body: unreadCount
+            )
+          },
           onFeedChanged: { [weak self] set in
             do {
               let json: [String: Any] = [
                 "messages": try set.messages.map { try $0.toJson() ?? "" },
-                "unreadMessageCount": 0, // TODO
                 "totalMessageCount": set.totalCount,
                 "canPaginate": set.canPaginate
               ]
               self?.broadcast(
-                  name: messagesId,
-                  body: json
+                name: feedId,
+                body: json
+              )
+            } catch {
+              Courier.shared.client?.error(error.localizedDescription)
+            }
+          },
+          onArchiveChanged: { [weak self] set in
+            do {
+              let json: [String: Any] = [
+                "messages": try set.messages.map { try $0.toJson() ?? "" },
+                "totalMessageCount": set.totalCount,
+                "canPaginate": set.canPaginate
+              ]
+              self?.broadcast(
+                name: archiveId,
+                body: json
+              )
+            } catch {
+              Courier.shared.client?.error(error.localizedDescription)
+            }
+          },
+          onPageAdded: { [weak self] feed, set in
+            do {
+              let json: [String: Any] = [
+                "feed": feed == .archived ? "archived" : "feed",
+                "messages": try set.messages.map { try $0.toJson() ?? "" },
+                "totalMessageCount": set.totalCount,
+                "canPaginate": set.canPaginate
+              ]
+              self?.broadcast(
+                name: pageAddedId,
+                body: json
+              )
+            } catch {
+              Courier.shared.client?.error(error.localizedDescription)
+            }
+          },
+          onMessageChanged: { [weak self] feed, index, message in
+            do {
+              let json: [String: Any] = [
+                "feed": feed == .archived ? "archived" : "feed",
+                "index": index,
+                "message": try message.toJson() ?? "",
+              ]
+              self?.broadcast(
+                name: messageChangedId,
+                body: json
+              )
+            } catch {
+              Courier.shared.client?.error(error.localizedDescription)
+            }
+          },
+          onMessageAdded: { [weak self] feed, index, message in
+            do {
+              let json: [String: Any] = [
+                "feed": feed == .archived ? "archived" : "feed",
+                "index": index,
+                "message": try message.toJson() ?? "",
+              ]
+              self?.broadcast(
+                name: messageAddedId,
+                body: json
+              )
+            } catch {
+              Courier.shared.client?.error(error.localizedDescription)
+            }
+          },
+          onMessageRemoved: { [weak self] feed, index, message in
+            do {
+              let json: [String: Any] = [
+                "feed": feed == .archived ? "archived" : "feed",
+                "index": index,
+                "message": try message.toJson() ?? "",
+              ]
+              self?.broadcast(
+                name: messageRemovedId,
+                body: json
               )
             } catch {
               Courier.shared.client?.error(error.localizedDescription)
