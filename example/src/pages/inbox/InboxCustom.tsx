@@ -125,7 +125,7 @@ const InboxCustom = () => {
         }}
         onEndReached={() => {
           if (inbox?.canPaginate) {
-            Courier.shared.fetchNextPageOfMessages();
+            Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' });
           }
         }}
       />

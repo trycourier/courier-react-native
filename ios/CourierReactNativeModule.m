@@ -126,7 +126,8 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN_METHOD(
-  fetchNextPageOfMessages: (RCTPromiseResolveBlock)resolve
+  fetchNextPageOfMessages: (NSString*)inboxMessageFeed
+  withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
