@@ -14,6 +14,12 @@ class CourierInboxViewManager: RCTViewManager {
 }
 
 class CourierInboxView : UIView {
+  
+    @objc var canSwipePages: Bool = false {
+        didSet {
+            refresh()
+        }
+    }
     
     @objc var theme: NSDictionary? = [:] {
         didSet {
@@ -39,6 +45,7 @@ class CourierInboxView : UIView {
         let darkTheme = theme?["dark"] as? NSDictionary
         
         let courierInbox = CourierInbox(
+            canSwipePages: self.canSwipePages,
             lightTheme: lightTheme?.toInboxTheme() ?? .defaultLight,
             darkTheme: darkTheme?.toInboxTheme() ?? .defaultDark,
             didClickInboxMessageAtIndex: { [weak self] message, index in
@@ -85,10 +92,160 @@ class CourierInboxView : UIView {
         UIView.setAnimationsEnabled(true)
         
     }
+  
+    internal static func defaultTabStyle() -> CourierStyles.Inbox.TabStyle {
+        return CourierStyles.Inbox.TabStyle(
+            selected: CourierStyles.Inbox.TabItemStyle(
+                font: CourierStyles.Font(
+                    font: UIFont.boldSystemFont(ofSize: UIFont.labelFontSize),
+                    color: .label
+                ),
+                indicator: CourierStyles.Inbox.TabIndicatorStyle(
+                    font: CourierStyles.Font(
+                        font: UIFont.boldSystemFont(ofSize: UIFont.systemFontSize),
+                        color: .white
+                    ),
+                    color: .systemBlue
+                )
+            ),
+            unselected: CourierStyles.Inbox.TabItemStyle(
+                font: CourierStyles.Font(
+                    font: UIFont.boldSystemFont(ofSize: UIFont.labelFontSize),
+                    color: .secondaryLabel
+                ),
+                indicator: CourierStyles.Inbox.TabIndicatorStyle(
+                    font: CourierStyles.Font(
+                        font: UIFont.boldSystemFont(ofSize: UIFont.systemFontSize),
+                        color: .label
+                    ),
+                    color: .lightGray
+                )
+            )
+        )
+    }
+  
+    internal static func defaultReadingStyle() -> CourierStyles.Inbox.ReadingSwipeActionStyle {
+      return CourierStyles.Inbox.ReadingSwipeActionStyle(
+        read: CourierStyles.Inbox.SwipeActionStyle(
+            icon: UIImage(systemName: "envelope.fill"),
+            color: .systemGray
+        ),
+        unread: CourierStyles.Inbox.SwipeActionStyle(
+            icon: UIImage(systemName: "envelope.open.fill"),
+            color: .systemBlue
+        )
+      )
+    }
+    
+    internal static func defaultArchivingStyle() -> CourierStyles.Inbox.ArchivingSwipeActionStyle {
+      return CourierStyles.Inbox.ArchivingSwipeActionStyle(
+        archive: CourierStyles.Inbox.SwipeActionStyle(
+            icon: UIImage(systemName: "archivebox.fill"),
+            color: .systemRed
+        )
+      )
+    }
     
 }
 
 internal extension NSDictionary {
+  
+    func toTabStyle() -> CourierStyles.Inbox.TabStyle? {
+      
+        guard let selectedDict = self["selected"] as? NSDictionary, let unselectedDict = self["unselected"] as? NSDictionary else {
+            return nil
+        }
+        
+        guard let selected = selectedDict.toTabItemStyle(), let unselected = unselectedDict.toTabItemStyle() else {
+          return nil
+        }
+        
+        return CourierStyles.Inbox.TabStyle(
+          selected: selected,
+          unselected: unselected
+        )
+      
+    }
+  
+    func toTabItemStyle() -> CourierStyles.Inbox.TabItemStyle? {
+    
+        guard let fontDict = self["font"] as? NSDictionary, let indicatorDict = self["indicator"] as? NSDictionary else {
+            return nil
+        }
+        
+        let font = fontDict.toFont()
+        guard let indicator = indicatorDict.toTabIndicatorStyle() else {
+            return nil
+        }
+        
+        return CourierStyles.Inbox.TabItemStyle(font: font, indicator: indicator)
+      
+    }
+  
+    func toTabIndicatorStyle() -> CourierStyles.Inbox.TabIndicatorStyle? {
+      
+        guard let fontDict = self["font"] as? NSDictionary, let colorString = self["color"] as? String else {
+            return nil
+        }
+      
+        let font = fontDict.toFont()
+        guard let color = colorString.toColor() else {
+          return nil
+        }
+        
+        return CourierStyles.Inbox.TabIndicatorStyle(
+          font: font,
+          color: color
+        )
+      
+    }
+  
+    func toReadingSwipeActionStyle() -> CourierStyles.Inbox.ReadingSwipeActionStyle? {
+      
+        guard let readDict = self["read"] as? NSDictionary, let unreadDict = self["unread"] as? NSDictionary else {
+            return nil
+        }
+        
+        guard let read = readDict.toSwipeActionStyle(), let unread = unreadDict.toSwipeActionStyle() else {
+            return nil
+        }
+        
+        return CourierStyles.Inbox.ReadingSwipeActionStyle(
+            read: read,
+            unread: unread
+        )
+      
+    }
+  
+    func toArchivingSwipeActionStyle() -> CourierStyles.Inbox.ArchivingSwipeActionStyle? {
+      
+        // TODO: Icon
+      
+        guard let archiveDict = self["archive"] as? NSDictionary else {
+            return nil
+        }
+        
+        guard let archive = archiveDict.toSwipeActionStyle() else {
+            return nil
+        }
+        
+        return CourierStyles.Inbox.ArchivingSwipeActionStyle(archive: archive)
+      
+    }
+  
+    func toSwipeActionStyle() -> CourierStyles.Inbox.SwipeActionStyle? {
+      
+        // TODO: Icon
+      
+        guard let colorString = self["color"] as? String else {
+            return nil
+        }
+        
+        let color = colorString.toColor() ?? .systemBlue
+        
+        return CourierStyles.Inbox.SwipeActionStyle(icon: nil, color: color)
+      
+    }
     
     func toUnreadIndicatorStyle() -> CourierStyles.Inbox.UnreadIndicatorStyle {
         
@@ -137,6 +294,10 @@ internal extension NSDictionary {
         let defaultTheme = CourierInboxTheme()
         
         let brandId = self["brandId"] as? String
+        let tabIndicatorColor = self["tabIndicatorColor"] as? String
+        let tabStyle = self["tabStyle"] as? NSDictionary
+        let readingSwipeActionStyle = self["readingSwipeActionStyle"] as? NSDictionary
+        let archivingSwipeActionStyle = self["archivingSwipeActionStyle"] as? NSDictionary
         let unreadIndicatorStyle = self["unreadIndicatorStyle"] as? NSDictionary
         let loadingIndicatorColor = self["loadingIndicatorColor"] as? String
         let titleStyle = self["titleStyle"] as? NSDictionary
@@ -151,6 +312,10 @@ internal extension NSDictionary {
         
         return CourierInboxTheme(
             brandId: brandId,
+            tabIndicatorColor: tabIndicatorColor?.toColor(),
+            tabStyle: tabStyle?.toTabStyle() ?? CourierInboxView.defaultTabStyle(),
+            readingSwipeActionStyle: readingSwipeActionStyle?.toReadingSwipeActionStyle() ?? CourierInboxView.defaultReadingStyle(),
+            archivingSwipeActionStyle: archivingSwipeActionStyle?.toArchivingSwipeActionStyle() ?? CourierInboxView.defaultArchivingStyle(),
             messageAnimationStyle: messageAnimationStyle?.toRowAnimation() ?? .left,
             loadingIndicatorColor: loadingIndicatorColor?.toColor(),
             unreadIndicatorStyle: unreadIndicatorStyle?.toUnreadIndicatorStyle() ?? defaultTheme.unreadIndicatorStyle,

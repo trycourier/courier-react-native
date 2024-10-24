@@ -6,6 +6,7 @@ import { CourierInboxTheme } from "src/models/CourierInboxTheme";
 import { Modules } from "../Modules";
 
 type CourierInboxViewProps = {
+  canSwipePages?: boolean,
   theme?: { 
     light?: CourierInboxTheme, 
     dark?: CourierInboxTheme 
@@ -107,6 +108,7 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
 
   return (
     <CourierInbox 
+      canSwipePages={props.canSwipePages ?? false}
       theme={props.theme ?? { light: undefined, dark: undefined }} 
       onClickInboxMessageAtIndex={(event: any) => onClickInboxMessageAtIndex(event.nativeEvent)}
       onClickInboxActionForMessageAtIndex={(event: any) => onClickInboxActionForMessageAtIndex(event.nativeEvent)}

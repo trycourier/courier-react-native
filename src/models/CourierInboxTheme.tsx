@@ -17,8 +17,41 @@ export interface CourierInboxUnreadIndicatorStyle {
   color?: string
 }
 
+export interface CourierInboxTabIndicatorStyle {
+  font?: CourierFont
+  color?: string
+}
+
+export interface CourierInboxTabItemStyle {
+  font?: CourierFont
+  indicator?: CourierInboxTabIndicatorStyle
+}
+
+export interface CourierInboxTabStyle {
+  selected?: CourierInboxTabItemStyle
+  unselected?: CourierInboxTabItemStyle
+}
+
+export interface CourierSwipeActionStyle {
+  icon?: string
+  color?: string
+}
+
+export interface CourierReadingSwipeActionStyle {
+  read?: CourierSwipeActionStyle
+  unread?: CourierSwipeActionStyle
+}
+
+export interface CourierArchivingSwipeActionStyle {
+  archive?: CourierSwipeActionStyle
+}
+
 export interface CourierInboxTheme {
   brandId?: string,
+  tabIndicatorColor?: string,
+  tabStyle?: CourierInboxTabStyle,
+  readingSwipeActionStyle?: CourierReadingSwipeActionStyle
+  archivingSwipeActionStyle?: CourierArchivingSwipeActionStyle
   loadingIndicatorColor?: string
   unreadIndicatorStyle?: CourierInboxUnreadIndicatorStyle
   titleStyle?: CourierInboxTextStyle

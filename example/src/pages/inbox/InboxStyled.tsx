@@ -12,6 +12,51 @@ const InboxStyled = () => {
     
     return {
       brandId: Env.brandId,
+      tabIndicatorColor: styles.Colors.action,
+      tabStyle: {
+        selected: {
+          font: {
+            family: styles.Fonts.title,
+            size: styles.TextSizes.title,
+            color: styles.Colors.heading
+          },
+          indicator: {
+            font: {
+              family: styles.Fonts.title,
+              size: 14,
+              color: '#FFFFFF'
+            },
+            color: styles.Colors.action
+          }
+        },
+        unselected: {
+          font: {
+            family: styles.Fonts.title,
+            size: styles.TextSizes.title,
+            color: styles.Colors.subtitle
+          },
+          indicator: {
+            font: {
+              family: styles.Fonts.title,
+              size: 14,
+              color: '#000000'
+            },
+            color: styles.Colors.subtitle
+          }
+        }
+      },
+      readingSwipeActionStyle: {
+        read: {
+          icon: 'check',
+          color: styles.Colors.action
+        }
+      },
+      archivingSwipeActionStyle: {
+        archive: {
+          icon: 'archive',
+          color: styles.Colors.action
+        }
+      },
       unreadIndicatorStyle: {
         indicator: 'dot',
         color: styles.Colors.action
@@ -120,6 +165,7 @@ const InboxStyled = () => {
   return (
     <View style={styles.container}>
       <CourierInboxView 
+        canSwipePages={true}
         theme={{
           light: getTheme(false),
           dark: getTheme(true)
