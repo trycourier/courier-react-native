@@ -3,7 +3,7 @@ package com.courierreactnative
 import com.courier.android.Courier
 import com.courier.android.models.CourierAuthenticationListener
 import com.courier.android.models.CourierInboxListener
-import com.courier.android.models.InboxMessage
+import com.courier.android.models.InboxMessageSet
 import com.courier.android.models.remove
 import com.courier.android.modules.addAuthenticationListener
 import com.courier.android.modules.addInboxListener
@@ -24,10 +24,12 @@ import com.courier.android.modules.tenantId
 import com.courier.android.modules.tokens
 import com.courier.android.modules.unreadMessage
 import com.courier.android.modules.userId
+import com.courier.android.ui.inbox.InboxMessageFeed
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.WritableMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -235,39 +237,80 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
-  fun addInboxListener(loadingId: String, errorId: String, messagesId: String): String {
+  fun addInboxListener(loadingId: String, errorId: String, unreadCountId: String, feedId: String, archiveId: String, pageAddedId: String, messageChangedId: String, messageAddedId: String, messageRemovedId: String): String {
 
     val listener = Courier.shared.addInboxListener(
-      onInitialLoad = {
-
+      onLoading = {
         reactApplicationContext.sendEvent(
           eventName = loadingId,
           value = null
         )
-
       },
       onError = { e ->
-
         reactApplicationContext.sendEvent(
           eventName = errorId,
           value = e.message ?: "Courier Inbox Error"
         )
-
       },
-      onMessagesChanged = { messages: List<InboxMessage>, unreadMessageCount: Int, totalMessageCount: Int, canPaginate: Boolean ->
-
-        val json = Arguments.createMap()
-        json.putArray("messages", messages.toList().map { it.toJson() }.toWritableArray())
-        json.putInt("unreadMessageCount", unreadMessageCount)
-        json.putInt("totalMessageCount", totalMessageCount)
-        json.putBoolean("canPaginate", canPaginate)
-
+      onUnreadCountChanged = { unreadCount ->
         reactApplicationContext.sendEvent(
-          eventName = messagesId,
+          eventName = unreadCountId,
+          value = unreadCount
+        )
+      },
+      onFeedChanged = { messageSet ->
+        reactApplicationContext.sendEvent(
+          eventName = feedId,
+          value = messageSet.toJson()
+        )
+      },
+      onArchiveChanged = { messageSet ->
+        reactApplicationContext.sendEvent(
+          eventName = feedId,
+          value = messageSet.toJson()
+        )
+      },
+      onPageAdded = { feed, messageSet ->
+        val json = Arguments.createMap()
+        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
+        json.putArray("messages", messageSet.messages.map { it.toJson() }.toWritableArray())
+        json.putInt("totalMessageCount", messageSet.totalCount)
+        json.putBoolean("canPaginate", messageSet.canPaginate)
+        reactApplicationContext.sendEvent(
+          eventName = pageAddedId,
           value = json
         )
-
-      }
+      },
+      onMessageAdded = { feed, index, message ->
+        val json = Arguments.createMap()
+        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
+        json.putInt("index", index)
+        json.putString("message", message.toJson())
+        reactApplicationContext.sendEvent(
+          eventName = messageAddedId,
+          value = json
+        )
+      },
+      onMessageChanged = { feed, index, message ->
+        val json = Arguments.createMap()
+        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
+        json.putInt("index", index)
+        json.putString("message", message.toJson())
+        reactApplicationContext.sendEvent(
+          eventName = messageAddedId,
+          value = json
+        )
+      },
+      onMessageRemoved = { feed, index, message ->
+        val json = Arguments.createMap()
+        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
+        json.putInt("index", index)
+        json.putString("message", message.toJson())
+        reactApplicationContext.sendEvent(
+          eventName = messageAddedId,
+          value = json
+        )
+      },
     )
 
     // Add listener
@@ -276,6 +319,14 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
 
     return id
 
+  }
+
+  private fun InboxMessageSet.toJson(): WritableMap? {
+    val json = Arguments.createMap()
+    json.putArray("messages", messages.toList().map { it.toJson() }.toWritableArray())
+    json.putInt("totalMessageCount", totalCount)
+    json.putBoolean("canPaginate", canPaginate)
+    return json
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
@@ -300,10 +351,10 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod
-  fun fetchNextPageOfMessages(promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun fetchNextPageOfMessages(promise: Promise, inboxMessageFeed: String) = CoroutineScope(Dispatchers.Main).launch {
     try {
-      val messages = Courier.shared.fetchNextInboxPage()
-      promise.resolve(messages.map { it.toJson() }.toWritableArray())
+      val messageSet = Courier.shared.fetchNextInboxPage(if (inboxMessageFeed == "archived") InboxMessageFeed.ARCHIVE else InboxMessageFeed.FEED)
+      promise.resolve(messageSet?.toJson())
     } catch (e: Exception) {
       promise.apiError(e)
     }
