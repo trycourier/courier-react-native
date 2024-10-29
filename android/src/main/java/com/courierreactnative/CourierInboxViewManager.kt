@@ -241,7 +241,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
   private fun ReadableMap.toTabIndicatorStyle(context: Context): CourierStyles.Inbox.TabIndicatorStyle {
 
     val font = getMap("font")
-    val color = getString("string")
+    val color = getString("color")
 
     return CourierStyles.Inbox.TabIndicatorStyle(
       font = font?.toFont(context) ?: CourierStyles.Font(),

@@ -49,12 +49,16 @@ const InboxStyled = () => {
         read: {
           icon: 'check',
           color: styles.Colors.action
+        },
+        unread: {
+          icon: 'check',
+          color: styles.Colors.subtitle
         }
       },
       archivingSwipeActionStyle: {
         archive: {
           icon: 'archive',
-          color: styles.Colors.action
+          color: '#C32F27'
         }
       },
       unreadIndicatorStyle: {
