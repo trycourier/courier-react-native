@@ -102,7 +102,7 @@ This will remove any credentials that are stored between app sessions.
 
 ```javascript
 import Courier from "@trycourier/courier-react-native";
-await Courier.shared.signOut()
+await Courier.shared.signOut();
 ```
 
 ## All Available Authentication Values
