@@ -8,7 +8,8 @@ const InboxCustom = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [inbox, setInbox] = useState<any>({});
+  const [messages, setMessages] = useState<InboxMessage[]>([]);
+  const [canPaginate, setCanPaginate] = useState(false);
 
   useEffect(() => {
 
@@ -22,15 +23,45 @@ const InboxCustom = () => {
         setIsLoading(false);
         setError(error);
       },
-      onFeedChanged(messages, totalMessageCount, canPaginate) {
+      onFeedChanged(messageSet) {
         setIsLoading(false);
         setError(null);
-        setInbox({
-          messages,
-          totalMessageCount,
-          canPaginate
-        });
+        setMessages(messageSet.messages);
+        setCanPaginate(messageSet.canPaginate);
       },
+      onMessageChanged(feed, index, message) {
+        if (feed === 'feed') {
+          setMessages(prevMessages => {
+          const newMessages = [...prevMessages];
+          newMessages[index] = message;
+          return newMessages;
+          });
+        }
+      },
+      onMessageAdded(feed, index, message) {
+        if (feed === 'feed') {
+          setMessages(prevMessages => {
+            const newMessages = [...prevMessages];
+            newMessages.splice(index, 0, message);
+            return newMessages;
+          });
+        }
+      },
+      onMessageRemoved(feed, index) {
+        if (feed === 'feed') {
+          setMessages(prevMessages => {
+            const newMessages = [...prevMessages];
+            newMessages.splice(index, 1);
+            return newMessages;
+          });
+        }
+      },
+      onPageAdded(feed, messageSet) {
+        if (feed === 'feed') {
+          setMessages(prevMessages => [...prevMessages, ...messageSet.messages]);
+          setCanPaginate(messageSet.canPaginate);
+        }
+      }
     });
 
     return () => {
@@ -110,7 +141,7 @@ const InboxCustom = () => {
 
     return (
       <FlatList
-        data={inbox?.messages}
+        data={messages}
         keyExtractor={message => message.messageId}
         renderItem={message => <ListItem message={message.item} />}
         refreshControl={
@@ -120,10 +151,10 @@ const InboxCustom = () => {
           />
         }
         ListFooterComponent={() => {
-          return inbox?.canPaginate ? <PaginationItem /> : null
+          return canPaginate ? <PaginationItem /> : null
         }}
         onEndReached={() => {
-          if (inbox?.canPaginate) {
+          if (canPaginate) {
             Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' });
           }
         }}
