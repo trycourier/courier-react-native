@@ -14,6 +14,7 @@ import Broadcaster from './Broadcaster';
 import { CourierClient } from './client/CourierClient';
 import { Events, Utils } from './utils';
 import { InboxMessageFeed } from './models/InboxMessageFeed';
+import { InboxMessageSet } from './models/InboxMessageSet';
 
 export { CourierClient } from './client/CourierClient';
 export { BrandClient } from './client/BrandClient';
@@ -36,6 +37,7 @@ export { CourierButton } from './models/CourierButton';
 export { CourierInfoViewStyle } from './models/CourierInfoViewStyle';
 export { iOS_CourierCell } from './models/iOS_CourierCell';
 export { iOS_CourierSheet } from './models/iOS_CourierSheet';
+export { InboxMessageSet } from './models/InboxMessageSet';
 export { CourierInboxButtonStyle, CourierInboxTextStyle, CourierInboxUnreadIndicatorStyle, CourierInboxTheme } from './models/CourierInboxTheme';
 export { CourierPreferencesTheme, CourierPreferencesMode, CourierPreferencesChannel } from './models/CourierPreferencesTheme';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
@@ -520,9 +522,9 @@ class Courier {
     onInitialLoad?: () => void,
     onError?: (error: string) => void,
     onUnreadCountChanged?: (unreadCount: number) => void,
-    onFeedChanged?: (messages: InboxMessage[], totalMessageCount: number, canPaginate: boolean) => void,
-    onArchiveChanged?: (messages: InboxMessage[], totalMessageCount: number, canPaginate: boolean) => void,
-    onPageAdded?: (feed: InboxMessageFeed, messages: InboxMessage[], totalMessageCount: number, canPaginate: boolean) => void,
+    onFeedChanged?: (messageSet: InboxMessageSet) => void,
+    onArchiveChanged?: (messageSet: InboxMessageSet) => void,
+    onPageAdded?: (feed: InboxMessageFeed, messageSet: InboxMessageSet) => void,
     onMessageChanged?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
     onMessageAdded?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
     onMessageRemoved?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void
@@ -570,17 +572,32 @@ class Courier {
 
     listener.onFeedChanged = this.sharedBroadcaster.addListener(listenerIds.feed, (event: any) => {
       const convertedMessages = this.convertMessages(event.messages);
-      props.onFeedChanged?.(convertedMessages, event.totalMessageCount, event.canPaginate);
+      const messageSet: InboxMessageSet = {
+        messages: convertedMessages,
+        totalMessageCount: event.totalMessageCount,
+        canPaginate: event.canPaginate
+      }
+      props.onFeedChanged?.(messageSet);
     });
 
     listener.onArchiveChanged = this.sharedBroadcaster.addListener(listenerIds.archive, (event: any) => {
       const convertedMessages = this.convertMessages(event.messages);
-      props.onArchiveChanged?.(convertedMessages, event.totalMessageCount, event.canPaginate);
+      const messageSet: InboxMessageSet = {
+        messages: convertedMessages,
+        totalMessageCount: event.totalMessageCount,
+        canPaginate: event.canPaginate
+      }
+      props.onArchiveChanged?.(messageSet);
     });
 
     listener.onPageAdded = this.sharedBroadcaster.addListener(listenerIds.pageAdded, (event: any) => {
       const convertedMessages = this.convertMessages(event.messages);
-      props.onPageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', convertedMessages, event.totalMessageCount, event.canPaginate);
+      const messageSet: InboxMessageSet = {
+        messages: convertedMessages,
+        totalMessageCount: event.totalMessageCount,
+        canPaginate: event.canPaginate
+      }
+      props.onPageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', messageSet);
     });
 
     listener.onMessageChanged = this.sharedBroadcaster.addListener(listenerIds.messageChanged, (event: any) => {
@@ -701,6 +718,14 @@ class Courier {
     return messages.map((message: string) => JSON.parse(message));
   }
   
+}
+
+// Handle Hot Reload cleanup
+if (__DEV__) {
+  console.log('Courier SDK is running in development mode');
+  Courier.shared.removeAllAuthenticationListeners();
+  Courier.shared.removeAllInboxListeners();
+  Courier.shared.removeAllPushNotificationListeners();
 }
 
 export default Courier;
