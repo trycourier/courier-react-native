@@ -720,12 +720,4 @@ class Courier {
   
 }
 
-// Handle Hot Reload cleanup
-if (__DEV__) {
-  console.log('Courier SDK is running in development mode');
-  Courier.shared.removeAllAuthenticationListeners();
-  Courier.shared.removeAllInboxListeners();
-  Courier.shared.removeAllPushNotificationListeners();
-}
-
 export default Courier;
