@@ -377,15 +377,35 @@ Courier.shared.inboxPaginationLimit = 100;
 
 // Inbox listener
 const listener = Courier.shared.addInboxListener({
-  onInitialLoad: () => {
-    console.log('Inbox initial load');
+  onInitialLoad() {
+    ..
   },
-  onError: (error) => {
-    console.log('Inbox error:', error);
+  onError(error) {
+    ..
   },
-  onMessagesChanged: (messages, unreadMessageCount, totalMessageCount, canPaginate) => {
-    console.log('Inbox messages changed:', messages, unreadMessageCount, totalMessageCount, canPaginate);
+  onFeedChanged(messageSet) {
+    ..
   },
+  onMessageChanged(feed, index, message) {
+    if (feed === 'feed') {
+      ..
+    }
+  },
+  onMessageAdded(feed, index, message) {
+    if (feed === 'feed') {
+      ..
+    }
+  },
+  onMessageRemoved(feed, index) {
+    if (feed === 'feed') {
+      ..
+    }
+  },
+  onPageAdded(feed, messageSet) {
+    if (feed === 'feed') {
+      ..
+    }
+  }
 });
 listener.remove();
 
