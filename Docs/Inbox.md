@@ -251,7 +251,7 @@ const Page = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [inbox, setInbox] = useState<any>({});
+  const [inbox, setInbox] = useState<InboxMessageSet>();
 
   useEffect(() => {
 
@@ -265,15 +265,10 @@ const Page = () => {
         setIsLoading(false);
         setError(error);
       },
-      onMessagesChanged(messages, unreadMessageCount, totalMessageCount, canPaginate) {
+      onFeedChanged(messageSet) {
         setIsLoading(false);
         setError(null);
-        setInbox({
-          messages,
-          unreadMessageCount,
-          totalMessageCount,
-          canPaginate
-        });
+        setInbox(messageSet);
       },
     });
 
@@ -293,7 +288,7 @@ const Page = () => {
 
   return (
     <FlatList
-      data={inbox?.messages}
+      data={messageSet?.messages}
       keyExtractor={message => message.messageId}
       renderItem={message => <ListItem message={message.item} />}
       refreshControl={
@@ -307,7 +302,7 @@ const Page = () => {
       }}
       onEndReached={() => {
         if (inbox?.canPaginate) {
-          Courier.shared.fetchNextPageOfMessages();
+          Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' });
         }
       }}
     />
