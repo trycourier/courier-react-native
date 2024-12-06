@@ -1,6 +1,6 @@
-import Courier, { CourierInboxTheme, CourierInboxView } from '@trycourier/courier-react-native';
+import Courier, { CourierInboxTheme, CourierInboxView, InboxMessage } from '@trycourier/courier-react-native';
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ActionSheetIOS, Platform, Alert } from 'react-native';
 import { Styles } from '../Styles';
 import Env from '../../Env';
 
@@ -165,6 +165,51 @@ const InboxStyled = () => {
       height: '100%',
     },
   });
+
+  const showMessageActions = (message: InboxMessage) => {
+    if (Platform.OS === 'android') {
+      Alert.alert(
+        'Message Actions',
+        '',
+        [
+          {
+            text: message.read ? 'Mark as Unread' : 'Mark as Read',
+            onPress: () => {
+              message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
+            },
+          },
+          {
+            text: message.archived ? 'Unarchive' : 'Archive',
+            onPress: () => {
+              message.archived ? null : Courier.shared.archiveMessage({ messageId: message.messageId });
+            },
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+        ]
+      );
+    } else if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: [message.read ? 'Mark as Unread' : 'Mark as Read', message.archived ? 'Unarchive' : 'Archive', 'Cancel'],
+          cancelButtonIndex: 2,
+          destructiveButtonIndex: 1,
+        },
+        (buttonIndex) => {
+          switch (buttonIndex) {
+            case 0:
+              message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
+              break;
+            case 1:
+              message.archived ? null : Courier.shared.archiveMessage({ messageId: message.messageId });
+              break;
+          }
+        }
+      );
+    }
+  };
   
   return (
     <View style={styles.container}>
@@ -181,6 +226,9 @@ const InboxStyled = () => {
           } else {
             await Courier.shared.readMessage({ messageId: message.messageId });
           }
+        }}
+        onLongPressInboxMessageAtIndex={(message, _index) => {
+          showMessageActions(message);
         }}
         onClickInboxActionForMessageAtIndex={(action, _message, _index) => {
           console.log(action);

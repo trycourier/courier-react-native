@@ -28,6 +28,8 @@ class CourierInboxView : UIView {
     }
     
     @objc var onClickInboxMessageAtIndex: RCTBubblingEventBlock? = nil
+  
+    @objc var onLongPressInboxMessageAtIndex: RCTBubblingEventBlock? = nil
     
     @objc var onClickInboxActionForMessageAtIndex: RCTBubblingEventBlock? = nil
     
@@ -51,6 +53,16 @@ class CourierInboxView : UIView {
             didClickInboxMessageAtIndex: { [weak self] message, index in
                 do {
                     self?.onClickInboxMessageAtIndex?([
+                        "message" : try message.toJson() ?? "",
+                        "index" : index
+                    ])
+                } catch {
+                    Courier.shared.client?.error(error.localizedDescription)
+                }
+            },
+            didLongPressInboxMessageAtIndex: { [weak self] message, index in
+                do {
+                    self?.onLongPressInboxMessageAtIndex?([
                         "message" : try message.toJson() ?? "",
                         "index" : index
                     ])

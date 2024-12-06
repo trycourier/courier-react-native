@@ -32,9 +32,9 @@ const InboxCustom = () => {
       onMessageChanged(feed, index, message) {
         if (feed === 'feed') {
           setMessages(prevMessages => {
-          const newMessages = [...prevMessages];
-          newMessages[index] = message;
-          return newMessages;
+            const newMessages = [...prevMessages];
+            newMessages[index] = message;
+            return newMessages;
           });
         }
       },

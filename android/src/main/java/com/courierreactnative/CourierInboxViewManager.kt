@@ -34,6 +34,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
   private var themedReactContext: ThemedReactContext? = null
 
   private companion object {
+    const val ON_LONG_PRESS_MESSAGE_AT_INDEX = "courierLongPressMessageAtIndex"
     const val ON_CLICK_MESSAGE_AT_INDEX = "courierClickMessageAtIndex"
     const val ON_CLICK_ACTION_AT_INDEX = "courierClickActionAtIndex"
     const val ON_SCROLL = "courierScrollInbox"
@@ -54,6 +55,18 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
       map.putString("message", message.toJson())
       map.putInt("index", index)
       themedReactContext?.sendEvent(ON_CLICK_MESSAGE_AT_INDEX, map)
+    }
+
+  }
+
+  @ReactProp(name = "onLongPressInboxMessageAtIndex")
+  fun setOnLongPressInboxMessageAtIndex(view: CourierInbox, callback: Boolean) {
+
+    view.setOnLongPressMessageListener { message, index ->
+      val map = Arguments.createMap()
+      map.putString("message", message.toJson())
+      map.putInt("index", index)
+      themedReactContext?.sendEvent(ON_LONG_PRESS_MESSAGE_AT_INDEX, map)
     }
 
   }
@@ -93,6 +106,11 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
   fun setTheme(view: CourierInbox, theme: ReadableMap) {
     view.lightTheme = theme.getMap("light")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_LIGHT
     view.darkTheme = theme.getMap("dark")?.toTheme(view) ?: CourierInboxTheme.DEFAULT_DARK
+  }
+
+  @ReactProp(name = "canSwipePages")
+  fun canSwipePages(view: CourierInbox, canSwipePages: Boolean) {
+    view.canSwipePages = canSwipePages
   }
 
   private fun ReadableMap.toTheme(view: View): CourierInboxTheme {
