@@ -1,8 +1,7 @@
-import { CourierPreferencesView } from "@trycourier/courier-react-native";
+import { CourierPreferencesView, CourierPreferencesTheme } from "@trycourier/courier-react-native";
 import Env from "../../Env";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { CourierPreferencesTheme } from "src/models/CourierPreferencesTheme";
 import { Styles } from "../Styles";
 
 const PreferencesStyled = () => {

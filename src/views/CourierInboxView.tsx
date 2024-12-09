@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Platform, ViewStyle, DeviceEventEmitter, EmitterSubscription } from "react-native";
 import { InboxAction } from "../models/InboxAction";
 import { InboxMessage } from "../models/InboxMessage";
-import { CourierInboxTheme } from "src/models/CourierInboxTheme";
+import { CourierInboxTheme } from "../models/CourierInboxTheme";
 import { Modules } from "../Modules";
 
 type CourierInboxViewProps = {

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { DeviceEventEmitter, EmitterSubscription, Platform, ViewStyle } from "react-native";
-import { CourierPreferencesMode, CourierPreferencesTheme } from "src/models/CourierPreferencesTheme";
+import { CourierPreferencesMode, CourierPreferencesTheme } from "../models/CourierPreferencesTheme";
 import { Modules } from "../Modules";
 
 type CourierPreferencesProps = {

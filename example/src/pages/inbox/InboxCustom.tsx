@@ -1,7 +1,6 @@
-import Courier from '@trycourier/courier-react-native';
+import Courier, { InboxMessage } from '@trycourier/courier-react-native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator, Platform } from 'react-native';
-import { InboxMessage } from 'src/models/InboxMessage';
 
 const InboxCustom = () => {
 
