@@ -29,7 +29,7 @@ abstract class ReactNativeModule(val tag: String, private val name: String, reac
   }
 
   internal fun Promise.apiError(throwable: Throwable) {
-    reject(throwable.message, tag, throwable)
+    throwable.message?.let { reject(it, tag, throwable) }
   }
 
 }

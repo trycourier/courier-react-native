@@ -22,7 +22,7 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
     if (self) {
         
         // Set the user agent
-        Courier.agent = [CourierAgent reactNativeIOS:@"5.2.2"];
+        Courier.agent = [CourierAgent reactNativeIOS:@"5.2.3"];
         
         // Register for remote notifications
         UIApplication *app = [UIApplication sharedApplication];

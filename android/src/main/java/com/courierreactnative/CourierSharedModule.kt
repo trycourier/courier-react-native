@@ -266,7 +266,7 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
       },
       onArchiveChanged = { messageSet ->
         reactApplicationContext.sendEvent(
-          eventName = feedId,
+          eventName = archiveId,
           value = messageSet.toJson()
         )
       },
@@ -297,7 +297,7 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
         json.putInt("index", index)
         json.putString("message", message.toJson())
         reactApplicationContext.sendEvent(
-          eventName = messageAddedId,
+          eventName = messageChangedId,
           value = json
         )
       },
@@ -307,7 +307,7 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
         json.putInt("index", index)
         json.putString("message", message.toJson())
         reactApplicationContext.sendEvent(
-          eventName = messageAddedId,
+          eventName = messageRemovedId,
           value = json
         )
       },
