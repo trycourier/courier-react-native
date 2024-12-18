@@ -252,8 +252,6 @@ const theme: CourierInboxTheme = {
 
 The raw data you can use to build any UI you'd like.
 
-<img width="894" alt="custom-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/90456f3d-c39f-4d66-aac1-d1d62a84f3c5">
-
 ```javascript
 import Courier from '@trycourier/courier-react-native';
 
