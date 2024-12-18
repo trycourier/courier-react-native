@@ -107,7 +107,8 @@ import { CourierInboxView } from '@trycourier/courier-react-native';
 
 The styles you can use to quickly customize the `CourierInboxView`.
 
-<img width="894" alt="styled-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/46ad8b3a-5931-490c-8f48-d36c05e89abd">
+<img width="390" alt="styled-inbox-styles" src="https://github.com/user-attachments/assets/025dd640-083a-465f-86fa-d67f94a6ff4a">
+<img width="410" alt="Screenshot 2024-12-09 at 11 19 31 AM" src="https://github.com/user-attachments/assets/a203fed8-4f7f-4e63-8f86-887c67338dad">
 
 #### ⚠️ Android Theme Requirement
 
