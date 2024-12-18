@@ -248,6 +248,8 @@ const theme: CourierInboxTheme = {
 />
 ```
 
+&emsp;
+
 ## Custom Inbox Example
 
 The raw data you can use to build any UI you'd like.
