@@ -53,7 +53,8 @@ If you are using JWT authentication, be sure to enable JWT support on the Courie
 
 The default `CourierInboxView` styles.
 
-<img width="894" alt="default-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/e39a1f20-5636-48a9-9337-e1416fbb67bf">
+<img width="390" alt="default-inbox-styles" src="https://github.com/user-attachments/assets/b7329cce-330b-4418-9b8b-45fe654cb424">
+<img width="441" alt="android-default-inbox-styles" src="https://github.com/user-attachments/assets/4e9779b9-9d0c-4408-ba12-917eceee7098">
 
 #### ⚠️ Important Android Requirement
 
