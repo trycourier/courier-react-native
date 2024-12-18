@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, TouchableOpacity, TextInput, Modal, Button, Switch, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Courier, { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus, iOSForegroundPresentationOptions } from '@trycourier/courier-react-native';
+import Courier, { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus, InboxMessageSet, iOSForegroundPresentationOptions } from '@trycourier/courier-react-native';
 import Env from '../Env';
 import { ExampleServer, Utils } from '../Utils';
 
@@ -288,23 +288,26 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       tenantId: params.tenantId,
       showLogs: params.showLogs,
     });
-    return Courier.shared.client?.options;
+
+    const client = await Courier.shared.getClient();
+
+    return client?.options;
   },
 
   testGetUserId: async () => {
-    return Courier.shared.userId;
+    return await Courier.shared.getUserId();
   },
 
   testGetTenantId: async () => {
-    return Courier.shared.tenantId;
+    return await Courier.shared.getTenantId();
   },
 
   testGetIsUserSignedIn: async () => {
-    return Courier.shared.isUserSignedIn;
+    return await Courier.shared.isUserSignedIn();
   },
 
   testAuthenticationListener: async () => {
-    const listener = Courier.shared.addAuthenticationListener({
+    const listener = await Courier.shared.addAuthenticationListener({
       onUserChanged: (userId) => {
         console.log('User changed:', userId);
       },
@@ -322,7 +325,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testGetClient: async () => {
-    const client = Courier.shared.client;
+    const client = await Courier.shared.getClient();
     return {
       clientId: client?.clientId,
       options: client?.options,
@@ -361,18 +364,18 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testSetInboxPaginationLimit: async (params: { limit: number }) => {
-    Courier.shared.inboxPaginationLimit = params.limit;
+    await Courier.shared.setInboxPaginationLimit(params.limit);
   },
 
   testGetInboxPaginationLimit: async () => {
-    return Courier.shared.inboxPaginationLimit;
+    return await Courier.shared.getInboxPaginationLimit();
   },
 
   testOpenMessage: async (params: { messageId?: string }) => {
     const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
       const result = await ExampleServer.sendTest({
         authKey: Env.authKey,
-        userId: Courier.shared.userId!,
+        userId: await Courier.shared.getUserId() ?? '',
         channel: 'inbox',
       });
       setTimeout(() => resolve(result), 5000);
@@ -385,7 +388,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
       const result = await ExampleServer.sendTest({
         authKey: Env.authKey,
-        userId: Courier.shared.userId!,
+        userId: await Courier.shared.getUserId() ?? '',
         channel: 'inbox',
       });
       setTimeout(() => resolve(result), 5000);
@@ -398,7 +401,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
       const result = await ExampleServer.sendTest({
         authKey: Env.authKey,
-        userId: Courier.shared.userId!,
+        userId: await Courier.shared.getUserId() ?? '',
         channel: 'inbox',
       });
       setTimeout(() => resolve(result), 5000);
@@ -411,7 +414,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
       const result = await ExampleServer.sendTest({
         authKey: Env.authKey,
-        userId: Courier.shared.userId!,
+        userId: await Courier.shared.getUserId() ?? '',
         channel: 'inbox',
       });
       setTimeout(() => resolve(result), 5000);
@@ -424,7 +427,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
       const result = await ExampleServer.sendTest({
         authKey: Env.authKey,
-        userId: Courier.shared.userId!,
+        userId: await Courier.shared.getUserId() ?? '',
         channel: 'inbox',
       });
       setTimeout(() => resolve(result), 5000);
@@ -438,18 +441,18 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testAddInboxListener: async () => {
-    const listener = Courier.shared.addInboxListener({
+    const listener = await Courier.shared.addInboxListener({
       onInitialLoad: () => {
         console.log('Inbox initial load');
       },
       onError: (error) => {
         console.log('Inbox error:', error);
       },
-      onFeedChanged: (messages, totalMessageCount, canPaginate) => {
-        console.log('Inbox messages changed:', messages, totalMessageCount, canPaginate);
+      onFeedChanged: (messageSet: InboxMessageSet) => {
+        console.log('Inbox messages changed:', messageSet);
       },
     });
-    listener.remove();
+    await listener.remove();
     return listener;
   },
 
@@ -528,7 +531,7 @@ type TestSection = {
   tests: TestItem[];
 };
 
-const getTestSections = (): TestSection[] => [
+const getTestSections = async (): Promise<TestSection[]> => [
   {
     title: 'Client Management',
     tests: [
@@ -879,7 +882,7 @@ const getTestSections = (): TestSection[] => [
         name: 'Send Inbox Message',
         testId: 'testSendInboxMessage',
         defaultParams: { 
-          userId: Courier.shared.userId ?? savedClient?.options.userId,
+          userId: await Courier.shared.getUserId() ?? savedClient?.options.userId,
           title: 'Test',
           body: 'Body'
         },
@@ -889,7 +892,7 @@ const getTestSections = (): TestSection[] => [
         name: 'Send APN Message',
         testId: 'testSendApnMessage',
         defaultParams: { 
-          userId: Courier.shared.userId ?? savedClient?.options.userId,
+          userId: await Courier.shared.getUserId() ?? savedClient?.options.userId,
           title: 'Test',
           body: 'Body'
         },
@@ -899,7 +902,7 @@ const getTestSections = (): TestSection[] => [
         name: 'Send FCM Message',
         testId: 'testSendFcmMessage',
         defaultParams: { 
-          userId: Courier.shared.userId ?? savedClient?.options.userId,
+          userId: await Courier.shared.getUserId() ?? savedClient?.options.userId,
           title: 'Test',
           body: 'Body'
         },
@@ -947,14 +950,26 @@ const SectionHeader = ({ title }: { title: string }) => (
 
 const Tests = () => {
   const navigation = useNavigation();
-  const testSections = getTestSections();
-  const [testResults, setTestResults] = useState<Array<{ name: string; result?: unknown; status?: string; runOrder?: string }>>(
-    testSections.flatMap(section => section.tests.map(test => ({ name: test.name, runOrder: test.runOrder })))
-  );
+  const [testSections, setTestSections] = useState<TestSection[]>([]);
+  const [testResults, setTestResults] = useState<Array<{ name: string; result?: unknown; status?: string; runOrder?: string }>>([]);
   const [isRunning, setIsRunning] = useState(false);
-
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
-  const totalTests = testSections.flatMap(section => section.tests).length;
+  const [totalTests, setTotalTests] = useState(0);
+
+  useEffect(() => {
+    const loadTests = async () => {
+      const sections = await getTestSections();
+      setTestSections(sections);
+      setTestResults(sections.flatMap(section => 
+        section.tests.map(test => ({ 
+          name: test.name, 
+          runOrder: test.runOrder 
+        }))
+      ));
+      setTotalTests(sections.flatMap(section => section.tests).length);
+    };
+    loadTests();
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -1091,10 +1106,10 @@ const Tests = () => {
     <View style={styles.container}>
       <FlatList
         data={testSections}
-        renderItem={({ item: section }) => (
+        renderItem={({ item: section }: { item: TestSection }) => (
           <>
             <SectionHeader title={section.title} />
-            {section.tests.map((test) => (
+            {section.tests.map((test: TestItem) => (
               <TestItem
                 key={test.name}
                 item={testResults.find(r => r.name === test.name) || { name: test.name, runOrder: test.runOrder }}

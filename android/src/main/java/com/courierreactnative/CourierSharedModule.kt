@@ -33,7 +33,6 @@ import com.facebook.react.bridge.WritableMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 
 class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeModule(tag = "Shared Instance Error", name = "CourierSharedModule", reactContext = reactContext) {
@@ -52,29 +51,34 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     // Keep: Required for RN built in Event Emitter Calls.
   }
 
+  @ReactMethod
+  fun attachEmitter(emitterId: String, promise: Promise) {
+    promise.resolve(emitterId)
+  }
+
   // Client
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getClient(): String? {
-    val options = Courier.shared.client?.options ?: return null
-    return options.toJson()
+  @ReactMethod
+  fun getClient(promise: Promise) {
+    val options = Courier.shared.client?.options
+    promise.resolve(options?.toJson())
   }
 
   // Authentication
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getUserId(): String? {
-    return Courier.shared.userId
+  @ReactMethod
+  fun getUserId(promise: Promise) {
+    promise.resolve(Courier.shared.userId)
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getTenantId(): String? {
-    return Courier.shared.tenantId
+  @ReactMethod
+  fun getTenantId(promise: Promise) {
+    promise.resolve(Courier.shared.tenantId)
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getIsUserSignedIn(): String {
-    return Courier.shared.isUserSignedIn.toString()
+  @ReactMethod
+  fun getIsUserSignedIn(promise: Promise) {
+    promise.resolve(Courier.shared.isUserSignedIn.toString())
   }
 
   @ReactMethod
@@ -95,8 +99,8 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     promise.resolve(null)
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun addAuthenticationListener(listenerId: String): String {
+  @ReactMethod
+  fun addAuthenticationListener(listenerId: String, promise: Promise) {
 
     // Create the listener
     val listener = Courier.shared.addAuthenticationListener { userId ->
@@ -109,12 +113,12 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     // Add the listener to the map
     authenticationListeners[listenerId] = listener
 
-    return listenerId
+    promise.resolve(listenerId)
 
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun removeAuthenticationListener(listenerId: String): String {
+  @ReactMethod
+  fun removeAuthenticationListener(listenerId: String, promise: Promise) {
 
     val listener = authenticationListeners[listenerId]
 
@@ -124,15 +128,15 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     // Remove the id from the map
     authenticationListeners.remove(listenerId)
 
-    return listenerId
+    promise.resolve(listenerId)
 
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun removeAllAuthenticationListeners(): String? {
+  @ReactMethod
+  fun removeAllAuthenticationListeners(promise: Promise) {
     authenticationListeners.values.forEach { it.remove() }
     authenticationListeners.clear()
-    return null
+    promise.resolve(null)
   }
 
   // Push
@@ -165,15 +169,15 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   // Inbox
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun getInboxPaginationLimit(): String {
-    return Courier.shared.inboxPaginationLimit.toString()
+  @ReactMethod
+  fun getInboxPaginationLimit(promise: Promise) {
+    promise.resolve(Courier.shared.inboxPaginationLimit.toString())
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun setInboxPaginationLimit(limit: Double): String {
+  @ReactMethod
+  fun setInboxPaginationLimit(limit: Double, promise: Promise) {
     Courier.shared.inboxPaginationLimit = limit.toInt()
-    return Courier.shared.inboxPaginationLimit.toString()
+    promise.resolve(Courier.shared.inboxPaginationLimit.toString())
   }
 
   @ReactMethod
@@ -236,8 +240,8 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     }
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun addInboxListener(loadingId: String, errorId: String, unreadCountId: String, feedId: String, archiveId: String, pageAddedId: String, messageChangedId: String, messageAddedId: String, messageRemovedId: String): String {
+  @ReactMethod
+  fun addInboxListener(listenerId: String, loadingId: String, errorId: String, unreadCountId: String, feedId: String, archiveId: String, pageAddedId: String, messageChangedId: String, messageAddedId: String, messageRemovedId: String, promise: Promise) {
 
     val listener = Courier.shared.addInboxListener(
       onLoading = {
@@ -314,10 +318,9 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     )
 
     // Add listener
-    val id = UUID.randomUUID().toString()
-    inboxListeners[id] = listener
+    inboxListeners[listenerId] = listener
 
-    return id
+    promise.resolve(listenerId)
 
   }
 
@@ -329,19 +332,19 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     return json
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun removeInboxListener(listenerId: String): String {
+  @ReactMethod
+  fun removeInboxListener(listenerId: String, promise: Promise) {
     val listener = inboxListeners[listenerId]
     listener?.remove()
     inboxListeners.remove(listenerId)
-    return listenerId
+    promise.resolve(listenerId)
   }
 
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  fun removeAllInboxListeners(): String? {
+  @ReactMethod
+  fun removeAllInboxListeners(promise: Promise) {
     inboxListeners.values.forEach { it.remove() }
     inboxListeners.clear()
-    return null
+    promise.resolve(null)
   }
 
   @ReactMethod

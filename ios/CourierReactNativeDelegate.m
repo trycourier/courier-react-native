@@ -107,11 +107,7 @@ NSUInteger notificationPresentationOptions = UNNotificationPresentationOptionNon
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    [[Courier shared] setAPNSTokenWithRawToken:deviceToken completion:^(NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"Error setting APNS Token: %@", error.localizedDescription);
-        }
-    }];
+    [Courier setAPNSToken:deviceToken];
 }
 
 @end

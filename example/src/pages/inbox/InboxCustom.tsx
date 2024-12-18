@@ -11,60 +11,70 @@ const InboxCustom = () => {
   const [canPaginate, setCanPaginate] = useState(false);
 
   useEffect(() => {
+    const initInbox = async () => {
+      await Courier.shared.setInboxPaginationLimit(100);
 
-    Courier.shared.inboxPaginationLimit = 100;
-
-    const inboxListener = Courier.shared.addInboxListener({
-      onInitialLoad() {
-        setIsLoading(true);
-      },
-      onError(error) {
-        setIsLoading(false);
-        setError(error);
-      },
-      onFeedChanged(messageSet) {
-        setIsLoading(false);
-        setError(null);
-        setMessages(messageSet.messages);
-        setCanPaginate(messageSet.canPaginate);
-      },
-      onMessageChanged(feed, index, message) {
-        if (feed === 'feed') {
-          setMessages(prevMessages => {
-            const newMessages = [...prevMessages];
-            newMessages[index] = message;
-            return newMessages;
-          });
-        }
-      },
-      onMessageAdded(feed, index, message) {
-        if (feed === 'feed') {
-          setMessages(prevMessages => {
-            const newMessages = [...prevMessages];
-            newMessages.splice(index, 0, message);
-            return newMessages;
-          });
-        }
-      },
-      onMessageRemoved(feed, index) {
-        if (feed === 'feed') {
-          setMessages(prevMessages => {
-            const newMessages = [...prevMessages];
-            newMessages.splice(index, 1);
-            return newMessages;
-          });
-        }
-      },
-      onPageAdded(feed, messageSet) {
-        if (feed === 'feed') {
-          setMessages(prevMessages => [...prevMessages, ...messageSet.messages]);
+      const inboxListener = await Courier.shared.addInboxListener({
+        onInitialLoad() {
+          setIsLoading(true);
+        },
+        onError(error) {
+          setIsLoading(false);
+          setError(error);
+        },
+        onFeedChanged(messageSet) {
+          setIsLoading(false);
+          setError(null);
+          setMessages(messageSet.messages);
           setCanPaginate(messageSet.canPaginate);
+        },
+        onMessageChanged(feed, index, message) {
+          if (feed === 'feed') {
+            setMessages(prevMessages => {
+              const newMessages = [...prevMessages];
+              newMessages[index] = message;
+              return newMessages;
+            });
+          }
+        },
+        onMessageAdded(feed, index, message) {
+          if (feed === 'feed') {
+            setMessages(prevMessages => {
+              const newMessages = [...prevMessages];
+              newMessages.splice(index, 0, message);
+              return newMessages;
+            });
+          }
+        },
+        onMessageRemoved(feed, index) {
+          if (feed === 'feed') {
+            setMessages(prevMessages => {
+              const newMessages = [...prevMessages];
+              newMessages.splice(index, 1);
+              return newMessages;
+            });
+          }
+        },
+        onPageAdded(feed, messageSet) {
+          if (feed === 'feed') {
+            setMessages(prevMessages => [...prevMessages, ...messageSet.messages]);
+            setCanPaginate(messageSet.canPaginate);
+          }
         }
-      }
+      });
+
+      return inboxListener;
+    };
+
+    let inboxListener: any;
+    initInbox().then(listener => {
+      inboxListener = listener;
     });
 
     return () => {
-      inboxListener.remove();
+      if (inboxListener) {
+        inboxListener.remove();
+      }
     };
 
   }, []);

@@ -256,7 +256,9 @@ internal extension RCTEventEmitter {
         do {
             broadcast(name: name, body: try message?.toString())
         } catch {
-            Courier.shared.client?.log(String(describing: error))
+            Task {
+              await Courier.shared.client?.log(String(describing: error))
+            }
         }
         
     }

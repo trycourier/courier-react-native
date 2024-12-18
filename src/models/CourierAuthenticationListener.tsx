@@ -10,10 +10,10 @@ export class CourierAuthenticationListener {
     this.listenerId = id;
   }
 
-  public remove() {
+  public async remove() {
 
     // Remove the native inbox listener
-    Courier.shared.removeInboxListener({ listenerId: this.listenerId });
+    await Courier.shared.removeInboxListener({ listenerId: this.listenerId });
 
     // Remove the emitter
     this.onUserChanged?.remove();

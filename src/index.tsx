@@ -96,7 +96,7 @@ class Courier {
 
   // System (Static)
 
-  private attachPushNotificationListeners() {
+  private async attachPushNotificationListeners() {
 
     // Remove existing listeners
     // Only allows one subscription to be active
@@ -104,7 +104,7 @@ class Courier {
     this.pushNotificationDeliveredEmitter?.remove();
 
     // When a push notification is clicked
-    this.pushNotificationClickedEmitter = this.systemBroadcaster.addListener(Events.Push.CLICKED, (event) => {
+    this.pushNotificationClickedEmitter = await this.systemBroadcaster.addListener(Events.Push.CLICKED, (event) => {
       try {
         const message = JSON.parse(event);
         this.pushListeners.forEach(listener => {
@@ -118,7 +118,7 @@ class Courier {
     });
 
     // When a push notification is delivered
-    this.pushNotificationDeliveredEmitter = this.systemBroadcaster.addListener(Events.Push.DELIVERED, (event) => {
+    this.pushNotificationDeliveredEmitter = await this.systemBroadcaster.addListener(Events.Push.DELIVERED, (event) => {
       try {
         const message = JSON.parse(event);
         this.pushListeners.forEach(listener => {
@@ -178,11 +178,11 @@ class Courier {
 
   /**
    * Gets the current CourierClient instance.
-   * @returns {CourierClient | undefined} The current CourierClient instance, or undefined if not initialized.
+   * @returns {Promise<CourierClient | undefined>} The current CourierClient instance, or undefined if not initialized.
    */
-  public get client(): CourierClient | undefined {
+  public async getClient(): Promise<CourierClient | undefined> {
 
-    const client = Modules.Shared.getClient() ?? undefined;
+    const client = await Modules.Shared.getClient() ?? undefined;
 
     if (!client) {
       return undefined;
@@ -205,26 +205,26 @@ class Courier {
 
   /**
    * Gets the current user ID.
-   * @returns {string | undefined} The current user ID, or undefined if not set.
+   * @returns {Promise<string | undefined>} The current user ID, or undefined if not set.
    */
-  public get userId(): string | undefined {
-    return Modules.Shared.getUserId() ?? undefined;
+  public async getUserId(): Promise<string | undefined> {
+    return await Modules.Shared.getUserId() ?? undefined;
   }
 
   /**
    * Gets the current tenant ID.
-   * @returns {string | undefined} The current tenant ID, or undefined if not set.
+   * @returns {Promise<string | undefined>} The current tenant ID, or undefined if not set.
    */
-  public get tenantId(): string | undefined {
-    return Modules.Shared.getTenantId() ?? undefined;
+  public async getTenantId(): Promise<string | undefined> {
+    return await Modules.Shared.getTenantId() ?? undefined;
   }
 
   /**
    * Checks if a user is currently signed in.
-   * @returns {boolean} True if a user is signed in, false otherwise.
+   * @returns {Promise<boolean>} True if a user is signed in, false otherwise.
    */
-  public get isUserSignedIn(): boolean {
-    const isSignedIn: string = Modules.Shared.getIsUserSignedIn() ?? 'false';
+  public async isUserSignedIn(): Promise<boolean> {
+    const isSignedIn: string = await Modules.Shared.getIsUserSignedIn() ?? 'false';
     return isSignedIn.toLowerCase() === 'true';
   }
 
@@ -263,15 +263,15 @@ class Courier {
    * @param {function} props.onUserChanged - Callback function triggered when the user changes.
    * @returns {CourierAuthenticationListener} The created authentication listener.
    */
-  public addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): CourierAuthenticationListener {
+  public async addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): Promise<CourierAuthenticationListener> {
 
     // Create a listener
     const listenerId = `authentication_${Utils.generateUUID()}`;
-    const id = Modules.Shared.addAuthenticationListener(listenerId);
 
     // Attach the listener
-    const listener = new CourierAuthenticationListener(id);
-    listener.onUserChanged = this.sharedBroadcaster.addListener(listenerId, (event) => props.onUserChanged(event));
+    const listener = new CourierAuthenticationListener(listenerId);
+    listener.onUserChanged = await this.sharedBroadcaster.addListener(listenerId, (event) => props.onUserChanged(event));
+    const id = await Modules.Shared.addAuthenticationListener(listenerId);
     this.authenticationListeners.set(id, listener);
 
     return listener;
@@ -282,12 +282,12 @@ class Courier {
    * Removes a specific authentication listener.
    * @param {Object} props - The removal properties.
    * @param {string} props.listenerId - The ID of the listener to remove.
-   * @returns {string} The ID of the removed listener.
+   * @returns {Promise<string>} A promise that resolves to the ID of the removed listener.
    */
-  public removeAuthenticationListener(props: { listenerId: string }): string {
+  public async removeAuthenticationListener(props: { listenerId: string }): Promise<string> {
 
     // Remove the native listener
-    Modules.Shared.removeAuthenticationListener(props.listenerId);
+    await Modules.Shared.removeAuthenticationListener(props.listenerId);
 
     // Remove the listener
     if (this.authenticationListeners.has(props.listenerId)) {
@@ -304,10 +304,10 @@ class Courier {
    * Removes all authentication listeners.
    * This method clears all registered authentication listeners, both native and JavaScript.
    */
-  public removeAllAuthenticationListeners() {
+  public async removeAllAuthenticationListeners() {
 
     // Remove all native listeners
-    Modules.Shared.removeAllAuthenticationListeners();
+    await Modules.Shared.removeAllAuthenticationListeners();
 
     // Iterate through all authentication listeners
     this.authenticationListeners.forEach((listener) => {
@@ -412,7 +412,7 @@ class Courier {
    * @param {string} props.listenerId - The ID of the listener to remove.
    * @returns {string} The ID of the removed listener.
    */
-  public removePushNotificationListener(props: { listenerId: string }): string {
+  public async removePushNotificationListener(props: { listenerId: string }): Promise<string> {
     if (this.pushListeners.has(props.listenerId)) {
       this.pushListeners.delete(props.listenerId);
     }
@@ -422,7 +422,7 @@ class Courier {
   /**
    * Removes all push notification listeners.
    */
-  public removeAllPushNotificationListeners() {
+  public async removeAllPushNotificationListeners() {
     this.pushListeners.forEach((listener) => {
       listener.remove();
     });
@@ -433,18 +433,19 @@ class Courier {
 
   /**
    * Gets the current pagination limit for inbox messages.
-   * @returns {number} The current pagination limit.
+   * @returns {Promise<number>} A promise that resolves with the current pagination limit.
    */
-  public get inboxPaginationLimit(): number {
-    return Modules.Shared.getInboxPaginationLimit();
+  public async getInboxPaginationLimit(): Promise<number> {
+    return await Modules.Shared.getInboxPaginationLimit();
   }
 
   /**
    * Sets the pagination limit for inbox messages.
    * @param {number} limit - The new pagination limit to set.
+   * @returns {Promise<void>} A promise that resolves when the limit is set.
    */
-  public set inboxPaginationLimit(limit: number) {
-    Modules.Shared.setInboxPaginationLimit(limit);
+  public async setInboxPaginationLimit(limit: number): Promise<void> {
+    await Modules.Shared.setInboxPaginationLimit(limit);
   }
 
   /**
@@ -519,7 +520,7 @@ class Courier {
    * @param {Function} [props.onMessageRemoved] - Callback function called when a message is removed.
    * @returns {CourierInboxListener} A listener object that can be used to remove the listener later.
    */
-  public addInboxListener(props: {
+  public async addInboxListener(props: {
     onInitialLoad?: () => void,
     onError?: (error: string) => void,
     onUnreadCountChanged?: (unreadCount: number) => void,
@@ -529,7 +530,9 @@ class Courier {
     onMessageChanged?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
     onMessageAdded?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
     onMessageRemoved?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void
-  }): CourierInboxListener {
+  }): Promise<CourierInboxListener> {
+
+    const listenerId = `inbox_${Utils.generateUUID()}`;
 
     const listenerIds = {
       loading: `inbox_loading_${Utils.generateUUID()}`,
@@ -541,10 +544,71 @@ class Courier {
       messageChanged: `inbox_message_changed_${Utils.generateUUID()}`,
       messageAdded: `inbox_message_added_${Utils.generateUUID()}`,
       messageRemoved: `inbox_message_removed_${Utils.generateUUID()}`
-    }
+    };
 
-    // Set the listener id
-    const id = Modules.Shared.addInboxListener(
+    // Create the initial listeners
+    const listener = new CourierInboxListener(listenerId);
+
+    listener.onInitialLoad = await this.sharedBroadcaster.addListener(listenerIds.loading, (_: any) => {
+      props.onInitialLoad?.();
+    });
+
+    listener.onError = await this.sharedBroadcaster.addListener(listenerIds.error, (event: any) => {
+      props.onError?.(event);
+    });
+
+    listener.onUnreadCountChanged = await this.sharedBroadcaster.addListener(listenerIds.unreadCount, (event: any) => {
+      props.onUnreadCountChanged?.(event);
+    });
+
+    listener.onFeedChanged = await this.sharedBroadcaster.addListener(listenerIds.feed, (event: any) => {
+      const convertedMessages = this.convertMessages(event.messages);
+      const messageSet: InboxMessageSet = {
+        messages: convertedMessages,
+        totalMessageCount: event.totalMessageCount,
+        canPaginate: event.canPaginate
+      }
+      props.onFeedChanged?.(messageSet);
+    });
+
+    listener.onArchiveChanged = await this.sharedBroadcaster.addListener(listenerIds.archive, (event: any) => {
+      const convertedMessages = this.convertMessages(event.messages);
+      const messageSet: InboxMessageSet = {
+        messages: convertedMessages,
+        totalMessageCount: event.totalMessageCount,
+        canPaginate: event.canPaginate
+      }
+      props.onArchiveChanged?.(messageSet);
+    });
+
+    listener.onPageAdded = await this.sharedBroadcaster.addListener(listenerIds.pageAdded, (event: any) => {
+      const convertedMessages = this.convertMessages(event.messages);
+      const messageSet: InboxMessageSet = {
+        messages: convertedMessages,
+        totalMessageCount: event.totalMessageCount,
+        canPaginate: event.canPaginate
+      }
+      props.onPageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', messageSet);
+    });
+
+    listener.onMessageChanged = await this.sharedBroadcaster.addListener(listenerIds.messageChanged, (event: any) => {
+      const convertedMessage = this.convertMessage(event.message);
+      props.onMessageChanged?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
+    });
+
+    listener.onMessageAdded = await this.sharedBroadcaster.addListener(listenerIds.messageAdded, (event: any) => {
+      const convertedMessage = this.convertMessage(event.message);
+      props.onMessageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
+    });
+
+    listener.onMessageRemoved = await this.sharedBroadcaster.addListener(listenerIds.messageRemoved, (event: any) => {
+      const convertedMessage = this.convertMessage(event.message);
+      props.onMessageRemoved?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
+    });
+
+    // Attach listener to native code
+    const id = await Modules.Shared.addInboxListener(
+      listenerId,
       listenerIds.loading,
       listenerIds.error,
       listenerIds.unreadCount,
@@ -556,70 +620,11 @@ class Courier {
       listenerIds.messageRemoved
     );
 
-    // Create the initial listeners
-    const listener = new CourierInboxListener(id);
-
-    listener.onInitialLoad = this.sharedBroadcaster.addListener(listenerIds.loading, (_: any) => {
-      props.onInitialLoad?.();
-    });
-
-    listener.onError = this.sharedBroadcaster.addListener(listenerIds.error, (event: any) => {
-      props.onError?.(event);
-    });
-
-    listener.onUnreadCountChanged = this.sharedBroadcaster.addListener(listenerIds.unreadCount, (event: any) => {
-      props.onUnreadCountChanged?.(event);
-    });
-
-    listener.onFeedChanged = this.sharedBroadcaster.addListener(listenerIds.feed, (event: any) => {
-      const convertedMessages = this.convertMessages(event.messages);
-      const messageSet: InboxMessageSet = {
-        messages: convertedMessages,
-        totalMessageCount: event.totalMessageCount,
-        canPaginate: event.canPaginate
-      }
-      props.onFeedChanged?.(messageSet);
-    });
-
-    listener.onArchiveChanged = this.sharedBroadcaster.addListener(listenerIds.archive, (event: any) => {
-      const convertedMessages = this.convertMessages(event.messages);
-      const messageSet: InboxMessageSet = {
-        messages: convertedMessages,
-        totalMessageCount: event.totalMessageCount,
-        canPaginate: event.canPaginate
-      }
-      props.onArchiveChanged?.(messageSet);
-    });
-
-    listener.onPageAdded = this.sharedBroadcaster.addListener(listenerIds.pageAdded, (event: any) => {
-      const convertedMessages = this.convertMessages(event.messages);
-      const messageSet: InboxMessageSet = {
-        messages: convertedMessages,
-        totalMessageCount: event.totalMessageCount,
-        canPaginate: event.canPaginate
-      }
-      props.onPageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', messageSet);
-    });
-
-    listener.onMessageChanged = this.sharedBroadcaster.addListener(listenerIds.messageChanged, (event: any) => {
-      const convertedMessage = this.convertMessage(event.message);
-      props.onMessageChanged?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
-    });
-
-    listener.onMessageAdded = this.sharedBroadcaster.addListener(listenerIds.messageAdded, (event: any) => {
-      const convertedMessage = this.convertMessage(event.message);
-      props.onMessageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
-    });
-
-    listener.onMessageRemoved = this.sharedBroadcaster.addListener(listenerIds.messageRemoved, (event: any) => {
-      const convertedMessage = this.convertMessage(event.message);
-      props.onMessageRemoved?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
-    });
-
     // Add listener to manager
     this.inboxListeners.set(id, listener);
 
     return listener;
+    
   }
 
   private convertMessages(messages: string[]): InboxMessage[] {
@@ -648,10 +653,10 @@ class Courier {
    * @param {string} props.listenerId - The ID of the listener to remove.
    * @returns {string} The ID of the removed listener.
    */
-  public removeInboxListener(props: { listenerId: string }): string {
+  public async removeInboxListener(props: { listenerId: string }): Promise<string> {
 
     // Call native code
-    Modules.Shared.removeInboxListener(props.listenerId);
+    await Modules.Shared.removeInboxListener(props.listenerId);
 
     // Remove the listener
     if (this.inboxListeners.has(props.listenerId)) {
@@ -680,10 +685,10 @@ class Courier {
   /**
    * Removes all inbox listeners.
    */
-  public removeAllInboxListeners() {
+  public async removeAllInboxListeners() {
 
     // Call native code
-    Modules.Shared.removeAllInboxListeners();
+    await Modules.Shared.removeAllInboxListeners();
 
     // Remove all items from inboxListeners
     this.inboxListeners.forEach((listener) => {
@@ -697,6 +702,7 @@ class Courier {
       listener?.onMessageAdded?.remove();
       listener?.onMessageRemoved?.remove();
     });
+    
     this.inboxListeners.clear();
 
   }
@@ -707,7 +713,7 @@ class Courier {
    * @returns {Promise<void>} A promise that resolves when the inbox is refreshed.
    */
   public async refreshInbox(): Promise<void> {
-    return Modules.Shared.refreshInbox();
+    return await Modules.Shared.refreshInbox();
   }
 
   /**

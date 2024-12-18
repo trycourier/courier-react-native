@@ -19,8 +19,8 @@ export class CourierInboxListener {
     this.listenerId = id;
   }
 
-  public remove() {
-    Courier.shared.removeInboxListener({ listenerId: this.listenerId });
+  public async remove() {
+    await Courier.shared.removeInboxListener({ listenerId: this.listenerId });
   }
 
 }

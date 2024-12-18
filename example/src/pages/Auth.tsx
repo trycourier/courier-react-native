@@ -12,24 +12,34 @@ const Auth = () => {
   const [tenantId, setTenantId] = useState<string | undefined>()
 
   useEffect(() => {
+    const initAuth = async () => {
+      const authListener = await Courier.shared.addAuthenticationListener({
+        onUserChanged: async (userId) => {
+          setUserId(userId);
+          setTenantId(await Courier.shared.getTenantId());
+          console.log(`User changed: ${userId}`);
+          console.log(`Tenant changed: ${await Courier.shared.getTenantId()}`);
+        }
+      });
 
-    const authListener = Courier.shared.addAuthenticationListener({
-      onUserChanged: (userId) => {
-        setUserId(userId);
-        setTenantId(Courier.shared.tenantId);
-        console.log(`User changed: ${userId}`);
-        console.log(`Tenant changed: ${Courier.shared.tenantId}`);
-      }
+      const userId = await Courier.shared.getUserId();
+      const tenantId = await Courier.shared.getTenantId();
+      console.log(`Initial user: ${userId}`);
+      console.log(`Initial tenant: ${tenantId}`);
+      refreshJWT(userId, tenantId);
+
+      return authListener;
+    };
+
+    let listener: any;
+    initAuth().then(result => {
+      listener = result;
     });
 
-    const userId = Courier.shared.userId;
-    const tenantId = Courier.shared.tenantId;
-    console.log(`Initial user: ${userId}`);
-    console.log(`Initial tenant: ${tenantId}`);
-    refreshJWT(userId, tenantId);
-
     return () => {
-      authListener.remove();
+      if (listener) {
+        listener.remove();
+      }
     };
 
   }, []);
@@ -98,8 +108,8 @@ const Auth = () => {
         tenantId: tenantId.length ? tenantId : undefined
       });
 
-      setUserId(Courier.shared.userId);
-      setTenantId(Courier.shared.tenantId);
+      setUserId(await Courier.shared.getUserId());
+      setTenantId(await Courier.shared.getTenantId());
 
     } catch (e) {
 
@@ -113,8 +123,8 @@ const Auth = () => {
 
   async function signOut() {
     await Courier.shared.signOut();
-    setUserId(Courier.shared.userId);
-    setTenantId(Courier.shared.tenantId);
+    setUserId(await Courier.shared.getUserId());
+    setTenantId(await Courier.shared.getTenantId());
   }
 
   const styles = StyleSheet.create({
@@ -183,10 +193,10 @@ const Auth = () => {
       }
     }, [modalVisible]);
   
-    const handleButtonPress = () => {
+    const handleButtonPress = async () => {
 
-      if (Courier.shared.userId) {
-        signOut();
+      if (await Courier.shared.getUserId()) {
+        await signOut();
       } else {
         setModalVisible(true);
       }

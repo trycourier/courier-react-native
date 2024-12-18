@@ -3,19 +3,33 @@
 @interface RCT_EXTERN_MODULE(CourierSharedModule, NSObject)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getClient
+  addEmitter:(NSString *)emitterId
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getUserId
+RCT_EXTERN_METHOD(
+  attachEmitter: (NSString*)emitterId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getTenantId
+RCT_EXTERN_METHOD(
+  getClient: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getIsUserSignedIn
+RCT_EXTERN_METHOD(
+  getUserId: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getTenantId: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getIsUserSignedIn: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
@@ -33,16 +47,27 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
+  addAuthenticationListener: (NSString*)listenerId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
   addAuthenticationListener: (NSString*)authId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   removeAuthenticationListener: (NSString*)listenerId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  removeAllAuthenticationListeners
+RCT_EXTERN_METHOD(
+  removeAllAuthenticationListeners: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
@@ -63,12 +88,15 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  getInboxPaginationLimit
+RCT_EXTERN_METHOD(
+  getInboxPaginationLimit: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   setInboxPaginationLimit: (double)limit
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(
@@ -106,8 +134,9 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  addInboxListener: (NSString*)loadingId
+RCT_EXTERN_METHOD(
+  addInboxListener: (NSString*)listenerId
+  withLoadingId: (NSString*)loadingId
   withErrorId: (NSString*)errorId
   withUnreadCountId: (NSString*)unreadCountId
   withFeedId: (NSString*)feedId
@@ -116,14 +145,19 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
   withMessageChangedId: (NSString*)messageChangedId
   withMessageAddedId: (NSString*)messageAddedId
   withMessageRemovedId: (NSString*)messageRemovedId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
+RCT_EXTERN_METHOD(
   removeInboxListener: (NSString*)listenerId
+  withResolver: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(
-  removeAllInboxListeners
+RCT_EXTERN_METHOD(
+  removeAllInboxListeners: (RCTPromiseResolveBlock)resolve
+  withRejecter: (RCTPromiseRejectBlock)reject
 )
 
 RCT_EXTERN_METHOD(

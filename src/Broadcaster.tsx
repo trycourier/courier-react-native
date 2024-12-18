@@ -1,5 +1,6 @@
 import { NativeModule } from "react-native";
 import { NativeEventEmitter, EmitterSubscription, Platform, DeviceEventEmitter } from "react-native";
+import { Modules } from "./Modules";
 
 export default class Broadcaster {
 
@@ -15,7 +16,9 @@ export default class Broadcaster {
     * @param callback Value returned for the listener callback
     * @returns Subscription
     */
-  addListener(id: string, callback: (value: any) => void): EmitterSubscription | undefined {
+  async addListener(id: string, callback: (value: any) => void): Promise<EmitterSubscription | undefined> {
+
+    await Modules.Shared.attachEmitter(id);
 
     if (Platform.OS === 'android') {
       return DeviceEventEmitter.addListener(id, (event: any) => callback(event));
