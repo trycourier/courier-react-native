@@ -263,26 +263,28 @@ const Page = () => {
 
   useEffect(() => {
 
-    Courier.shared.setInboxPaginationLimit({ limit: 100 });
+    const initInbox = async () => {
 
-    const inboxListener = Courier.shared.addInboxListener({
-      onInitialLoad() {
-        setIsLoading(true);
-      },
-      onError(error) {
-        setIsLoading(false);
-        setError(error);
-      },
-      onFeedChanged(messageSet) {
-        setIsLoading(false);
-        setError(null);
-        setInbox(messageSet);
-      },
-    });
+      await Courier.shared.setInboxPaginationLimit({ limit: 100 });
 
-    return () => {
-      inboxListener.remove();
+      const inboxListener = await Courier.shared.addInboxListener({
+        onInitialLoad() {
+          setIsLoading(true);
+        },
+        onError(error) {
+          setIsLoading(false);
+          setError(error);
+        },
+        onFeedChanged(messageSet) {
+          setIsLoading(false);
+          setError(null);
+          setInbox(messageSet);
+        },
+      });
+
     };
+  
+    initInbox();
 
   }, []);
 
@@ -376,10 +378,10 @@ const Page = () => {
 
 ```javascript
 // Pagination limit
-Courier.shared.inboxPaginationLimit = 100;
+await Courier.shared.inboxPaginationLimit = 100;
 
 // Inbox listener
-const listener = Courier.shared.addInboxListener({
+const listener = await Courier.shared.addInboxListener({
   onInitialLoad() {
     ..
   },
@@ -413,11 +415,11 @@ const listener = Courier.shared.addInboxListener({
 listener.remove();
 
 // Remove the listener
-Courier.shared.removeInboxListener({ listenerId: 'asdf' });
+await Courier.shared.removeInboxListener({ listenerId: 'asdf' });
 
 // Remove all listeners
 // Warning: This will remove ALL listeners. Use at own risk.
-Courier.shared.removeAllInboxListeners();
+await Courier.shared.removeAllInboxListeners();
 
 // Refresh inbox
 await Courier.shared.refreshInbox();
