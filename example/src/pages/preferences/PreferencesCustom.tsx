@@ -39,8 +39,12 @@ const PreferencesCustom = ({ navigation }: any) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
+    const initUser = async () => {
+      const id = await Courier.shared.getUserId();
+      setUserId(id);
+    };
 
-    setUserId(Courier.shared.userId);
+    initUser();
 
     const handleSaveClicked = (_: any) => {
       if (userId) {
@@ -63,7 +67,7 @@ const PreferencesCustom = ({ navigation }: any) => {
 
   async function getPrefs(refresh: boolean = false) {
 
-    if (!Courier.shared.client) {
+    if (!await Courier.shared.getClient()) {
       return;
     }
 
@@ -77,8 +81,11 @@ const PreferencesCustom = ({ navigation }: any) => {
 
       console.log('getPrefs');
 
-      const res = await Courier.shared.client.preferences.getUserPreferences();
-      setTopics(res.items);
+      const client = await Courier.shared.getClient();
+      const res = await client?.preferences.getUserPreferences();
+      if (res?.items) {
+        setTopics(res.items);
+      }
 
     } catch (e) {
 

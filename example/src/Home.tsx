@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Auth from './pages/Auth';
 import Push from './pages/Push';
 import Inbox from './pages/Inbox';
-import Courier from '@trycourier/courier-react-native';
+import Courier, { CourierInboxListener } from '@trycourier/courier-react-native';
 import PreferencesStack from './pages/PreferencesStack';
 import Tests from './pages/Tests';
 
@@ -33,18 +33,25 @@ const Home = () => {
     });
 
     // Setup Inbox
+    const setupInbox = async () => {
+      await Courier.shared.setInboxPaginationLimit(100);
+      return await Courier.shared.addInboxListener({
+        onUnreadCountChanged(unreadCount) {
+          setUnreadCount(unreadCount);
+        },
+      });
+    };
 
-    Courier.shared.inboxPaginationLimit = 100;
-
-    const inboxListener = Courier.shared.addInboxListener({
-      onUnreadCountChanged(unreadCount) {
-        setUnreadCount(unreadCount);
-      },
+    let inboxListener: CourierInboxListener;
+    setupInbox().then(listener => {
+      inboxListener = listener;
     });
 
     return () => {
       pushListener.remove();
-      inboxListener.remove();
+      if (inboxListener) {
+        inboxListener.remove();
+      }
     };
 
   }, []);
