@@ -1,10 +1,10 @@
 PODS:
   - boost (1.76.0)
   - courier-react-native (5.3.0):
-    - Courier_iOS (= 5.5.4)
+    - Courier_iOS (= 5.5.5)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - Courier_iOS (5.5.4)
+  - Courier_iOS (5.5.5)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.72.4)
   - FBReactNativeSpec (0.72.4):
@@ -604,8 +604,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
-  courier-react-native: 0f794e6aece5c1fcace9e87f2ae87b3a34c3c583
-  Courier_iOS: f7cc0205bad20e9ed9b7893fbd1776d91e9a8b1d
+  courier-react-native: 1c45af07b8e2adee06397b0d05559fdb5e806601
+  Courier_iOS: e4adb330bcee6f5b26ac3261b34f591d48f13488
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 5d4a3b7f411219a45a6d952f77d2c0a6c9989da5
   FBReactNativeSpec: 3fc2d478e1c4b08276f9dd9128f80ec6d5d85c1f
@@ -654,6 +654,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
 
-PODFILE CHECKSUM: 1ec9af05c2109f5e939c2bc1fe99d87465a6c21e
+PODFILE CHECKSUM: 94a793006401476d96ad6b828ad5e179f25b3867
 
 COCOAPODS: 1.15.2
