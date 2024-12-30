@@ -16,35 +16,42 @@ const Home = () => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
   useEffect(() => {
+    const setupInbox = async () => {
+      // Setup Push
 
-    // Setup Push
+      Courier.setIOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
 
-    Courier.setIOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
+      const pushListener = Courier.shared.addPushNotificationListener({
+        onPushNotificationClicked(push) {
+          console.log(push);
+          Alert.alert('👆 Push Notification Clicked', JSON.stringify(push));
+        },
+        onPushNotificationDelivered(push) {
+          console.log(push);
+          Alert.alert('📬 Push Notification Delivered', JSON.stringify(push));
+        }
+      });
 
-    const pushListener = Courier.shared.addPushNotificationListener({
-      onPushNotificationClicked(push) {
-        console.log(push);
-        Alert.alert('👆 Push Notification Clicked', JSON.stringify(push));
-      },
-      onPushNotificationDelivered(push) {
-        console.log(push);
-        Alert.alert('📬 Push Notification Delivered', JSON.stringify(push));
-      }
-    });
+      // Setup Inbox
 
-    // Setup Inbox
+      await Courier.shared.setInboxPaginationLimit(100);
 
-    Courier.shared.inboxPaginationLimit = 100;
+      const inboxListener = await Courier.shared.addInboxListener({
+        onUnreadCountChanged(unreadCount) {
+          setUnreadCount(unreadCount);
+        },
+      });
 
-    const inboxListener = Courier.shared.addInboxListener({
-      onUnreadCountChanged(unreadCount) {
-        setUnreadCount(unreadCount);
-      },
-    });
+      return { pushListener, inboxListener };
+    };
+
+    const listeners = setupInbox();
 
     return () => {
-      pushListener.remove();
-      inboxListener.remove();
+      listeners.then(({ pushListener, inboxListener }) => {
+        pushListener.remove();
+        inboxListener.remove();
+      });
     };
 
   }, []);
