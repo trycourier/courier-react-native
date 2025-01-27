@@ -244,10 +244,10 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   fun addInboxListener(listenerId: String, loadingId: String, errorId: String, unreadCountId: String, feedId: String, archiveId: String, pageAddedId: String, messageChangedId: String, messageAddedId: String, messageRemovedId: String, promise: Promise) {
 
     val listener = Courier.shared.addInboxListener(
-      onLoading = {
+      onLoading = { isRefresh ->
         reactApplicationContext.sendEvent(
           eventName = loadingId,
-          value = null
+          value = isRefresh
         )
       },
       onError = { e ->

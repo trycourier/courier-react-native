@@ -321,10 +321,10 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             
             // Create the new listener
             let listener = await Courier.shared.addInboxListener(
-              onLoading: { [weak self] in
+              onLoading: { [weak self] isRefresh in
                 self?.broadcast(
                     name: loadingId,
-                    body: nil
+                    body: isRefresh
                 )
               },
               onError: { [weak self] error in

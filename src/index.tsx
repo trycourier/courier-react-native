@@ -521,7 +521,7 @@ class Courier {
    * @returns {CourierInboxListener} A listener object that can be used to remove the listener later.
    */
   public async addInboxListener(props: {
-    onInitialLoad?: () => void,
+    onInitialLoad?: (isRefresh: boolean) => void,
     onError?: (error: string) => void,
     onUnreadCountChanged?: (unreadCount: number) => void,
     onFeedChanged?: (messageSet: InboxMessageSet) => void,
@@ -549,8 +549,8 @@ class Courier {
     // Create the initial listeners
     const listener = new CourierInboxListener(listenerId);
 
-    listener.onInitialLoad = await this.sharedBroadcaster.addListener(listenerIds.loading, (_: any) => {
-      props.onInitialLoad?.();
+    listener.onInitialLoad = await this.sharedBroadcaster.addListener(listenerIds.loading, (event: any) => {
+      props.onInitialLoad?.(event);
     });
 
     listener.onError = await this.sharedBroadcaster.addListener(listenerIds.error, (event: any) => {
