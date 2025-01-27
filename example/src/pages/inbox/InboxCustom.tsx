@@ -15,8 +15,12 @@ const InboxCustom = () => {
       await Courier.shared.setInboxPaginationLimit(100);
 
       const inboxListener = await Courier.shared.addInboxListener({
-        onInitialLoad() {
-          setIsLoading(true);
+        onInitialLoad(isRefresh) {
+          if (isRefresh) {
+            setIsRefreshing(true);
+          } else {
+            setIsLoading(true);
+          }
         },
         onError(error) {
           setIsLoading(false);
