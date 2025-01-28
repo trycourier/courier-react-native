@@ -302,7 +302,6 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
   }
 
   private fun ReadableMap.toArchivingSwipeActionStyle(): CourierStyles.Inbox.ArchivingSwipeActionStyle? {
-    // TODO: Icon
 
     val archiveDict = getMap("archive") ?: return null
     val archive = archiveDict.toSwipeActionStyle() ?: return null
@@ -311,12 +310,17 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
   }
 
   private fun ReadableMap.toSwipeActionStyle(): CourierStyles.Inbox.SwipeActionStyle? {
-    // TODO: Icon
+
+    // Get the icon if possible
+    // Not ideal with the identifier but going to have to work for now
+    val icon = getString("icon")?.let {
+      return@let themedReactContext?.resources?.getIdentifier(it, "drawable", themedReactContext?.packageName)
+    }.takeIf { it != 0 }
 
     val colorString = getString("color") ?: return null
     val color = colorString.toColor()
 
-    return CourierStyles.Inbox.SwipeActionStyle(icon = null, color = color)
+    return CourierStyles.Inbox.SwipeActionStyle(icon = icon, color = color)
   }
 
   private fun ReadableMap.toButtonStyle(context: Context): CourierStyles.Inbox.ButtonStyle {

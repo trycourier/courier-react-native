@@ -51,35 +51,41 @@ class CourierInboxView : UIView {
             lightTheme: lightTheme?.toInboxTheme() ?? .defaultLight,
             darkTheme: darkTheme?.toInboxTheme() ?? .defaultDark,
             didClickInboxMessageAtIndex: { [weak self] message, index in
+              Task {
                 do {
-                    self?.onClickInboxMessageAtIndex?([
-                        "message" : try message.toJson() ?? "",
-                        "index" : index
-                    ])
+                  self?.onClickInboxMessageAtIndex?([
+                      "message" : try message.toJson() ?? "",
+                      "index" : index
+                  ])
                 } catch {
-                    Courier.shared.client?.error(error.localizedDescription)
+                  await Courier.shared.client?.error(error.localizedDescription)
                 }
+              }
             },
             didLongPressInboxMessageAtIndex: { [weak self] message, index in
+              Task {
                 do {
-                    self?.onLongPressInboxMessageAtIndex?([
-                        "message" : try message.toJson() ?? "",
-                        "index" : index
-                    ])
+                  self?.onLongPressInboxMessageAtIndex?([
+                      "message" : try message.toJson() ?? "",
+                      "index" : index
+                  ])
                 } catch {
-                    Courier.shared.client?.error(error.localizedDescription)
+                  await Courier.shared.client?.error(error.localizedDescription)
                 }
+              }
             },
             didClickInboxActionForMessageAtIndex: { [weak self] action, message, index in
+              Task {
                 do {
-                    self?.onClickInboxActionForMessageAtIndex?([
-                        "action" : try action.toJson() ?? "",
-                        "message" : try message.toJson() ?? "",
-                        "index" : index
-                    ])
+                  self?.onClickInboxActionForMessageAtIndex?([
+                      "action" : try action.toJson() ?? "",
+                      "message" : try message.toJson() ?? "",
+                      "index" : index
+                  ])
                 } catch {
-                    Courier.shared.client?.error(error.localizedDescription)
+                  await Courier.shared.client?.error(error.localizedDescription)
                 }
+              }
             },
             didScrollInbox: { [weak self] scrollView in
                 self?.onScrollInbox?([
@@ -247,15 +253,19 @@ internal extension NSDictionary {
   
     func toSwipeActionStyle() -> CourierStyles.Inbox.SwipeActionStyle? {
       
-        // TODO: Icon
+      // Get the image from assets if possible
+      var image: UIImage? = nil
+      if let icon = self["icon"] as? String {
+        image = UIImage(named: icon)
+      }
+    
+      guard let colorString = self["color"] as? String else {
+        return nil
+      }
       
-        guard let colorString = self["color"] as? String else {
-            return nil
-        }
-        
-        let color = colorString.toColor() ?? .systemBlue
-        
-        return CourierStyles.Inbox.SwipeActionStyle(icon: nil, color: color)
+      let color = colorString.toColor() ?? .systemBlue
+      
+      return CourierStyles.Inbox.SwipeActionStyle(icon: image, color: color)
       
     }
     

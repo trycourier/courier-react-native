@@ -12,7 +12,7 @@ import { CourierPushProvider } from './models/CourierPushProvider';
 import { Modules } from './Modules';
 import Broadcaster from './Broadcaster';
 import { CourierClient } from './client/CourierClient';
-import { Events, Utils } from './utils';
+import { Events, CourierUtils } from './utils';
 import { InboxMessageFeed } from './models/InboxMessageFeed';
 import { InboxMessageSet } from './models/InboxMessageSet';
 
@@ -42,6 +42,7 @@ export { InboxMessage } from './models/InboxMessage';
 export { CourierInboxButtonStyle, CourierInboxTextStyle, CourierInboxUnreadIndicatorStyle, CourierInboxTheme } from './models/CourierInboxTheme';
 export { CourierPreferencesTheme, CourierPreferencesMode, CourierPreferencesChannel } from './models/CourierPreferencesTheme';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
+export { CourierUtils } from './utils';
 
 class Courier {
 
@@ -266,7 +267,7 @@ class Courier {
   public async addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): Promise<CourierAuthenticationListener> {
 
     // Create a listener
-    const listenerId = `authentication_${Utils.generateUUID()}`;
+    const listenerId = `authentication_${CourierUtils.generateUUID()}`;
 
     // Attach the listener
     const listener = new CourierAuthenticationListener(listenerId);
@@ -385,7 +386,7 @@ class Courier {
    */
   public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
     
-    const listenerId = `push_${Utils.generateUUID()}`;
+    const listenerId = `push_${CourierUtils.generateUUID()}`;
 
     const pushListener = new CourierPushListener(
       listenerId,
@@ -532,18 +533,18 @@ class Courier {
     onMessageRemoved?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void
   }): Promise<CourierInboxListener> {
 
-    const listenerId = `inbox_${Utils.generateUUID()}`;
+    const listenerId = `inbox_${CourierUtils.generateUUID()}`;
 
     const listenerIds = {
-      loading: `inbox_loading_${Utils.generateUUID()}`,
-      error: `inbox_error_${Utils.generateUUID()}`,
-      unreadCount: `inbox_unread_count_${Utils.generateUUID()}`,
-      feed: `inbox_feed_${Utils.generateUUID()}`,
-      archive: `inbox_archive_${Utils.generateUUID()}`,
-      pageAdded: `inbox_page_added_${Utils.generateUUID()}`,
-      messageChanged: `inbox_message_changed_${Utils.generateUUID()}`,
-      messageAdded: `inbox_message_added_${Utils.generateUUID()}`,
-      messageRemoved: `inbox_message_removed_${Utils.generateUUID()}`
+      loading: `inbox_loading_${CourierUtils.generateUUID()}`,
+      error: `inbox_error_${CourierUtils.generateUUID()}`,
+      unreadCount: `inbox_unread_count_${CourierUtils.generateUUID()}`,
+      feed: `inbox_feed_${CourierUtils.generateUUID()}`,
+      archive: `inbox_archive_${CourierUtils.generateUUID()}`,
+      pageAdded: `inbox_page_added_${CourierUtils.generateUUID()}`,
+      messageChanged: `inbox_message_changed_${CourierUtils.generateUUID()}`,
+      messageAdded: `inbox_message_added_${CourierUtils.generateUUID()}`,
+      messageRemoved: `inbox_message_removed_${CourierUtils.generateUUID()}`
     };
 
     // Create the initial listeners
