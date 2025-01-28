@@ -125,91 +125,138 @@ Android fonts point to system fonts with the path included. More about Android f
 ```javascript
 import { CourierInboxView } from '@trycourier/courier-react-native';
 
-// See above for more details about fonts
-const textColor = '#2A1537'
-const primaryColor = '#882DB9'
-const secondaryColor = '#EA6866'
+const textColor = '#2A1537';
+const primaryColor = '#882DB9';
+const secondaryColor = '#EA6866';
 
-const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf'
-const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
+const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf';
+const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf';
 
 const theme: CourierInboxTheme = {
-  brandId: 'ASDFASDF',
-  loadingIndicatorColor: primaryColor,
+  brandId: "your_brand_id",
+  tabIndicatorColor: primaryColor,
+  tabStyle: {
+    selected: {
+      font: {
+        family: titleFont,
+        size: 16,
+        color: textColor
+      },
+      indicator: {
+        font: {
+          family: titleFont,
+          size: 14,
+          color: '#FFFFFF'
+        },
+        color: primaryColor
+      }
+    },
+    unselected: {
+      font: {
+        family: titleFont,
+        size: 16,
+        color: textColor
+      },
+      indicator: {
+        font: {
+          family: titleFont,
+          size: 14,
+          color: '#000000'
+        },
+        color: secondaryColor
+      }
+    }
+  },
+  readingSwipeActionStyle: {
+    read: {
+      icon: Platform.OS === 'ios' ? 'icon_ios_undo' : 'icon_android_undo',
+      color: textColor
+    },
+    unread: {
+      icon: Platform.OS === 'ios' ? 'icon_ios_check' : 'icon_android_check',
+      color: primaryColor
+    }
+  },
+  archivingSwipeActionStyle: {
+    archive: {
+      icon: Platform.OS === 'ios' ? 'icon_ios_archive' : 'icon_android_archive',
+      color: secondaryColor
+    }
+  },
   unreadIndicatorStyle: {
     indicator: 'dot',
-    color: secondaryColor
+    color: primaryColor
   },
   titleStyle: {
     unread: {
       family: titleFont,
-      size: 20,
+      size: 14,
       color: textColor
     },
     read: {
       family: titleFont,
-      size: 20,
+      size: 14,
       color: textColor
     }
   },
   timeStyle: {
     unread: {
       family: defaultFont,
-      size: 16,
+      size: 12,
       color: textColor
     },
     read: {
       family: defaultFont,
-      size: 16,
+      size: 12,
       color: textColor
     }
   },
   bodyStyle: {
     unread: {
       family: defaultFont,
-      size: 18,
+      size: 12,
       color: textColor
     },
     read: {
       family: defaultFont,
-      size: 18,
+      size: 12,
       color: textColor
     }
   },
   buttonStyle: {
     unread: {
       font: {
-        family: titleFont,
-        size: 16,
+        family: defaultFont,
+        size: 12,
         color: '#FFFFFF'
       },
       backgroundColor: primaryColor,
-      cornerRadius: 100
+      cornerRadius: 8
     },
     read: {
       font: {
-        family: titleFont,
-        size: 16,
-        color: '#FFFFFF'
+        family: defaultFont,
+        size: 12,
+        color: textColor
       },
-      backgroundColor: primaryColor,
-      cornerRadius: 100
+      backgroundColor: secondaryColor,
+      cornerRadius: 8
     }
   },
   infoViewStyle: {
     font: {
-      family: defaultFont,
-      size: 20,
+      family: titleFont,
+      size: 14,
       color: textColor
     },
     button: {
       font: {
-        family: titleFont,
-        size: 16,
-        color: '#FFFFFF'
+        family: defaultFont,
+        size: 12,
+        color: primaryColor
       },
-      backgroundColor: primaryColor,
-      cornerRadius: 100
+      backgroundColor: textColor,
+      cornerRadius: 8
     }
   },
   iOS: {
@@ -227,7 +274,7 @@ const theme: CourierInboxTheme = {
   android: {
     dividerItemDecoration: 'vertical'
   }
-}
+};
 
 <CourierInboxView 
   theme={{
