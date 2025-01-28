@@ -122,6 +122,10 @@ iOS fonts point to the name of the font you have loaded into your app's fonts re
 
 Android fonts point to system fonts with the path included. More about Android fonts [`here`](https://developer.android.com/develop/ui/views/text-and-emoji/fonts-in-xml).
 
+#### Custom Icons:
+
+Add the icons to your native app as Drawables on Android and Images assets on iOS. Then simply pass the name of the file to `CourierInboxTheme`.
+
 ```javascript
 import { CourierInboxView } from '@trycourier/courier-react-native';
 
