@@ -11,6 +11,7 @@ export const Styles = (isDark: boolean) => {
       heading: isDark ? '#9747FF' : '#9747FF',
       title: isDark ? '#FFFFFF' : '#000000',
       subtitle: isDark ? '#9A9A9A' : '#BEBEBE',
+      warning: isDark ? '#C32F27' : '#C32F27',
       option: isDark ? '#1F1F1F' : '#F0F0F0',
       action: isDark ? '#9747FF' : '#9747FF',
     },

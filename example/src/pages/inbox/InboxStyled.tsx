@@ -47,18 +47,18 @@ const InboxStyled = () => {
       },
       readingSwipeActionStyle: {
         read: {
-          icon: 'check',
+          icon: Platform.OS === 'ios' ? 'icon_check' : 'icon_check',
           color: styles.Colors.action
         },
         unread: {
-          icon: 'check',
+          icon: Platform.OS === 'ios' ? 'icon_undo' : 'icon_undo',
           color: styles.Colors.subtitle
         }
       },
       archivingSwipeActionStyle: {
         archive: {
-          icon: 'archive',
-          color: '#C32F27'
+          icon: Platform.OS === 'ios' ? 'icon_archive' : 'icon_archive',
+          color: styles.Colors.warning
         }
       },
       unreadIndicatorStyle: {
@@ -214,7 +214,7 @@ const InboxStyled = () => {
   return (
     <View style={styles.container}>
       <CourierInboxView 
-        canSwipePages={true}
+        canSwipePages={false}
         theme={{
           light: getTheme(false),
           dark: getTheme(true)

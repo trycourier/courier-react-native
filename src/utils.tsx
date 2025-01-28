@@ -13,7 +13,7 @@ export namespace Events {
 
 }
 
-export class Utils {
+export class CourierUtils {
 
   static generateUUID(): string {
     let uuid = '';

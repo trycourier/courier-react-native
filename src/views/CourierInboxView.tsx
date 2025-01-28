@@ -94,7 +94,7 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
       onClickInboxActionForMessageAtIndexListener = DeviceEventEmitter.addListener('courierClickActionAtIndex', onClickInboxActionForMessageAtIndex);
     }
 
-  }, [props.onClickInboxActionForMessageAtIndex])
+  }, [props.onClickInboxActionForMessageAtIndex]);
 
   const onClickInboxActionForMessageAtIndex = (event: any) => {
 
