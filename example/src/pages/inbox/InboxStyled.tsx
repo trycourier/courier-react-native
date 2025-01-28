@@ -47,12 +47,12 @@ const InboxStyled = () => {
       },
       readingSwipeActionStyle: {
         read: {
-          icon: Platform.OS === 'ios' ? 'icon_check' : 'icon_check',
-          color: styles.Colors.action
+          icon: Platform.OS === 'ios' ? 'ionc_undo' : 'icon_undo',
+          color: styles.Colors.subtitle
         },
         unread: {
-          icon: Platform.OS === 'ios' ? 'icon_undo' : 'icon_undo',
-          color: styles.Colors.subtitle
+          icon: Platform.OS === 'ios' ? 'icon_check' : 'icon_check',
+          color: styles.Colors.action
         }
       },
       archivingSwipeActionStyle: {

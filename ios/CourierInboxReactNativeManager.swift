@@ -237,8 +237,6 @@ internal extension NSDictionary {
   
     func toArchivingSwipeActionStyle() -> CourierStyles.Inbox.ArchivingSwipeActionStyle? {
       
-        // TODO: Icon
-      
         guard let archiveDict = self["archive"] as? NSDictionary else {
             return nil
         }
