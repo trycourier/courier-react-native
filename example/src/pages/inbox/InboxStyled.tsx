@@ -47,7 +47,7 @@ const InboxStyled = () => {
       },
       readingSwipeActionStyle: {
         read: {
-          icon: Platform.OS === 'ios' ? 'ionc_undo' : 'icon_undo',
+          icon: Platform.OS === 'ios' ? 'icon_undo' : 'icon_undo',
           color: styles.Colors.subtitle
         },
         unread: {
