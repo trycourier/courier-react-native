@@ -61,8 +61,6 @@ target 'CourierReactNativeExample' do
       :mac_catalyst_enabled => false
     )
 
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
-
     # Strip bitcode from all frameworks
     bitcode_strip_path = `xcrun --find bitcode_strip`.chomp
     unless bitcode_strip_path.empty?

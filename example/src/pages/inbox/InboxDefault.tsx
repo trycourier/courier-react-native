@@ -17,11 +17,11 @@ const InboxDefault = () => {
   return (
     <View style={styles.container}>
       <CourierInboxView
-        onClickInboxMessageAtIndex={async (message, index) => {
+        onClickInboxMessageAtIndex={async (message, _index) => {
           console.log('onClickInboxMessageAtIndex', message.read);
           message.read ? await Courier.shared.unreadMessage({ messageId: message.messageId }) : await Courier.shared.readMessage({ messageId: message.messageId })
         }}
-        onClickInboxActionForMessageAtIndex={(action, message, index) => {
+        onClickInboxActionForMessageAtIndex={(action, _message, _index) => {
           console.log(action)
         }}
         style={styles.box} />

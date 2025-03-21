@@ -14,7 +14,7 @@ const modules = Object.keys({ ...pak.peerDependencies });
  * @type {import('metro-config').MetroConfig}
  */
 const config = {
-  watchFolders: [root],
+  watchFolders: [root, path.resolve(__dirname, '../node_modules')],
 
   // We need to make sure that only one version is loaded for peerDependencies
   // So we block them at the root, and alias them to the versions in example's node_modules
@@ -26,10 +26,14 @@ const config = {
       )
     ),
 
-    extraNodeModules: modules.reduce((acc, name) => {
-      acc[name] = path.join(__dirname, 'node_modules', name);
-      return acc;
-    }, {}),
+    extraNodeModules: {
+      ...modules.reduce((acc, name) => {
+        acc[name] = path.join(__dirname, 'node_modules', name);
+        return acc;
+      }, {}),
+      '@trycourier/courier-react-native': path.resolve(__dirname, '..')
+    },
+    assetExts: ['png', 'jpg', 'jpeg', 'gif', 'webp'],
   },
 
   transformer: {

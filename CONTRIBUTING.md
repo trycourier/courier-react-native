@@ -40,6 +40,7 @@ in the root directory run:
 
 ```sh
 yarn link
+yarn prepack
 ```
 
 navigate to example directory, run:
