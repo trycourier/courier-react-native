@@ -18,9 +18,8 @@ const InboxDefault = () => {
     <View style={styles.container}>
       <CourierInboxView
         onClickInboxMessageAtIndex={async (message, _index) => {
-          console.log('onClickInboxMessageAtIndex', message.read);
-          message.read ? await Courier.shared.unreadMessage({ messageId: message.messageId }) : await Courier.shared.readMessage({ messageId: message.messageId })
-        }}
+          message.isRead ? await message.markAsUnread() : await message.markAsRead()
+        }}  
         onClickInboxActionForMessageAtIndex={(action, _message, _index) => {
           console.log(action)
         }}

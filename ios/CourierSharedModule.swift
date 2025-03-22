@@ -314,18 +314,27 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         
     }
     
-    @objc(addInboxListener:withLoadingId:withErrorId:withUnreadCountId:withFeedId:withArchiveId:withPageAddedId:withMessageChangedId:withMessageAddedId:withMessageRemovedId:withResolver:withRejecter:)
-    func addInboxListener(listenerId: String, loadingId: String, errorId: String, unreadCountId: String, feedId: String, archiveId: String, pageAddedId: String, messageChangedId: String, messageAddedId: String, messageRemovedId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
-        Task {
-            
-            // Create the new listener
-            let listener = await Courier.shared.addInboxListener(
+    @objc(addInboxListener:withLoadingId:withErrorId:withUnreadCountId:withTotalCountId:withMessagesChangedId:withPageAddedId:withMessageEventId:withResolver:withRejecter:)
+    func addInboxListener(
+        listenerId: String,
+        loadingId: String,
+        errorId: String,
+        unreadCountId: String,
+        totalCountId: String,
+        messagesChangedId: String,
+        pageAddedId: String,
+        messageEventId: String,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) -> Void {
+      
+      Task {
+          let listener = await Courier.shared.addInboxListener(
               onLoading: { [weak self] isRefresh in
-                self?.broadcast(
-                    name: loadingId,
-                    body: isRefresh
-                )
+                  self?.broadcast(
+                      name: loadingId,
+                      body: isRefresh
+                  )
               },
               onError: { [weak self] error in
                   self?.broadcast(
@@ -334,122 +343,89 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                   )
               },
               onUnreadCountChanged: { [weak self] unreadCount in
-                self?.broadcast(
-                    name: unreadCountId,
-                    body: unreadCount
-                )
+                  self?.broadcast(
+                      name: unreadCountId,
+                      body: unreadCount
+                  )
               },
-              onFeedChanged: { [weak self] set in
-                do {
+              onTotalCountChanged: { [weak self] totalCount, feed in
+                  let feedName = (feed == .archive) ? "archive" : "feed"
                   let json: [String: Any] = [
-                    "messages": try set.messages.map { try $0.toJson() ?? "" },
-                    "totalMessageCount": set.totalCount,
-                    "canPaginate": set.canPaginate
+                      "totalCount": totalCount,
+                      "feed": feedName
                   ]
                   self?.broadcast(
-                    name: feedId,
-                    body: json
+                      name: totalCountId,
+                      body: json
                   )
-                } catch {
-                  Task {
-                    await Courier.shared.client?.error(error.localizedDescription)
-                  }
-                }
               },
-              onArchiveChanged: { [weak self] set in
-                do {
-                  let json: [String: Any] = [
-                    "messages": try set.messages.map { try $0.toJson() ?? "" },
-                    "totalMessageCount": set.totalCount,
-                    "canPaginate": set.canPaginate
-                  ]
-                  self?.broadcast(
-                    name: archiveId,
-                    body: json
-                  )
-                } catch {
-                  Task {
-                    await Courier.shared.client?.error(error.localizedDescription)
+              onMessagesChanged: { [weak self] messages, canPaginate, feed in
+                  // Convert each InboxMessage to JSON
+                  do {
+                      let feedName = (feed == .archive) ? "archive" : "feed"
+                      let json: [String: Any] = [
+                          "feed": feedName,
+                          "canPaginate": canPaginate,
+                          "messages": try messages.map { try $0.toJson() ?? "" }
+                      ]
+                      self?.broadcast(
+                          name: messagesChangedId,
+                          body: json
+                      )
+                  } catch {
+                      Task {
+                          await Courier.shared.client?.error(error.localizedDescription)
+                      }
                   }
-                }
               },
-              onPageAdded: { [weak self] feed, set in
-                do {
-                  let json: [String: Any] = [
-                    "feed": feed == .archived ? "archived" : "feed",
-                    "messages": try set.messages.map { try $0.toJson() ?? "" },
-                    "totalMessageCount": set.totalCount,
-                    "canPaginate": set.canPaginate
-                  ]
-                  self?.broadcast(
-                    name: pageAddedId,
-                    body: json
-                  )
-                } catch {
-                  Task {
-                    await Courier.shared.client?.error(error.localizedDescription)
+              onPageAdded: { [weak self] messages, canPaginate, isFirstPage, feed in
+                  // Convert each InboxMessage to JSON
+                  do {
+                      let feedName = (feed == .archive) ? "archive" : "feed"
+                      let json: [String: Any] = [
+                          "feed": feedName,
+                          "canPaginate": canPaginate,
+                          "isFirstPage": isFirstPage,
+                          "messages": try messages.map { try $0.toJson() ?? "" }
+                      ]
+                      self?.broadcast(
+                          name: pageAddedId,
+                          body: json
+                      )
+                  } catch {
+                      Task {
+                          await Courier.shared.client?.error(error.localizedDescription)
+                      }
                   }
-                }
               },
-              onMessageChanged: { [weak self] feed, index, message in
-                do {
-                  let json: [String: Any] = [
-                    "feed": feed == .archived ? "archived" : "feed",
-                    "index": index,
-                    "message": try message.toJson() ?? "",
-                  ]
-                  self?.broadcast(
-                    name: messageChangedId,
-                    body: json
-                  )
-                } catch {
-                  Task {
-                    await Courier.shared.client?.error(error.localizedDescription)
+              onMessageEvent: { [weak self] message, index, feed, event in
+                  do {
+                      let feedName = (feed == .archive) ? "archive" : "feed"
+                      let eventName = event.rawValue  // or handle explicitly as needed
+                      let json: [String: Any] = [
+                          "feed": feedName,
+                          "event": eventName,
+                          "index": index,
+                          "message": try message.toJson() ?? ""
+                      ]
+                      self?.broadcast(
+                          name: messageEventId,
+                          body: json
+                      )
+                  } catch {
+                      Task {
+                          await Courier.shared.client?.error(error.localizedDescription)
+                      }
                   }
-                }
-              },
-              onMessageAdded: { [weak self] feed, index, message in
-                do {
-                  let json: [String: Any] = [
-                    "feed": feed == .archived ? "archived" : "feed",
-                    "index": index,
-                    "message": try message.toJson() ?? "",
-                  ]
-                  self?.broadcast(
-                    name: messageAddedId,
-                    body: json
-                  )
-                } catch {
-                  Task {
-                    await Courier.shared.client?.error(error.localizedDescription)
-                  }
-                }
-              },
-              onMessageRemoved: { [weak self] feed, index, message in
-                do {
-                  let json: [String: Any] = [
-                    "feed": feed == .archived ? "archived" : "feed",
-                    "index": index,
-                    "message": try message.toJson() ?? "",
-                  ]
-                  self?.broadcast(
-                    name: messageRemovedId,
-                    body: json
-                  )
-                } catch {
-                  Task {
-                    await Courier.shared.client?.error(error.localizedDescription)
-                  }
-                }
               }
-            )
+          )
           
-            inboxListeners[listenerId] = listener
+          // Store the listener so you can remove it later if needed
+          inboxListeners[listenerId] = listener
           
-            resolve(listenerId)
-          
-        }
-        
+          // Resolve with the listenerId so JS knows the registration succeeded
+          resolve(listenerId)
+      }
     }
     
     @objc(removeInboxListener:withResolver:withRejecter:)
@@ -498,7 +474,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     func fetchNextPageOfMessages(inboxMessageFeed: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
             do {
-                let value: InboxMessageFeed = inboxMessageFeed == "archived" ? .feed : .archived
+                let value: InboxMessageFeed = inboxMessageFeed == "archive" ? .feed : .archive
                 let messages = try await Courier.shared.fetchNextInboxPage(value)
                 resolve(try messages.map { try $0.toJson() ?? "" })
             } catch {

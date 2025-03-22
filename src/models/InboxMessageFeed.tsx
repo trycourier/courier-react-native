@@ -1,1 +1,1 @@
-export type InboxMessageFeed = 'feed' | 'archived';
+export type InboxMessageFeed = 'feed' | 'archive';

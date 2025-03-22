@@ -54,7 +54,7 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
     if (props.onClickInboxMessageAtIndex) {
 
       const index = event["index"];
-      const message = JSON.parse(event["message"]) as InboxMessage;
+      const message = InboxMessage.fromJson(event["message"]);
 
       props.onClickInboxMessageAtIndex(message, index);
 
@@ -78,7 +78,7 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
     if (props.onLongPressInboxMessageAtIndex) {
 
       const index = event["index"];
-      const message = JSON.parse(event["message"]) as InboxMessage;
+      const message = InboxMessage.fromJson(event["message"]);
 
       props.onLongPressInboxMessageAtIndex(message, index);
 
@@ -102,8 +102,8 @@ export const CourierInboxView = (props: CourierInboxViewProps) => {
     if (props.onClickInboxActionForMessageAtIndex) {
 
       const index = event["index"];
-      const action = JSON.parse(event["action"]) as InboxAction;
-      const message = JSON.parse(event["message"]) as InboxMessage;
+      const action = InboxAction.fromJson(event["action"]);
+      const message = InboxMessage.fromJson(event["message"]);
 
       props.onClickInboxActionForMessageAtIndex(action, message, index);
 

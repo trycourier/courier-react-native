@@ -1,6 +1,7 @@
-import Courier, { InboxMessage } from '@trycourier/courier-react-native';
+import Courier, { InboxMessage, InboxMessageEvent } from '@trycourier/courier-react-native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator, Platform } from 'react-native';
+import { InboxMessageFeed } from 'src/models/InboxMessageFeed';
 
 const InboxCustom = () => {
 
@@ -15,54 +16,35 @@ const InboxCustom = () => {
       await Courier.shared.setInboxPaginationLimit(100);
 
       const inboxListener = await Courier.shared.addInboxListener({
-        onInitialLoad(isRefresh) {
+        onLoading(isRefresh: boolean) {
           if (isRefresh) {
             setIsRefreshing(true);
           } else {
             setIsLoading(true);
           }
         },
-        onError(error) {
+        onError(error: string) {
           setIsLoading(false);
           setError(error);
         },
-        onFeedChanged(messageSet) {
-          setIsLoading(false);
-          setError(null);
-          setMessages(messageSet.messages);
-          setCanPaginate(messageSet.canPaginate);
-        },
-        onMessageChanged(feed, index, message) {
+        onMessagesChanged(messages: InboxMessage[], canPaginate: boolean, feed: InboxMessageFeed) {
           if (feed === 'feed') {
-            setMessages(prevMessages => {
-              const newMessages = [...prevMessages];
-              newMessages[index] = message;
-              return newMessages;
-            });
+            setIsLoading(false);
+            setError(null);
+            setMessages(messages);
+            setCanPaginate(canPaginate);
           }
         },
-        onMessageAdded(feed, index, message) {
+        onMessageEvent(message: InboxMessage, index: number, feed: InboxMessageFeed, eventName: InboxMessageEvent) {
           if (feed === 'feed') {
-            setMessages(prevMessages => {
-              const newMessages = [...prevMessages];
-              newMessages.splice(index, 0, message);
-              return newMessages;
-            });
+            console.log(message, index, feed, eventName);
+            setMessages([...messages]);
           }
         },
-        onMessageRemoved(feed, index) {
-          if (feed === 'feed') {
-            setMessages(prevMessages => {
-              const newMessages = [...prevMessages];
-              newMessages.splice(index, 1);
-              return newMessages;
-            });
-          }
-        },
-        onPageAdded(feed, messageSet) {
-          if (feed === 'feed') {
-            setMessages(prevMessages => [...prevMessages, ...messageSet.messages]);
-            setCanPaginate(messageSet.canPaginate);
+        onPageAdded(messages: InboxMessage[], canPaginate: boolean, isFirstPage: boolean, feed: string) {
+          if (feed === 'feed' && !isFirstPage) {
+            setMessages(prevMessages => [...prevMessages, ...messages]);
+            setCanPaginate(canPaginate);
           }
         }
       });
@@ -92,7 +74,7 @@ const InboxCustom = () => {
         borderBottomColor: '#ccc',
       },
       unread: {
-        backgroundColor: 'red'
+        backgroundColor: '#ADD8E6'
       },
       text: {
         width: Platform.OS === 'ios' ? undefined : '100%',

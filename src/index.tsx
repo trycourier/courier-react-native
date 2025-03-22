@@ -14,9 +14,9 @@ import Broadcaster from './Broadcaster';
 import { CourierClient } from './client/CourierClient';
 import { Events, CourierUtils } from './utils';
 import { InboxMessageFeed } from './models/InboxMessageFeed';
-import { InboxMessageSet } from './models/InboxMessageSet';
+import { InboxMessageEvent } from './models/InboxMessageEvent';
 
-export { CourierClient } from './client/CourierClient';
+export { CourierClient } from './client/CourierClient'  ;
 export { BrandClient } from './client/BrandClient';
 export { CourierBrandResponse } from './models/CourierBrand';
 export { CourierDevice } from './models/CourierDevice';
@@ -37,8 +37,9 @@ export { CourierButton } from './models/CourierButton';
 export { CourierInfoViewStyle } from './models/CourierInfoViewStyle';
 export { iOS_CourierCell } from './models/iOS_CourierCell';
 export { iOS_CourierSheet } from './models/iOS_CourierSheet';
-export { InboxMessageSet } from './models/InboxMessageSet';
 export { InboxMessage } from './models/InboxMessage';
+export { InboxMessageFeed } from './models/InboxMessageFeed';
+export { InboxMessageEvent } from './models/InboxMessageEvent';
 export { CourierInboxButtonStyle, CourierInboxTextStyle, CourierInboxUnreadIndicatorStyle, CourierInboxTheme } from './models/CourierInboxTheme';
 export { CourierPreferencesTheme, CourierPreferencesMode, CourierPreferencesChannel } from './models/CourierPreferencesTheme';
 export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
@@ -508,144 +509,109 @@ class Courier {
   }
 
   /**
-   * Adds a listener for inbox changes.
+   * Adds a listener for inbox changes (aligned with the updated native iOS/Swift callbacks).
    * @param {Object} props - The properties object.
-   * @param {Function} [props.onInitialLoad] - Callback function called when the inbox is initially loaded.
-   * @param {Function} [props.onError] - Callback function called when an error occurs. Receives the error message as a parameter.
-   * @param {Function} [props.onUnreadCountChanged] - Callback function called when the unread count changes.
-   * @param {Function} [props.onFeedChanged] - Callback function called when the feed changes.
-   * @param {Function} [props.onArchiveChanged] - Callback function called when the archive changes.
-   * @param {Function} [props.onPageAdded] - Callback function called when a new page is added.
-   * @param {Function} [props.onMessageChanged] - Callback function called when a message changes.
-   * @param {Function} [props.onMessageAdded] - Callback function called when a new message is added.
-   * @param {Function} [props.onMessageRemoved] - Callback function called when a message is removed.
+   * @param {Function} [props.onLoading] - Called when loading or refreshing begins. Receives isRefresh (boolean).
+   * @param {Function} [props.onError] - Called when an error occurs. Receives the error message (string).
+   * @param {Function} [props.onUnreadCountChanged] - Called when unread count changes. Receives unreadCount (number).
+   * @param {Function} [props.onTotalCountChanged] - Called when total message count changes. Receives totalCount (number) and feed ("feed" or "archive").
+   * @param {Function} [props.onMessagesChanged] - Called when messages in a feed change. Receives an InboxMessageSet and feed name.
+   * @param {Function} [props.onPageAdded] - Called when a new page of messages is added. Receives an InboxMessageSet, feed name, and isFirstPage (boolean).
+   * @param {Function} [props.onMessageEvent] - Called for message-level changes (add/remove/update). Receives a message, index, feed name, and event string.
    * @returns {CourierInboxListener} A listener object that can be used to remove the listener later.
    */
   public async addInboxListener(props: {
-    onInitialLoad?: (isRefresh: boolean) => void,
+    onLoading?: (isRefresh: boolean) => void,
     onError?: (error: string) => void,
     onUnreadCountChanged?: (unreadCount: number) => void,
-    onFeedChanged?: (messageSet: InboxMessageSet) => void,
-    onArchiveChanged?: (messageSet: InboxMessageSet) => void,
-    onPageAdded?: (feed: InboxMessageFeed, messageSet: InboxMessageSet) => void,
-    onMessageChanged?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
-    onMessageAdded?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void,
-    onMessageRemoved?: (feed: InboxMessageFeed, index: number, message: InboxMessage) => void
+    onTotalCountChanged?: (totalCount: number, feed: string) => void,
+    onMessagesChanged?: (messages: InboxMessage[], canPaginate: boolean, feed: InboxMessageFeed) => void,
+    onPageAdded?: (messages: InboxMessage[], canPaginate: boolean, isFirstPage: boolean, feed: InboxMessageFeed) => void,
+    onMessageEvent?: (message: InboxMessage, index: number, feed: InboxMessageFeed, eventName: InboxMessageEvent) => void
   }): Promise<CourierInboxListener> {
 
+    // Generate a unique ID for the listener
     const listenerId = `inbox_${CourierUtils.generateUUID()}`;
 
+    // Generate unique channel IDs for each callback
     const listenerIds = {
       loading: `inbox_loading_${CourierUtils.generateUUID()}`,
       error: `inbox_error_${CourierUtils.generateUUID()}`,
       unreadCount: `inbox_unread_count_${CourierUtils.generateUUID()}`,
-      feed: `inbox_feed_${CourierUtils.generateUUID()}`,
-      archive: `inbox_archive_${CourierUtils.generateUUID()}`,
+      totalCount: `inbox_total_count_${CourierUtils.generateUUID()}`,
+      messagesChanged: `inbox_messages_changed_${CourierUtils.generateUUID()}`,
       pageAdded: `inbox_page_added_${CourierUtils.generateUUID()}`,
-      messageChanged: `inbox_message_changed_${CourierUtils.generateUUID()}`,
-      messageAdded: `inbox_message_added_${CourierUtils.generateUUID()}`,
-      messageRemoved: `inbox_message_removed_${CourierUtils.generateUUID()}`
+      messageEvent: `inbox_message_event_${CourierUtils.generateUUID()}`,
     };
 
-    // Create the initial listeners
+    // Create the CourierInboxListener instance
     const listener = new CourierInboxListener(listenerId);
 
-    listener.onInitialLoad = await this.sharedBroadcaster.addListener(listenerIds.loading, (event: any) => {
-      props.onInitialLoad?.(event);
+    // 1) onLoading
+    listener.onLoading = await this.sharedBroadcaster.addListener(listenerIds.loading, (event: any) => {
+      // event is simply the boolean "isRefresh"
+      props.onLoading?.(event);
     });
 
+    // 2) onError
     listener.onError = await this.sharedBroadcaster.addListener(listenerIds.error, (event: any) => {
+      // event is the error message (string)
       props.onError?.(event);
     });
 
+    // 3) onUnreadCountChanged
     listener.onUnreadCountChanged = await this.sharedBroadcaster.addListener(listenerIds.unreadCount, (event: any) => {
+      // event is the unread count (number)
       props.onUnreadCountChanged?.(event);
     });
 
-    listener.onFeedChanged = await this.sharedBroadcaster.addListener(listenerIds.feed, (event: any) => {
-      const convertedMessages = this.convertMessages(event.messages);
-      const messageSet: InboxMessageSet = {
-        messages: convertedMessages,
-        totalMessageCount: event.totalMessageCount,
-        canPaginate: event.canPaginate
-      }
-      props.onFeedChanged?.(messageSet);
+    // 4) onTotalCountChanged
+    listener.onTotalCountChanged = await this.sharedBroadcaster.addListener(listenerIds.totalCount, (event: any) => {
+      // event => { feed: "feed"|"archive", totalCount: number }
+      props.onTotalCountChanged?.(event.totalCount, event.feed);
     });
 
-    listener.onArchiveChanged = await this.sharedBroadcaster.addListener(listenerIds.archive, (event: any) => {
+    // 5) onMessagesChanged
+    listener.onMessagesChanged = await this.sharedBroadcaster.addListener(listenerIds.messagesChanged, (event: any) => {
+      // event => { feed: "feed"|"archive", messages: any[], totalMessageCount: number, canPaginate: boolean }
       const convertedMessages = this.convertMessages(event.messages);
-      const messageSet: InboxMessageSet = {
-        messages: convertedMessages,
-        totalMessageCount: event.totalMessageCount,
-        canPaginate: event.canPaginate
-      }
-      props.onArchiveChanged?.(messageSet);
+      props.onMessagesChanged?.(convertedMessages, event.canPaginate, event.feed);
     });
 
+    // 6) onPageAdded
     listener.onPageAdded = await this.sharedBroadcaster.addListener(listenerIds.pageAdded, (event: any) => {
+      // event => { feed: "feed"|"archive", messages: any[], totalMessageCount: number, canPaginate: boolean, isFirstPage: boolean }
       const convertedMessages = this.convertMessages(event.messages);
-      const messageSet: InboxMessageSet = {
-        messages: convertedMessages,
-        totalMessageCount: event.totalMessageCount,
-        canPaginate: event.canPaginate
-      }
-      props.onPageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', messageSet);
+      props.onPageAdded?.(convertedMessages, event.canPaginate, event.isFirstPage, event.feed);
     });
 
-    listener.onMessageChanged = await this.sharedBroadcaster.addListener(listenerIds.messageChanged, (event: any) => {
-      const convertedMessage = this.convertMessage(event.message);
-      props.onMessageChanged?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
+    // 7) onMessageEvent
+    listener.onMessageEvent = await this.sharedBroadcaster.addListener(listenerIds.messageEvent, (event: any) => {
+      // event => { feed: "feed"|"archive", index: number, event: string, message: any }
+      const convertedMessage = InboxMessage.fromJson(event.message);
+      props.onMessageEvent?.(convertedMessage, event.index, event.feed, event.event);
     });
 
-    listener.onMessageAdded = await this.sharedBroadcaster.addListener(listenerIds.messageAdded, (event: any) => {
-      const convertedMessage = this.convertMessage(event.message);
-      props.onMessageAdded?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
-    });
-
-    listener.onMessageRemoved = await this.sharedBroadcaster.addListener(listenerIds.messageRemoved, (event: any) => {
-      const convertedMessage = this.convertMessage(event.message);
-      props.onMessageRemoved?.(event.feed === 'archived' ? 'archived' : 'feed', event.index, convertedMessage);
-    });
-
-    // Attach listener to native code
+    // Attach the listener to native iOS/Android via bridging
     const id = await Modules.Shared.addInboxListener(
       listenerId,
       listenerIds.loading,
       listenerIds.error,
       listenerIds.unreadCount,
-      listenerIds.feed,
-      listenerIds.archive,
+      listenerIds.totalCount,
+      listenerIds.messagesChanged,
       listenerIds.pageAdded,
-      listenerIds.messageChanged,
-      listenerIds.messageAdded,
-      listenerIds.messageRemoved
+      listenerIds.messageEvent
     );
 
-    // Add listener to manager
+    // Keep track so we can remove it later
     this.inboxListeners.set(id, listener);
 
     return listener;
-    
   }
 
   private convertMessages(messages: string[]): InboxMessage[] {
-    return messages.map(jsonString => {
-      try {
-        return JSON.parse(jsonString) as InboxMessage;
-      } catch (error) {
-        Courier.log(`Error parsing message: ${error}`);
-        return null;
-      }
-    }).filter((message): message is InboxMessage => message !== null);
-  }
-
-  private convertMessage(message: string): InboxMessage {
-    try {
-      return JSON.parse(message) as InboxMessage;
-    } catch (error) {
-      Courier.log(`Error parsing message: ${error}`);
-      throw error;
-    }
+    return messages.map(jsonString => InboxMessage.fromJson(jsonString));
   }
 
   /**
@@ -664,15 +630,13 @@ class Courier {
 
       // Remove emitters
       const listener = this.inboxListeners.get(props.listenerId);
-      listener?.onInitialLoad?.remove();
+      listener?.onLoading?.remove();
       listener?.onError?.remove();
       listener?.onUnreadCountChanged?.remove();
-      listener?.onFeedChanged?.remove();
-      listener?.onArchiveChanged?.remove();
+      listener?.onTotalCountChanged?.remove();
+      listener?.onMessagesChanged?.remove();
       listener?.onPageAdded?.remove();
-      listener?.onMessageChanged?.remove();
-      listener?.onMessageAdded?.remove();
-      listener?.onMessageRemoved?.remove();
+      listener?.onMessageEvent?.remove();
 
       // Remove the listener
       this.inboxListeners.delete(props.listenerId);
@@ -693,15 +657,13 @@ class Courier {
 
     // Remove all items from inboxListeners
     this.inboxListeners.forEach((listener) => {
-      listener?.onInitialLoad?.remove();
+      listener?.onLoading?.remove();
       listener?.onError?.remove();
       listener?.onUnreadCountChanged?.remove();
-      listener?.onFeedChanged?.remove();
-      listener?.onArchiveChanged?.remove();
+      listener?.onTotalCountChanged?.remove();
+      listener?.onMessagesChanged?.remove();
       listener?.onPageAdded?.remove();
-      listener?.onMessageChanged?.remove();
-      listener?.onMessageAdded?.remove();
-      listener?.onMessageRemoved?.remove();
+      listener?.onMessageEvent?.remove();
     });
     
     this.inboxListeners.clear();

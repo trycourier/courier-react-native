@@ -175,13 +175,15 @@ const InboxStyled = () => {
           {
             text: message.read ? 'Mark as Unread' : 'Mark as Read',
             onPress: () => {
-              message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
+              message.isRead ? message.markAsUnread() : message.markAsRead();
             },
           },
           {
             text: message.archived ? 'Unarchive' : 'Archive',
             onPress: () => {
-              message.archived ? null : Courier.shared.archiveMessage({ messageId: message.messageId });
+              if (!message.archived) {
+                message.markAsArchived();
+              }
             },
           },
           {
@@ -200,10 +202,10 @@ const InboxStyled = () => {
         (buttonIndex) => {
           switch (buttonIndex) {
             case 0:
-              message.read ? Courier.shared.unreadMessage({ messageId: message.messageId }) : Courier.shared.readMessage({ messageId: message.messageId });
+              message.isRead ? message.markAsUnread() : message.markAsRead();
               break;
             case 1:
-              message.archived ? null : Courier.shared.archiveMessage({ messageId: message.messageId });
+              message.isArchived ? null : message.markAsArchived();
               break;
           }
         }

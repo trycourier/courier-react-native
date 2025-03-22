@@ -139,12 +139,10 @@ RCT_EXTERN_METHOD(
   withLoadingId: (NSString*)loadingId
   withErrorId: (NSString*)errorId
   withUnreadCountId: (NSString*)unreadCountId
-  withFeedId: (NSString*)feedId
-  withArchiveId: (NSString*)archiveId
+  withTotalCountId: (NSString*)totalCountId
+  withMessagesChangedId: (NSString*)messagesChangedId
   withPageAddedId: (NSString*)pageAddedId
-  withMessageChangedId: (NSString*)messageChangedId
-  withMessageAddedId: (NSString*)messageAddedId
-  withMessageRemovedId: (NSString*)messageRemovedId
+  withMessageEventId: (NSString*)messageEventId
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
 )
