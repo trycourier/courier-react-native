@@ -241,8 +241,17 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod
-  fun addInboxListener(listenerId: String, loadingId: String, errorId: String, unreadCountId: String, feedId: String, archiveId: String, pageAddedId: String, messageChangedId: String, messageAddedId: String, messageRemovedId: String, promise: Promise) {
-
+  fun addInboxListener(
+    listenerId: String,
+    loadingId: String,
+    errorId: String,
+    unreadCountId: String,
+    totalCountId: String,
+    messagesChangedId: String,
+    pageAddedId: String,
+    messageEventId: String,
+    promise: Promise
+  ) = CoroutineScope(Dispatchers.Main).launch {
     val listener = Courier.shared.addInboxListener(
       onLoading = { isRefresh ->
         reactApplicationContext.sendEvent(
@@ -262,66 +271,56 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
           value = unreadCount
         )
       },
-      onFeedChanged = { messageSet ->
+      onTotalCountChanged = { totalCount, feed ->
+        val json = Arguments.createMap().apply {
+          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+          putInt("totalCount", totalCount)
+        }
         reactApplicationContext.sendEvent(
-          eventName = feedId,
-          value = messageSet.toJson()
+          eventName = totalCountId,
+          value = json
         )
       },
-      onArchiveChanged = { messageSet ->
+      onMessagesChanged = { messages, canPaginate, feed ->
+        val json = Arguments.createMap().apply {
+          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+          putArray("messages", messages.map { it.toJson() }.toWritableArray())
+          putBoolean("canPaginate", canPaginate)
+        }
         reactApplicationContext.sendEvent(
-          eventName = archiveId,
-          value = messageSet.toJson()
+          eventName = messagesChangedId,
+          value = json
         )
       },
-      onPageAdded = { feed, messageSet ->
-        val json = Arguments.createMap()
-        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
-        json.putArray("messages", messageSet.messages.map { it.toJson() }.toWritableArray())
-        json.putInt("totalMessageCount", messageSet.totalCount)
-        json.putBoolean("canPaginate", messageSet.canPaginate)
+      onPageAdded = { messages, canPaginate, isFirstPage, feed ->
+        val json = Arguments.createMap().apply {
+          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+          putArray("messages", messages.map { it.toJson() }.toWritableArray())
+          putBoolean("canPaginate", canPaginate)
+          putBoolean("isFirstPage", isFirstPage)
+        }
         reactApplicationContext.sendEvent(
           eventName = pageAddedId,
           value = json
         )
       },
-      onMessageAdded = { feed, index, message ->
-        val json = Arguments.createMap()
-        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
-        json.putInt("index", index)
-        json.putString("message", message.toJson())
+      onMessageEvent = { message, index, feed, event ->
+        val json = Arguments.createMap().apply {
+          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+          putInt("index", index)
+          putString("event", event.value)
+          putString("message", message.toJson())
+        }
         reactApplicationContext.sendEvent(
-          eventName = messageAddedId,
+          eventName = messageEventId,
           value = json
         )
-      },
-      onMessageChanged = { feed, index, message ->
-        val json = Arguments.createMap()
-        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
-        json.putInt("index", index)
-        json.putString("message", message.toJson())
-        reactApplicationContext.sendEvent(
-          eventName = messageChangedId,
-          value = json
-        )
-      },
-      onMessageRemoved = { feed, index, message ->
-        val json = Arguments.createMap()
-        json.putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archived")
-        json.putInt("index", index)
-        json.putString("message", message.toJson())
-        reactApplicationContext.sendEvent(
-          eventName = messageRemovedId,
-          value = json
-        )
-      },
+      }
     )
 
-    // Add listener
     inboxListeners[listenerId] = listener
 
     promise.resolve(listenerId)
-
   }
 
   private fun InboxMessageSet.toJson(): WritableMap? {

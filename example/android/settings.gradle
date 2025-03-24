@@ -1,4 +1,12 @@
 rootProject.name = 'CourierReactNativeExample'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
+def nativeModulesGradle = file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+if (nativeModulesGradle.exists()) {
+  apply from: nativeModulesGradle
+  applyNativeModulesSettingsGradle(settings)
+}
+
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+include ':courier-react-native'
+project(':courier-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/@trycourier/courier-react-native/android')
+includeBuild('../../node_modules/@react-native/gradle-plugin')

@@ -1,4 +1,4 @@
-import Courier, { CourierInboxView } from '@trycourier/courier-react-native';
+import { CourierInboxView } from '@trycourier/courier-react-native';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
