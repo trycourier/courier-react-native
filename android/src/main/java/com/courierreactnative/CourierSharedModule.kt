@@ -34,8 +34,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
-class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeModule(tag = "Shared Instance Error", name = "CourierSharedModule", reactContext = reactContext) {
+class CourierSharedModule(
+  reactContext: ReactApplicationContext
+) : ReactNativeModule(
+  tag = "Shared Instance Error",
+  name = "CourierSharedModule",
+  reactContext = reactContext
+) {
 
   // Listeners
   private var authenticationListeners = mutableMapOf<String, CourierAuthenticationListener>()
@@ -82,26 +87,36 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod
-  fun signIn(accessToken: String, clientKey: String?, userId: String, tenantId: String?, showLogs: Boolean, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    Courier.shared.signIn(
-      userId = userId,
-      tenantId = tenantId,
-      accessToken = accessToken,
-      clientKey = clientKey,
-      showLogs = showLogs
-    )
-    promise.resolve(null)
+  fun signIn(
+    accessToken: String,
+    clientKey: String?,
+    userId: String,
+    tenantId: String?,
+    showLogs: Boolean,
+    promise: Promise
+  ) {
+    CoroutineScope(Dispatchers.Main).launch {
+      Courier.shared.signIn(
+        userId = userId,
+        tenantId = tenantId,
+        accessToken = accessToken,
+        clientKey = clientKey,
+        showLogs = showLogs
+      )
+      promise.resolve(null)
+    }
   }
 
   @ReactMethod
-  fun signOut(promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    Courier.shared.signOut()
-    promise.resolve(null)
+  fun signOut(promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      Courier.shared.signOut()
+      promise.resolve(null)
+    }
   }
 
   @ReactMethod
   fun addAuthenticationListener(listenerId: String, promise: Promise) {
-
     // Create the listener
     val listener = Courier.shared.addAuthenticationListener { userId ->
       reactApplicationContext.sendEvent(
@@ -112,24 +127,15 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
 
     // Add the listener to the map
     authenticationListeners[listenerId] = listener
-
     promise.resolve(listenerId)
-
   }
 
   @ReactMethod
   fun removeAuthenticationListener(listenerId: String, promise: Promise) {
-
     val listener = authenticationListeners[listenerId]
-
-    // Disable the listener
     listener?.remove()
-
-    // Remove the id from the map
     authenticationListeners.remove(listenerId)
-
     promise.resolve(listenerId)
-
   }
 
   @ReactMethod
@@ -142,28 +148,34 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   // Push
 
   @ReactMethod
-  fun getAllTokens(promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    val tokens = Courier.shared.tokens
-    val resultMap = Arguments.createMap()
-    tokens.forEach { (key, value) ->
-      resultMap.putString(key, value)
+  fun getAllTokens(promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val tokens = Courier.shared.tokens
+      val resultMap = Arguments.createMap()
+      tokens.forEach { (key, value) ->
+        resultMap.putString(key, value)
+      }
+      promise.resolve(resultMap)
     }
-    promise.resolve(resultMap)
   }
 
   @ReactMethod
-  fun getToken(provider: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    val token = Courier.shared.getToken(provider)
-    promise.resolve(token)
+  fun getToken(provider: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val token = Courier.shared.getToken(provider)
+      promise.resolve(token)
+    }
   }
 
   @ReactMethod
-  fun setToken(provider: String, token: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      Courier.shared.setToken(provider, token)
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun setToken(provider: String, token: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        Courier.shared.setToken(provider, token)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
   }
 
@@ -181,62 +193,74 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod
-  fun openMessage(messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      Courier.shared.openMessage(messageId)
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun openMessage(messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        Courier.shared.openMessage(messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
   }
 
   @ReactMethod
-  fun archiveMessage(messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      Courier.shared.archiveMessage(messageId)
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun archiveMessage(messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        Courier.shared.archiveMessage(messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
   }
 
   @ReactMethod
-  fun clickMessage(messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      Courier.shared.clickMessage(messageId)
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun clickMessage(messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        Courier.shared.clickMessage(messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
   }
 
   @ReactMethod
-  fun readMessage(messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      Courier.shared.readMessage(messageId)
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun readMessage(messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        Courier.shared.readMessage(messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
   }
 
   @ReactMethod
-  fun unreadMessage(messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      Courier.shared.unreadMessage(messageId)
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun unreadMessage(messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        Courier.shared.unreadMessage(messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
   }
 
   @ReactMethod
-  fun readAllInboxMessages(promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      Courier.shared.readAllInboxMessages()
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun readAllInboxMessages(promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        Courier.shared.readAllInboxMessages()
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
   }
 
@@ -251,76 +275,77 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
     pageAddedId: String,
     messageEventId: String,
     promise: Promise
-  ) = CoroutineScope(Dispatchers.Main).launch {
-    val listener = Courier.shared.addInboxListener(
-      onLoading = { isRefresh ->
-        reactApplicationContext.sendEvent(
-          eventName = loadingId,
-          value = isRefresh
-        )
-      },
-      onError = { e ->
-        reactApplicationContext.sendEvent(
-          eventName = errorId,
-          value = e.message ?: "Courier Inbox Error"
-        )
-      },
-      onUnreadCountChanged = { unreadCount ->
-        reactApplicationContext.sendEvent(
-          eventName = unreadCountId,
-          value = unreadCount
-        )
-      },
-      onTotalCountChanged = { totalCount, feed ->
-        val json = Arguments.createMap().apply {
-          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
-          putInt("totalCount", totalCount)
+  ) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val listener = Courier.shared.addInboxListener(
+        onLoading = { isRefresh ->
+          reactApplicationContext.sendEvent(
+            eventName = loadingId,
+            value = isRefresh
+          )
+        },
+        onError = { e ->
+          reactApplicationContext.sendEvent(
+            eventName = errorId,
+            value = e.message ?: "Courier Inbox Error"
+          )
+        },
+        onUnreadCountChanged = { unreadCount ->
+          reactApplicationContext.sendEvent(
+            eventName = unreadCountId,
+            value = unreadCount
+          )
+        },
+        onTotalCountChanged = { totalCount, feed ->
+          val json = Arguments.createMap().apply {
+            putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+            putInt("totalCount", totalCount)
+          }
+          reactApplicationContext.sendEvent(
+            eventName = totalCountId,
+            value = json
+          )
+        },
+        onMessagesChanged = { messages, canPaginate, feed ->
+          val json = Arguments.createMap().apply {
+            putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+            putArray("messages", messages.map { it.toJson() }.toWritableArray())
+            putBoolean("canPaginate", canPaginate)
+          }
+          reactApplicationContext.sendEvent(
+            eventName = messagesChangedId,
+            value = json
+          )
+        },
+        onPageAdded = { messages, canPaginate, isFirstPage, feed ->
+          val json = Arguments.createMap().apply {
+            putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+            putArray("messages", messages.map { it.toJson() }.toWritableArray())
+            putBoolean("canPaginate", canPaginate)
+            putBoolean("isFirstPage", isFirstPage)
+          }
+          reactApplicationContext.sendEvent(
+            eventName = pageAddedId,
+            value = json
+          )
+        },
+        onMessageEvent = { message, index, feed, event ->
+          val json = Arguments.createMap().apply {
+            putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
+            putInt("index", index)
+            putString("event", event.value)
+            putString("message", message.toJson())
+          }
+          reactApplicationContext.sendEvent(
+            eventName = messageEventId,
+            value = json
+          )
         }
-        reactApplicationContext.sendEvent(
-          eventName = totalCountId,
-          value = json
-        )
-      },
-      onMessagesChanged = { messages, canPaginate, feed ->
-        val json = Arguments.createMap().apply {
-          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
-          putArray("messages", messages.map { it.toJson() }.toWritableArray())
-          putBoolean("canPaginate", canPaginate)
-        }
-        reactApplicationContext.sendEvent(
-          eventName = messagesChangedId,
-          value = json
-        )
-      },
-      onPageAdded = { messages, canPaginate, isFirstPage, feed ->
-        val json = Arguments.createMap().apply {
-          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
-          putArray("messages", messages.map { it.toJson() }.toWritableArray())
-          putBoolean("canPaginate", canPaginate)
-          putBoolean("isFirstPage", isFirstPage)
-        }
-        reactApplicationContext.sendEvent(
-          eventName = pageAddedId,
-          value = json
-        )
-      },
-      onMessageEvent = { message, index, feed, event ->
-        val json = Arguments.createMap().apply {
-          putString("feed", if (feed == InboxMessageFeed.FEED) "feed" else "archive")
-          putInt("index", index)
-          putString("event", event.value)
-          putString("message", message.toJson())
-        }
-        reactApplicationContext.sendEvent(
-          eventName = messageEventId,
-          value = json
-        )
-      }
-    )
+      )
 
-    inboxListeners[listenerId] = listener
-
-    promise.resolve(listenerId)
+      inboxListeners[listenerId] = listener
+      promise.resolve(listenerId)
+    }
   }
 
   private fun InboxMessageSet.toJson(): WritableMap? {
@@ -347,19 +372,24 @@ class CourierSharedModule(reactContext: ReactApplicationContext): ReactNativeMod
   }
 
   @ReactMethod
-  fun refreshInbox(promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
-    Courier.shared.refreshInbox()
-    promise.resolve(null)
-  }
-
-  @ReactMethod
-  fun fetchNextPageOfMessages(promise: Promise, inboxMessageFeed: String) = CoroutineScope(Dispatchers.Main).launch {
-    try {
-      val messageSet = Courier.shared.fetchNextInboxPage(if (inboxMessageFeed == "archived") InboxMessageFeed.ARCHIVE else InboxMessageFeed.FEED)
-      promise.resolve(messageSet?.toJson())
-    } catch (e: Exception) {
-      promise.apiError(e)
+  fun refreshInbox(promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      Courier.shared.refreshInbox()
+      promise.resolve(null)
     }
   }
 
+  @ReactMethod
+  fun fetchNextPageOfMessages(promise: Promise, inboxMessageFeed: String) {
+    CoroutineScope(Dispatchers.Main).launch {
+      try {
+        val messageSet = Courier.shared.fetchNextInboxPage(
+          if (inboxMessageFeed == "archived") InboxMessageFeed.ARCHIVE else InboxMessageFeed.FEED
+        )
+        promise.resolve(messageSet?.toJson())
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
+    }
+  }
 }

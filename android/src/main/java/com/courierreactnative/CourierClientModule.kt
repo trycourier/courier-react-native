@@ -15,7 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeModule(tag = "Client Error", name = "CourierClientModule", reactContext = reactContext) {
+class CourierClientModule(
+  reactContext: ReactApplicationContext
+) : ReactNativeModule(
+  tag = "Client Error",
+  name = "CourierClientModule",
+  reactContext = reactContext
+) {
 
   private var clients: MutableMap<String, CourierClient> = mutableMapOf()
 
@@ -31,7 +37,6 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun addClient(options: ReadableMap): String {
-
     val userId = options.getString("userId")
     val showLogs = if (options.hasKey("showLogs")) options.getBoolean("showLogs") else null
 
@@ -52,7 +57,6 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
     clients[uuid] = client
 
     return uuid
-
   }
 
   @ReactMethod(isBlockingSynchronousMethod = true)
@@ -64,378 +68,369 @@ class CourierClientModule(reactContext: ReactApplicationContext): ReactNativeMod
   // Tokens
 
   @ReactMethod
-  fun putUserToken(clientId: String, token: String, provider: String, device: ReadableMap?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun putUserToken(clientId: String, token: String, provider: String, device: ReadableMap?, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      if (reactActivity == null) {
+        promise.rejectMissingContext()
+        return@launch
+      }
+
+      val courierDevice = device?.let {
+        CourierDevice(
+          appId = it.getString("appId"),
+          adId = it.getString("adId"),
+          deviceId = it.getString("deviceId"),
+          platform = it.getString("platform"),
+          manufacturer = it.getString("manufacturer"),
+          model = it.getString("model")
+        )
+      }
+
+      try {
+        client.tokens.putUserToken(
+          token = token,
+          provider = provider,
+          device = courierDevice ?: CourierDevice.current(reactActivity!!)
+        )
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    if (reactActivity == null) {
-      promise.rejectMissingContext()
-      return@launch
-    }
-
-    val courierDevice = device?.let {
-      return@let CourierDevice(
-        appId = it.getString("appId"),
-        adId = it.getString("adId"),
-        deviceId = it.getString("deviceId"),
-        platform = it.getString("platform"),
-        manufacturer = it.getString("manufacturer"),
-        model = it.getString("model")
-      )
-    }
-
-    try {
-      client.tokens.putUserToken(
-        token = token,
-        provider = provider,
-        device = courierDevice ?: CourierDevice.current(reactActivity!!)
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun deleteUserToken(clientId: String, token: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun deleteUserToken(clientId: String, token: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.tokens.deleteUserToken(token = token)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.tokens.deleteUserToken(
-        token = token,
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   // Brands
 
   @ReactMethod
-  fun getBrand(clientId: String, brandId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getBrand(clientId: String, brandId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        val brand = client.brands.getBrand(brandId = brandId)
+        val json = brand.toJson()
+        promise.resolve(json)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      val brand = client.brands.getBrand(
-        brandId = brandId
-      )
-      val json = brand.toJson()
-      promise.resolve(json)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   // Inbox
 
   @ReactMethod
-  fun getMessages(clientId: String, paginationLimit: Int, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getMessages(clientId: String, paginationLimit: Int, startCursor: String?, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        val res = client.inbox.getMessages(
+          paginationLimit = paginationLimit,
+          startCursor = startCursor
+        )
+        val json = res.toJson()
+        promise.resolve(json)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      val res = client.inbox.getMessages(
-        paginationLimit = paginationLimit,
-        startCursor = startCursor,
-      )
-      val json = res.toJson()
-      promise.resolve(json)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun getArchivedMessages(clientId: String, paginationLimit: Int, startCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getArchivedMessages(clientId: String, paginationLimit: Int, startCursor: String?, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        val res = client.inbox.getArchivedMessages(
+          paginationLimit = paginationLimit,
+          startCursor = startCursor
+        )
+        val json = res.toJson()
+        promise.resolve(json)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      val res = client.inbox.getArchivedMessages(
-        paginationLimit = paginationLimit,
-        startCursor = startCursor,
-      )
-      val json = res.toJson()
-      promise.resolve(json)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun getMessageById(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getMessageById(clientId: String, messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        val res = client.inbox.getMessage(messageId = messageId)
+        val json = res.toJson()
+        promise.resolve(json)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      val res = client.inbox.getMessage(
-        messageId = messageId,
-      )
-      val json = res.toJson()
-      promise.resolve(json)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun getUnreadMessageCount(clientId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getUnreadMessageCount(clientId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        val count = client.inbox.getUnreadMessageCount()
+        promise.resolve(count)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      val count = client.inbox.getUnreadMessageCount()
-      promise.resolve(count)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun openMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun openMessage(clientId: String, messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.inbox.open(messageId = messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.inbox.open(
-        messageId = messageId,
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun readMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun readMessage(clientId: String, messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.inbox.read(messageId = messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.inbox.read(
-        messageId = messageId,
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun unreadMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun unreadMessage(clientId: String, messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.inbox.unread(messageId = messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.inbox.unread(
-        messageId = messageId,
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun clickMessage(clientId: String, messageId: String, trackingId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun clickMessage(clientId: String, messageId: String, trackingId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.inbox.click(
+          messageId = messageId,
+          trackingId = trackingId
+        )
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.inbox.click(
-        messageId = messageId,
-        trackingId = trackingId,
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun archiveMessage(clientId: String, messageId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun archiveMessage(clientId: String, messageId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.inbox.archive(messageId = messageId)
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.inbox.archive(
-        messageId = messageId,
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun readAllMessages(clientId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun readAllMessages(clientId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.inbox.readAll()
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.inbox.readAll()
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   // Preferences
 
   @ReactMethod
-  fun getUserPreferences(clientId: String, paginationCursor: String?, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getUserPreferences(clientId: String, paginationCursor: String?, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        val res = client.preferences.getUserPreferences(
+          paginationCursor = paginationCursor
+        )
+        val json = res.toJson()
+        promise.resolve(json)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      val res = client.preferences.getUserPreferences(
-        paginationCursor = paginationCursor
-      )
-      val json = res.toJson()
-      promise.resolve(json)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun getUserPreferenceTopic(clientId: String, topicId: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun getUserPreferenceTopic(clientId: String, topicId: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        val res = client.preferences.getUserPreferenceTopic(topicId = topicId)
+        val json = res.toJson()
+        promise.resolve(json)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      val res = client.preferences.getUserPreferenceTopic(
-        topicId = topicId
-      )
-      val json = res.toJson()
-      promise.resolve(json)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   @ReactMethod
-  fun putUserPreferenceTopic(clientId: String, topicId: String, status: String, hasCustomRouting: Boolean, customRouting: ReadableArray, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun putUserPreferenceTopic(
+    clientId: String,
+    topicId: String,
+    status: String,
+    hasCustomRouting: Boolean,
+    customRouting: ReadableArray,
+    promise: Promise
+  ) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.preferences.putUserPreferenceTopic(
+          topicId = topicId,
+          status = CourierPreferenceStatus.fromString(status),
+          hasCustomRouting = hasCustomRouting,
+          customRouting = customRouting.toArrayList()
+            .map { CourierPreferenceChannel.fromString(it as String) }
+        )
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.preferences.putUserPreferenceTopic(
-        topicId = topicId,
-        status = CourierPreferenceStatus.fromString(status),
-        hasCustomRouting = hasCustomRouting,
-        customRouting = customRouting.toArrayList().map { CourierPreferenceChannel.fromString(it as String) },
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
 
   // Tracking
 
   @ReactMethod
-  fun postTrackingUrl(clientId: String, url: String, event: String, promise: Promise) = CoroutineScope(Dispatchers.Main).launch {
+  fun postTrackingUrl(clientId: String, url: String, event: String, promise: Promise) {
+    CoroutineScope(Dispatchers.Main).launch {
+      val client = clients[clientId]
+      if (client == null) {
+        promise.rejectMissingClient()
+        return@launch
+      }
 
-    val client = clients[clientId]
-    if (client == null) {
-      promise.rejectMissingClient()
-      return@launch
+      try {
+        client.tracking.postTrackingUrl(
+          url = url,
+          event = CourierTrackingEvent.valueOf(event.uppercase())
+        )
+        promise.resolve(null)
+      } catch (e: Exception) {
+        promise.apiError(e)
+      }
     }
-
-    try {
-      client.tracking.postTrackingUrl(
-        url = url,
-        event = CourierTrackingEvent.valueOf(event.uppercase()),
-      )
-      promise.resolve(null)
-    } catch (e: Exception) {
-      promise.apiError(e)
-    }
-
   }
-
 }
