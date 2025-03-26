@@ -34,8 +34,6 @@ If you want to automatically sync [`Push Notification`](https://github.com/tryco
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
-#import <IntercomModule.h>
-#import "RNBootSplash.h"
 #import <React/RCTLinkingManager.h>
 
 @implementation AppDelegate
