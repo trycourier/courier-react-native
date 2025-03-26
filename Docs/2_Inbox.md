@@ -28,7 +28,7 @@ An in-app notification center list you can use to notify your users. Allows you 
                 </td>
             </tr>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Authentication.md">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/1_Authentication.md">
                     <code>Authentication</code>
                 </a>
             </td>
@@ -112,7 +112,7 @@ The styles you can use to quickly customize the `CourierInboxView`.
 
 #### ⚠️ Android Theme Requirement
 
-Be sure to add support for the material theme. More info [`here`](https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#%EF%B8%8F-important-android-requirement).
+Be sure to add support for the material theme. More info [`here`](https://github.com/trycourier/courier-react-native/blob/master/Docs/2_Inbox.md#%EF%B8%8F-important-android-requirement).
 
 Setting `CourierInboxTheme` will override your app's default `styles.xml` theme.
 
@@ -393,7 +393,7 @@ const Page = () => {
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#default-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/2_Inbox.md#default-inbox-example">
                     <code>Default</code>
                 </a>
             </td>
@@ -405,7 +405,7 @@ const Page = () => {
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#styled-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/2_Inbox.md#styled-inbox-example">
                     <code>Styled</code>
                 </a>
             </td>
@@ -417,7 +417,7 @@ const Page = () => {
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Inbox.md#custom-inbox-example">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/2_Inbox.md#custom-inbox-example">
                     <code>Custom</code>
                 </a>
             </td>

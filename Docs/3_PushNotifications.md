@@ -77,7 +77,7 @@ The easiest way to support push notifications in your app.
     <tbody>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Authentication.md">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/1_Authentication.md">
                     <code>Authentication</code>
                 </a>
             </td>
@@ -87,7 +87,7 @@ The easiest way to support push notifications in your app.
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/PushNotifications.md#1-setup-a-push-notification-provider">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/3_PushNotifications.md#1-setup-a-push-notification-provider">
                     <code>A Configured Provider</code>
                 </a>
             </td>
@@ -490,4 +490,4 @@ const tokens = await Courier.shared.getAllTokens();
 
 ---
 
-👋 `TokenManagement APIs` can be found <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/Client.md#token-management-apis"><code>here</code></a>
+👋 `TokenManagement APIs` can be found <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/5_Client.md#token-management-apis"><code>here</code></a>
