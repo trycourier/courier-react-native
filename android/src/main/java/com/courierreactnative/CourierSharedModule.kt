@@ -380,7 +380,7 @@ class CourierSharedModule(
   }
 
   @ReactMethod
-  fun fetchNextPageOfMessages(promise: Promise, inboxMessageFeed: String) {
+  fun fetchNextPageOfMessages(inboxMessageFeed: String, promise: Promise) {
     CoroutineScope(Dispatchers.Main).launch {
       try {
         val messageSet = Courier.shared.fetchNextInboxPage(
