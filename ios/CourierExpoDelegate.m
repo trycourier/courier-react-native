@@ -1,61 +1,57 @@
 //
-//  CourierReactNativeDelegate.m
+//  CourierExpoDelegate.m
 //  courier-react-native
 //
-//  Created by Michael Miller on 10/7/22.
+//  Created by Michael Miller on 3/25/25.
 //
 
+#import "CourierExpoDelegate.h"
+
 @import Courier_iOS;
-#import "CourierReactNativeDelegate.h"
-#pragma GCC diagnostic ignored "-Wprotocol"
-#pragma clang diagnostic ignored "-Wprotocol"
 
-@interface CourierReactNativeDelegate ()
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTLinkingManager.h>
 
-@property (nonatomic, copy) NSString *iosForegroundNotificationPresentationOptions;
-@property (nonatomic, assign) UNNotificationPresentationOptions notificationPresentationOptions;
+@implementation CourierExpoDelegate
 
-@end
+NSString *expoIosForegroundNotificationPresentationOptions = @"iosForegroundNotificationPresentationOptions";
+NSUInteger expoNotificationPresentationOptions = UNNotificationPresentationOptionNone;
 
-@implementation CourierReactNativeDelegate
-
-- (id) init {
-    
-    self = [super init];
-    
-    if (self) {
-        
-        // Set the user agent
-        Courier.agent = [CourierAgent reactNativeIOS:@"5.4.3"];
-        
-        // Register for remote notifications
-        UIApplication *app = [UIApplication sharedApplication];
-        [app registerForRemoteNotifications];
-        
-        // Register notification center changes
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        center.delegate = self;
-        
-        [[NSNotificationCenter defaultCenter]
-            addObserver:self
-            selector:@selector(notificationPresentationOptionsUpdate:)
-            name:_iosForegroundNotificationPresentationOptions
-            object:nil
-        ];
-        
-    }
-    
-    return(self);
-    
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  // Set the Courier user agent
+  Courier.agent = [CourierAgent reactNativeIOS:@"5.4.3"];
+  
+  // Register for remote notifications
+  [application registerForRemoteNotifications];
+  
+  // Set the UNUserNotificationCenter delegate
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  center.delegate = self;
+  
+  // Observe changes to the iOS foreground notification presentation options
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self
+      selector:@selector(notificationPresentationOptionsUpdate:)
+      name:expoIosForegroundNotificationPresentationOptions
+      object:nil
+  ];
+  
+  // Standard Expo/RN setup
+  self.moduleName = @"main";
+  self.initialProps = @{};
+  
+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-- (void) notificationPresentationOptionsUpdate:(NSNotification *) notification
+#pragma mark - Custom Courier / Notification Methods
+
+- (void)notificationPresentationOptionsUpdate:(NSNotification *)notification
 {
-    if ([[notification name] isEqualToString:_iosForegroundNotificationPresentationOptions])
-    {
-        NSDictionary *userInfo = notification.userInfo;
-        _notificationPresentationOptions = ((NSNumber *) [userInfo objectForKey:@"options"]).unsignedIntegerValue;
-    }
+  if ([[notification name] isEqualToString:expoIosForegroundNotificationPresentationOptions]) {
+    NSDictionary *userInfo = notification.userInfo;
+    expoNotificationPresentationOptions = ((NSNumber *)[userInfo objectForKey:@"options"]).unsignedIntegerValue;
+  }
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
@@ -75,7 +71,7 @@
         NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:pushNotification];
         
-        completionHandler(self->_notificationPresentationOptions);
+        completionHandler(expoNotificationPresentationOptions);
         
     });
     
