@@ -225,6 +225,12 @@ These are all the available features of the SDK.
 
 &emsp;
 
+# Expo
+
+If you are using Expo, you should check out the [Expo Docs](https://github.com/trycourier/courier-react-native/blob/master/Docs/6_Expo.md) for all the details.
+
+&emsp;
+
 # Example Projects
 
 Starter projects using this SDK.
