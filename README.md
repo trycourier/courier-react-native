@@ -118,16 +118,24 @@ Your app must support at least gradle `8.4`
 
 &emsp;
 
-### 3. Extend the `CourierReactNativeActivity`
-
-In your Android project, change your `MainActivity` to extend the `CourierReactNativeActivity`.
+### 3. Extend your `MainActivity` with `CourierReactNativeActivity`
 
 This allows the Courier SDK to manage the current user between app sessions.
 
+Java
 ```java
 import com.courierreactnative.CourierReactNativeActivity;
 
 public class MainActivity extends CourierReactNativeActivity {
+    ..
+}
+```
+
+Kotlin
+```kotlin
+import com.courierreactnative.CourierReactNativeActivity;
+
+class MainActivity : CourierReactNativeActivity() {
     ..
 }
 ```
