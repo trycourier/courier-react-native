@@ -1,6 +1,6 @@
 # Expo
 
-Details on adding Courier to your Expo app
+This is how to using `CourierReactNative` in an Expo app.
 
 &emsp;
 
