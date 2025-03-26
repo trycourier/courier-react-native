@@ -26,7 +26,7 @@
     if (self) {
         
         // Set the user agent
-        Courier.agent = [CourierAgent reactNativeIOS:@"5.4.3"];
+        Courier.agent = [CourierAgent reactNativeIOS:@"5.5.0"];
         
         // Register for remote notifications
         UIApplication *app = [UIApplication sharedApplication];
