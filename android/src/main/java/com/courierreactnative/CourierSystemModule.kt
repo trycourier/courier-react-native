@@ -2,10 +2,14 @@ package com.courierreactnative
 
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
 import com.courier.android.Courier
+import com.courier.android.models.CourierTrackingEvent.CLICKED
+import com.courier.android.models.CourierTrackingEvent.DELIVERED
 import com.courier.android.modules.isPushPermissionGranted
 import com.courier.android.modules.requestNotificationPermission
 import com.courier.android.utils.error
+import com.courier.android.utils.onPushNotificationEvent
 import com.courier.android.utils.pushNotification
 import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.bridge.Promise
@@ -15,6 +19,19 @@ import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 
 class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeModule(tag = "System Error", name = "CourierSystemModule", reactContext = reactContext) {
+
+  init {
+
+    // Handle delivered messages on the main thread
+    Courier.shared.onPushNotificationEvent { event ->
+      when (event.trackingEvent) {
+        CLICKED -> postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, event.remoteMessage)
+        DELIVERED -> postPushNotificationJavascriptEvent(CourierEvents.Push.DELIVERED_EVENT, event.remoteMessage)
+        else -> Log.w("CourierSystemModule", "Unknown tracking event: ${event.trackingEvent}")
+      }
+    }
+
+  }
 
   @ReactMethod
   fun addListener(type: String?) {
@@ -35,13 +52,13 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   private fun checkIntentForPushNotificationClick(intent: Intent?) {
     intent?.trackPushNotificationClick { message ->
-      postPushNotificationClicked(message)
+      postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, message)
     }
   }
 
-  private fun postPushNotificationClicked(message: RemoteMessage) {
+  private fun postPushNotificationJavascriptEvent(eventName: String, message: RemoteMessage) {
     reactApplicationContext.sendEvent(
-      eventName = CourierEvents.Push.CLICKED_EVENT,
+      eventName = eventName,
       value = JSONObject(message.pushNotification).toString()
     )
   }

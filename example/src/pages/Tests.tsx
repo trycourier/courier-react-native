@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, TouchableOpacity, TextInput, Modal, Button, Switch, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Courier, { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus, InboxMessageSet, iOSForegroundPresentationOptions } from '@trycourier/courier-react-native';
+import Courier, { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus, InboxMessage, iOSForegroundPresentationOptions } from '@trycourier/courier-react-native';
 import Env from '../Env';
 import { ExampleServer, Utils } from '../Utils';
 
@@ -442,14 +442,26 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   testAddInboxListener: async () => {
     const listener = await Courier.shared.addInboxListener({
-      onInitialLoad: () => {
-        console.log('Inbox initial load');
+      onLoading: (isRefresh: boolean) => {
+        console.log('Inbox loading:', isRefresh);
       },
-      onError: (error) => {
+      onError: (error: string) => {
         console.log('Inbox error:', error);
       },
-      onFeedChanged: (messageSet: InboxMessageSet) => {
-        console.log('Inbox messages changed:', messageSet);
+      onUnreadCountChanged: (unreadCount: number) => {
+        console.log('Inbox unread count changed:', unreadCount);
+      },
+      onTotalCountChanged: (totalCount: number, feed: string) => {
+        console.log('Inbox total count changed:', totalCount, feed);
+      },
+      onMessagesChanged: (messages: InboxMessage[], canPaginate: boolean, feed: string) => {
+        console.log('Inbox messages changed:', messages, canPaginate, feed);
+      },
+      onPageAdded: (messages: InboxMessage[], canPaginate: boolean, isFirstPage: boolean, feed: string) => {
+        console.log('Inbox page added:', messages, canPaginate, isFirstPage, feed);
+      },
+      onMessageEvent: (message: InboxMessage, index: number, feed: string, eventName: string) => {
+        console.log('Inbox message event:', message, index, feed, eventName);
       },
     });
     await listener.remove();

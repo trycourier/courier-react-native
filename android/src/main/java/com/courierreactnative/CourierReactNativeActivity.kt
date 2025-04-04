@@ -1,15 +1,10 @@
 package com.courierreactnative
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import com.courier.android.Courier
-import com.courier.android.utils.getLastDeliveredMessage
-import com.courier.android.utils.pushNotification
 import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.ReactActivity
-import com.google.firebase.messaging.RemoteMessage
-import org.json.JSONObject
 
 open class CourierReactNativeActivity : ReactActivity() {
 
@@ -27,11 +22,6 @@ open class CourierReactNativeActivity : ReactActivity() {
     // See if there is a pending click event
     checkIntentForPushNotificationClick(intent)
 
-    // Handle delivered messages on the main thread
-    Courier.shared.getLastDeliveredMessage { message ->
-      postPushNotificationDelivered(message)
-    }
-
   }
 
   override fun onNewIntent(intent: Intent?) {
@@ -40,25 +30,7 @@ open class CourierReactNativeActivity : ReactActivity() {
   }
 
   private fun checkIntentForPushNotificationClick(intent: Intent?) {
-    intent?.trackPushNotificationClick { message ->
-      postPushNotificationClicked(message)
-    }
-  }
-
-  @SuppressLint("VisibleForTests")
-  private fun postPushNotificationDelivered(message: RemoteMessage) {
-    reactInstanceManager.currentReactContext?.sendEvent(
-      eventName = CourierEvents.Push.DELIVERED_EVENT,
-      value = JSONObject(message.pushNotification).toString()
-    )
-  }
-
-  @SuppressLint("VisibleForTests")
-  private fun postPushNotificationClicked(message: RemoteMessage) {
-    reactInstanceManager.currentReactContext?.sendEvent(
-      eventName = CourierEvents.Push.CLICKED_EVENT,
-      value = JSONObject(message.pushNotification).toString()
-    )
+    intent?.trackPushNotificationClick {}
   }
 
 }
