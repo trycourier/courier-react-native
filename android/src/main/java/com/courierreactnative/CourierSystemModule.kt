@@ -22,7 +22,7 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   init {
 
-    // Handle delivered messages on the main thread
+    // Listen to push notification events
     Courier.shared.onPushNotificationEvent { event ->
       when (event.trackingEvent) {
         CLICKED -> postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, event.remoteMessage)

@@ -2,7 +2,7 @@
 //  CourierReactNativeDelegate.m
 //  courier-react-native
 //
-//  Created by Michael Miller on 10/7/22.
+//  Created by https://github.com/mikemilla on 10/7/22.
 //
 
 @import Courier_iOS;
@@ -12,19 +12,18 @@
 
 @interface CourierReactNativeDelegate ()
 
-@property (nonatomic, copy) NSString *iosForegroundNotificationPresentationOptions;
 @property (nonatomic, assign) UNNotificationPresentationOptions notificationPresentationOptions;
 
 @end
 
 @implementation CourierReactNativeDelegate
 
-- (id) init {
-    
+static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosForegroundNotificationPresentationOptions";
+
+- (id)init {
     self = [super init];
     
     if (self) {
-        
         // Set the user agent
         Courier.agent = [CourierAgent reactNativeIOS:@"5.5.3"];
         
@@ -39,28 +38,27 @@
         [[NSNotificationCenter defaultCenter]
             addObserver:self
             selector:@selector(notificationPresentationOptionsUpdate:)
-            name:_iosForegroundNotificationPresentationOptions
+            name:CourierForegroundOptionsDidChangeNotification
             object:nil
         ];
-        
     }
     
-    return(self);
-    
+    return self;
 }
 
-- (void) notificationPresentationOptionsUpdate:(NSNotification *) notification
+- (void)notificationPresentationOptionsUpdate:(NSNotification *)notification
 {
-    if ([[notification name] isEqualToString:_iosForegroundNotificationPresentationOptions])
+    if ([[notification name] isEqualToString:CourierForegroundOptionsDidChangeNotification])
     {
         NSDictionary *userInfo = notification.userInfo;
-        _notificationPresentationOptions = ((NSNumber *) [userInfo objectForKey:@"options"]).unsignedIntegerValue;
+        self.notificationPresentationOptions = ((NSNumber *)[userInfo objectForKey:@"options"]).unsignedIntegerValue;
     }
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
-    
     UNNotificationContent *content = notification.request.content;
     NSDictionary *message = content.userInfo;
     
@@ -71,19 +69,16 @@
     }];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-    
         NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:pushNotification];
-        
-        completionHandler(self->_notificationPresentationOptions);
-        
+        completionHandler(self.notificationPresentationOptions);
     });
-    
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler
 {
-    
     UNNotificationContent *content = response.notification.request.content;
     NSDictionary *message = content.userInfo;
     
@@ -94,22 +89,20 @@
     }];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-
         NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
-
         completionHandler();
-
     });
-    
 }
 
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+- (void)application:(UIApplication *)application
+didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-    NSLog(@"Failed to rgister for remote notification token: %@", error.localizedDescription);
+    NSLog(@"Failed to register for remote notification token: %@", error.localizedDescription);
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     [Courier setAPNSToken:deviceToken];
 }
