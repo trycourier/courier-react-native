@@ -576,7 +576,7 @@
 			baseConfigurationReference = C7AD9C1107FE681619533449 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 83BJVWGX4Q;
+				DEVELOPMENT_TEAM = VJQ245Q28G;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -593,7 +593,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CourierReactNativeExample.app/CourierReactNativeExample";
 			};
@@ -605,7 +605,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 83BJVWGX4Q;
+				DEVELOPMENT_TEAM = VJQ245Q28G;
 				INFOPLIST_FILE = CourierReactNativeExampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -618,7 +618,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CourierReactNativeExample.app/CourierReactNativeExample";
 			};
@@ -633,7 +633,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CourierReactNativeExample/CourierReactNativeExample.entitlements;
 				CURRENT_PROJECT_VERSION = 37;
-				DEVELOPMENT_TEAM = 83BJVWGX4Q;
+				DEVELOPMENT_TEAM = VJQ245Q28G;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = CourierReactNativeExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -647,7 +647,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn;
 				PRODUCT_NAME = CourierReactNativeExample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -664,7 +664,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CourierReactNativeExample/CourierReactNativeExample.entitlements;
 				CURRENT_PROJECT_VERSION = 37;
-				DEVELOPMENT_TEAM = 83BJVWGX4Q;
+				DEVELOPMENT_TEAM = VJQ245Q28G;
 				INFOPLIST_FILE = CourierReactNativeExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -677,7 +677,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn;
 				PRODUCT_NAME = CourierReactNativeExample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -697,7 +697,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 83BJVWGX4Q;
+				DEVELOPMENT_TEAM = VJQ245Q28G;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CourierService/Info.plist;
@@ -712,7 +712,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative.CourierService;
+				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn.CourierService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -737,7 +737,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 83BJVWGX4Q;
+				DEVELOPMENT_TEAM = VJQ245Q28G;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CourierService/Info.plist;
@@ -751,7 +751,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative.CourierService;
+				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn.CourierService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -830,10 +830,7 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -900,10 +897,7 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
