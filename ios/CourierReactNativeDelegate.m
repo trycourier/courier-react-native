@@ -33,7 +33,7 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
     if (self) {
       
         // Set the user agent
-        Courier.agent = [CourierAgent reactNativeIOS:@"5.5.7"];
+        Courier.agent = [CourierAgent reactNativeIOS:@"5.5.8"];
         
         // Register for remote notifications
         UIApplication *app = [UIApplication sharedApplication];
@@ -57,7 +57,7 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
       
         [[NSNotificationCenter defaultCenter]
             addObserver:self
-            selector:@selector(onReactUIReady:)
+            selector:@selector(onReactNativeReady:)
             name:RCTContentDidAppearNotification
             object:nil];
     }
@@ -66,7 +66,7 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
 }
 
 // Called when React Native is loaded and ready
-- (void)onReactUIReady:(__unused NSNotification *)note
+- (void)onReactNativeReady:(__unused NSNotification *)note
 {
   self.isReactNativeReady = YES;
 
