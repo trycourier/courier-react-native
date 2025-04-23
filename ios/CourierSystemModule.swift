@@ -6,10 +6,12 @@
 //
 
 import Courier_iOS
+import React
 
 @objc(CourierSystemModule)
 class CourierSystemModule: CourierReactNativeEventEmitter {
     
+    private var isReactNativeReady: Bool = false
     private var lastClickedMessage: [AnyHashable: Any]? = nil
     private var notificationCenter: NotificationCenter {
         get { return NotificationCenter.default }
@@ -38,6 +40,30 @@ class CourierSystemModule: CourierReactNativeEventEmitter {
             object: nil
         )
         
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(onReactNativeReady),
+            name: NSNotification.Name(rawValue: "RCTContentDidAppearNotification"),
+            object: nil
+        )
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(onBridgeWillReload),
+            name: NSNotification.Name(rawValue: "RCTBridgeWillReloadNotification"),
+            object: nil
+        )
+        
+    }
+    
+    // MARK: - RN Lifecycle Notifications
+
+    @objc private func onReactNativeReady(_ notification: Notification) {
+        isReactNativeReady = true
+    }
+
+    @objc private func onBridgeWillReload(_ notification: Notification) {
+        isReactNativeReady = false
     }
     
     @objc private func pushNotificationClicked(notification: Notification) {
@@ -70,16 +96,30 @@ class CourierSystemModule: CourierReactNativeEventEmitter {
     }
     
     @objc func registerPushNotificationClickedOnKilledState() {
-        
-        guard let message = lastClickedMessage else {
-            return
+        let pollInterval: UInt64 = 250_000_000  // 250ms
+        let timeout: UInt64 = 10_000_000_000    // 10s
+
+        // Poll until react native is ready
+        Task.detached(priority: .background) { [weak self] in
+            guard let self else { return }
+
+            let start = DispatchTime.now().uptimeNanoseconds
+
+            // Hold until react native is ready
+            while !self.isReactNativeReady, DispatchTime.now().uptimeNanoseconds - start < timeout {
+                try? await Task.sleep(nanoseconds: pollInterval)
+            }
+
+            // If possible, broadcast the message
+            await MainActor.run {
+                guard self.isReactNativeReady, let message = self.lastClickedMessage else {
+                    NSLog("[Courier] Timed out waiting for React Native or no message available.")
+                    return
+                }
+
+                self.broadcast(name: PushEvents.CLICKED_EVENT, message: message)
+            }
         }
-        
-        broadcast(
-            name: PushEvents.CLICKED_EVENT,
-            message: message
-        )
-        
     }
     
     // MARK: Open App

@@ -402,9 +402,7 @@ class Courier {
     // Attempt to fetch the last message that was clicked
     // This is needed for when the app is killed and the
     // user launched the app by clicking on a notifications
-    setTimeout(() => {
-      Modules.System.registerPushNotificationClickedOnKilledState();
-    }, 5000);
+    Modules.System.registerPushNotificationClickedOnKilledState();
 
     return pushListener;
 
