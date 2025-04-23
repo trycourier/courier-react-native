@@ -7,6 +7,7 @@
 
 @import Courier_iOS;
 #import "CourierReactNativeDelegate.h"
+#import <React/RCTRootView.h>
 #import <React/RCTBridge.h>
 #import <React/RCTBridge+Private.h>
 #import <React/RCTUtils.h>
@@ -17,7 +18,7 @@
 @interface CourierReactNativeDelegate ()
 
 @property (nonatomic, assign) UNNotificationPresentationOptions notificationPresentationOptions;
-@property (nonatomic, strong) NSDictionary *pendingNotificationClick;
+@property (nonatomic, strong) NSDictionary *cachedMessage;
 @property (nonatomic, assign) BOOL isReactNativeReady;
 
 @end
@@ -30,8 +31,9 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
     self = [super init];
     
     if (self) {
+      
         // Set the user agent
-        Courier.agent = [CourierAgent reactNativeIOS:@"5.5.6"];
+        Courier.agent = [CourierAgent reactNativeIOS:@"5.5.7"];
         
         // Register for remote notifications
         UIApplication *app = [UIApplication sharedApplication];
@@ -40,29 +42,45 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
         // Set notification center delegate
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = self;
-        
-        // Detect JS bridge load
-        self.isReactNativeReady = [self detectIfBridgeIsReady];
-
-        [[NSNotificationCenter defaultCenter]
-            addObserver:self
-            selector:@selector(onJavaScriptDidLoad:)
-            name:RCTJavaScriptDidLoadNotification
-            object:nil];
 
         [[NSNotificationCenter defaultCenter]
             addObserver:self
             selector:@selector(notificationPresentationOptionsUpdate:)
             name:CourierForegroundOptionsDidChangeNotification
             object:nil];
+      
+        [[NSNotificationCenter defaultCenter]
+            addObserver:self
+            selector:@selector(onBridgeWillReload)
+            name:RCTBridgeWillReloadNotification
+            object:nil];
+      
+        [[NSNotificationCenter defaultCenter]
+            addObserver:self
+            selector:@selector(onReactUIReady:)
+            name:RCTContentDidAppearNotification
+            object:nil];
     }
     
     return self;
 }
 
-- (BOOL)detectIfBridgeIsReady {
-    // RCTBridge currentBridge is non-nil only after JS is loaded
-    return [RCTBridge currentBridge] != nil;
+// Called when React Native is loaded and ready
+- (void)onReactUIReady:(__unused NSNotification *)note
+{
+  self.isReactNativeReady = YES;
+
+  // flush anything that was queued while RN was booting
+  if (self.cachedMessage) {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:self.cachedMessage];
+    self.cachedMessage = nil;
+  }
+}
+
+// Called when there is a reload to React Native
+- (void)onBridgeWillReload
+{
+  self.isReactNativeReady = NO;
 }
 
 - (void)notificationPresentationOptionsUpdate:(NSNotification *)notification
@@ -71,21 +89,7 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
     self.notificationPresentationOptions = ((NSNumber *)[userInfo objectForKey:@"options"]).unsignedIntegerValue;
 }
 
-- (void)onJavaScriptDidLoad:(NSNotification *)notification
-{
-    self.isReactNativeReady = YES;
-
-    if (self.pendingNotificationClick) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked"
-                                                            object:nil
-                                                          userInfo:self.pendingNotificationClick];
-        self.pendingNotificationClick = nil;
-    }
-}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
 {
     UNNotificationContent *content = response.notification.request.content;
     NSDictionary *message = content.userInfo;
@@ -97,22 +101,18 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     }];
 
     NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
-
+    
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.isReactNativeReady) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked"
-                                                                object:nil
-                                                              userInfo:pushNotification];
-        } else {
-            self.pendingNotificationClick = pushNotification;
-        }
-        completionHandler();
+      if (self.isReactNativeReady) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:pushNotification];
+      } else {
+        self.cachedMessage = pushNotification;
+      }
+      completionHandler();
     });
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-       willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
     UNNotificationContent *content = notification.request.content;
     NSDictionary *message = content.userInfo;
@@ -125,23 +125,25 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
     dispatch_async(dispatch_get_main_queue(), ^{
         NSDictionary *pushNotification = [Courier formatPushNotificationWithContent:content];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered"
-                                                            object:nil
-                                                          userInfo:pushNotification];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationDelivered" object:nil userInfo:pushNotification];
         completionHandler(self.notificationPresentationOptions);
     });
 }
 
-- (void)application:(UIApplication *)application
-didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
     NSLog(@"[Courier] Failed to register for remote notifications: %@", error.localizedDescription);
 }
 
-- (void)application:(UIApplication *)application
-didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     [Courier setAPNSToken:deviceToken];
+}
+
+- (void)dealloc
+{
+  self.cachedMessage = nil;
+  self.isReactNativeReady = NO;
 }
 
 @end
