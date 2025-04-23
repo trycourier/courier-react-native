@@ -25,7 +25,7 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
     
     if (self) {
         // Set the user agent
-        Courier.agent = [CourierAgent reactNativeIOS:@"5.5.4"];
+        Courier.agent = [CourierAgent reactNativeIOS:@"5.5.5"];
         
         // Register for remote notifications
         UIApplication *app = [UIApplication sharedApplication];
@@ -46,12 +46,44 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
     return self;
 }
 
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    // Killed-state launch support
+    [self handleNotificationLaunchFromKilledState:launchOptions];
+
+    return YES;
+}
+
 - (void)notificationPresentationOptionsUpdate:(NSNotification *)notification
 {
     if ([[notification name] isEqualToString:CourierForegroundOptionsDidChangeNotification])
     {
         NSDictionary *userInfo = notification.userInfo;
         self.notificationPresentationOptions = ((NSNumber *)[userInfo objectForKey:@"options"]).unsignedIntegerValue;
+    }
+}
+
+/// Handles notification taps when the app launches from a killed state.
+/// Call this from AppDelegate's didFinishLaunchingWithOptions using UIApplicationLaunchOptionsRemoteNotificationKey.
+- (void)handleNotificationLaunchFromKilledState:(NSDictionary *)launchOptions
+{
+    NSDictionary *userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    if (userInfo) {
+        // Track event
+        [userInfo trackMessageWithEvent:CourierTrackingEventClicked completion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"[Courier] Failed to track message click on cold start: %@", error.localizedDescription);
+            }
+        }];
+
+        // Create temporary content for formatting
+        UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+        content.userInfo = userInfo;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSDictionary *formatted = [Courier formatPushNotificationWithContent:content];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"pushNotificationClicked" object:nil userInfo:formatted];
+        });
     }
 }
 
