@@ -58,8 +58,9 @@ class CourierPreferencesView : UIView {
             },
             onError: { [weak self] error in
                 self?.onPreferenceError?([
-                    "error" : error.message
+                    "error": error.message
                 ])
+                return error.message
             }
         )
         
