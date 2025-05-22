@@ -65,7 +65,7 @@ class Courier {
 
     // Sets the initial SDK values
     // will show all foreground notification styles in iOS
-    Courier.setIOSForegroundPresentationOptions({ 
+    Courier.setIOSForegroundPresentationOptions({
       options: ['sound', 'badge', 'list', 'banner']
     });
 
@@ -251,7 +251,7 @@ class Courier {
   public async signIn(props: { accessToken: string, clientKey?: string, userId: string, tenantId?: string, showLogs?: boolean }): Promise<void> {
     this.isDebugging = props.showLogs ?? __DEV__;
     return await Modules.Shared.signIn(
-      props.accessToken, 
+      props.accessToken,
       props.clientKey ?? null,
       props.userId,
       props.tenantId ?? null,
@@ -386,7 +386,7 @@ class Courier {
    * @returns {CourierPushListener} The created push notification listener.
    */
   public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
-    
+
     const listenerId = `push_${CourierUtils.generateUUID()}`;
 
     const pushListener = new CourierPushListener(
@@ -665,7 +665,7 @@ class Courier {
       listener?.onPageAdded?.remove();
       listener?.onMessageEvent?.remove();
     });
-    
+
     this.inboxListeners.clear();
 
   }
@@ -687,7 +687,16 @@ class Courier {
     const messages = await Modules.Shared.fetchNextPageOfMessages(props.inboxMessageFeed);
     return messages.map((message: string) => JSON.parse(message));
   }
-  
+
+  /**
+   * Sets a flag to indicate if UI tests are active.
+   */
+  public static setIsUITestsActive(isActive: boolean): void {
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      Modules.System.setIsUITestsActive(isActive);
+    }
+  }
+
 }
 
 export default Courier;
