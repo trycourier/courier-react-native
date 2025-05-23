@@ -348,4 +348,8 @@ RCT_EXTERN_METHOD(
   return YES;
 }
 
+RCT_EXTERN_METHOD(
+  setIsUITestsActive: (BOOL)isActive
+)
+
 @end
