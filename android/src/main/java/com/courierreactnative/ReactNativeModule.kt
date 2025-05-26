@@ -34,7 +34,6 @@ abstract class ReactNativeModule(val tag: String, private val name: String, reac
 
   @ReactMethod
   fun setIsUITestsActive(isActive: Boolean) {
-      Courier.shared.isUITestsActive = isActive
+    Courier.isUITestsActive = isActive
   }
-
 }
