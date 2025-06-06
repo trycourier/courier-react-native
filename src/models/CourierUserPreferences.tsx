@@ -46,6 +46,7 @@ export function getCourierUserPreferencesStatusTitle(status: CourierUserPreferen
 
 export enum CourierUserPreferencesChannel {
   DirectMessage = "direct_message",
+  Inbox = "inbox",
   Email = "email",
   Push = "push",
   Sms = "sms",
@@ -58,6 +59,8 @@ export function getCourierUserPreferencesChannelTitle(channel: CourierUserPrefer
   switch (channel) {
     case CourierUserPreferencesChannel.DirectMessage:
       return "In App Messages";
+    case CourierUserPreferencesChannel.Inbox:
+      return "Inbox";
     case CourierUserPreferencesChannel.Email:
       return "Emails";
     case CourierUserPreferencesChannel.Push:
