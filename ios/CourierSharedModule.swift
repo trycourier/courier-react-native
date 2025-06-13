@@ -2,7 +2,7 @@ import Courier_iOS
 
 @objc(CourierSharedModule)
 class CourierSharedModule: CourierReactNativeEventEmitter {
-    
+
     private var nativeEmitters = [String]()
     private var authenticationListeners: [String: CourierAuthenticationListener] = [:]
     private var inboxListeners: [String: CourierInboxListener] = [:]
@@ -11,29 +11,29 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         removeAuthListeners()
         removeInboxListeners()
     }
-  
+
     @objc(attachEmitter:withResolver:withRejecter:)
     func attachEmitter(emitterId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         nativeEmitters.append(emitterId)
         resolve(emitterId)
-        
+
     }
-    
+
     // MARK: Client
-  
+
     @objc(getClient:withRejecter:)
     func getClient(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
-        
+
             guard let options = await Courier.shared.client?.options else {
                 resolve(nil)
                 return
             }
-        
+
             do {
-                  
+
                 let dictionary = [
                     "jwt": options.jwt as Any,
                     "clientKey": options.clientKey as Any,
@@ -43,29 +43,29 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                     "showLogs": options.showLogs as Any
                 ]
                 .compactMapValues { $0 }
-                
+
                 let jsonData = try JSONSerialization.data(
                     withJSONObject: dictionary,
                     options: .prettyPrinted
                 )
-                
+
                 guard let jsonString = String(data: jsonData, encoding: .utf8) else {
                     resolve(nil)
                     return
                 }
-                
+
                 resolve(jsonString)
-                  
+
             } catch {
                 resolve(nil)
             }
-          
+
         }
-        
+
     }
-    
+
     // MARK: Authentication
-    
+
     @objc(getUserId:withRejecter:)
     func getUserId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -73,7 +73,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(userId)
         }
     }
-    
+
     @objc(getTenantId:withRejecter:)
     func getTenantId(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -81,7 +81,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(tenantId)
         }
     }
-    
+
     @objc(getIsUserSignedIn:withRejecter:)
     func getIsUserSignedIn(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -92,9 +92,9 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
 
     @objc(signIn:withClientKey:withUserId:withTenantId:withShowLogs:withResolver:withRejecter:)
     func signIn(accessToken: String, clientKey: String?, userId: String, tenantId: String?, showLogs: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
+
         Task {
-            
+
             await Courier.shared.signIn(
                 userId: userId,
                 tenantId: tenantId,
@@ -102,11 +102,11 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 clientKey: clientKey,
                 showLogs: showLogs
             )
-            
+
             resolve(nil)
-            
+
         }
-      
+
     }
 
     @objc(signOut:withRejecter:)
@@ -119,43 +119,43 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
 
     @objc(addAuthenticationListener:withResolver:withRejecter:)
     func addAuthenticationListener(listenerId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
+
         Task {
-            
+
             let listener = await Courier.shared.addAuthenticationListener { [weak self] userId in
                 self?.broadcast(
                     name: listenerId,
                     body: userId
                 )
             }
-            
+
             authenticationListeners[listenerId] = listener
-            
+
             resolve(listenerId)
-          
+
         }
-        
+
     }
-    
+
     @objc(removeAuthenticationListener:withResolver:withRejecter:)
     func removeAuthenticationListener(listenerId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
+
         Task {
-            
+
             let listener = authenticationListeners[listenerId]
-            
+
             // Disable the listener
             listener?.remove()
-            
+
             // Remove the id from the map
             authenticationListeners.removeValue(forKey: listenerId)
-            
+
             resolve(listenerId)
-          
+
         }
-        
+
     }
-    
+
     @objc(removeAllAuthenticationListeners:withRejecter:)
     func removeAllAuthenticationListeners(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -163,19 +163,19 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(nil)
         }
     }
-  
+
     private func removeAuthListeners() {
-      
+
         for value in authenticationListeners.values {
             value.remove()
         }
-      
+
         authenticationListeners.removeAll()
-      
+
     }
-    
+
     // MARK: Push
-    
+
     @objc(getAllTokens:withRejecter:)
     func getAllTokens(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         Task {
@@ -183,20 +183,20 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(tokens)
         }
     }
-    
+
     @objc(getToken:withResolver:withRejecter:)
     func getToken(provider: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             let token = await Courier.shared.getToken(for: provider)
             resolve(token)
         }
-        
+
     }
 
     @objc(setToken:withToken:withResolver:withRejecter:)
     func setToken(provider: String, token: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             do {
                 try await Courier.shared.setToken(
@@ -208,11 +208,11 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 Rejections.sharedError(reject, error: error)
             }
         }
-    
+
     }
-    
+
     // MARK: Inbox
-    
+
     @objc(getInboxPaginationLimit:withRejecter:)
     func getInboxPaginationLimit(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -220,7 +220,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(limit)
         }
     }
-    
+
     @objc(setInboxPaginationLimit:withResolver:withRejecter:)
     func setInboxPaginationLimit(limit: Double, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -229,10 +229,10 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(limit)
         }
     }
-    
+
     @objc(openMessage:withResolver:withRejecter:)
     func openMessage(messageId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             do {
                 try await Courier.shared.openMessage(messageId)
@@ -241,12 +241,12 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 Rejections.sharedError(reject, error: error)
             }
         }
-        
+
     }
-    
+
     @objc(archiveMessage:withResolver:withRejecter:)
     func archiveMessage(messageId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             do {
                 try await Courier.shared.archiveMessage(messageId)
@@ -255,12 +255,12 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 Rejections.sharedError(reject, error: error)
             }
         }
-        
+
     }
-    
+
     @objc(clickMessage:withResolver:withRejecter:)
     func clickMessage(messageId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             do {
                 try await Courier.shared.clickMessage(messageId)
@@ -269,12 +269,12 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 Rejections.sharedError(reject, error: error)
             }
         }
-        
+
     }
-    
+
     @objc(readMessage:withResolver:withRejecter:)
     func readMessage(messageId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             do {
                 try await Courier.shared.readMessage(messageId)
@@ -283,12 +283,12 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 Rejections.sharedError(reject, error: error)
             }
         }
-        
+
     }
-    
+
     @objc(unreadMessage:withResolver:withRejecter:)
     func unreadMessage(messageId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             do {
                 try await Courier.shared.unreadMessage(messageId)
@@ -297,12 +297,12 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 Rejections.sharedError(reject, error: error)
             }
         }
-        
+
     }
-    
+
     @objc(readAllInboxMessages:withRejecter:)
     func readAllInboxMessages(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        
+
         Task {
             do {
                 try await Courier.shared.readAllInboxMessages()
@@ -311,9 +311,9 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 Rejections.sharedError(reject, error: error)
             }
         }
-        
+
     }
-    
+
     @objc(addInboxListener:withLoadingId:withErrorId:withUnreadCountId:withTotalCountId:withMessagesChangedId:withPageAddedId:withMessageEventId:withResolver:withRejecter:)
     func addInboxListener(
         listenerId: String,
@@ -327,7 +327,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) -> Void {
-      
+
       Task {
           let listener = await Courier.shared.addInboxListener(
               onLoading: { [weak self] isRefresh in
@@ -419,34 +419,34 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                   }
               }
           )
-          
+
           // Store the listener so you can remove it later if needed
           inboxListeners[listenerId] = listener
-          
+
           // Resolve with the listenerId so JS knows the registration succeeded
           resolve(listenerId)
       }
     }
-    
+
     @objc(removeInboxListener:withResolver:withRejecter:)
     func removeInboxListener(listenerId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        
+
         Task {
-            
+
             let listener = inboxListeners[listenerId]
-            
+
             // Disable the listener
             listener?.remove()
-            
+
             // Remove the id from the map
             inboxListeners.removeValue(forKey: listenerId)
-            
+
             resolve(listenerId)
-          
+
         }
-        
+
     }
-    
+
     @objc(removeAllInboxListeners:withRejecter:)
     func removeAllInboxListeners(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -454,14 +454,14 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(nil)
         }
     }
-  
+
     private func removeInboxListeners() {
         for value in inboxListeners.values {
             value.remove()
         }
         inboxListeners.removeAll()
     }
-    
+
     @objc(refreshInbox: withRejecter:)
     func refreshInbox(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -469,7 +469,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
             resolve(nil)
         }
     }
-    
+
     @objc(fetchNextPageOfMessages:withResolver:withRejecter:)
     func fetchNextPageOfMessages(inboxMessageFeed: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
@@ -486,5 +486,10 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     override func supportedEvents() -> [String]! {
         return nativeEmitters
     }
-    
+
+    @objc(setIsUITestsActive:)
+    func setIsUITestsActive(_ isActive: Bool) {
+      Courier.isUITestsActive = isActive
+    }
+
 }

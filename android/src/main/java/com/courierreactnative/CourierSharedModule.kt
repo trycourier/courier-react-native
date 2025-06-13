@@ -392,4 +392,9 @@ class CourierSharedModule(
       }
     }
   }
+
+  @ReactMethod
+  fun setIsUITestsActive(isActive: Boolean) {
+    Courier.shared.isUITestsActive = isActive
+  }
 }

@@ -447,9 +447,4 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
         }
     }
 
-    @objc(setIsUITestsActive:)
-    func setIsUITestsActive(_ isActive: Bool) {
-      Courier.isUITestsActive = isActive
-    }
-
 }

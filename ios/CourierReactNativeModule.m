@@ -174,6 +174,8 @@ RCT_EXTERN_METHOD(
   return YES;
 }
 
+RCT_EXTERN_METHOD(setIsUITestsActive:(BOOL)isActive)
+
 @end
 
 @interface RCT_EXTERN_MODULE(CourierClientModule, NSObject)
@@ -347,9 +349,5 @@ RCT_EXTERN_METHOD(
 {
   return YES;
 }
-
-RCT_EXTERN_METHOD(
-  setIsUITestsActive: (BOOL)isActive
-)
 
 @end
