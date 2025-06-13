@@ -5,6 +5,7 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 
 abstract class ReactNativeModule(val tag: String, private val name: String, reactContext: ReactApplicationContext): ReactContextBaseJavaModule(reactContext)  {
 
@@ -34,6 +35,6 @@ abstract class ReactNativeModule(val tag: String, private val name: String, reac
 
   @ReactMethod
   fun setIsUITestsActive(isActive: Boolean) {
-    Courier.isUITestsActive = isActive
+    Courier.shared.isUITestsActive = isActive
   }
 }
