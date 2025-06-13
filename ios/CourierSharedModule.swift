@@ -486,5 +486,10 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     override func supportedEvents() -> [String]! {
         return nativeEmitters
     }
+
+    @objc(setIsUITestsActive:)
+    func setIsUITestsActive(_ isActive: Bool) {
+      Courier.isUITestsActive = isActive
+    }
     
 }

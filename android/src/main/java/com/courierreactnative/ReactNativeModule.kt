@@ -32,8 +32,4 @@ abstract class ReactNativeModule(val tag: String, private val name: String, reac
     throwable.message?.let { reject(it, tag, throwable) }
   }
 
-  @ReactMethod
-  fun setIsUITestsActive(isActive: Boolean) {
-    Courier.isUITestsActive = isActive
-  }
 }
