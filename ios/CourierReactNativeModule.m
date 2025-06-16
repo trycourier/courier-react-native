@@ -169,6 +169,10 @@ RCT_EXTERN_METHOD(
   withRejecter: (RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(
+  setIsUITestsActive: (BOOL)isActive
+)
+
 + (BOOL)requiresMainQueueSetup
 {
   return YES;
@@ -347,9 +351,5 @@ RCT_EXTERN_METHOD(
 {
   return YES;
 }
-
-RCT_EXTERN_METHOD(
-  setIsUITestsActive: (BOOL)isActive
-)
 
 @end
