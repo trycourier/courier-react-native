@@ -693,7 +693,7 @@ class Courier {
    */
   public static setIsUITestsActive(isActive: boolean): void {
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      Modules.System.setIsUITestsActive(isActive);
+      Modules.Shared.setIsUITestsActive(isActive);
     }
   }
 
