@@ -17,13 +17,6 @@ If you want to automatically sync [`Push Notification`](https://github.com/tryco
 ### 1. Add this file to your iOS Project
 
 ```swift
-//
-//  CourierExpoDelgate.swift
-//  exposwift
-//
-//  Created by https://github.com/mikemilla on 7/17/25.
-//
-
 import UIKit
 import UserNotifications
 import Courier_iOS
