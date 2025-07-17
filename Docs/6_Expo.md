@@ -10,8 +10,6 @@ This is how to using `CourierReactNative` in an Expo app.
 
 If you want to automatically sync [`Push Notification`](https://github.com/trycourier/courier-react-native/blob/master/Docs/3_PushNotifications.md) tokens you will need to update your `AppDelegate` files.
 
-&emsp;
-
 <details>
 
 <summary>Swift</summary>
@@ -27,6 +25,8 @@ You can add an image or a code block, too.
 ```
 
 </details>
+
+<details>
 
 <summary>Objective C</summary>
 
