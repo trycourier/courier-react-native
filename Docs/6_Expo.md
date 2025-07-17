@@ -14,8 +14,6 @@ If you want to automatically sync [`Push Notification`](https://github.com/tryco
 
 <summary>Swift</summary>
 
-&emsp;
-
 ### 1. Add this file to you iOS Project
 
 ```swift
