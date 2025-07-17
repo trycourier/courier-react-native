@@ -1,25 +1,17 @@
 <details>
-<summary>📱 Objective‑C</summary>
 
-<br/>
+<summary>Tips for collapsed sections</summary>
 
-**`AppDelegate.h`**
-```objc
-// your Objective‑C code here
-AppDelegate.mm
+### You can add a header
 
-objc
-Copy
-Edit
-// your Objective‑C code here
-</details>
-<details> <summary>🚀 Swift</summary> <br/>
-AppDelegate.swift
+You can add text within a collapsed section.
 
-swift
-Copy
-Edit
-// your Swift code here
+You can add an image or a code block, too.
+
+```ruby
+   puts "Hello World"
+```
+
 </details>
 
 # Expo
