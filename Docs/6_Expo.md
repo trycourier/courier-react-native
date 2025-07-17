@@ -12,7 +12,7 @@ If you want to automatically sync [`Push Notification`](https://github.com/tryco
 
 <details>
 
-<summary>### Swift</summary>
+<summary>Swift</summary>
 
 ### You can add a header
 
@@ -28,7 +28,7 @@ You can add an image or a code block, too.
 
 <details>
 
-<summary>### Objective C</summary>
+<summary>Objective C</summary>
 
 `AppDelegate.h`
 
