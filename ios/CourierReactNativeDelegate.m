@@ -33,7 +33,7 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
     if (self) {
       
         // Set the user agent
-        Courier.agent = [CourierAgent reactNativeIOS:@"5.6.7"];
+        Courier.agent = [CourierAgent reactNativeIOS:@"5.6.8"];
         
         // Register for remote notifications
         UIApplication *app = [UIApplication sharedApplication];
