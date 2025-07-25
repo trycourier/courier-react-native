@@ -256,6 +256,6 @@ Starter projects using this SDK.
 
 # **Share feedback with Courier**
 
-We are building the best SDKs for handling notifications! Have an idea or feedback about our SDKs? Here are some links to contact us:
+We want to make this the best SDK for managing notifications! Have an idea or feedback about our SDKs? Let us know!
 
-- [Courier React Native Issues](https://github.com/trycourier/courier-react-native/issues)
+[Courier React Native Issues](https://github.com/trycourier/courier-react-native/issues)
