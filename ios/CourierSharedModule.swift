@@ -474,7 +474,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     func fetchNextPageOfMessages(inboxMessageFeed: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
             do {
-                let value: InboxMessageFeed = inboxMessageFeed == "archive" ? .feed : .archive
+                let value: InboxMessageFeed = inboxMessageFeed == "archive" ? .archive : .feed
                 let messages = try await Courier.shared.fetchNextInboxPage(value)
                 resolve(try messages.map { try $0.toJson() ?? "" })
             } catch {
