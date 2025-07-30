@@ -13,8 +13,6 @@ const InboxCustom = () => {
 
   useEffect(() => {
     const initInbox = async () => {
-      await Courier.shared.setInboxPaginationLimit(100);
-
       const inboxListener = await Courier.shared.addInboxListener({
         onLoading(isRefresh: boolean) {
           if (isRefresh) {
@@ -150,7 +148,9 @@ const InboxCustom = () => {
         }}
         onEndReached={() => {
           if (canPaginate) {
-            Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' });
+            Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' }).then(messages => {
+              console.log(messages.length);
+            });
           }
         }}
       />

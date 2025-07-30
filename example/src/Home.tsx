@@ -34,7 +34,7 @@ const Home = () => {
 
       // Setup Inbox
 
-      await Courier.shared.setInboxPaginationLimit(100);
+      await Courier.shared.setInboxPaginationLimit(10);
 
       const inboxListener = await Courier.shared.addInboxListener({
         onUnreadCountChanged(unreadCount) {

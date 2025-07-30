@@ -436,6 +436,7 @@ class Courier {
   /**
    * Gets the current pagination limit for inbox messages.
    * @returns {Promise<number>} A promise that resolves with the current pagination limit.
+   * Default is 32.
    */
   public async getInboxPaginationLimit(): Promise<number> {
     return await Modules.Shared.getInboxPaginationLimit();
@@ -445,6 +446,7 @@ class Courier {
    * Sets the pagination limit for inbox messages.
    * @param {number} limit - The new pagination limit to set.
    * @returns {Promise<void>} A promise that resolves when the limit is set.
+   * Default is 32.
    */
   public async setInboxPaginationLimit(limit: number): Promise<void> {
     await Modules.Shared.setInboxPaginationLimit(limit);
@@ -684,8 +686,9 @@ class Courier {
    * @returns {Promise<InboxMessage[]>} A promise that resolves with an array of fetched inbox messages.
    */
   public async fetchNextPageOfMessages(props: { inboxMessageFeed: InboxMessageFeed }): Promise<InboxMessage[]> {
-    const messages = await Modules.Shared.fetchNextPageOfMessages(props.inboxMessageFeed);
-    return messages.map((message: string) => JSON.parse(message));
+    const data = await Modules.Shared.fetchNextPageOfMessages(props.inboxMessageFeed);
+    const parsedData = data ? JSON.parse(data) : [];
+    return parsedData.messages;
   }
 
   /**
