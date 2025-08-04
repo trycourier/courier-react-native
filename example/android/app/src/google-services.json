@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "762517715380",
     "project_id": "react-native-courier",
-    "storage_bucket": "react-native-courier.appspot.com"
+    "storage_bucket": "react-native-courier.firebasestorage.app"
   },
   "client": [
     {
@@ -10,6 +10,25 @@
         "mobilesdk_app_id": "1:762517715380:android:379d53ae07c2d9d9da1ae1",
         "android_client_info": {
           "package_name": "com.courierreactnativeexample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3d6Mey5kG8LpeEEzkEigj1HAsLZ9tlIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762517715380:android:9dc54b66d0e79817da1ae1",
+        "android_client_info": {
+          "package_name": "com.courierreactnativeexample.app"
         }
       },
       "oauth_client": [],

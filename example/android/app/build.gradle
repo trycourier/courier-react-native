@@ -79,10 +79,10 @@ android {
   namespace "com.courierreactnativeexample"
 
   defaultConfig {
-    applicationId "com.courierreactnativeexample"
+    applicationId "com.courierreactnativeexample.app"
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
-    versionCode 34
+    versionCode 37
     versionName "1.0"
   }
   signingConfigs {
@@ -93,7 +93,7 @@ android {
       keyPassword 'android'
     }
     release {
-      storeFile file('/Users/mike/Desktop/keys/keystore.jks')
+      storeFile file('/Users/michaelmiller/Desktop/android_keystore')
       storePassword '12341234'
       keyAlias 'key0'
       keyPassword '12341234'
