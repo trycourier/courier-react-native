@@ -383,10 +383,10 @@ class CourierSharedModule(
   fun fetchNextPageOfMessages(inboxMessageFeed: String, promise: Promise) {
     CoroutineScope(Dispatchers.Main).launch {
       try {
-        val messageSet = Courier.shared.fetchNextInboxPage(
-          if (inboxMessageFeed == "archived") InboxMessageFeed.ARCHIVE else InboxMessageFeed.FEED
-        )
-        promise.resolve(messageSet?.toJson())
+        val feed = if (inboxMessageFeed == "archived") InboxMessageFeed.ARCHIVE else InboxMessageFeed.FEED
+        val messageSet = Courier.shared.fetchNextInboxPage(feed)
+        val json = messageSet?.toJson().toString()
+        promise.resolve(json)
       } catch (e: Exception) {
         promise.apiError(e)
       }

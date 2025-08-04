@@ -1,6 +1,6 @@
 PODS:
   - boost (1.83.0)
-  - courier-react-native (5.6.10):
+  - courier-react-native (5.6.13):
     - Courier_iOS (= 5.7.15)
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1264,7 +1264,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  courier-react-native: 5dd64125529f0a69a0e014e06134bc87afe2cbf3
+  courier-react-native: 37d36f98029782dfdf66f7058c9527f292863368
   Courier_iOS: 1930efadafa3c7fd9c13b695582dfd10b8ba68fd
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: 9f533d5a4c75ca77c8ed774aced1a91a0701781e

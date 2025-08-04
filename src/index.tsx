@@ -687,8 +687,8 @@ class Courier {
    */
   public async fetchNextPageOfMessages(props: { inboxMessageFeed: InboxMessageFeed }): Promise<InboxMessage[]> {
     const data = await Modules.Shared.fetchNextPageOfMessages(props.inboxMessageFeed);
-    const parsedData = data ? JSON.parse(data) : [];
-    return parsedData.messages;
+    const parsedData = data ? JSON.parse(data) : undefined;
+    return parsedData?.messages ?? [];
   }
 
   /**
