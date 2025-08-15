@@ -14,10 +14,10 @@
 		27960AEA2A9D62100076CE04 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 27960AE92A9D62100076CE04 /* Fonts */; };
 		27EA85212AA12AEB002BFB5B /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EA85202AA12AEB002BFB5B /* NotificationService.swift */; };
 		27EA85252AA12AEB002BFB5B /* CourierService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27EA851E2AA12AEB002BFB5B /* CourierService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		28CCA1DF77BA5C0588D65254 /* libPods-CourierReactNativeExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BCBFC742A18E26B82535214 /* libPods-CourierReactNativeExample.a */; };
+		28B78DE0BFA0D2E1FF0B5239 /* libPods-CourierService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 413297E3CE0410DDCCE3E20E /* libPods-CourierService.a */; };
+		47CBAA0E468842B301405C96 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4267AE89289334F22347DB6 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		8E889F66CAF92CC77DB630EE /* libPods-CourierService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CCFD51F7202BBD81BC3E3AB /* libPods-CourierService.a */; };
-		A053D70D12BA833312EF9B25 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE98AC9133A941372C8336E6 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a */; };
+		BFC171A3BD24F11FA7EF2235 /* libPods-CourierReactNativeExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D43845845067C0BD67EA579E /* libPods-CourierReactNativeExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,28 +55,28 @@
 		00E356EE1AD99517003FC87E /* CourierReactNativeExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CourierReactNativeExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* CourierReactNativeExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CourierReactNativeExampleTests.m; sourceTree = "<group>"; };
-		0CCFD51F7202BBD81BC3E3AB /* libPods-CourierService.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierService.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* CourierReactNativeExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CourierReactNativeExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = CourierReactNativeExample/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = CourierReactNativeExample/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CourierReactNativeExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CourierReactNativeExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = CourierReactNativeExample/main.m; sourceTree = "<group>"; };
-		1BCBFC742A18E26B82535214 /* libPods-CourierReactNativeExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierReactNativeExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27960AE92A9D62100076CE04 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
 		27960AEF2A9E71960076CE04 /* CourierReactNativeExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = CourierReactNativeExample.entitlements; path = CourierReactNativeExample/CourierReactNativeExample.entitlements; sourceTree = "<group>"; };
 		27EA851E2AA12AEB002BFB5B /* CourierService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CourierService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		27EA85202AA12AEB002BFB5B /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		27EA85222AA12AEB002BFB5B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C72CB490C52FC47A50E6339 /* Pods-CourierReactNativeExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample.release.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample.release.xcconfig"; sourceTree = "<group>"; };
-		30E327091F38C129BB5B91E1 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig"; sourceTree = "<group>"; };
-		7D2F963B64A4E883C8AC904B /* Pods-CourierReactNativeExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample.debug.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample.debug.xcconfig"; sourceTree = "<group>"; };
+		413297E3CE0410DDCCE3E20E /* libPods-CourierService.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierService.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C76479379FC82DC88A1F8B8 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		6C29C4CCE3685212192D74BC /* Pods-CourierReactNativeExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample.release.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CourierReactNativeExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		C7AD9C1107FE681619533449 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
-		CD0DFD532AA08E316DAE46E9 /* Pods-CourierService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierService.release.xcconfig"; path = "Target Support Files/Pods-CourierService/Pods-CourierService.release.xcconfig"; sourceTree = "<group>"; };
-		CE98AC9133A941372C8336E6 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DA475149BEE8387B88E514B4 /* Pods-CourierService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierService.debug.xcconfig"; path = "Target Support Files/Pods-CourierService/Pods-CourierService.debug.xcconfig"; sourceTree = "<group>"; };
+		A4267AE89289334F22347DB6 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AACB90BA55DA1744B8237882 /* Pods-CourierService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierService.debug.xcconfig"; path = "Target Support Files/Pods-CourierService/Pods-CourierService.debug.xcconfig"; sourceTree = "<group>"; };
+		D43845845067C0BD67EA579E /* libPods-CourierReactNativeExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierReactNativeExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F335BCFE11502757BCB55127 /* Pods-CourierReactNativeExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample.debug.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample.debug.xcconfig"; sourceTree = "<group>"; };
+		F680340EB75ABCC6DA7DFEE2 /* Pods-CourierService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierService.release.xcconfig"; path = "Target Support Files/Pods-CourierService/Pods-CourierService.release.xcconfig"; sourceTree = "<group>"; };
+		F901D6CC0B87D1F1C7E2DA78 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A053D70D12BA833312EF9B25 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a in Frameworks */,
+				47CBAA0E468842B301405C96 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,7 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28CCA1DF77BA5C0588D65254 /* libPods-CourierReactNativeExample.a in Frameworks */,
+				BFC171A3BD24F11FA7EF2235 /* libPods-CourierReactNativeExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E889F66CAF92CC77DB630EE /* libPods-CourierService.a in Frameworks */,
+				28B78DE0BFA0D2E1FF0B5239 /* libPods-CourierService.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,9 +152,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				1BCBFC742A18E26B82535214 /* libPods-CourierReactNativeExample.a */,
-				CE98AC9133A941372C8336E6 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a */,
-				0CCFD51F7202BBD81BC3E3AB /* libPods-CourierService.a */,
+				D43845845067C0BD67EA579E /* libPods-CourierReactNativeExample.a */,
+				A4267AE89289334F22347DB6 /* libPods-CourierReactNativeExample-CourierReactNativeExampleTests.a */,
+				413297E3CE0410DDCCE3E20E /* libPods-CourierService.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -195,12 +195,12 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7D2F963B64A4E883C8AC904B /* Pods-CourierReactNativeExample.debug.xcconfig */,
-				2C72CB490C52FC47A50E6339 /* Pods-CourierReactNativeExample.release.xcconfig */,
-				C7AD9C1107FE681619533449 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig */,
-				30E327091F38C129BB5B91E1 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig */,
-				DA475149BEE8387B88E514B4 /* Pods-CourierService.debug.xcconfig */,
-				CD0DFD532AA08E316DAE46E9 /* Pods-CourierService.release.xcconfig */,
+				F335BCFE11502757BCB55127 /* Pods-CourierReactNativeExample.debug.xcconfig */,
+				6C29C4CCE3685212192D74BC /* Pods-CourierReactNativeExample.release.xcconfig */,
+				F901D6CC0B87D1F1C7E2DA78 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig */,
+				4C76479379FC82DC88A1F8B8 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig */,
+				AACB90BA55DA1744B8237882 /* Pods-CourierService.debug.xcconfig */,
+				F680340EB75ABCC6DA7DFEE2 /* Pods-CourierService.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -212,12 +212,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "CourierReactNativeExampleTests" */;
 			buildPhases = (
-				04CE4347607FBA89A8B4B372 /* [CP] Check Pods Manifest.lock */,
+				C70D77AF89ED491E4F9C4CC2 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				2C911425902DD0377E7DB097 /* [CP] Copy Pods Resources */,
-				C4A55E95E268DD7C40F02FB7 /* [CP] Embed Pods Frameworks */,
+				7127FE9ABDEEA6D41C7055F8 /* [CP] Embed Pods Frameworks */,
+				3F1F3FEFBE91A754FC38A1A0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -233,15 +233,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CourierReactNativeExample" */;
 			buildPhases = (
-				D099D79AD749D5E18CA58063 /* [CP] Check Pods Manifest.lock */,
+				5077C09F7F23A9D368E837F1 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				27EA85262AA12AEB002BFB5B /* Embed Foundation Extensions */,
-				33B6EC7CAE6B2AFA57539375 /* [CP] Copy Pods Resources */,
-				D9C4D22DF14ED62C2802C458 /* [CP] Embed Pods Frameworks */,
+				43F491899709BE7191662969 /* [CP] Embed Pods Frameworks */,
+				95DA7A8197ABFAD9B2853CAA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -257,11 +257,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 27EA85292AA12AEB002BFB5B /* Build configuration list for PBXNativeTarget "CourierService" */;
 			buildPhases = (
-				BACF82FFF817F78EC7792D5F /* [CP] Check Pods Manifest.lock */,
+				E1F9F2C2291D4EC7E8DA58B6 /* [CP] Check Pods Manifest.lock */,
 				27EA851A2AA12AEB002BFB5B /* Sources */,
 				27EA851B2AA12AEB002BFB5B /* Frameworks */,
 				27EA851C2AA12AEB002BFB5B /* Resources */,
-				5D721DC8A4A00A22730B3FD2 /* [CP] Copy Pods Resources */,
+				9DA1A47678FDAB693FBCC8D1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -307,8 +307,8 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* CourierReactNativeExample */,
-				00E356ED1AD99517003FC87E /* CourierReactNativeExampleTests */,
 				27EA851D2AA12AEB002BFB5B /* CourierService */,
+				00E356ED1AD99517003FC87E /* CourierReactNativeExampleTests */,
 			);
 		};
 /* End PBXProject section */
@@ -357,29 +357,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		04CE4347607FBA89A8B4B372 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2C911425902DD0377E7DB097 /* [CP] Copy Pods Resources */ = {
+		3F1F3FEFBE91A754FC38A1A0 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -396,80 +374,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		33B6EC7CAE6B2AFA57539375 /* [CP] Copy Pods Resources */ = {
+		43F491899709BE7191662969 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5D721DC8A4A00A22730B3FD2 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BACF82FFF817F78EC7792D5F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CourierService-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C4A55E95E268DD7C40F02FB7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D099D79AD749D5E18CA58063 /* [CP] Check Pods Manifest.lock */ = {
+		5077C09F7F23A9D368E837F1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -491,21 +413,99 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D9C4D22DF14ED62C2802C458 /* [CP] Embed Pods Frameworks */ = {
+		7127FE9ABDEEA6D41C7055F8 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample-CourierReactNativeExampleTests/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		95DA7A8197ABFAD9B2853CAA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierReactNativeExample/Pods-CourierReactNativeExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9DA1A47678FDAB693FBCC8D1 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CourierService/Pods-CourierService-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C70D77AF89ED491E4F9C4CC2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CourierReactNativeExample-CourierReactNativeExampleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E1F9F2C2291D4EC7E8DA58B6 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CourierService-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -573,7 +573,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C7AD9C1107FE681619533449 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig */;
+			baseConfigurationReference = F901D6CC0B87D1F1C7E2DA78 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = VJQ245Q28G;
@@ -601,7 +601,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 30E327091F38C129BB5B91E1 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig */;
+			baseConfigurationReference = 4C76479379FC82DC88A1F8B8 /* Pods-CourierReactNativeExample-CourierReactNativeExampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -626,14 +626,14 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7D2F963B64A4E883C8AC904B /* Pods-CourierReactNativeExample.debug.xcconfig */;
+			baseConfigurationReference = F335BCFE11502757BCB55127 /* Pods-CourierReactNativeExample.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CourierReactNativeExample/CourierReactNativeExample.entitlements;
-				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = VJQ245Q28G;
+				CURRENT_PROJECT_VERSION = 43;
+				DEVELOPMENT_TEAM = 83BJVWGX4Q;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = CourierReactNativeExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -647,7 +647,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn;
+				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative;
 				PRODUCT_NAME = CourierReactNativeExample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -657,14 +657,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C72CB490C52FC47A50E6339 /* Pods-CourierReactNativeExample.release.xcconfig */;
+			baseConfigurationReference = 6C29C4CCE3685212192D74BC /* Pods-CourierReactNativeExample.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CourierReactNativeExample/CourierReactNativeExample.entitlements;
-				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = VJQ245Q28G;
+				CURRENT_PROJECT_VERSION = 43;
+				DEVELOPMENT_TEAM = 83BJVWGX4Q;
 				INFOPLIST_FILE = CourierReactNativeExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -677,7 +677,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn;
+				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative;
 				PRODUCT_NAME = CourierReactNativeExample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -686,7 +686,7 @@
 		};
 		27EA85272AA12AEB002BFB5B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DA475149BEE8387B88E514B4 /* Pods-CourierService.debug.xcconfig */;
+			baseConfigurationReference = AACB90BA55DA1744B8237882 /* Pods-CourierService.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -697,7 +697,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = VJQ245Q28G;
+				DEVELOPMENT_TEAM = 83BJVWGX4Q;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CourierService/Info.plist;
@@ -712,7 +712,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn.CourierService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative.CourierService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -725,7 +725,7 @@
 		};
 		27EA85282AA12AEB002BFB5B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CD0DFD532AA08E316DAE46E9 /* Pods-CourierService.release.xcconfig */;
+			baseConfigurationReference = F680340EB75ABCC6DA7DFEE2 /* Pods-CourierService.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -737,7 +737,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = VJQ245Q28G;
+				DEVELOPMENT_TEAM = 83BJVWGX4Q;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CourierService/Info.plist;
@@ -751,7 +751,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = courier.expo.rn.CourierService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.courier.reactnative.CourierService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
