@@ -136,7 +136,7 @@ const secondaryColor = '#EA6866';
 const titleFont = Platform.OS === 'ios' ? 'Avenir Black' : 'fonts/poppins_regular.otf';
 const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf';
 
-const theme: CourierInboxTheme = {
+const lightTheme: CourierInboxTheme = {
   brandId: "your_brand_id",
   tabIndicatorColor: primaryColor,
   tabStyle: {
@@ -280,10 +280,14 @@ const theme: CourierInboxTheme = {
   }
 };
 
+const darkTheme: CourierInboxTheme = {
+  tabIndicatorColor: primaryColor,
+};
+
 <CourierInboxView 
   theme={{
-    light: theme,
-    dark: theme
+    light: lightTheme,
+    dark: darkTheme
   }}
   onClickInboxMessageAtIndex={(message, index) => {
     console.log(message)
@@ -490,3 +494,4 @@ await Courier.shared.archiveMessage({ messageId: 'asdf' });
 // Fetch a new page of messages
 cosnt newMessages = await Courier.shared.fetchNextPageOfMessages();
 ```
+
