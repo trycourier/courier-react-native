@@ -13,10 +13,22 @@ const InboxDefault = () => {
       height: '100%',
     },
   });
+
+  const lightTheme = {
+    tabIndicatorColor: '#000000',
+  }
+
+  const darkTheme = {
+    tabIndicatorColor: '#FFFFFF',
+  }
   
   return (
     <View style={styles.container}>
       <CourierInboxView
+        theme={{
+          light: lightTheme,
+          dark: darkTheme,
+        }}
         onClickInboxMessageAtIndex={async (message, _index) => {
           message.isRead ? await message.markAsUnread() : await message.markAsRead()
         }}  
