@@ -252,9 +252,9 @@ class Courier {
     this.isDebugging = props.showLogs ?? __DEV__;
     return await Modules.Shared.signIn(
       props.accessToken,
-      props.clientKey ?? null,
+      props.clientKey,
       props.userId,
-      props.tenantId ?? null,
+      props.tenantId,
       this.isDebugging
     );
   }
