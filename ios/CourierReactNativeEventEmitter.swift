@@ -14,7 +14,7 @@ internal class CourierReactNativeEventEmitter: RCTEventEmitter {
         
         // Set the user agent
         // Used to know the platform performing requests
-        Courier.agent = CourierAgent.reactNativeIOS("5.6.15")
+        Courier.agent = CourierAgent.reactNativeIOS("5.6.16")
         
     }
     
