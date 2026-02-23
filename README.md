@@ -1,5 +1,7 @@
 <img width="1040" alt="banner-react-native" src="https://github.com/user-attachments/assets/c38f52d8-792f-4b51-a423-f1c5dd9f996b">
 
+<!-- AUTO-GENERATED-OVERVIEW:START — Do not edit this section. It is synced from mintlify-docs. -->
+
 &emsp;
 
 # Requirements & Support
@@ -139,6 +141,8 @@ class MainActivity : CourierReactNativeActivity() {
     ..
 }
 ```
+
+<!-- AUTO-GENERATED-OVERVIEW:END -->
 
 &emsp;
 
