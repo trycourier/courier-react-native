@@ -1,3 +1,5 @@
+> **Note**: These docs have moved to [courier.com/docs/sdk-libraries/react-native](https://www.courier.com/docs/sdk-libraries/react-native/). The content below may be outdated.
+
 # Expo
 
 This is how to using `CourierReactNative` in an Expo app.

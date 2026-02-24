@@ -160,12 +160,12 @@ These are all the available features of the SDK.
                 1
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/1_Authentication.md">
+                <a href="https://www.courier.com/docs/sdk-libraries/react-native/#authentication">
                     <code>Authentication</code>
                 </a>
             </td>
             <td align="left">
-                Manages user credentials between app sessions. Required if you would like to use <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/2_Inbox.md"><code>Courier Inbox</code></a> and <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/3_PushNotifications.md"><code>Push Notifications</code></a>.
+                Manages user credentials between app sessions. Required if you would like to use <a href="https://www.courier.com/docs/sdk-libraries/react-native/#inbox"><code>Courier Inbox</code></a> and <a href="https://www.courier.com/docs/sdk-libraries/react-native/#push-notifications"><code>Push Notifications</code></a>.
             </td>
         </tr>
         <tr width="600px">
@@ -173,7 +173,7 @@ These are all the available features of the SDK.
                 2
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/2_Inbox.md">
+                <a href="https://www.courier.com/docs/sdk-libraries/react-native/#inbox">
                     <code>Inbox</code>
                 </a>
             </td>
@@ -186,7 +186,7 @@ These are all the available features of the SDK.
                 3
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/3_PushNotifications.md">
+                <a href="https://www.courier.com/docs/sdk-libraries/react-native/#push-notifications">
                     <code>Push Notifications</code>
                 </a>
             </td>
@@ -199,7 +199,7 @@ These are all the available features of the SDK.
                 4
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/4_Preferences.md">
+                <a href="https://www.courier.com/docs/sdk-libraries/react-native/#preferences">
                     <code>Preferences</code>
                 </a>
             </td>
@@ -212,7 +212,7 @@ These are all the available features of the SDK.
                 5
             </td>
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/Docs/5_Client.md">
+                <a href="https://www.courier.com/docs/sdk-libraries/react-native/#courierclient">
                     <code>CourierClient</code>
                 </a>
             </td>
@@ -227,7 +227,7 @@ These are all the available features of the SDK.
 
 # Expo
 
-If you are using Expo, you should check out the [Expo Docs](https://github.com/trycourier/courier-react-native/blob/master/Docs/6_Expo.md) for all the details.
+If you are using Expo, you should check out the [Expo Docs](https://www.courier.com/docs/sdk-libraries/react-native/#expo) for all the details.
 
 &emsp;
 

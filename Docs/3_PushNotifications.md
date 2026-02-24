@@ -1,5 +1,7 @@
 <img width="1040" alt="banner-react-native-push" src="https://github.com/trycourier/courier-react-native/assets/6370613/67762338-2f2b-4b46-bf28-1462ca742fed">
 
+> **Note**: These docs have moved to [courier.com/docs/sdk-libraries/react-native](https://www.courier.com/docs/sdk-libraries/react-native/). The content below may be outdated.
+
 &emsp;
 
 # Push Notifications
