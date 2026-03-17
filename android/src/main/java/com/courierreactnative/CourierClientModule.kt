@@ -50,6 +50,7 @@ class CourierClientModule(
       userId = userId,
       connectionId = options.getString("connectionId"),
       tenantId = options.getString("tenantId"),
+      apiUrls = options.getMap("apiUrls")?.toApiUrls() ?: CourierClient.ApiUrls(),
       showLogs = showLogs
     )
 

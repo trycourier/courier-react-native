@@ -1,9 +1,10 @@
-import { BrandClient } from "..";
-import { ClientModule } from "./ClientModule";
-import { InboxClient } from "./InboxClient";
-import { PreferenceClient } from "./PreferenceClient";
-import { TokenClient } from "./TokenClient";
-import { TrackingClient } from "./TrackingClient";
+import { BrandClient } from '..';
+import { ClientModule } from './ClientModule';
+import { InboxClient } from './InboxClient';
+import { PreferenceClient } from './PreferenceClient';
+import { TokenClient } from './TokenClient';
+import { TrackingClient } from './TrackingClient';
+import { CourierApiUrls } from '../CourierApiUrls';
 
 export interface CourierClientOptions {
   userId: string;
@@ -12,10 +13,10 @@ export interface CourierClientOptions {
   clientKey?: string;
   connectionId?: string;
   tenantId?: string;
+  apiUrls?: CourierApiUrls;
 }
 
 export class CourierClient extends ClientModule {
-
   public readonly options: CourierClientOptions;
   public readonly tokens: TokenClient;
   public readonly brands: BrandClient;
@@ -23,8 +24,15 @@ export class CourierClient extends ClientModule {
   public readonly preferences: PreferenceClient;
   public readonly tracking: TrackingClient;
 
-  constructor(props: { userId: string, jwt?: string, clientKey?: string, connectionId?: string, tenantId?: string, showLogs?: boolean }) {
-
+  constructor(props: {
+    userId: string;
+    jwt?: string;
+    clientKey?: string;
+    connectionId?: string;
+    tenantId?: string;
+    apiUrls?: CourierApiUrls;
+    showLogs?: boolean;
+  }) {
     const options = {
       userId: props.userId,
       showLogs: props.showLogs ?? __DEV__,
@@ -32,18 +40,17 @@ export class CourierClient extends ClientModule {
       clientKey: props.clientKey,
       connectionId: props.clientKey,
       tenantId: props.tenantId,
+      apiUrls: props.apiUrls ? { ...props.apiUrls } : undefined
     };
 
     super(options);
 
-    this.options = options
+    this.options = options;
 
     this.tokens = new TokenClient(this.clientId);
     this.brands = new BrandClient(this.clientId);
     this.inbox = new InboxClient(this.clientId);
     this.preferences = new PreferenceClient(this.clientId);
     this.tracking = new TrackingClient(this.clientId);
-    
   }
-
 }

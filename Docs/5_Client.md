@@ -15,6 +15,7 @@ const client = new CourierClient({
   clientKey:    "...",          // Optional. Used only for Inbox
   tenantId:     ..,             // Optional. Used for scoping a client to a specific tenant
   connectionId: "...",          // Optional. Used for inbox websocket
+  apiUrls:      getCourierApiUrlsForRegion("eu"), // Optional. Use for EU-hosted workspaces
 });
 
 // Details about the client
