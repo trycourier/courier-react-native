@@ -76,6 +76,16 @@ internal fun ReadableMap.toInfoViewStyle(context: Context): CourierStyles.InfoVi
 
 }
 
+internal fun ReadableMap.toApiUrls(): com.courier.android.client.CourierClient.ApiUrls {
+  val defaults = com.courier.android.client.CourierClient.ApiUrls()
+  return com.courier.android.client.CourierClient.ApiUrls(
+    rest = getString("rest") ?: defaults.rest,
+    graphql = getString("graphql") ?: defaults.graphql,
+    inboxGraphql = getString("inboxGraphql") ?: defaults.inboxGraphql,
+    inboxWebSocket = getString("inboxWebSocket") ?: defaults.inboxWebSocket
+  )
+}
+
 internal fun Map<String, Any>?.toWritableMap(): WritableMap {
   val map = Arguments.createMap()
   this?.forEach { (key, value) ->
