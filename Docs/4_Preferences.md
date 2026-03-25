@@ -1,5 +1,7 @@
 <img width="1040" alt="banner-react-native-preferences" src="https://github.com/trycourier/courier-react-native/assets/6370613/2d5190c1-5f44-45db-aa26-50e4275ea7f1">
 
+> **Note**: These docs have moved to [courier.com/docs/sdk-libraries/react-native](https://www.courier.com/docs/sdk-libraries/react-native/). The content below may be outdated.
+
 # Courier Preferences
 
 In-app notification settings that allow your users to customize which of your notifications they receive. Allows you to build high quality, flexible preference settings very quickly.

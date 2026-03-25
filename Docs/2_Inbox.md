@@ -1,5 +1,7 @@
 <img width="1040" alt="banner-react-native-inbox" src="https://github.com/trycourier/courier-react-native/assets/6370613/f138f4a4-fa64-417b-91c7-90aa8802624d">
 
+> **Note**: These docs have moved to [courier.com/docs/sdk-libraries/react-native](https://www.courier.com/docs/sdk-libraries/react-native/). The content below may be outdated.
+
 &emsp;
 
 # Courier Inbox
