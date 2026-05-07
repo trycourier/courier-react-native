@@ -140,6 +140,7 @@ const defaultFont = Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_reg
 
 const lightTheme: CourierInboxTheme = {
   brandId: "your_brand_id",
+  backgroundColor: '#FFFFFF',
   tabIndicatorColor: primaryColor,
   tabStyle: {
     selected: {

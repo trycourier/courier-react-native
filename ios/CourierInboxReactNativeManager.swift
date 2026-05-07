@@ -314,6 +314,7 @@ internal extension NSDictionary {
         let defaultTheme = CourierInboxTheme()
         
         let brandId = self["brandId"] as? String
+        let backgroundColor = self["backgroundColor"] as? String
         let tabIndicatorColor = self["tabIndicatorColor"] as? String
         let tabStyle = self["tabStyle"] as? NSDictionary
         let readingSwipeActionStyle = self["readingSwipeActionStyle"] as? NSDictionary
@@ -332,6 +333,7 @@ internal extension NSDictionary {
         
         return CourierInboxTheme(
             brandId: brandId,
+            backgroundColor: backgroundColor?.toColor(),
             tabIndicatorColor: tabIndicatorColor?.toColor(),
             tabStyle: tabStyle?.toTabStyle() ?? CourierInboxView.defaultTabStyle(),
             readingSwipeActionStyle: readingSwipeActionStyle?.toReadingSwipeActionStyle() ?? CourierInboxView.defaultReadingStyle(),
