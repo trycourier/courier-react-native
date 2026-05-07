@@ -25,7 +25,7 @@ export interface AuthPreferencesData {
 }
 
 export async function loadAuthPreferences(): Promise<AuthPreferencesData> {
-  const results = await AsyncStorage.getMany([
+  const pairs = await AsyncStorage.multiGet([
     KEYS.environment,
     KEYS.userId,
     KEYS.tenantId,
@@ -35,6 +35,11 @@ export async function loadAuthPreferences(): Promise<AuthPreferencesData> {
     KEYS.inboxGraphqlUrl,
     KEYS.inboxWebSocketUrl,
   ]);
+
+  const results: Record<string, string | null> = {};
+  for (const [key, value] of pairs) {
+    results[key] = value;
+  }
 
   return {
     environment:
@@ -54,19 +59,20 @@ export async function loadAuthPreferences(): Promise<AuthPreferencesData> {
 export async function saveAuthPreferences(
   data: Partial<AuthPreferencesData>
 ): Promise<void> {
-  const entries: Record<string, string> = {};
+  const pairs: [string, string][] = [];
   if (data.environment !== undefined)
-    entries[KEYS.environment] = data.environment;
-  if (data.userId !== undefined) entries[KEYS.userId] = data.userId;
-  if (data.tenantId !== undefined) entries[KEYS.tenantId] = data.tenantId;
-  if (data.apiKey !== undefined) entries[KEYS.apiKey] = data.apiKey;
-  if (data.restUrl !== undefined) entries[KEYS.restUrl] = data.restUrl;
-  if (data.graphqlUrl !== undefined) entries[KEYS.graphqlUrl] = data.graphqlUrl;
+    pairs.push([KEYS.environment, data.environment]);
+  if (data.userId !== undefined) pairs.push([KEYS.userId, data.userId]);
+  if (data.tenantId !== undefined) pairs.push([KEYS.tenantId, data.tenantId]);
+  if (data.apiKey !== undefined) pairs.push([KEYS.apiKey, data.apiKey]);
+  if (data.restUrl !== undefined) pairs.push([KEYS.restUrl, data.restUrl]);
+  if (data.graphqlUrl !== undefined)
+    pairs.push([KEYS.graphqlUrl, data.graphqlUrl]);
   if (data.inboxGraphqlUrl !== undefined)
-    entries[KEYS.inboxGraphqlUrl] = data.inboxGraphqlUrl;
+    pairs.push([KEYS.inboxGraphqlUrl, data.inboxGraphqlUrl]);
   if (data.inboxWebSocketUrl !== undefined)
-    entries[KEYS.inboxWebSocketUrl] = data.inboxWebSocketUrl;
-  if (Object.keys(entries).length > 0) {
-    await AsyncStorage.setMany(entries);
+    pairs.push([KEYS.inboxWebSocketUrl, data.inboxWebSocketUrl]);
+  if (pairs.length > 0) {
+    await AsyncStorage.multiSet(pairs);
   }
 }

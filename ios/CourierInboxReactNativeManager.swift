@@ -46,6 +46,14 @@ class CourierInboxView : UIView {
         let lightTheme = theme?["light"] as? NSDictionary
         let darkTheme = theme?["dark"] as? NSDictionary
         
+        let lightBgColor = (lightTheme?["backgroundColor"] as? String)?.toColor()
+        let darkBgColor = (darkTheme?["backgroundColor"] as? String)?.toColor()
+        if let bgColor = traitCollection.userInterfaceStyle == .dark ? darkBgColor ?? lightBgColor : lightBgColor ?? darkBgColor {
+            self.backgroundColor = bgColor
+        } else {
+            self.backgroundColor = nil
+        }
+        
         let courierInbox = CourierInbox(
             canSwipePages: self.canSwipePages,
             lightTheme: lightTheme?.toInboxTheme() ?? .defaultLight,

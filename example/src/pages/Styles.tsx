@@ -11,6 +11,7 @@ export const Styles = (isDark: boolean) => {
         Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
     },
     Colors: {
+      background: isDark ? '#1C1C1E' : '#FFFFFF',
       heading: isDark ? '#9747FF' : '#9747FF',
       title: isDark ? '#FFFFFF' : '#000000',
       subtitle: isDark ? '#9A9A9A' : '#BEBEBE',
