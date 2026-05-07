@@ -10,7 +10,6 @@ example/android/app/release/
 .expo/
 
 # VSCode
-.vscode/
 jsconfig.json
 
 # Xcode
@@ -47,6 +46,9 @@ android.iml
 # Cocoapods
 #
 example/ios/Pods
+
+# Local Xcode env (machine-specific node path)
+example/ios/.xcode.env.local
 
 # Ruby
 example/vendor/

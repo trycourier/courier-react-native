@@ -1,5 +1,5 @@
-import Courier from "..";
-import { InboxAction } from "./InboxAction";
+import Courier from '..';
+import { InboxAction } from './InboxAction';
 
 export class InboxMessage {
   readonly messageId: string;
@@ -19,7 +19,7 @@ export class InboxMessage {
   constructor(
     messageId: string,
     title: string | null = null,
-    body: string | null = null, 
+    body: string | null = null,
     preview: string | null = null,
     created: string | null = null,
     actions: InboxAction[] | null = null,
@@ -101,5 +101,4 @@ export class InboxMessage {
   async markAsClicked() {
     await Courier.shared.clickMessage({ messageId: this.messageId });
   }
-
 }

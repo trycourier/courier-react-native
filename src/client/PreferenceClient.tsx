@@ -1,8 +1,12 @@
-import { Modules } from "../Modules";
-import { CourierUserPreferences, CourierUserPreferencesChannel, CourierUserPreferencesStatus, CourierUserPreferencesTopic } from "../models/CourierUserPreferences";
+import { Modules } from '../Modules';
+import {
+  CourierUserPreferences,
+  CourierUserPreferencesChannel,
+  CourierUserPreferencesStatus,
+  CourierUserPreferencesTopic,
+} from '../models/CourierUserPreferences';
 
 export class PreferenceClient {
-
   readonly clientId: string;
 
   constructor(clientId: string) {
@@ -15,26 +19,31 @@ export class PreferenceClient {
    * @param props.paginationCursor - Optional cursor for pagination.
    * @returns A promise that resolves with CourierUserPreferences containing user preference items and paging information.
    */
-  public async getUserPreferences(props?: { paginationCursor?: string }): Promise<CourierUserPreferences> {
+  public async getUserPreferences(props?: {
+    paginationCursor?: string;
+  }): Promise<CourierUserPreferences> {
+    const json = await Modules.Client.getUserPreferences(
+      this.clientId,
+      props?.paginationCursor
+    );
 
-    const json = await Modules.Client.getUserPreferences(this.clientId, props?.paginationCursor);
-    
     const rawData = JSON.parse(json);
-  
+
     return {
       items: rawData.items.map((item: any) => ({
         defaultStatus: item.default_status as CourierUserPreferencesStatus,
         hasCustomRouting: item.has_custom_routing,
-        customRouting: item.custom_routing.map((channel: string) => channel as CourierUserPreferencesChannel),
+        customRouting: item.custom_routing.map(
+          (channel: string) => channel as CourierUserPreferencesChannel
+        ),
         status: item.status as CourierUserPreferencesStatus,
         topicId: item.topic_id,
         topicName: item.topic_name,
         sectionName: item.section_name,
-        sectionId: item.section_id
+        sectionId: item.section_id,
       })),
-      paging: rawData.paging
+      paging: rawData.paging,
     };
-
   }
 
   /**
@@ -43,21 +52,28 @@ export class PreferenceClient {
    * @param props.topicId - The ID of the topic to retrieve preferences for.
    * @returns A promise that resolves with CourierUserPreferencesTopic containing the topic preference details.
    */
-  public async getUserPreferenceTopic(props: { topicId: string }): Promise<CourierUserPreferencesTopic> {
-    const json = await Modules.Client.getUserPreferenceTopic(this.clientId, props.topicId);
+  public async getUserPreferenceTopic(props: {
+    topicId: string;
+  }): Promise<CourierUserPreferencesTopic> {
+    const json = await Modules.Client.getUserPreferenceTopic(
+      this.clientId,
+      props.topicId
+    );
     const rawData = JSON.parse(json);
-  
+
     const convertedTopic: CourierUserPreferencesTopic = {
       defaultStatus: rawData.default_status as CourierUserPreferencesStatus,
       hasCustomRouting: rawData.has_custom_routing,
-      customRouting: rawData.custom_routing.map((channel: string) => channel as CourierUserPreferencesChannel),
+      customRouting: rawData.custom_routing.map(
+        (channel: string) => channel as CourierUserPreferencesChannel
+      ),
       status: rawData.status as CourierUserPreferencesStatus,
       topicId: rawData.topic_id,
       topicName: rawData.topic_name,
       sectionName: rawData.section_name,
-      sectionId: rawData.section_id
+      sectionId: rawData.section_id,
     };
-  
+
     return convertedTopic;
   }
 
@@ -70,8 +86,18 @@ export class PreferenceClient {
    * @param props.customRouting - Array of custom routing channels.
    * @returns A promise that resolves when the update is complete.
    */
-  public async putUserPreferenceTopic(props: { topicId: string, status: CourierUserPreferencesStatus, hasCustomRouting: boolean, customRouting: CourierUserPreferencesChannel[] }): Promise<void> {
-    await Modules.Client.putUserPreferenceTopic(this.clientId, props.topicId, props.status, props.hasCustomRouting, props.customRouting);
+  public async putUserPreferenceTopic(props: {
+    topicId: string;
+    status: CourierUserPreferencesStatus;
+    hasCustomRouting: boolean;
+    customRouting: CourierUserPreferencesChannel[];
+  }): Promise<void> {
+    await Modules.Client.putUserPreferenceTopic(
+      this.clientId,
+      props.topicId,
+      props.status,
+      props.hasCustomRouting,
+      props.customRouting
+    );
   }
-
 }

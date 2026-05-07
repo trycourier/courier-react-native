@@ -29,10 +29,12 @@ const Inbox = () => {
 
   return (
     <View style={styles.container}>
-      <TabControl tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-      <View style={styles.content}>
-        {renderContent()}
-      </View>
+      <TabControl
+        tabs={tabs}
+        selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
+      />
+      <View style={styles.content}>{renderContent()}</View>
     </View>
   );
 };

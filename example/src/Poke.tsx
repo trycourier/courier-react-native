@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useMemo, createContext, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  createContext,
+  useContext,
+} from 'react';
 import { View, StyleSheet, ViewStyle, Animated, Easing } from 'react-native';
 
 interface Touch {
@@ -44,14 +50,19 @@ export const Poke: React.FC<PokeProviderProps> = ({
   initialTouchTimeout = 150,
 }) => {
   const [enabled, setEnabled] = useState(initialEnabled);
-  const [indicatorStyle, setIndicatorStyle] = useState<TouchIndicatorStyle>(initialIndicatorStyle || {});
+  const [indicatorStyle, setIndicatorStyle] = useState<TouchIndicatorStyle>(
+    initialIndicatorStyle || {}
+  );
   const [touchTimeout, setTouchTimeout] = useState(initialTouchTimeout);
 
-  const contextValue = useMemo(() => ({
-    setEnabled,
-    setIndicatorStyle,
-    setTouchTimeout,
-  }), []);
+  const contextValue = useMemo(
+    () => ({
+      setEnabled,
+      setIndicatorStyle,
+      setTouchTimeout,
+    }),
+    []
+  );
 
   return (
     <PokeContext.Provider value={contextValue}>
@@ -73,11 +84,11 @@ interface TouchIndicatorProps {
   touchTimeout: number;
 }
 
-const TouchIndicator: React.FC<TouchIndicatorProps> = ({ 
-  children, 
-  indicatorStyle, 
-  enabled, 
-  touchTimeout
+const TouchIndicator: React.FC<TouchIndicatorProps> = ({
+  children,
+  indicatorStyle,
+  enabled,
+  touchTimeout,
 }) => {
   const [latestTouch, setLatestTouch] = useState<Touch | null>(null);
 
@@ -118,18 +129,22 @@ const TouchIndicator: React.FC<TouchIndicatorProps> = ({
     }
   };
 
-  const touchIndicatorStyle = useMemo(() => ({
-    position: 'absolute',
-    width: indicatorSize,
-    height: indicatorSize,
-    borderRadius: indicatorSize / 2,
-    backgroundColor: indicatorColor,
-    zIndex: 9999,
-  } as ViewStyle), [indicatorSize, indicatorColor]);
+  const touchIndicatorStyle = useMemo(
+    () =>
+      ({
+        position: 'absolute',
+        width: indicatorSize,
+        height: indicatorSize,
+        borderRadius: indicatorSize / 2,
+        backgroundColor: indicatorColor,
+        zIndex: 9999,
+      } as ViewStyle),
+    [indicatorSize, indicatorColor]
+  );
 
   return (
-    <View 
-      style={StyleSheet.absoluteFill} 
+    <View
+      style={StyleSheet.absoluteFill}
       onTouchStart={handleTouch}
       onTouchMove={handleTouch}
       onTouchEnd={handleTouch}

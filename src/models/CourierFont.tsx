@@ -1,5 +1,5 @@
 export interface CourierFont {
-  family?: string
-  size?: number
-  color?: string
+  family?: string;
+  size?: number;
+  color?: string;
 }

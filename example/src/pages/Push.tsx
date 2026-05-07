@@ -1,42 +1,48 @@
 import Courier, { CourierPushProvider } from '@trycourier/courier-react-native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Clipboard, ActivityIndicator, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Clipboard,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
 
 const Push = () => {
-
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [tokens, setTokens] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
-
     setExampleToken();
-
   }, []);
 
   const refreshTokens = async () => {
     const tokensMap = await Courier.shared.getAllTokens();
     setTokens(tokensMap);
-  }
+  };
 
   const setExampleToken = async () => {
-
     setIsLoading(true);
 
     const requestStatus = await Courier.requestNotificationPermission();
     console.log('Request Notification Status: ' + requestStatus);
-    console.log('Get Notification Status: ' + await Courier.getNotificationPermissionStatus());
+    console.log(
+      'Get Notification Status: ' +
+        (await Courier.getNotificationPermissionStatus())
+    );
 
     // Example of setting an expo token
     await Courier.shared.setTokenForProvider({
       provider: CourierPushProvider.EXPO,
-      token: 'example_expo_token'
+      token: 'example_expo_token',
     });
 
     setIsLoading(false);
 
     refreshTokens();
-
-  }
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -95,18 +101,19 @@ const Push = () => {
   const handleButtonPress = () => {
     Courier.requestNotificationPermission();
   };
-  
+
   return (
     <View style={styles.container}>
-
-      {isLoading && (
-        <ActivityIndicator size="small" />
-      )}
+      {isLoading && <ActivityIndicator size="small" />}
 
       {!isLoading && (
         <>
           {Array.from(tokens).map(([key, value]) => (
-            <TouchableOpacity key={key} onPress={() => handleCopyToClipboard(value)} style={styles.itemContainer}>
+            <TouchableOpacity
+              key={key}
+              onPress={() => handleCopyToClipboard(value)}
+              style={styles.itemContainer}
+            >
               <Text style={styles.keyText}>{key}</Text>
               <Text style={styles.valueText}>{value}</Text>
             </TouchableOpacity>
@@ -119,10 +126,8 @@ const Push = () => {
           </TouchableOpacity>
         </>
       )}
-
     </View>
   );
-
 };
 
 export default Push;

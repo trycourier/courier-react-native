@@ -25,7 +25,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
             userId: userId,
             connectionId: options["connectionId"] as? String,
             tenantId: options["tenantId"] as? String,
-            baseUrls: (options["apiUrls"] as? NSDictionary)?.toCourierApiUrls() ?? CourierClient.ApiUrls(),
+            apiUrls: (options["apiUrls"] as? NSDictionary)?.toCourierApiUrls() ?? CourierClient.ApiUrls(),
             showLogs: showLogs
         )
 

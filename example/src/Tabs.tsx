@@ -1,18 +1,39 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export interface TabItem {
   title: string;
   key: string;
 }
 
-export const Tab = ({ title, isSelected, onPress }: { title: string; isSelected: boolean; onPress: () => void }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.tabButton, isSelected && styles.selectedTabButton]}>
-    <Text style={[styles.tabText, isSelected && styles.selectedTabText]}>{title}</Text>
+export const Tab = ({
+  title,
+  isSelected,
+  onPress,
+}: {
+  title: string;
+  isSelected: boolean;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={[styles.tabButton, isSelected && styles.selectedTabButton]}
+  >
+    <Text style={[styles.tabText, isSelected && styles.selectedTabText]}>
+      {title}
+    </Text>
   </TouchableOpacity>
 );
 
-export const TabControl = ({ tabs, selectedTab, setSelectedTab }: { tabs: TabItem[]; selectedTab: string; setSelectedTab: (tab: string) => void }) => (
+export const TabControl = ({
+  tabs,
+  selectedTab,
+  setSelectedTab,
+}: {
+  tabs: TabItem[];
+  selectedTab: string;
+  setSelectedTab: (tab: string) => void;
+}) => (
   <View style={styles.segmentedControl}>
     {tabs.map((tab) => (
       <Tab

@@ -1,4 +1,4 @@
-import { CourierPaging } from "./CourierPaging";
+import { CourierPaging } from './CourierPaging';
 
 export interface CourierUserPreferences {
   items: CourierUserPreferencesTopic[];
@@ -22,56 +22,60 @@ export interface GetCourierUserPreferencesTopic {
 
 // Additional interfaces for CourierUserPreferencesStatus and CourierUserPreferencesChannel would be needed based on their definitions
 export enum CourierUserPreferencesStatus {
-  OptedIn = "OPTED_IN",
-  OptedOut = "OPTED_OUT",
-  Required = "REQUIRED",
-  Unknown = "UNKNOWN",
+  OptedIn = 'OPTED_IN',
+  OptedOut = 'OPTED_OUT',
+  Required = 'REQUIRED',
+  Unknown = 'UNKNOWN',
 }
 
 // Function to get the title of the enum value
-export function getCourierUserPreferencesStatusTitle(status: CourierUserPreferencesStatus): string {
+export function getCourierUserPreferencesStatusTitle(
+  status: CourierUserPreferencesStatus
+): string {
   switch (status) {
     case CourierUserPreferencesStatus.OptedIn:
-      return "Opted In";
+      return 'Opted In';
     case CourierUserPreferencesStatus.OptedOut:
-      return "Opted Out";
+      return 'Opted Out';
     case CourierUserPreferencesStatus.Required:
-      return "Required";
+      return 'Required';
     case CourierUserPreferencesStatus.Unknown:
-      return "Unknown";
+      return 'Unknown';
     default:
-      return "Unknown";
+      return 'Unknown';
   }
 }
 
 export enum CourierUserPreferencesChannel {
-  DirectMessage = "direct_message",
-  Inbox = "inbox",
-  Email = "email",
-  Push = "push",
-  Sms = "sms",
-  Webhook = "webhook",
-  Unknown = "unknown",
+  DirectMessage = 'direct_message',
+  Inbox = 'inbox',
+  Email = 'email',
+  Push = 'push',
+  Sms = 'sms',
+  Webhook = 'webhook',
+  Unknown = 'unknown',
 }
 
 // Function to get the title of the enum value
-export function getCourierUserPreferencesChannelTitle(channel: CourierUserPreferencesChannel): string {
+export function getCourierUserPreferencesChannelTitle(
+  channel: CourierUserPreferencesChannel
+): string {
   switch (channel) {
     case CourierUserPreferencesChannel.DirectMessage:
-      return "In App Messages";
+      return 'In App Messages';
     case CourierUserPreferencesChannel.Inbox:
-      return "Inbox";
+      return 'Inbox';
     case CourierUserPreferencesChannel.Email:
-      return "Emails";
+      return 'Emails';
     case CourierUserPreferencesChannel.Push:
-      return "Push Notifications";
+      return 'Push Notifications';
     case CourierUserPreferencesChannel.Sms:
-      return "Text Messages";
+      return 'Text Messages';
     case CourierUserPreferencesChannel.Webhook:
-      return "Webhooks";
+      return 'Webhooks';
     case CourierUserPreferencesChannel.Unknown:
-      return "Unknown";
+      return 'Unknown';
     default:
-      return "Unknown";
+      return 'Unknown';
   }
 }

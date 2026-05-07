@@ -5,7 +5,6 @@ import Toast from 'react-native-toast-message';
 import { Poke } from './Poke';
 
 export default function App() {
-
   return (
     <Poke initialEnabled={false}>
       <NavigationContainer>
@@ -14,5 +13,4 @@ export default function App() {
       </NavigationContainer>
     </Poke>
   );
-
 }

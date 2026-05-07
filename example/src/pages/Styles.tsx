@@ -1,11 +1,14 @@
-import { Platform } from "react-native"
+import { Platform } from 'react-native';
 
 export const Styles = (isDark: boolean) => {
   return {
     Fonts: {
-      heading: Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
-      title: Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
-      subtitle: Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
+      heading:
+        Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
+      title:
+        Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
+      subtitle:
+        Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
     },
     Colors: {
       heading: isDark ? '#9747FF' : '#9747FF',
@@ -21,7 +24,7 @@ export const Styles = (isDark: boolean) => {
       subtitle: 16,
     },
     Corners: {
-      button: 100
-    }
-  }
-}
+      button: 100,
+    },
+  };
+};

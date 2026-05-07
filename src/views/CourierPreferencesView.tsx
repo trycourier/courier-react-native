@@ -1,13 +1,21 @@
-import React, { useEffect } from "react";
-import { DeviceEventEmitter, EmitterSubscription, Platform, ViewStyle } from "react-native";
-import { CourierPreferencesMode, CourierPreferencesTheme } from "../models/CourierPreferencesTheme";
-import { Modules } from "../Modules";
+import React, { useEffect } from 'react';
+import {
+  DeviceEventEmitter,
+  EmitterSubscription,
+  Platform,
+  ViewStyle,
+} from 'react-native';
+import {
+  CourierPreferencesMode,
+  CourierPreferencesTheme,
+} from '../models/CourierPreferencesTheme';
+import { Modules } from '../Modules';
 
 type CourierPreferencesProps = {
-  mode?: CourierPreferencesMode,
-  theme?: { 
-    light?: CourierPreferencesTheme, 
-    dark?: CourierPreferencesTheme 
+  mode?: CourierPreferencesMode;
+  theme?: {
+    light?: CourierPreferencesTheme;
+    dark?: CourierPreferencesTheme;
   };
   onScrollPreferences?: (offsetY: number, offsetX: number) => void;
   onPreferenceError?: (message: string) => void;
@@ -17,59 +25,50 @@ type CourierPreferencesProps = {
 const CourierPreferences = Modules.getNativeComponent('CourierPreferencesView');
 
 export const CourierPreferencesView = (props: CourierPreferencesProps) => {
-
-  let onScrollPreferencesListener: EmitterSubscription | undefined = undefined;
+  let onScrollPreferencesListener: EmitterSubscription | undefined;
 
   useEffect(() => {
-
     return () => {
       onScrollPreferencesListener?.remove();
-    }
-
+    };
   }, []);
 
   useEffect(() => {
-
     onScrollPreferencesListener?.remove();
 
     if (Platform.OS === 'android' && props.onScrollPreferences) {
-      onScrollPreferencesListener = DeviceEventEmitter.addListener('courierScrollPreferences', onScrollPreferences);
+      onScrollPreferencesListener = DeviceEventEmitter.addListener(
+        'courierScrollPreferences',
+        onScrollPreferences
+      );
     }
-
-  }, [props.onScrollPreferences])
+  }, [props.onScrollPreferences]);
 
   const onScrollPreferences = (event: any) => {
-
     // Parse the native event data
     if (props.onScrollPreferences) {
-
-      const contentOffset = event["contentOffset"];
-      props.onScrollPreferences(contentOffset["y"], contentOffset["x"]);
-
+      const contentOffset = event.contentOffset;
+      props.onScrollPreferences(contentOffset.y, contentOffset.x);
     }
-
-  }
+  };
 
   const onPreferenceError = (event: any) => {
-
     // Parse the native event data
     if (props.onPreferenceError) {
-
-      const message = event["error"];
+      const message = event.error;
       props.onPreferenceError(message);
-
     }
-
-  }
+  };
 
   return (
-    <CourierPreferences 
+    <CourierPreferences
       mode={props.mode}
       theme={props.theme ?? { light: undefined, dark: undefined }}
-      onScrollPreferences={(event: any) => onScrollPreferences(event.nativeEvent)}
+      onScrollPreferences={(event: any) =>
+        onScrollPreferences(event.nativeEvent)
+      }
       onPreferenceError={(event: any) => onPreferenceError(event.nativeEvent)}
       style={props.style}
     />
-  )
-
-}
+  );
+};

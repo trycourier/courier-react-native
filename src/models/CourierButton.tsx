@@ -1,7 +1,7 @@
-import { CourierFont } from "./CourierFont"
+import { CourierFont } from './CourierFont';
 
 export interface CourierButton {
-  font?: CourierFont
-  backgroundColor?: string
-  cornerRadius?: number
+  font?: CourierFont;
+  backgroundColor?: string;
+  cornerRadius?: number;
 }
