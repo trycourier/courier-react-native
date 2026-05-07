@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabNavigationOptions,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import { Alert, Button } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Auth from './pages/Auth';
@@ -12,14 +15,15 @@ import Tests from './pages/Tests';
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
-
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
   useEffect(() => {
     const setupInbox = async () => {
       // Setup Push
 
-      Courier.setIOSForegroundPresentationOptions({ options: ['sound', 'badge', 'list', 'banner'] });
+      Courier.setIOSForegroundPresentationOptions({
+        options: ['sound', 'badge', 'list', 'banner'],
+      });
 
       const pushListener = Courier.shared.addPushNotificationListener({
         onPushNotificationClicked(push) {
@@ -29,7 +33,7 @@ const Home = () => {
         onPushNotificationDelivered(push) {
           console.log(push);
           Alert.alert('📬 Push Notification Delivered', JSON.stringify(push));
-        }
+        },
       });
 
       // Setup Inbox
@@ -53,14 +57,12 @@ const Home = () => {
         inboxListener.remove();
       });
     };
-
   }, []);
 
   const inboxOptions = (): BottomTabNavigationOptions => {
-
     const badgeCount = () => {
       return unreadCount > 0 ? unreadCount : undefined;
-    }
+    };
 
     return {
       headerRight: () => (
@@ -72,24 +74,36 @@ const Home = () => {
       tabBarBadge: badgeCount(),
       tabBarIcon: ({ color, size }) => (
         <MaterialCommunityIcons name={'bell'} color={color} size={size} />
-      )
-    }
-  }
+      ),
+    };
+  };
 
   const icon = (icon: string): BottomTabNavigationOptions => {
     return {
       tabBarIcon: ({ color, size }) => (
         <MaterialCommunityIcons name={icon} color={color} size={size} />
-      )
-    }
-  }
+      ),
+    };
+  };
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Auth" component={Auth} options={icon('account-circle')} />
-      <Tab.Screen name="Push" component={Push} options={icon('message-badge')} />
+      <Tab.Screen
+        name="Auth"
+        component={Auth}
+        options={{ ...icon('account-circle'), headerShown: false }}
+      />
+      <Tab.Screen
+        name="Push"
+        component={Push}
+        options={icon('message-badge')}
+      />
       <Tab.Screen name="Inbox" component={Inbox} options={inboxOptions()} />
-      <Tab.Screen name="Preferences" component={PreferencesStack} options={{ ...icon('wrench'), headerShown: false }} />
+      <Tab.Screen
+        name="Preferences"
+        component={PreferencesStack}
+        options={{ ...icon('wrench'), headerShown: false }}
+      />
       <Tab.Screen name="Tests" component={Tests} options={icon('test-tube')} />
     </Tab.Navigator>
   );
