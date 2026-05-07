@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     outputs:
       deployed: ${{ steps.check.outputs.deployed }}
       version: ${{ steps.check.outputs.version }}
@@ -76,6 +77,4 @@ jobs:
 
       - name: Publish to npm
         if: steps.check.outputs.deployed == 'true'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
