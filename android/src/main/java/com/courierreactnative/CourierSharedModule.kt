@@ -1,6 +1,7 @@
 package com.courierreactnative
 
 import com.courier.android.Courier
+import com.courier.android.client.CourierClient
 import com.courier.android.models.CourierAuthenticationListener
 import com.courier.android.models.CourierInboxListener
 import com.courier.android.models.InboxMessageSet
@@ -92,6 +93,7 @@ class CourierSharedModule(
     clientKey: String?,
     userId: String,
     tenantId: String?,
+    apiUrls: com.facebook.react.bridge.ReadableMap?,
     showLogs: Boolean,
     promise: Promise
   ) {
@@ -101,6 +103,7 @@ class CourierSharedModule(
         tenantId = tenantId,
         accessToken = accessToken,
         clientKey = clientKey,
+        apiUrls = apiUrls?.toApiUrls() ?: CourierClient.ApiUrls(),
         showLogs = showLogs
       )
       promise.resolve(null)

@@ -157,6 +157,16 @@ internal extension NSDictionary {
         )
         
     }
+
+    func toCourierApiUrls() -> CourierClient.ApiUrls {
+        let defaults = CourierClient.ApiUrls()
+        return CourierClient.ApiUrls(
+            rest: self["rest"] as? String ?? defaults.rest,
+            graphql: self["graphql"] as? String ?? defaults.graphql,
+            inboxGraphql: self["inboxGraphql"] as? String ?? defaults.inboxGraphql,
+            inboxWebSocket: self["inboxWebSocket"] as? String ?? defaults.inboxWebSocket
+        )
+    }
     
 }
 
