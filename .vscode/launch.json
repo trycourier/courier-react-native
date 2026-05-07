@@ -1,0 +1,47 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Bump Version",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "sh scripts/bump_version.sh; exit",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Build Demo App",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "sh scripts/build_demo_app.sh; exit",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run iOS (Simulator)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example && npx react-native run-ios; exit",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run iOS (Device)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example && npx react-native run-ios --device; exit",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run Android (Emulator)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example && npx react-native run-android; exit",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run Android (Device)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example && npx react-native run-android --active-arch-only; exit",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
