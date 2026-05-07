@@ -5,7 +5,7 @@
 //  Created by Michael Miller on 8/29/23.
 //
 
-#import "RCTAppDelegate.h"
+#import <React/RCTAppDelegate.h>
 #import <UIKit/UIKit.h>
 #import <UserNotifications/UserNotifications.h>
 

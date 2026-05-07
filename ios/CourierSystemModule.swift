@@ -47,6 +47,9 @@ class CourierSystemModule: CourierReactNativeEventEmitter {
             object: nil
         )
 
+        // RCTBridgeWillReloadNotification is only available in bridge mode.
+        // In bridgeless mode (New Architecture), this notification is not posted,
+        // but registering for it is harmless.
         notificationCenter.addObserver(
             self,
             selector: #selector(onBridgeWillReload),

@@ -45,8 +45,8 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   @ReactMethod
   fun registerPushNotificationClickedOnKilledState() {
-    reactActivity?.let { activity ->
-      checkIntentForPushNotificationClick(activity.intent)
+    activity?.let { a ->
+      checkIntentForPushNotificationClick(a.intent)
     }
   }
 
@@ -66,8 +66,8 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
   @ReactMethod
   fun requestNotificationPermission(promise: Promise) {
 
-    reactActivity?.let { activity ->
-      Courier.shared.requestNotificationPermission(activity)
+    activity?.let { a ->
+      Courier.shared.requestNotificationPermission(a)
     }
 
     promise.resolve("unknown")
@@ -77,9 +77,9 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
   @ReactMethod
   fun getNotificationPermissionStatus(promise: Promise) {
 
-    reactActivity?.let { context ->
+    activity?.let { a ->
 
-      val isGranted = Courier.shared.isPushPermissionGranted(context)
+      val isGranted = Courier.shared.isPushPermissionGranted(a)
       val status = if (isGranted) "authorized" else "denied"
       promise.resolve(status)
       return

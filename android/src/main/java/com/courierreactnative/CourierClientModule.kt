@@ -77,7 +77,8 @@ class CourierClientModule(
         return@launch
       }
 
-      if (reactActivity == null) {
+      val currentActivity = activity
+      if (currentActivity == null) {
         promise.rejectMissingContext()
         return@launch
       }
@@ -97,7 +98,7 @@ class CourierClientModule(
         client.tokens.putUserToken(
           token = token,
           provider = provider,
-          device = courierDevice ?: CourierDevice.current(reactActivity!!)
+          device = courierDevice ?: CourierDevice.current(currentActivity)
         )
         promise.resolve(null)
       } catch (e: Exception) {

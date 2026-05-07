@@ -8,9 +8,12 @@
 @import Courier_iOS;
 #import "CourierReactNativeDelegate.h"
 #import <React/RCTRootView.h>
-#import <React/RCTBridge.h>
-#import <React/RCTBridge+Private.h>
 #import <React/RCTUtils.h>
+
+// Conditionally import bridge headers for backward compatibility
+#if __has_include(<React/RCTBridge.h>)
+#import <React/RCTBridge.h>
+#endif
 
 #pragma GCC diagnostic ignored "-Wprotocol"
 #pragma clang diagnostic ignored "-Wprotocol"
@@ -49,10 +52,13 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
             name:CourierForegroundOptionsDidChangeNotification
             object:nil];
       
+        // RCTBridgeWillReloadNotification is only available in bridge mode.
+        // In bridgeless mode (New Architecture), this notification doesn't exist.
+        NSString *bridgeReloadNotification = @"RCTBridgeWillReloadNotification";
         [[NSNotificationCenter defaultCenter]
             addObserver:self
             selector:@selector(onBridgeWillReload)
-            name:RCTBridgeWillReloadNotification
+            name:bridgeReloadNotification
             object:nil];
       
         [[NSNotificationCenter defaultCenter]
@@ -77,7 +83,7 @@ static NSString *const CourierForegroundOptionsDidChangeNotification = @"iosFore
   }
 }
 
-// Called when there is a reload to React Native
+// Called when there is a reload to React Native (bridge mode only)
 - (void)onBridgeWillReload
 {
   self.isReactNativeReady = NO;
