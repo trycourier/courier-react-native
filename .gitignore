@@ -47,6 +47,9 @@ android.iml
 #
 example/ios/Pods
 
+# Local Xcode env (machine-specific node path)
+example/ios/.xcode.env.local
+
 # Ruby
 example/vendor/
 

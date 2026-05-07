@@ -106,7 +106,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 tenantId: tenantId,
                 accessToken: accessToken,
                 clientKey: clientKey,
-                baseUrls: apiUrls?.toCourierApiUrls() ?? CourierClient.ApiUrls(),
+                apiUrls: apiUrls?.toCourierApiUrls() ?? CourierClient.ApiUrls(),
                 showLogs: showLogs
             )
             
