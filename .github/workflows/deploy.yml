@@ -56,6 +56,8 @@ jobs:
       - name: Publish to npm
         if: steps.check.outputs.deployed == 'true'
         run: npm publish --access public --provenance
+        env:
+          NPM_TOKEN: ''
 
       - name: Create git tag
         if: steps.check.outputs.deployed == 'true'
