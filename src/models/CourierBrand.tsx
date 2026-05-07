@@ -1,18 +1,18 @@
 export interface CourierBrandResponse {
-  data?: CourierBrandData
+  data?: CourierBrandData;
 }
 
 export interface CourierBrandData {
-  brand?: CourierBrand
+  brand?: CourierBrand;
 }
 
 export interface CourierBrand {
-  settings?: CourierBrandSettings
+  settings?: CourierBrandSettings;
 }
 
 export interface CourierBrandSettings {
-  inapp?: CourierBrandInApp
-  colors?: CourierBrandColors
+  inapp?: CourierBrandInApp;
+  colors?: CourierBrandColors;
 }
 
 export interface CourierBrandInApp {

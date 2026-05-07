@@ -1,8 +1,10 @@
-import { Modules } from "../Modules";
-import { CourierGetInboxMessageResponse, CourierGetInboxMessagesResponse } from "../models/CourierInboxMessages";
+import { Modules } from '../Modules';
+import {
+  CourierGetInboxMessageResponse,
+  CourierGetInboxMessagesResponse
+} from '../models/CourierInboxMessages';
 
 export class InboxClient {
-
   readonly clientId: string;
 
   constructor(clientId: string) {
@@ -16,8 +18,15 @@ export class InboxClient {
    * @param props.startCursor - Optional. The cursor to start retrieving messages from.
    * @returns A promise that resolves with the CourierGetInboxMessagesResponse containing the messages.
    */
-  public async getMessages(props: { paginationLimit?: number, startCursor?: string }): Promise<CourierGetInboxMessagesResponse> {
-    const json = await Modules.Client.getMessages(this.clientId, props.paginationLimit ?? 24, props.startCursor);
+  public async getMessages(props: {
+    paginationLimit?: number;
+    startCursor?: string;
+  }): Promise<CourierGetInboxMessagesResponse> {
+    const json = await Modules.Client.getMessages(
+      this.clientId,
+      props.paginationLimit ?? 24,
+      props.startCursor
+    );
     return JSON.parse(json);
   }
 
@@ -28,8 +37,15 @@ export class InboxClient {
    * @param props.startCursor - Optional. The cursor to start retrieving messages from.
    * @returns A promise that resolves with the CourierGetInboxMessagesResponse containing the archived messages.
    */
-  public async getArchivedMessages(props: { paginationLimit?: number, startCursor?: string }): Promise<CourierGetInboxMessagesResponse> {
-    const json = await Modules.Client.getArchivedMessages(this.clientId, props.paginationLimit ?? 24, props.startCursor);
+  public async getArchivedMessages(props: {
+    paginationLimit?: number;
+    startCursor?: string;
+  }): Promise<CourierGetInboxMessagesResponse> {
+    const json = await Modules.Client.getArchivedMessages(
+      this.clientId,
+      props.paginationLimit ?? 24,
+      props.startCursor
+    );
     return JSON.parse(json);
   }
 
@@ -39,8 +55,13 @@ export class InboxClient {
    * @param props.messageId - The ID of the message to retrieve.
    * @returns A promise that resolves with the CourierGetInboxMessageResponse containing the message.
    */
-  public async getMessageById(props: { messageId: String }): Promise<CourierGetInboxMessageResponse> {
-    const json = await Modules.Client.getMessageById(this.clientId, props.messageId);
+  public async getMessageById(props: {
+    messageId: String;
+  }): Promise<CourierGetInboxMessageResponse> {
+    const json = await Modules.Client.getMessageById(
+      this.clientId,
+      props.messageId
+    );
     return JSON.parse(json);
   }
 
@@ -89,8 +110,15 @@ export class InboxClient {
    * @param props.trackingId - The tracking ID associated with the click event.
    * @returns A promise that resolves with a number indicating the operation result.
    */
-  public async click(props: { messageId: String, trackingId: string }): Promise<number> {
-    return await Modules.Client.clickMessage(this.clientId, props.messageId, props.trackingId);
+  public async click(props: {
+    messageId: String;
+    trackingId: string;
+  }): Promise<number> {
+    return await Modules.Client.clickMessage(
+      this.clientId,
+      props.messageId,
+      props.trackingId
+    );
   }
 
   /**
@@ -110,5 +138,4 @@ export class InboxClient {
   public async readAll(): Promise<number> {
     return await Modules.Client.readAllMessages(this.clientId);
   }
-
 }

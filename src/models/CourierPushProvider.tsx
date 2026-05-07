@@ -3,5 +3,5 @@ export enum CourierPushProvider {
   FIREBASE_FCM = 'firebase-fcm',
   EXPO = 'expo',
   ONE_SIGNAL = 'onesignal',
-  PUSHER_BEAMS = 'pusher-beams',
+  PUSHER_BEAMS = 'pusher-beams'
 }

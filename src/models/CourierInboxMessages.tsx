@@ -1,4 +1,4 @@
-import { InboxMessage } from "./InboxMessage";
+import { InboxMessage } from './InboxMessage';
 
 export interface CourierGetInboxMessagesResponse {
   data?: GetInboxMessagesData;

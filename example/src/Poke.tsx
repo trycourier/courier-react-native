@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useMemo, createContext, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  createContext,
+  useContext
+} from 'react';
 import { View, StyleSheet, ViewStyle, Animated, Easing } from 'react-native';
 
 interface Touch {
@@ -41,17 +47,22 @@ export const Poke: React.FC<PokeProviderProps> = ({
   children,
   initialEnabled = true,
   initialIndicatorStyle,
-  initialTouchTimeout = 150,
+  initialTouchTimeout = 150
 }) => {
   const [enabled, setEnabled] = useState(initialEnabled);
-  const [indicatorStyle, setIndicatorStyle] = useState<TouchIndicatorStyle>(initialIndicatorStyle || {});
+  const [indicatorStyle, setIndicatorStyle] = useState<TouchIndicatorStyle>(
+    initialIndicatorStyle || {}
+  );
   const [touchTimeout, setTouchTimeout] = useState(initialTouchTimeout);
 
-  const contextValue = useMemo(() => ({
-    setEnabled,
-    setIndicatorStyle,
-    setTouchTimeout,
-  }), []);
+  const contextValue = useMemo(
+    () => ({
+      setEnabled,
+      setIndicatorStyle,
+      setTouchTimeout
+    }),
+    []
+  );
 
   return (
     <PokeContext.Provider value={contextValue}>
@@ -73,10 +84,10 @@ interface TouchIndicatorProps {
   touchTimeout: number;
 }
 
-const TouchIndicator: React.FC<TouchIndicatorProps> = ({ 
-  children, 
-  indicatorStyle, 
-  enabled, 
+const TouchIndicator: React.FC<TouchIndicatorProps> = ({
+  children,
+  indicatorStyle,
+  enabled,
   touchTimeout
 }) => {
   const [latestTouch, setLatestTouch] = useState<Touch | null>(null);
@@ -104,32 +115,36 @@ const TouchIndicator: React.FC<TouchIndicatorProps> = ({
         x: touch.pageX,
         y: touch.pageY,
         timestamp: Date.now(),
-        animation: new Animated.Value(1),
+        animation: new Animated.Value(1)
       };
 
       Animated.timing(newTouch.animation, {
         toValue: 0,
         duration: touchTimeout,
         useNativeDriver: true,
-        easing: Easing.out(Easing.cubic),
+        easing: Easing.out(Easing.cubic)
       }).start();
 
       setLatestTouch(newTouch);
     }
   };
 
-  const touchIndicatorStyle = useMemo(() => ({
-    position: 'absolute',
-    width: indicatorSize,
-    height: indicatorSize,
-    borderRadius: indicatorSize / 2,
-    backgroundColor: indicatorColor,
-    zIndex: 9999,
-  } as ViewStyle), [indicatorSize, indicatorColor]);
+  const touchIndicatorStyle = useMemo(
+    () =>
+      ({
+        position: 'absolute',
+        width: indicatorSize,
+        height: indicatorSize,
+        borderRadius: indicatorSize / 2,
+        backgroundColor: indicatorColor,
+        zIndex: 9999
+      } as ViewStyle),
+    [indicatorSize, indicatorColor]
+  );
 
   return (
-    <View 
-      style={StyleSheet.absoluteFill} 
+    <View
+      style={StyleSheet.absoluteFill}
       onTouchStart={handleTouch}
       onTouchMove={handleTouch}
       onTouchEnd={handleTouch}
@@ -143,8 +158,8 @@ const TouchIndicator: React.FC<TouchIndicatorProps> = ({
             {
               left: latestTouch.x - indicatorSize / 2,
               top: latestTouch.y - indicatorSize / 2,
-              opacity: latestTouch.animation,
-            },
+              opacity: latestTouch.animation
+            }
           ]}
         />
       )}

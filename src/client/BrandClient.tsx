@@ -1,8 +1,7 @@
-import { Modules } from "../Modules";
-import { CourierBrandResponse } from "..";
+import { Modules } from '../Modules';
+import { CourierBrandResponse } from '..';
 
 export class BrandClient {
-
   readonly clientId: string;
 
   constructor(clientId: string) {
@@ -15,9 +14,10 @@ export class BrandClient {
    * @param props.brandId - The ID of the brand to retrieve.
    * @returns A promise that resolves with the CourierBrandResponse containing brand information.
    */
-  public async getBrand(props: { brandId: string }): Promise<CourierBrandResponse> {
+  public async getBrand(props: {
+    brandId: string;
+  }): Promise<CourierBrandResponse> {
     const json = await Modules.Client.getBrand(this.clientId, props.brandId);
     return JSON.parse(json);
   }
-
 }

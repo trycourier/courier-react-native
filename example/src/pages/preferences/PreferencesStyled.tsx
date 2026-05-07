@@ -1,14 +1,15 @@
-import { CourierPreferencesView, CourierPreferencesTheme } from "@trycourier/courier-react-native";
-import Env from "../../Env";
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Styles } from "../Styles";
+import {
+  CourierPreferencesView,
+  CourierPreferencesTheme
+} from '@trycourier/courier-react-native';
+import Env from '../../Env';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Styles } from '../Styles';
 
 const PreferencesStyled = () => {
-
   function getTheme(isDark: boolean): CourierPreferencesTheme {
-
-    const styles = Styles(isDark)
+    const styles = Styles(isDark);
 
     return {
       brandId: Env.brandId,
@@ -84,33 +85,32 @@ const PreferencesStyled = () => {
             color: styles.Colors.title
           },
           toggleThumbColor: styles.Colors.action,
-          toggleTrackColor: styles.Colors.option,
+          toggleTrackColor: styles.Colors.option
         }
       }
-    }
-
+    };
   }
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      flex: 1
     },
     box: {
       width: '100%',
-      height: '100%',
-    },
+      height: '100%'
+    }
   });
-  
+
   return (
     <View style={styles.container}>
-      <CourierPreferencesView 
-        mode={{ 
-          type: 'channels', 
-          channels: ['push', 'sms', 'email'] 
+      <CourierPreferencesView
+        mode={{
+          type: 'channels',
+          channels: ['push', 'sms', 'email']
         }}
         theme={{
           light: getTheme(false),
-          dark: getTheme(true),
+          dark: getTheme(true)
         }}
         onScrollPreferences={(offsetX, offsetY) => {
           console.log(offsetX, offsetY);
@@ -119,10 +119,9 @@ const PreferencesStyled = () => {
           console.log(error);
         }}
         style={styles.box}
-       />
+      />
     </View>
   );
-
 };
 
 export default PreferencesStyled;

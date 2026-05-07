@@ -7,7 +7,6 @@ import PreferencesStyled from './preferences/PreferencesStyled';
 const Tab = createMaterialTopTabNavigator();
 
 const PreferencesTab = () => {
-
   return (
     <Tab.Navigator>
       <Tab.Screen name="Default" component={PreferencesDefault} />
@@ -15,7 +14,6 @@ const PreferencesTab = () => {
       <Tab.Screen name="Custom" component={PreferencesCustom} />
     </Tab.Navigator>
   );
-
 };
 
 export default PreferencesTab;

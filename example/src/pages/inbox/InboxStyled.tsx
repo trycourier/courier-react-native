@@ -1,15 +1,23 @@
-import Courier, { CourierInboxTheme, CourierInboxView, InboxMessage } from '@trycourier/courier-react-native';
+import Courier, {
+  CourierInboxTheme,
+  CourierInboxView,
+  InboxMessage
+} from '@trycourier/courier-react-native';
 import React from 'react';
-import { View, StyleSheet, ActionSheetIOS, Platform, Alert } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ActionSheetIOS,
+  Platform,
+  Alert
+} from 'react-native';
 import { Styles } from '../Styles';
 import Env from '../../Env';
 
 const InboxStyled = () => {
-
   function getTheme(isDark: boolean): CourierInboxTheme {
+    const styles = Styles(isDark);
 
-    const styles = Styles(isDark)
-    
     return {
       brandId: Env.brandId,
       tabIndicatorColor: styles.Colors.action,
@@ -115,7 +123,7 @@ const InboxStyled = () => {
           font: {
             family: styles.Fonts.subtitle,
             size: styles.TextSizes.subtitle,
-            color: styles.Colors.title,
+            color: styles.Colors.title
           },
           backgroundColor: styles.Colors.option,
           cornerRadius: styles.Corners.button
@@ -152,52 +160,51 @@ const InboxStyled = () => {
       android: {
         dividerItemDecoration: 'vertical'
       }
-    }
-
+    };
   }
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      flex: 1
     },
     box: {
       width: '100%',
-      height: '100%',
-    },
+      height: '100%'
+    }
   });
 
   const showMessageActions = (message: InboxMessage) => {
     if (Platform.OS === 'android') {
-      Alert.alert(
-        'Message Actions',
-        '',
-        [
-          {
-            text: message.read ? 'Mark as Unread' : 'Mark as Read',
-            onPress: () => {
-              message.isRead ? message.markAsUnread() : message.markAsRead();
-            },
-          },
-          {
-            text: message.archived ? 'Unarchive' : 'Archive',
-            onPress: () => {
-              if (!message.archived) {
-                message.markAsArchived();
-              }
-            },
-          },
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-        ]
-      );
+      Alert.alert('Message Actions', '', [
+        {
+          text: message.read ? 'Mark as Unread' : 'Mark as Read',
+          onPress: () => {
+            message.isRead ? message.markAsUnread() : message.markAsRead();
+          }
+        },
+        {
+          text: message.archived ? 'Unarchive' : 'Archive',
+          onPress: () => {
+            if (!message.archived) {
+              message.markAsArchived();
+            }
+          }
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        }
+      ]);
     } else if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
-          options: [message.read ? 'Mark as Unread' : 'Mark as Read', message.archived ? 'Unarchive' : 'Archive', 'Cancel'],
+          options: [
+            message.read ? 'Mark as Unread' : 'Mark as Read',
+            message.archived ? 'Unarchive' : 'Archive',
+            'Cancel'
+          ],
           cancelButtonIndex: 2,
-          destructiveButtonIndex: 1,
+          destructiveButtonIndex: 1
         },
         (buttonIndex) => {
           switch (buttonIndex) {
@@ -212,10 +219,10 @@ const InboxStyled = () => {
       );
     }
   };
-  
+
   return (
     <View style={styles.container}>
-      <CourierInboxView 
+      <CourierInboxView
         canSwipePages={false}
         theme={{
           light: getTheme(false),
@@ -224,7 +231,9 @@ const InboxStyled = () => {
         onClickInboxMessageAtIndex={async (message, _index) => {
           console.log(message);
           if (message.read) {
-            await Courier.shared.unreadMessage({ messageId: message.messageId });
+            await Courier.shared.unreadMessage({
+              messageId: message.messageId
+            });
           } else {
             await Courier.shared.readMessage({ messageId: message.messageId });
           }
@@ -238,10 +247,10 @@ const InboxStyled = () => {
         onScrollInbox={(y, _x) => {
           console.log(`Inbox scroll offset y: ${y}`);
         }}
-        style={styles.box} />
+        style={styles.box}
+      />
     </View>
   );
-
 };
 
 export default InboxStyled;

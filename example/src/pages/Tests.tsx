@@ -1,20 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Platform, FlatList, TouchableOpacity, TextInput, Modal, Button, Switch, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  Button,
+  Switch,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Courier, { CourierClient, CourierTrackingEvent, CourierUserPreferencesChannel, CourierUserPreferencesStatus, InboxMessage, iOSForegroundPresentationOptions } from '@trycourier/courier-react-native';
+import Courier, {
+  CourierClient,
+  CourierTrackingEvent,
+  CourierUserPreferencesChannel,
+  CourierUserPreferencesStatus,
+  InboxMessage,
+  iOSForegroundPresentationOptions
+} from '@trycourier/courier-react-native';
 import Env from '../Env';
 import { ExampleServer, Utils } from '../Utils';
 
-let savedClient: CourierClient | undefined = undefined;
+let savedClient: CourierClient | undefined;
 
 const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
-  
-  createClient: async (params: { userId: string, clientKey: string, jwt?: string, showLogs: boolean, tenantId?: string, connectionId?: string }) => {
-    
-    const token = params.jwt ?? await ExampleServer.generateJwt({
-      authKey: Env.authKey,
-      userId: params.userId,
-    });
+  createClient: async (params: {
+    userId: string;
+    clientKey: string;
+    jwt?: string;
+    showLogs: boolean;
+    tenantId?: string;
+    connectionId?: string;
+  }) => {
+    const token =
+      params.jwt ??
+      (await ExampleServer.generateJwt({
+        authKey: Env.authKey,
+        userId: params.userId
+      }));
 
     savedClient = new CourierClient({
       userId: params.userId,
@@ -22,18 +50,16 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       jwt: token,
       clientKey: params.clientKey,
       tenantId: params.tenantId,
-      connectionId: params.connectionId,
+      connectionId: params.connectionId
     });
 
     return {
       id: savedClient.clientId,
-      options: savedClient.options,
+      options: savedClient.options
     };
-
   },
 
   removeClient: async (params: { clientId?: string }) => {
-
     let id = params.clientId;
 
     if (savedClient) {
@@ -42,146 +68,159 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       savedClient = undefined;
     }
     return {
-      clientId: id,
+      clientId: id
     };
-
   },
 
-  testPutToken: async (params: { token: string, provider: string }) => {
+  testPutToken: async (params: { token: string; provider: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     await savedClient.tokens.putUserToken({
       provider: params.provider,
-      token: params.token,
+      token: params.token
     });
     return { token: params.token, provider: params.provider };
   },
 
   testDeleteToken: async (params: { token: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     await savedClient.tokens.deleteUserToken({ token: params.token });
   },
 
   testGetBrands: async (params: { brandId: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
-    const brand = await savedClient.brands.getBrand({ brandId: params.brandId });
+    const brand = await savedClient.brands.getBrand({
+      brandId: params.brandId
+    });
     return brand;
   },
 
-  testMessages: async (params: { paginationLimit: number, startCursor?: string }) => {
+  testMessages: async (params: {
+    paginationLimit: number;
+    startCursor?: string;
+  }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     return await savedClient.inbox.getMessages({
       paginationLimit: params.paginationLimit,
-      startCursor: params.startCursor,
+      startCursor: params.startCursor
     });
   },
 
   testUnreadCount: async () => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     const count = await savedClient.inbox.getUnreadMessageCount();
     console.log('Unread Count:', count);
     return count;
   },
 
-  testArchivedMessages: async (params: { paginationLimit: number, startCursor?: string }) => {
+  testArchivedMessages: async (params: {
+    paginationLimit: number;
+    startCursor?: string;
+  }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     return await savedClient.inbox.getArchivedMessages({
       paginationLimit: params.paginationLimit,
-      startCursor: params.startCursor,
+      startCursor: params.startCursor
     });
   },
 
   testMessageById: async (params: { messageId?: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
 
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: savedClient!.options.userId,
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: savedClient!.options.userId,
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
 
     return await savedClient.inbox.getMessageById({
-      messageId: messageId,
+      messageId: messageId
     });
   },
 
   openMessage: async (params: { messageId?: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
 
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: savedClient!.options.userId,
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: savedClient!.options.userId,
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
 
     await savedClient.inbox.open({
-      messageId: messageId,
+      messageId: messageId
     });
 
     return { messageId: messageId };
-
   },
 
-  clickMessage: async (params: { messageId?: string, trackingId?: string }) => {
+  clickMessage: async (params: { messageId?: string; trackingId?: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
 
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: savedClient!.options.userId,
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: savedClient!.options.userId,
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
 
     await savedClient.inbox.click({
       messageId: messageId,
-      trackingId: params.trackingId ?? 'test-tracking-id',
+      trackingId: params.trackingId ?? 'test-tracking-id'
     });
 
     return { messageId: messageId };
-
   },
 
   readMessage: async (params: { messageId?: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
 
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: savedClient!.options.userId,
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: savedClient!.options.userId,
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
 
     await savedClient.inbox.read({
-      messageId: messageId,
+      messageId: messageId
     });
 
     return { messageId: messageId };
@@ -189,104 +228,125 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   unreadMessage: async (params: { messageId?: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
 
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: savedClient!.options.userId,
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: savedClient!.options.userId,
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
 
     await savedClient.inbox.unread({
-      messageId: messageId,
+      messageId: messageId
     });
 
     return { messageId: messageId };
-
   },
 
   archiveMessage: async (params: { messageId?: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
 
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: savedClient!.options.userId,
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: savedClient!.options.userId,
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
 
     await savedClient.inbox.archive({
-      messageId: messageId,
+      messageId: messageId
     });
 
     return { messageId: messageId };
-
   },
 
   readAllMessages: async () => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     await savedClient.inbox.readAll();
   },
 
   testGetPreferences: async () => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     return await savedClient.preferences.getUserPreferences();
   },
 
-  testUpdatePreferences: async (params: { topicId: string, status: string, hasCustomRouting: boolean, customRouting: string }) => {
+  testUpdatePreferences: async (params: {
+    topicId: string;
+    status: string;
+    hasCustomRouting: boolean;
+    customRouting: string;
+  }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     await savedClient.preferences.putUserPreferenceTopic({
       topicId: params.topicId,
       status: params.status as CourierUserPreferencesStatus,
       hasCustomRouting: params.hasCustomRouting,
-      customRouting: params.customRouting.split(',').map(channel => channel.trim() as CourierUserPreferencesChannel),
+      customRouting: params.customRouting
+        .split(',')
+        .map((channel) => channel.trim() as CourierUserPreferencesChannel)
     });
   },
 
   testGetPreferenceTopics: async (params: { topicId: string }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
-    return await savedClient.preferences.getUserPreferenceTopic({ topicId: params.topicId });
+    return await savedClient.preferences.getUserPreferenceTopic({
+      topicId: params.topicId
+    });
   },
 
-  testPostTrackingUrl: async (params: { trackingUrl: string, event: string }) => {
+  testPostTrackingUrl: async (params: {
+    trackingUrl: string;
+    event: string;
+  }) => {
     if (!savedClient) {
-      throw new Error("Client not initialized. Run createClient first.");
+      throw new Error('Client not initialized. Run createClient first.');
     }
     return await savedClient.tracking.postTrackingUrl({
       url: params.trackingUrl,
-      event: params.event as CourierTrackingEvent,
+      event: params.event as CourierTrackingEvent
     });
   },
 
-  testSignIn: async (params: { userId: string, accessToken?: string, clientKey: string, tenantId: string, showLogs: boolean }) => {
-
-    const token = params.accessToken ?? await ExampleServer.generateJwt({
-      authKey: Env.authKey,
-      userId: params.userId,
-    });
+  testSignIn: async (params: {
+    userId: string;
+    accessToken?: string;
+    clientKey: string;
+    tenantId: string;
+    showLogs: boolean;
+  }) => {
+    const token =
+      params.accessToken ??
+      (await ExampleServer.generateJwt({
+        authKey: Env.authKey,
+        userId: params.userId
+      }));
 
     await Courier.shared.signIn({
       userId: params.userId,
       accessToken: token,
       clientKey: params.clientKey,
       tenantId: params.tenantId,
-      showLogs: params.showLogs,
+      showLogs: params.showLogs
     });
 
     const client = await Courier.shared.getClient();
@@ -310,7 +370,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const listener = await Courier.shared.addAuthenticationListener({
       onUserChanged: (userId) => {
         console.log('User changed:', userId);
-      },
+      }
     });
     listener.remove();
     return listener.listenerId;
@@ -328,7 +388,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const client = await Courier.shared.getClient();
     return {
       clientId: client?.clientId,
-      options: client?.options,
+      options: client?.options
     };
   },
 
@@ -338,22 +398,25 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     tokens.forEach((value, key) => {
       tokenObject[key] = value;
     });
-    return tokenObject
+    return tokenObject;
   },
 
   testGetToken: async (params: { provider: string }) => {
     return await Courier.shared.getToken({ key: params.provider });
   },
 
-  testSetToken: async (params: { provider: string, token: string }) => {
-    return await Courier.shared.setToken({ key: params.provider, token: params.token });
+  testSetToken: async (params: { provider: string; token: string }) => {
+    return await Courier.shared.setToken({
+      key: params.provider,
+      token: params.token
+    });
   },
 
   testAddPushNotificationListener: async () => {
     const listener = Courier.shared.addPushNotificationListener({
       onPushNotificationClicked: (push) => {
         console.log('Push notification clicked:', push);
-      },
+      }
     });
     listener.remove();
     return listener.listenerId;
@@ -372,66 +435,76 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testOpenMessage: async (params: { messageId?: string }) => {
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: await Courier.shared.getUserId() ?? '',
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: (await Courier.shared.getUserId()) ?? '',
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
     await Courier.shared.openMessage({ messageId: messageId });
     return { messageId: messageId };
   },
 
   testClickMessage: async (params: { messageId?: string }) => {
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: await Courier.shared.getUserId() ?? '',
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: (await Courier.shared.getUserId()) ?? '',
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
     await Courier.shared.clickMessage({ messageId: messageId });
     return { messageId: messageId };
   },
-  
+
   testReadMessage: async (params: { messageId?: string }) => {
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: await Courier.shared.getUserId() ?? '',
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: (await Courier.shared.getUserId()) ?? '',
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
     await Courier.shared.readMessage({ messageId: messageId });
     return { messageId: messageId };
   },
 
   testUnreadMessage: async (params: { messageId?: string }) => {
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: await Courier.shared.getUserId() ?? '',
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: (await Courier.shared.getUserId()) ?? '',
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
     await Courier.shared.unreadMessage({ messageId: messageId });
     return { messageId: messageId };
   },
-  
+
   testArchiveMessage: async (params: { messageId?: string }) => {
-    const messageId = params.messageId ?? await new Promise<string>(async (resolve) => {
-      const result = await ExampleServer.sendTest({
-        authKey: Env.authKey,
-        userId: await Courier.shared.getUserId() ?? '',
-        channel: 'inbox',
-      });
-      setTimeout(() => resolve(result), 5000);
-    });
+    const messageId =
+      params.messageId ??
+      (await new Promise<string>(async (resolve) => {
+        const result = await ExampleServer.sendTest({
+          authKey: Env.authKey,
+          userId: (await Courier.shared.getUserId()) ?? '',
+          channel: 'inbox'
+        });
+        setTimeout(() => resolve(result), 5000);
+      }));
     await Courier.shared.archiveMessage({ messageId: messageId });
     return { messageId: messageId };
   },
@@ -454,15 +527,35 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       onTotalCountChanged: (totalCount: number, feed: string) => {
         console.log('Inbox total count changed:', totalCount, feed);
       },
-      onMessagesChanged: (messages: InboxMessage[], canPaginate: boolean, feed: string) => {
+      onMessagesChanged: (
+        messages: InboxMessage[],
+        canPaginate: boolean,
+        feed: string
+      ) => {
         console.log('Inbox messages changed:', messages, canPaginate, feed);
       },
-      onPageAdded: (messages: InboxMessage[], canPaginate: boolean, isFirstPage: boolean, feed: string) => {
-        console.log('Inbox page added:', messages, canPaginate, isFirstPage, feed);
+      onPageAdded: (
+        messages: InboxMessage[],
+        canPaginate: boolean,
+        isFirstPage: boolean,
+        feed: string
+      ) => {
+        console.log(
+          'Inbox page added:',
+          messages,
+          canPaginate,
+          isFirstPage,
+          feed
+        );
       },
-      onMessageEvent: (message: InboxMessage, index: number, feed: string, eventName: string) => {
+      onMessageEvent: (
+        message: InboxMessage,
+        index: number,
+        feed: string,
+        eventName: string
+      ) => {
         console.log('Inbox message event:', message, index, feed, eventName);
-      },
+      }
     });
     await listener.remove();
     return listener;
@@ -477,7 +570,9 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testFetchNextPageOfMessages: async () => {
-    return await Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' });
+    return await Courier.shared.fetchNextPageOfMessages({
+      inboxMessageFeed: 'feed'
+    });
   },
 
   testRequestPushNotificationPermission: async () => {
@@ -488,47 +583,62 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     return await Courier.getNotificationPermissionStatus();
   },
 
-  testSetIOSForegroundPresentationOptions: async (params: { options: iOSForegroundPresentationOptions[] }) => {
-    return Courier.setIOSForegroundPresentationOptions({ options: params.options });
+  testSetIOSForegroundPresentationOptions: async (params: {
+    options: iOSForegroundPresentationOptions[];
+  }) => {
+    return Courier.setIOSForegroundPresentationOptions({
+      options: params.options
+    });
   },
 
   testOpenSettingsForApp: async () => {
     return Courier.openSettingsForApp();
   },
 
-  testSendInboxMessage: async (params: { userId: string, title?: string, body?: string }) => {
+  testSendInboxMessage: async (params: {
+    userId: string;
+    title?: string;
+    body?: string;
+  }) => {
     const messageId = await ExampleServer.sendTest({
       authKey: Env.authKey,
       userId: params.userId,
       channel: 'inbox',
       title: params.title ?? 'Test',
-      body: params.body ?? 'Body',
+      body: params.body ?? 'Body'
     });
     return { messageId: messageId };
   },
 
-  testSendApnMessage: async (params: { userId: string, title?: string, body?: string }) => {
+  testSendApnMessage: async (params: {
+    userId: string;
+    title?: string;
+    body?: string;
+  }) => {
     const messageId = await ExampleServer.sendTest({
       authKey: Env.authKey,
       userId: params.userId,
       channel: 'apn',
       title: params.title ?? 'Test',
-      body: params.body ?? 'Body',
+      body: params.body ?? 'Body'
     });
     return { messageId: messageId };
   },
 
-  testSendFcmMessage: async (params: { userId: string, title?: string, body?: string }) => {
+  testSendFcmMessage: async (params: {
+    userId: string;
+    title?: string;
+    body?: string;
+  }) => {
     const messageId = await ExampleServer.sendTest({
       authKey: Env.authKey,
       userId: params.userId,
       channel: 'firebase-fcm',
       title: params.title ?? 'Test',
-      body: params.body ?? 'Body',
+      body: params.body ?? 'Body'
     });
     return { messageId: messageId };
-  },
-
+  }
 };
 
 type TestItem = {
@@ -550,7 +660,13 @@ const getTestSections = async (): Promise<TestSection[]> => [
       {
         name: 'Create Client',
         testId: 'createClient',
-        defaultParams: { userId: Utils.generateUUID(), clientKey: Env.clientKey, showLogs: true, tenantId: undefined, connectionId: undefined },
+        defaultParams: {
+          userId: Utils.generateUUID(),
+          clientKey: Env.clientKey,
+          showLogs: true,
+          tenantId: undefined,
+          connectionId: undefined
+        },
         runOrder: 'normal'
       },
       {
@@ -558,7 +674,7 @@ const getTestSections = async (): Promise<TestSection[]> => [
         testId: 'removeClient',
         defaultParams: { clientId: savedClient?.clientId },
         runOrder: 'skip'
-      },
+      }
     ]
   },
   {
@@ -575,7 +691,7 @@ const getTestSections = async (): Promise<TestSection[]> => [
         testId: 'testDeleteToken',
         defaultParams: { token: 'test-token' },
         runOrder: 'normal'
-      },
+      }
     ]
   },
   {
@@ -586,7 +702,7 @@ const getTestSections = async (): Promise<TestSection[]> => [
         testId: 'testGetBrands',
         defaultParams: { brandId: Env.brandId },
         runOrder: 'normal'
-      },
+      }
     ]
   },
   {
@@ -651,7 +767,7 @@ const getTestSections = async (): Promise<TestSection[]> => [
         testId: 'readAllMessages',
         defaultParams: {},
         runOrder: 'normal'
-      },
+      }
     ]
   },
   {
@@ -666,7 +782,12 @@ const getTestSections = async (): Promise<TestSection[]> => [
       {
         name: 'Update Preferences',
         testId: 'testUpdatePreferences',
-        defaultParams: { topicId: Env.topicId, status: 'OPTED_IN', hasCustomRouting: true, customRouting: 'push,sms,email' },
+        defaultParams: {
+          topicId: Env.topicId,
+          status: 'OPTED_IN',
+          hasCustomRouting: true,
+          customRouting: 'push,sms,email'
+        },
         runOrder: 'normal'
       },
       {
@@ -674,7 +795,7 @@ const getTestSections = async (): Promise<TestSection[]> => [
         testId: 'testGetPreferenceTopics',
         defaultParams: { topicId: Env.topicId },
         runOrder: 'normal'
-      },
+      }
     ]
   },
   {
@@ -683,9 +804,13 @@ const getTestSections = async (): Promise<TestSection[]> => [
       {
         name: 'Post Tracking Url',
         testId: 'testPostTrackingUrl',
-        defaultParams: { trackingUrl: 'https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy', event: 'delivered' },
+        defaultParams: {
+          trackingUrl:
+            'https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy',
+          event: 'delivered'
+        },
         runOrder: 'normal'
-      },
+      }
     ]
   },
   {
@@ -694,7 +819,13 @@ const getTestSections = async (): Promise<TestSection[]> => [
       {
         name: 'Sign In',
         testId: 'testSignIn',
-        defaultParams: { userId: Utils.generateUUID(), accessToken: undefined, clientKey: Env.clientKey, tenantId: undefined, showLogs: true },
+        defaultParams: {
+          userId: Utils.generateUUID(),
+          accessToken: undefined,
+          clientKey: Env.clientKey,
+          tenantId: undefined,
+          showLogs: true
+        },
         runOrder: 'normal'
       },
       {
@@ -884,7 +1015,7 @@ const getTestSections = async (): Promise<TestSection[]> => [
         testId: 'testOpenSettingsForApp',
         defaultParams: {},
         runOrder: 'normal'
-      },
+      }
     ]
   },
   {
@@ -893,8 +1024,9 @@ const getTestSections = async (): Promise<TestSection[]> => [
       {
         name: 'Send Inbox Message',
         testId: 'testSendInboxMessage',
-        defaultParams: { 
-          userId: await Courier.shared.getUserId() ?? savedClient?.options.userId,
+        defaultParams: {
+          userId:
+            (await Courier.shared.getUserId()) ?? savedClient?.options.userId,
           title: 'Test',
           body: 'Body'
         },
@@ -903,8 +1035,9 @@ const getTestSections = async (): Promise<TestSection[]> => [
       {
         name: 'Send APN Message',
         testId: 'testSendApnMessage',
-        defaultParams: { 
-          userId: await Courier.shared.getUserId() ?? savedClient?.options.userId,
+        defaultParams: {
+          userId:
+            (await Courier.shared.getUserId()) ?? savedClient?.options.userId,
           title: 'Test',
           body: 'Body'
         },
@@ -913,8 +1046,9 @@ const getTestSections = async (): Promise<TestSection[]> => [
       {
         name: 'Send FCM Message',
         testId: 'testSendFcmMessage',
-        defaultParams: { 
-          userId: await Courier.shared.getUserId() ?? savedClient?.options.userId,
+        defaultParams: {
+          userId:
+            (await Courier.shared.getUserId()) ?? savedClient?.options.userId,
           title: 'Test',
           body: 'Body'
         },
@@ -924,18 +1058,29 @@ const getTestSections = async (): Promise<TestSection[]> => [
   }
 ];
 
-const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; status?: string; runOrder?: string }, onPress: () => void }) => (
+const TestItem = ({
+  item,
+  onPress
+}: {
+  item: { name: string; result?: unknown; status?: string; runOrder?: string };
+  onPress: () => void;
+}) => (
   <TouchableOpacity onPress={onPress}>
-    <View style={[styles.testItem, item.status === 'running' && styles.runningTestItem]}>
+    <View
+      style={[
+        styles.testItem,
+        item.status === 'running' && styles.runningTestItem
+      ]}
+    >
       <View style={styles.testItemContent}>
         <Text style={styles.testItemTitle}>{item.name}</Text>
         {item.status !== undefined && item.status !== 'running' && (
           <Text style={styles.testItemResult}>
-            {item.result !== undefined ? (
-              typeof item.result === 'number' ? 
-                item.result.toString() : 
-                JSON.stringify(item.result, null, 2)
-            ) : 'No Response'}
+            {item.result !== undefined
+              ? typeof item.result === 'number'
+                ? item.result.toString()
+                : JSON.stringify(item.result, null, 2)
+              : 'No Response'}
           </Text>
         )}
       </View>
@@ -947,7 +1092,9 @@ const TestItem = ({ item, onPress }: { item: { name: string; result?: unknown; s
         ) : item.status === 'skipped' ? (
           <Text style={styles.statusEmoji}>⚠️</Text>
         ) : (
-          <Text style={styles.statusEmoji}>{item.status === 'success' ? '✅' : '❌'}</Text>
+          <Text style={styles.statusEmoji}>
+            {item.status === 'success' ? '✅' : '❌'}
+          </Text>
         )}
       </View>
     </View>
@@ -963,7 +1110,14 @@ const SectionHeader = ({ title }: { title: string }) => (
 const Tests = () => {
   const navigation = useNavigation();
   const [testSections, setTestSections] = useState<TestSection[]>([]);
-  const [testResults, setTestResults] = useState<Array<{ name: string; result?: unknown; status?: string; runOrder?: string }>>([]);
+  const [testResults, setTestResults] = useState<
+    Array<{
+      name: string;
+      result?: unknown;
+      status?: string;
+      runOrder?: string;
+    }>
+  >([]);
   const [isRunning, setIsRunning] = useState(false);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
   const [totalTests, setTotalTests] = useState(0);
@@ -972,13 +1126,15 @@ const Tests = () => {
     const loadTests = async () => {
       const sections = await getTestSections();
       setTestSections(sections);
-      setTestResults(sections.flatMap(section => 
-        section.tests.map(test => ({ 
-          name: test.name, 
-          runOrder: test.runOrder 
-        }))
-      ));
-      setTotalTests(sections.flatMap(section => section.tests).length);
+      setTestResults(
+        sections.flatMap((section) =>
+          section.tests.map((test) => ({
+            name: test.name,
+            runOrder: test.runOrder
+          }))
+        )
+      );
+      setTotalTests(sections.flatMap((section) => section.tests).length);
     };
     loadTests();
   }, []);
@@ -986,15 +1142,28 @@ const Tests = () => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={runAllTests} disabled={isRunning} style={{ marginRight: 22 }}>
+        <TouchableOpacity
+          onPress={runAllTests}
+          disabled={isRunning}
+          style={{ marginRight: 22 }}
+        >
           {isRunning ? (
             <ActivityIndicator size="small" />
           ) : (
-            <Text style={[styles.runTestsButton, isRunning && styles.disabledButton]}>Run Tests</Text>
+            <Text
+              style={[
+                styles.runTestsButton,
+                isRunning && styles.disabledButton
+              ]}
+            >
+              Run Tests
+            </Text>
           )}
         </TouchableOpacity>
       ),
-      headerTitle: isRunning ? `Running Test ${currentTestIndex + 1}/${totalTests}` : 'Tests',
+      headerTitle: isRunning
+        ? `Running Test ${currentTestIndex + 1}/${totalTests}`
+        : 'Tests'
     });
   }, [isRunning, currentTestIndex]);
 
@@ -1005,7 +1174,7 @@ const Tests = () => {
     if (error instanceof Error) {
       errorMessage = error.message;
       errorDetails = {
-        name: error.name,
+        name: error.name
       };
     } else if (typeof error === 'object' && error !== null) {
       errorMessage = String(error);
@@ -1020,44 +1189,66 @@ const Tests = () => {
   const runAllTests = async () => {
     if (isRunning) return;
 
-    setTestResults(prev => prev.map(item => ({
-      ...item,
-      status: undefined,
-      result: undefined
-    })));
+    setTestResults((prev) =>
+      prev.map((item) => ({
+        ...item,
+        status: undefined,
+        result: undefined
+      }))
+    );
 
     setIsRunning(true);
     setCurrentTestIndex(0);
-    const normalTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'normal'));
-    const endTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'run at end'));
-    const skipTests = testSections.flatMap(section => section.tests.filter(test => test.runOrder === 'skip'));
-    
+    const normalTests = testSections.flatMap((section) =>
+      section.tests.filter((test) => test.runOrder === 'normal')
+    );
+    const endTests = testSections.flatMap((section) =>
+      section.tests.filter((test) => test.runOrder === 'run at end')
+    );
+    const skipTests = testSections.flatMap((section) =>
+      section.tests.filter((test) => test.runOrder === 'skip')
+    );
+
     for (let i = 0; i < normalTests.length; i++) {
       setCurrentTestIndex(i);
       await runSingleTest(normalTests[i]!);
     }
-    
+
     for (let i = 0; i < endTests.length; i++) {
       setCurrentTestIndex(normalTests.length + i);
       await runSingleTest(endTests[i]!);
     }
 
     for (const test of skipTests) {
-      setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, status: 'skipped' } : t));
+      setTestResults((prev) =>
+        prev.map((t) =>
+          t.name === test.name ? { ...t, status: 'skipped' } : t
+        )
+      );
     }
-    
+
     setIsRunning(false);
     setCurrentTestIndex(0);
   };
 
   const runSingleTest = async (test: TestItem) => {
-    setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, status: 'running', result: undefined } : t));
-    setModalVisible(false);  // Close the modal when the test starts
+    setTestResults((prev) =>
+      prev.map((t) =>
+        t.name === test.name
+          ? { ...t, status: 'running', result: undefined }
+          : t
+      )
+    );
+    setModalVisible(false); // Close the modal when the test starts
     try {
       const testFunction = IntegrationTests[test.testId];
       if (typeof testFunction === 'function') {
         const result = await testFunction(test.defaultParams);
-        setTestResults(prev => prev.map(t => t.name === test.name ? { ...t, result, status: 'success' } : t));
+        setTestResults((prev) =>
+          prev.map((t) =>
+            t.name === test.name ? { ...t, result, status: 'success' } : t
+          )
+        );
       } else {
         throw new Error(`Test function '${test.testId}' not found`);
       }
@@ -1067,27 +1258,31 @@ const Tests = () => {
       console.log('Test failed:', {
         testName: test.name,
         errorMessage,
-        errorDetails,
+        errorDetails
       });
 
-      setTestResults(prev => prev.map(t => 
-        t.name === test.name 
-          ? { 
-              ...t, 
-              result: {
-                errorMessage,
-                errorDetails,
-              },
-              status: 'failure' 
-            } 
-          : t
-      ));
+      setTestResults((prev) =>
+        prev.map((t) =>
+          t.name === test.name
+            ? {
+                ...t,
+                result: {
+                  errorMessage,
+                  errorDetails
+                },
+                status: 'failure'
+              }
+            : t
+        )
+      );
     }
   };
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTest, setSelectedTest] = useState<TestItem | null>(null);
-  const [testParams, setTestParams] = useState<Record<string, string | boolean | number | undefined>>({});
+  const [testParams, setTestParams] = useState<
+    Record<string, string | boolean | number | undefined>
+  >({});
 
   const onTestItemPress = (item: TestItem) => {
     if (isRunning) return;
@@ -1096,8 +1291,11 @@ const Tests = () => {
     setModalVisible(true);
   };
 
-  const handleParamChange = (key: string, value: string | boolean | number | undefined) => {
-    setTestParams(prev => ({ ...prev, [key]: value }));
+  const handleParamChange = (
+    key: string,
+    value: string | boolean | number | undefined
+  ) => {
+    setTestParams((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleRunTest = async () => {
@@ -1124,7 +1322,12 @@ const Tests = () => {
             {section.tests.map((test: TestItem) => (
               <TestItem
                 key={test.name}
-                item={testResults.find(r => r.name === test.name) || { name: test.name, runOrder: test.runOrder }}
+                item={
+                  testResults.find((r) => r.name === test.name) || {
+                    name: test.name,
+                    runOrder: test.runOrder
+                  }
+                }
                 onPress={() => onTestItemPress(test)}
               />
             ))}
@@ -1143,7 +1346,9 @@ const Tests = () => {
                   {typeof value === 'boolean' ? (
                     <Switch
                       value={value}
-                      onValueChange={(newValue) => handleParamChange(key, newValue)}
+                      onValueChange={(newValue) =>
+                        handleParamChange(key, newValue)
+                      }
                     />
                   ) : typeof value === 'number' ? (
                     <TextInput
@@ -1151,7 +1356,10 @@ const Tests = () => {
                       value={value !== undefined ? String(value) : ''}
                       onChangeText={(text) => {
                         const numValue = Number(text);
-                        handleParamChange(key, isNaN(numValue) ? undefined : numValue);
+                        handleParamChange(
+                          key,
+                          isNaN(numValue) ? undefined : numValue
+                        );
                       }}
                       keyboardType="numeric"
                       autoCapitalize="none"
@@ -1161,7 +1369,9 @@ const Tests = () => {
                     <TextInput
                       style={styles.input}
                       value={value !== undefined ? String(value) : ''}
-                      onChangeText={(text) => handleParamChange(key, text || undefined)}
+                      onChangeText={(text) =>
+                        handleParamChange(key, text || undefined)
+                      }
                       autoCapitalize="none"
                       autoCorrect={false}
                     />
@@ -1180,7 +1390,7 @@ const Tests = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   testItem: {
     flexDirection: 'row',
@@ -1188,89 +1398,89 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: '#ccc'
   },
   runningTestItem: {
-    backgroundColor: '#e6f3ff',
+    backgroundColor: '#e6f3ff'
   },
   testItemContent: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 10
   },
   testItemTitle: {
     fontFamily: Platform.select({
       ios: 'Courier',
       android: 'monospace',
-      default: 'monospace',
+      default: 'monospace'
     }),
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 8
   },
   testItemStatus: {
     width: 24,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   testItemResult: {
     fontFamily: Platform.select({
       ios: 'Courier',
       android: 'monospace',
-      default: 'monospace',
+      default: 'monospace'
     }),
-    fontSize: 14,
+    fontSize: 14
   },
   statusEmoji: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 24
   },
   runTestsButton: {
-    fontSize: 16,
+    fontSize: 16
   },
   disabledButton: {
-    opacity: 0.5,
+    opacity: 0.5
   },
   sectionHeader: {
     backgroundColor: '#f0f0f0',
-    padding: 20,
+    padding: 20
   },
   sectionHeaderText: {
     fontFamily: Platform.select({
       ios: 'Courier',
       android: 'monospace',
-      default: 'monospace',
+      default: 'monospace'
     }),
     fontWeight: 'bold',
     fontSize: 24,
-    paddingTop: 20,
+    paddingTop: 20
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
-    width: '80%',
+    width: '80%'
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 10
   },
   inputLabel: {
     width: 100,
-    marginRight: 10,
+    marginRight: 10
   },
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 5,
-  },
+    padding: 5
+  }
 });
 
 export default Tests;

@@ -1,10 +1,21 @@
-import Courier, { InboxMessage, InboxMessageEvent } from '@trycourier/courier-react-native';
+import Courier, {
+  InboxMessage,
+  InboxMessageEvent
+} from '@trycourier/courier-react-native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+  Platform
+} from 'react-native';
 import { InboxMessageFeed } from 'src/models/InboxMessageFeed';
 
 const InboxCustom = () => {
-
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +36,11 @@ const InboxCustom = () => {
           setIsLoading(false);
           setError(error);
         },
-        onMessagesChanged(messages: InboxMessage[], canPaginate: boolean, feed: InboxMessageFeed) {
+        onMessagesChanged(
+          messages: InboxMessage[],
+          canPaginate: boolean,
+          feed: InboxMessageFeed
+        ) {
           if (feed === 'feed') {
             setIsLoading(false);
             setError(null);
@@ -33,15 +48,25 @@ const InboxCustom = () => {
             setCanPaginate(canPaginate);
           }
         },
-        onMessageEvent(message: InboxMessage, index: number, feed: InboxMessageFeed, eventName: InboxMessageEvent) {
+        onMessageEvent(
+          message: InboxMessage,
+          index: number,
+          feed: InboxMessageFeed,
+          eventName: InboxMessageEvent
+        ) {
           if (feed === 'feed') {
             console.log(message, index, feed, eventName);
             setMessages([...messages]);
           }
         },
-        onPageAdded(messages: InboxMessage[], canPaginate: boolean, isFirstPage: boolean, feed: string) {
+        onPageAdded(
+          messages: InboxMessage[],
+          canPaginate: boolean,
+          isFirstPage: boolean,
+          feed: string
+        ) {
           if (feed === 'feed' && !isFirstPage) {
-            setMessages(prevMessages => [...prevMessages, ...messages]);
+            setMessages((prevMessages) => [...prevMessages, ...messages]);
             setCanPaginate(canPaginate);
           }
         }
@@ -51,7 +76,7 @@ const InboxCustom = () => {
     };
 
     let inboxListener: any;
-    initInbox().then(listener => {
+    initInbox().then((listener) => {
       inboxListener = listener;
     });
 
@@ -60,16 +85,14 @@ const InboxCustom = () => {
         inboxListener.remove();
       }
     };
-
   }, []);
 
   const ListItem = (props: { message: InboxMessage }) => {
-
     const styles = StyleSheet.create({
       container: {
         padding: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        borderBottomColor: '#ccc'
       },
       unread: {
         backgroundColor: '#ADD8E6'
@@ -79,10 +102,10 @@ const InboxCustom = () => {
         fontFamily: Platform.select({
           ios: 'Courier',
           android: 'monospace',
-          default: 'monospace',
+          default: 'monospace'
         }),
-        fontSize: 16,
-      },
+        fontSize: 16
+      }
     });
 
     const isRead = props.message.read;
@@ -90,88 +113,82 @@ const InboxCustom = () => {
     async function toggleMessage() {
       const messageId = props.message.messageId;
       await Courier.shared.clickMessage({ messageId: messageId });
-      isRead ? await Courier.shared.unreadMessage({ messageId: messageId }) : await Courier.shared.readMessage({ messageId: messageId });
+      isRead
+        ? await Courier.shared.unreadMessage({ messageId: messageId })
+        : await Courier.shared.readMessage({ messageId: messageId });
       console.log(props.message);
     }
 
     return (
-      <TouchableOpacity style={[styles.container, isRead ? undefined : styles.unread]} onPress={toggleMessage}>
-        <Text style={styles.text}>{JSON.stringify(props.message, null, 2)}</Text>
+      <TouchableOpacity
+        style={[styles.container, isRead ? undefined : styles.unread]}
+        onPress={toggleMessage}
+      >
+        <Text style={styles.text}>
+          {JSON.stringify(props.message, null, 2)}
+        </Text>
       </TouchableOpacity>
     );
-
   };
 
   const PaginationItem = () => {
-
     return (
       <View style={{ paddingVertical: 20 }}>
         <ActivityIndicator size="small" />
       </View>
     );
-
-  }
+  };
 
   const refresh = async () => {
-
     setIsRefreshing(true);
 
     await Courier.shared.refreshInbox();
 
     setIsRefreshing(false);
-
-  }
+  };
 
   function buildContent() {
-
     if (isLoading) {
-      return <Text>Loading</Text>
+      return <Text>Loading</Text>;
     }
 
     if (error) {
-      return <Text>{error}</Text>
+      return <Text>{error}</Text>;
     }
 
     return (
       <FlatList
         data={messages}
-        keyExtractor={message => message.messageId}
-        renderItem={message => <ListItem message={message.item} />}
+        keyExtractor={(message) => message.messageId}
+        renderItem={(message) => <ListItem message={message.item} />}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={refresh}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={refresh} />
         }
         ListFooterComponent={() => {
-          return canPaginate ? <PaginationItem /> : null
+          return canPaginate ? <PaginationItem /> : null;
         }}
         onEndReached={() => {
           if (canPaginate) {
-            Courier.shared.fetchNextPageOfMessages({ inboxMessageFeed: 'feed' }).then(messages => {
-              console.log(messages.length);
-            });
+            Courier.shared
+              .fetchNextPageOfMessages({ inboxMessageFeed: 'feed' })
+              .then((messages) => {
+                console.log(messages.length);
+              });
           }
         }}
       />
-    )
-
+    );
   }
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
-    },
+      alignItems: 'center'
+    }
   });
-  
-  return (
-    <View style={styles.container}>
-      {buildContent()}
-    </View>
-  );
 
+  return <View style={styles.container}>{buildContent()}</View>;
 };
 
 export default InboxCustom;

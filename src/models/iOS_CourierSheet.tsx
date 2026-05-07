@@ -1,6 +1,6 @@
-import { CourierFont } from "./CourierFont"
+import { CourierFont } from './CourierFont';
 
 export interface iOS_CourierSheet {
-  font?: CourierFont
-  toggleColor?: string
+  font?: CourierFont;
+  toggleColor?: string;
 }

@@ -33,17 +33,17 @@ const config = {
       }, {}),
       '@trycourier/courier-react-native': path.resolve(__dirname, '..')
     },
-    assetExts: ['png', 'jpg', 'jpeg', 'gif', 'webp'],
+    assetExts: ['png', 'jpg', 'jpeg', 'gif', 'webp']
   },
 
   transformer: {
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-  },
+        inlineRequires: true
+      }
+    })
+  }
 };
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);

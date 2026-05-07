@@ -1,5 +1,5 @@
-import Courier from "..";
-import { EmitterSubscription } from "react-native";
+import Courier from '..';
+import { EmitterSubscription } from 'react-native';
 
 export class CourierInboxListener {
   readonly listenerId: string;

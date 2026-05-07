@@ -1,8 +1,7 @@
-import { CourierTrackingEvent } from "..";
-import { Modules } from "../Modules";
+import { CourierTrackingEvent } from '..';
+import { Modules } from '../Modules';
 
 export class TrackingClient {
-
   readonly clientId: string;
 
   constructor(clientId: string) {
@@ -16,8 +15,10 @@ export class TrackingClient {
    * @param props.event - The CourierTrackingEvent associated with the URL.
    * @returns A promise that resolves when the tracking URL is successfully posted.
    */
-  public async postTrackingUrl(props: { url: string, event: CourierTrackingEvent }): Promise<void> {
+  public async postTrackingUrl(props: {
+    url: string;
+    event: CourierTrackingEvent;
+  }): Promise<void> {
     await Modules.Client.postTrackingUrl(this.clientId, props.url, props.event);
   }
-
-} 
+}

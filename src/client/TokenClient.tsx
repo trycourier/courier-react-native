@@ -1,8 +1,7 @@
-import { CourierDevice } from "..";
-import { Modules } from "../Modules";
+import { CourierDevice } from '..';
+import { Modules } from '../Modules';
 
 export class TokenClient {
-
   readonly clientId: string;
 
   constructor(clientId: string) {
@@ -17,8 +16,17 @@ export class TokenClient {
    * @param props.device - Optional device information.
    * @returns A promise that resolves when the token is successfully stored.
    */
-  public async putUserToken(props: { token: string, provider: string, device?: CourierDevice }): Promise<void> {
-    await Modules.Client.putUserToken(this.clientId, props.token, props.provider, props.device);
+  public async putUserToken(props: {
+    token: string;
+    provider: string;
+    device?: CourierDevice;
+  }): Promise<void> {
+    await Modules.Client.putUserToken(
+      this.clientId,
+      props.token,
+      props.provider,
+      props.device
+    );
   }
 
   /**
@@ -30,5 +38,4 @@ export class TokenClient {
   public async deleteUserToken(props: { token: string }): Promise<void> {
     await Modules.Client.deleteUserToken(this.clientId, props.token);
   }
-
 }
