@@ -10,7 +10,6 @@ example/android/app/release/
 .expo/
 
 # VSCode
-.vscode/
 jsconfig.json
 
 # Xcode
