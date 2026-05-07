@@ -1,61 +1,36 @@
 #!/bin/bash
+set -euo pipefail
 
-# 📂 Change to the example directory
-cd "$(dirname "$0")/../example" || { echo "Failed to change to example directory 😢"; exit 1; }
+cd "$(dirname "$0")/.." || exit 1
 
-# 🔍 Function to ensure react-native-version is installed
-ensure_react_native_version() {
-  if ! yarn list --depth=0 | grep -q "react-native-version"; then
-    yarn add --dev react-native-version
-  else
-    echo "react-native-version is already installed, skipping installation. ✅"
-  fi
-}
+cd example || { echo "Directory not found: example"; exit 1; }
 
-# 🔍 Function to ensure react-native-cli is installed
-ensure_react_native_cli() {
-  if ! command -v react-native &> /dev/null; then
-    echo "react-native-cli is not installed. Installing... 📦"
-    npm install -g react-native-cli
-  else
-    echo "react-native-cli is already installed, skipping installation. ✅"
-  fi
-}
+echo "Installing dependencies..."
+yarn install
 
-# 🔢 Function to update build number for React Native project
-update_build_number() {
-  yarn react-native-version --increment-build --never-amend
-}
+echo ""
+echo "📦 Building iOS..."
+cd ios
+pod install
+SCHEME="CourierReactNativeExample"
+WORKSPACE="CourierReactNativeExample.xcworkspace"
+ARCHIVE_PATH="$PWD/build/ios/archive/CourierReactNativeExample.xcarchive"
 
-# 🍎 Function to build iOS app
-build_ios_app() {
-  cd ios
-  pod install
-  
-  open CourierReactNativeExample.xcworkspace
+xcodebuild \
+  -workspace "$WORKSPACE" \
+  -scheme "$SCHEME" \
+  -sdk iphoneos \
+  -archivePath "$ARCHIVE_PATH" \
+  archive || { echo "❌ iOS build failed"; exit 1; }
 
-  cd ..
-  
-}
+open "$ARCHIVE_PATH"
+echo "✅ iOS build completed and opened in Xcode Organizer"
+cd ..
 
-# 🤖 Function to build Android app
-build_android_app() {
-  cd android
-  ./gradlew bundleRelease
-  open app/build/outputs/bundle/release
-  cd ..
-}
-
-# 📦 Function to run yarn before building apps
-run_yarn() {
-  echo "Running yarn to install dependencies... 🧶"
-  yarn install
-}
-
-# 🚀 Main execution
-ensure_react_native_version
-ensure_react_native_cli
-update_build_number
-run_yarn
-build_ios_app
-build_android_app
+echo ""
+echo "📦 Building Android..."
+cd android
+./gradlew bundleRelease || { echo "❌ Android build failed"; exit 1; }
+open app/build/outputs/bundle/release
+echo "✅ Android build completed"
+cd ..
