@@ -50,6 +50,10 @@ jobs:
         if: steps.check.outputs.deployed == 'true'
         run: yarn prepack
 
+      - name: Upgrade npm
+        if: steps.check.outputs.deployed == 'true'
+        run: npm install -g npm@latest
+
       - name: Publish to npm
         if: steps.check.outputs.deployed == 'true'
         run: npm publish --access public --provenance

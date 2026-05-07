@@ -45,7 +45,10 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/trycourier/courier-react-native",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trycourier/courier-react-native.git"
+  },
   "author": "mikemilla <mike@mikemiller.design> (https://github.com/mikemilla)",
   "license": "MIT",
   "bugs": {
