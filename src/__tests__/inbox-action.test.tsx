@@ -3,7 +3,9 @@ import { InboxAction } from '../models/InboxAction';
 describe('InboxAction', () => {
   describe('constructor', () => {
     it('stores all fields', () => {
-      const action = new InboxAction('Click me', 'https://example.com', { key: 'val' });
+      const action = new InboxAction('Click me', 'https://example.com', {
+        key: 'val',
+      });
       expect(action.content).toBe('Click me');
       expect(action.href).toBe('https://example.com');
       expect(action.data).toEqual({ key: 'val' });

@@ -24,7 +24,9 @@ describe('CourierUtils', () => {
     });
 
     it('generates unique values on successive calls', () => {
-      const ids = new Set(Array.from({ length: 50 }, () => CourierUtils.generateUUID()));
+      const ids = new Set(
+        Array.from({ length: 50 }, () => CourierUtils.generateUUID())
+      );
       expect(ids.size).toBe(50);
     });
   });

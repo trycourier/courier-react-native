@@ -8,7 +8,7 @@ import { TabControl, TabItem } from '../Tabs';
 const tabs: TabItem[] = [
   { title: 'Default', key: 'Default' },
   { title: 'Styled', key: 'Styled' },
-  { title: 'Custom', key: 'Custom' }
+  { title: 'Custom', key: 'Custom' },
 ];
 
 const Inbox = () => {
@@ -41,11 +41,11 @@ const Inbox = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   content: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 export default Inbox;

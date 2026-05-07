@@ -78,8 +78,12 @@ describe('InboxMessage', () => {
 
   describe('computed getters', () => {
     it('isRead is true when read is non-null', () => {
-      expect(new InboxMessage('m', null, null, null, null, null, null, false).isRead).toBe(true);
-      expect(new InboxMessage('m', null, null, null, null, null, null, true).isRead).toBe(true);
+      expect(
+        new InboxMessage('m', null, null, null, null, null, null, false).isRead
+      ).toBe(true);
+      expect(
+        new InboxMessage('m', null, null, null, null, null, null, true).isRead
+      ).toBe(true);
     });
 
     it('isRead is false when read is null', () => {
@@ -87,7 +91,10 @@ describe('InboxMessage', () => {
     });
 
     it('isOpened is true when opened is non-null', () => {
-      expect(new InboxMessage('m', null, null, null, null, null, null, null, false).isOpened).toBe(true);
+      expect(
+        new InboxMessage('m', null, null, null, null, null, null, null, false)
+          .isOpened
+      ).toBe(true);
     });
 
     it('isOpened is false when opened is null', () => {
@@ -95,7 +102,20 @@ describe('InboxMessage', () => {
     });
 
     it('isArchived is true when archived is non-null', () => {
-      expect(new InboxMessage('m', null, null, null, null, null, null, null, null, true).isArchived).toBe(true);
+      expect(
+        new InboxMessage(
+          'm',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          true
+        ).isArchived
+      ).toBe(true);
     });
 
     it('isArchived is false when archived is null', () => {

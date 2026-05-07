@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Clipboard,
   ActivityIndicator,
-  Platform
+  Platform,
 } from 'react-native';
 
 const Push = () => {
@@ -36,7 +36,7 @@ const Push = () => {
     // Example of setting an expo token
     await Courier.shared.setTokenForProvider({
       provider: CourierPushProvider.EXPO,
-      token: 'example_expo_token'
+      token: 'example_expo_token',
     });
 
     setIsLoading(false);
@@ -50,26 +50,26 @@ const Push = () => {
       gap: 20,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20
+      padding: 20,
     },
     button: {
       backgroundColor: 'lightgray',
       padding: 10,
-      borderRadius: 5
+      borderRadius: 5,
     },
     buttonText: {
       fontSize: 16,
       fontFamily: Platform.select({
         ios: 'Courier',
         android: 'monospace',
-        default: 'monospace'
-      })
+        default: 'monospace',
+      }),
     },
     itemContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: 8
+      paddingVertical: 8,
     },
     keyText: {
       flex: 1,
@@ -77,10 +77,10 @@ const Push = () => {
       fontFamily: Platform.select({
         ios: 'Courier',
         android: 'monospace',
-        default: 'monospace'
+        default: 'monospace',
       }),
       fontWeight: 'bold',
-      fontSize: 16
+      fontSize: 16,
     },
     valueText: {
       flex: 1,
@@ -88,10 +88,10 @@ const Push = () => {
       fontFamily: Platform.select({
         ios: 'Courier',
         android: 'monospace',
-        default: 'monospace'
+        default: 'monospace',
       }),
-      fontSize: 16
-    }
+      fontSize: 16,
+    },
   });
 
   const handleCopyToClipboard = (value: string) => {

@@ -1,6 +1,6 @@
 import Courier, {
   InboxMessage,
-  InboxMessageEvent
+  InboxMessageEvent,
 } from '@trycourier/courier-react-native';
 import React, { useEffect, useState } from 'react';
 import {
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
-  Platform
+  Platform,
 } from 'react-native';
 import { InboxMessageFeed } from 'src/models/InboxMessageFeed';
 
@@ -69,7 +69,7 @@ const InboxCustom = () => {
             setMessages((prevMessages) => [...prevMessages, ...messages]);
             setCanPaginate(canPaginate);
           }
-        }
+        },
       });
 
       return inboxListener;
@@ -92,20 +92,20 @@ const InboxCustom = () => {
       container: {
         padding: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc'
+        borderBottomColor: '#ccc',
       },
       unread: {
-        backgroundColor: '#ADD8E6'
+        backgroundColor: '#ADD8E6',
       },
       text: {
         width: Platform.OS === 'ios' ? undefined : '100%',
         fontFamily: Platform.select({
           ios: 'Courier',
           android: 'monospace',
-          default: 'monospace'
+          default: 'monospace',
         }),
-        fontSize: 16
-      }
+        fontSize: 16,
+      },
     });
 
     const isRead = props.message.read;
@@ -184,8 +184,8 @@ const InboxCustom = () => {
     container: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center'
-    }
+      alignItems: 'center',
+    },
   });
 
   return <View style={styles.container}>{buildContent()}</View>;

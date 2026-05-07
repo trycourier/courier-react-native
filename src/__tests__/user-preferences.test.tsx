@@ -26,7 +26,9 @@ describe('getCourierUserPreferencesStatusTitle', () => {
 
   it('returns "Unknown" for an unrecognized value', () => {
     expect(
-      getCourierUserPreferencesStatusTitle('INVALID' as CourierUserPreferencesStatus)
+      getCourierUserPreferencesStatusTitle(
+        'INVALID' as CourierUserPreferencesStatus
+      )
     ).toBe('Unknown');
   });
 });
@@ -58,7 +60,9 @@ describe('getCourierUserPreferencesChannelTitle', () => {
 
   it('returns "Unknown" for an unrecognized value', () => {
     expect(
-      getCourierUserPreferencesChannelTitle('INVALID' as CourierUserPreferencesChannel)
+      getCourierUserPreferencesChannelTitle(
+        'INVALID' as CourierUserPreferencesChannel
+      )
     ).toBe('Unknown');
   });
 });

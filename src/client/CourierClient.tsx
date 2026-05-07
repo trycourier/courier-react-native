@@ -40,7 +40,7 @@ export class CourierClient extends ClientModule {
       clientKey: props.clientKey,
       connectionId: props.clientKey,
       tenantId: props.tenantId,
-      apiUrls: props.apiUrls ? { ...props.apiUrls } : undefined
+      apiUrls: props.apiUrls ? { ...props.apiUrls } : undefined,
     };
 
     super(options);

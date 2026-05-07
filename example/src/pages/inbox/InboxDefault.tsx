@@ -5,20 +5,20 @@ import { View, StyleSheet } from 'react-native';
 const InboxDefault = () => {
   const styles = StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     box: {
       width: '100%',
-      height: '100%'
-    }
+      height: '100%',
+    },
   });
 
   const lightTheme = {
-    tabIndicatorColor: '#000000'
+    tabIndicatorColor: '#000000',
   };
 
   const darkTheme = {
-    tabIndicatorColor: '#FFFFFF'
+    tabIndicatorColor: '#FFFFFF',
   };
 
   return (
@@ -26,7 +26,7 @@ const InboxDefault = () => {
       <CourierInboxView
         theme={{
           light: lightTheme,
-          dark: darkTheme
+          dark: darkTheme,
         }}
         onClickInboxMessageAtIndex={async (message, _index) => {
           message.isRead

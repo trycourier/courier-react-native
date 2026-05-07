@@ -3,11 +3,11 @@ import {
   DeviceEventEmitter,
   EmitterSubscription,
   Platform,
-  ViewStyle
+  ViewStyle,
 } from 'react-native';
 import {
   CourierPreferencesMode,
-  CourierPreferencesTheme
+  CourierPreferencesTheme,
 } from '../models/CourierPreferencesTheme';
 import { Modules } from '../Modules';
 

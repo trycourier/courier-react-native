@@ -9,7 +9,7 @@ export interface TabItem {
 export const Tab = ({
   title,
   isSelected,
-  onPress
+  onPress,
 }: {
   title: string;
   isSelected: boolean;
@@ -28,7 +28,7 @@ export const Tab = ({
 export const TabControl = ({
   tabs,
   selectedTab,
-  setSelectedTab
+  setSelectedTab,
 }: {
   tabs: TabItem[];
   selectedTab: string;
@@ -48,32 +48,32 @@ export const TabControl = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   segmentedControl: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%'
+    width: '100%',
   },
   content: {
     flex: 1,
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   tabButton: {
     padding: 16,
     flex: 1,
     alignItems: 'center',
     borderBottomWidth: 2,
-    borderBottomColor: 'transparent'
+    borderBottomColor: 'transparent',
   },
   selectedTabButton: {
-    borderBottomColor: 'blue'
+    borderBottomColor: 'blue',
   },
   tabText: {
-    color: 'black'
+    color: 'black',
   },
   selectedTabText: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });

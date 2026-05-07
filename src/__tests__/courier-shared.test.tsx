@@ -13,7 +13,9 @@ jest.mock('../Modules', () => ({
       getTenantId: jest.fn(() => Promise.resolve('tenant-1')),
       getIsUserSignedIn: jest.fn(() => Promise.resolve('true')),
       getClient: jest.fn(() => Promise.resolve(null)),
-      getAllTokens: jest.fn(() => Promise.resolve({ apn: 'tok-apn', fcm: 'tok-fcm' })),
+      getAllTokens: jest.fn(() =>
+        Promise.resolve({ apn: 'tok-apn', fcm: 'tok-fcm' })
+      ),
       getToken: jest.fn(() => Promise.resolve('tok-abc')),
       setToken: jest.fn(() => Promise.resolve()),
       getInboxPaginationLimit: jest.fn(() => Promise.resolve(32)),
@@ -26,7 +28,9 @@ jest.mock('../Modules', () => ({
       readAllInboxMessages: jest.fn(() => Promise.resolve()),
       refreshInbox: jest.fn(() => Promise.resolve()),
       fetchNextPageOfMessages: jest.fn(() => Promise.resolve(null)),
-      addAuthenticationListener: jest.fn(() => Promise.resolve('auth-listener-1')),
+      addAuthenticationListener: jest.fn(() =>
+        Promise.resolve('auth-listener-1')
+      ),
       removeAuthenticationListener: jest.fn(() => Promise.resolve()),
       removeAllAuthenticationListeners: jest.fn(() => Promise.resolve()),
       addInboxListener: jest.fn(() => Promise.resolve('inbox-listener-1')),
@@ -36,7 +40,9 @@ jest.mock('../Modules', () => ({
     },
     System: {
       setIOSForegroundPresentationOptions: jest.fn(() => 'ok'),
-      getNotificationPermissionStatus: jest.fn(() => Promise.resolve('authorized')),
+      getNotificationPermissionStatus: jest.fn(() =>
+        Promise.resolve('authorized')
+      ),
       requestNotificationPermission: jest.fn(() => Promise.resolve('granted')),
       openSettingsForApp: jest.fn(),
       registerPushNotificationClickedOnKilledState: jest.fn(),
@@ -74,12 +80,22 @@ describe('Authentication', () => {
     });
 
     expect(mockShared.signIn).toHaveBeenCalledWith(
-      'jwt-tok', 'ck', 'u1', 't1', null, expect.any(Boolean)
+      'jwt-tok',
+      'ck',
+      'u1',
+      't1',
+      null,
+      expect.any(Boolean)
     );
   });
 
   it('signIn passes apiUrls when provided', async () => {
-    const urls = { rest: 'r', graphql: 'g', inboxGraphql: 'ig', inboxWebSocket: 'ws' };
+    const urls = {
+      rest: 'r',
+      graphql: 'g',
+      inboxGraphql: 'ig',
+      inboxWebSocket: 'ws',
+    };
     await Courier.shared.signIn({
       accessToken: 'jwt',
       userId: 'u1',
@@ -87,7 +103,12 @@ describe('Authentication', () => {
     });
 
     expect(mockShared.signIn).toHaveBeenCalledWith(
-      'jwt', undefined, 'u1', undefined, urls, expect.any(Boolean)
+      'jwt',
+      undefined,
+      'u1',
+      undefined,
+      urls,
+      expect.any(Boolean)
     );
   });
 
@@ -160,7 +181,9 @@ describe('Authentication listeners', () => {
   });
 
   it('removeAllAuthenticationListeners clears all listeners', async () => {
-    await Courier.shared.addAuthenticationListener({ onUserChanged: jest.fn() });
+    await Courier.shared.addAuthenticationListener({
+      onUserChanged: jest.fn(),
+    });
     await Courier.shared.removeAllAuthenticationListeners();
 
     expect(mockShared.removeAllAuthenticationListeners).toHaveBeenCalled();
@@ -212,7 +235,9 @@ describe('Push notification listeners', () => {
     });
 
     expect(listener.listenerId).toMatch(/^push_/);
-    expect(mockSystem.registerPushNotificationClickedOnKilledState).toHaveBeenCalled();
+    expect(
+      mockSystem.registerPushNotificationClickedOnKilledState
+    ).toHaveBeenCalled();
   });
 
   it('removePushNotificationListener removes the listener', async () => {
@@ -324,7 +349,9 @@ describe('Inbox listeners', () => {
     });
 
     expect(id).toBe(listener.listenerId);
-    expect(mockShared.removeInboxListener).toHaveBeenCalledWith(listener.listenerId);
+    expect(mockShared.removeInboxListener).toHaveBeenCalledWith(
+      listener.listenerId
+    );
   });
 
   it('removeAllInboxListeners clears all inbox listeners', async () => {

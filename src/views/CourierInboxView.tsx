@@ -3,7 +3,7 @@ import {
   Platform,
   ViewStyle,
   DeviceEventEmitter,
-  EmitterSubscription
+  EmitterSubscription,
 } from 'react-native';
 import { InboxAction } from '../models/InboxAction';
 import { InboxMessage } from '../models/InboxMessage';

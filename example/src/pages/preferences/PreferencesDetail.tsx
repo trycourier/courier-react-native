@@ -7,12 +7,12 @@ import {
   StyleSheet,
   Switch,
   Text,
-  View
+  View,
 } from 'react-native';
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
 import Courier, {
   CourierUserPreferencesChannel,
-  CourierUserPreferencesStatus
+  CourierUserPreferencesStatus,
 } from '@trycourier/courier-react-native';
 import { emitEvent } from '../../Emitter';
 import Toast from 'react-native-toast-message';
@@ -21,41 +21,41 @@ const PreferencesDetail = ({ route, navigation }: any) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20
+      padding: 20,
     },
     switchItem: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       borderBottomWidth: 1,
-      borderBottomColor: '#ccc'
+      borderBottomColor: '#ccc',
     },
     text: {
       fontFamily: Platform.select({
         ios: 'Courier',
         android: 'monospace',
-        default: 'monospace'
+        default: 'monospace',
       }),
-      fontSize: 16
+      fontSize: 16,
     },
     section: {
-      marginBottom: 20
+      marginBottom: 20,
     },
     title: {
       fontWeight: 'bold',
-      marginBottom: 8
+      marginBottom: 8,
     },
     loading: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center'
-    }
+      alignItems: 'center',
+    },
   });
 
   const statuses = [
     { status: CourierUserPreferencesStatus.OptedIn, name: 'OPTED_IN' },
     { status: CourierUserPreferencesStatus.OptedOut, name: 'OPTED_OUT' },
-    { status: CourierUserPreferencesStatus.Required, name: 'REQUIRED' }
+    { status: CourierUserPreferencesStatus.Required, name: 'REQUIRED' },
   ];
 
   const { id } = route.params;
@@ -69,7 +69,7 @@ const PreferencesDetail = ({ route, navigation }: any) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: id
+      headerTitle: id,
     });
     getTopic(id);
   }, []);
@@ -84,7 +84,7 @@ const PreferencesDetail = ({ route, navigation }: any) => {
     setIsLoading(true);
     try {
       const topic = await client.preferences.getUserPreferenceTopic({
-        topicId
+        topicId,
       });
       setStatusIndex(
         statuses.findIndex((status) => status.status === topic.status) || 0
@@ -112,7 +112,7 @@ const PreferencesDetail = ({ route, navigation }: any) => {
         status:
           statuses[statusIndex]?.status || CourierUserPreferencesStatus.OptedIn,
         hasCustomRouting: useCustomRouting,
-        customRouting: routingChannels
+        customRouting: routingChannels,
       });
 
       emitEvent('saveButtonClicked', {});
@@ -123,7 +123,7 @@ const PreferencesDetail = ({ route, navigation }: any) => {
 
       Toast.show({
         type: 'error',
-        text1: (error as any).message
+        text1: (error as any).message,
       });
     } finally {
       setIsLoading(false);

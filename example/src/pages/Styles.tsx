@@ -8,7 +8,7 @@ export const Styles = (isDark: boolean) => {
       title:
         Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
       subtitle:
-        Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf'
+        Platform.OS === 'ios' ? 'Avenir Medium' : 'fonts/poppins_regular.otf',
     },
     Colors: {
       heading: isDark ? '#9747FF' : '#9747FF',
@@ -16,15 +16,15 @@ export const Styles = (isDark: boolean) => {
       subtitle: isDark ? '#9A9A9A' : '#BEBEBE',
       warning: isDark ? '#C32F27' : '#C32F27',
       option: isDark ? '#1F1F1F' : '#F0F0F0',
-      action: isDark ? '#9747FF' : '#9747FF'
+      action: isDark ? '#9747FF' : '#9747FF',
     },
     TextSizes: {
       heading: 24,
       title: 18,
-      subtitle: 16
+      subtitle: 16,
     },
     Corners: {
-      button: 100
-    }
+      button: 100,
+    },
   };
 };

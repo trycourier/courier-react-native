@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   BottomTabNavigationOptions,
-  createBottomTabNavigator
+  createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import { Alert, Button } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,7 +22,7 @@ const Home = () => {
       // Setup Push
 
       Courier.setIOSForegroundPresentationOptions({
-        options: ['sound', 'badge', 'list', 'banner']
+        options: ['sound', 'badge', 'list', 'banner'],
       });
 
       const pushListener = Courier.shared.addPushNotificationListener({
@@ -33,7 +33,7 @@ const Home = () => {
         onPushNotificationDelivered(push) {
           console.log(push);
           Alert.alert('📬 Push Notification Delivered', JSON.stringify(push));
-        }
+        },
       });
 
       // Setup Inbox
@@ -43,7 +43,7 @@ const Home = () => {
       const inboxListener = await Courier.shared.addInboxListener({
         onUnreadCountChanged(unreadCount) {
           setUnreadCount(unreadCount);
-        }
+        },
       });
 
       return { pushListener, inboxListener };
@@ -74,7 +74,7 @@ const Home = () => {
       tabBarBadge: badgeCount(),
       tabBarIcon: ({ color, size }) => (
         <MaterialCommunityIcons name={'bell'} color={color} size={size} />
-      )
+      ),
     };
   };
 
@@ -82,7 +82,7 @@ const Home = () => {
     return {
       tabBarIcon: ({ color, size }) => (
         <MaterialCommunityIcons name={icon} color={color} size={size} />
-      )
+      ),
     };
   };
 

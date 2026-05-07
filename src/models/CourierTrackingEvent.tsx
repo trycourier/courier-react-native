@@ -3,5 +3,5 @@ export enum CourierTrackingEvent {
   Delivered = 'DELIVERED',
   Opened = 'OPENED',
   Read = 'READ',
-  Unread = 'UNREAD'
+  Unread = 'UNREAD',
 }

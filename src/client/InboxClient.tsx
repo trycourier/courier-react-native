@@ -1,7 +1,7 @@
 import { Modules } from '../Modules';
 import {
   CourierGetInboxMessageResponse,
-  CourierGetInboxMessagesResponse
+  CourierGetInboxMessagesResponse,
 } from '../models/CourierInboxMessages';
 
 export class InboxClient {

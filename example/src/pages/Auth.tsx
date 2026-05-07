@@ -11,25 +11,25 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { ExampleServer } from '../Utils';
 import {
   CourierEnvironment,
   getUrlsForEnvironment,
-  toApiUrls
+  toApiUrls,
 } from '../CourierEnvironment';
 import {
   AuthPreferencesData,
   loadAuthPreferences,
-  saveAuthPreferences
+  saveAuthPreferences,
 } from '../AuthPreferences';
 
 const MONO_FONT = Platform.select({
   ios: 'Courier',
   android: 'monospace',
-  default: 'monospace'
+  default: 'monospace',
 });
 
 interface OptionRow {
@@ -58,7 +58,7 @@ const Auth = () => {
         { key: 'REST URL', value: prefs.restUrl },
         { key: 'GraphQL URL', value: prefs.graphqlUrl },
         { key: 'Inbox GraphQL URL', value: prefs.inboxGraphqlUrl },
-        { key: 'Inbox WebSocket', value: prefs.inboxWebSocketUrl }
+        { key: 'Inbox WebSocket', value: prefs.inboxWebSocketUrl },
       ];
     },
     []
@@ -76,7 +76,7 @@ const Auth = () => {
       authListener = await Courier.shared.addAuthenticationListener({
         onUserChanged: async (_userId) => {
           // Refresh UI state when auth changes externally
-        }
+        },
       });
     };
 
@@ -116,7 +116,7 @@ const Auth = () => {
     const jwt = await ExampleServer.generateJwt({
       authKey: apiKey,
       userId: userId,
-      baseUrl: restUrl
+      baseUrl: restUrl,
     });
 
     await Courier.shared.signIn({
@@ -127,8 +127,8 @@ const Auth = () => {
         rest: options[4]!.value,
         graphql: options[5]!.value,
         inboxGraphql: options[6]!.value,
-        inboxWebSocket: options[7]!.value
-      })
+        inboxWebSocket: options[7]!.value,
+      }),
     });
   };
 
@@ -158,7 +158,7 @@ const Auth = () => {
       rest: options[4]!.value,
       graphql: options[5]!.value,
       inboxGraphql: options[6]!.value,
-      inboxWebSocket: options[7]!.value
+      inboxWebSocket: options[7]!.value,
     };
 
     const updated = [...options];
@@ -174,7 +174,7 @@ const Auth = () => {
       restUrl: urls.rest,
       graphqlUrl: urls.graphql,
       inboxGraphqlUrl: urls.inboxGraphql,
-      inboxWebSocketUrl: urls.inboxWebSocket
+      inboxWebSocketUrl: urls.inboxWebSocket,
     });
   };
 
@@ -199,7 +199,7 @@ const Auth = () => {
       4: 'restUrl',
       5: 'graphqlUrl',
       6: 'inboxGraphqlUrl',
-      7: 'inboxWebSocketUrl'
+      7: 'inboxWebSocketUrl',
     };
     const prefKey = prefKeyMap[editIndex];
     if (prefKey) {
@@ -234,7 +234,7 @@ const Auth = () => {
             <Text
               style={[
                 styles.saveButton,
-                !saveEnabled && styles.saveButtonDisabled
+                !saveEnabled && styles.saveButtonDisabled,
               ]}
             >
               Save
@@ -354,12 +354,12 @@ const Auth = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -368,20 +368,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#2196F3',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    paddingTop: Platform.OS === 'ios' ? 56 : 14
+    paddingTop: Platform.OS === 'ios' ? 56 : 14,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#fff'
+    color: '#fff',
   },
   saveButton: {
     fontSize: 16,
     color: '#fff',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   saveButtonDisabled: {
-    opacity: 0.4
+    opacity: 0.4,
   },
   row: {
     flexDirection: 'row',
@@ -389,44 +389,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   rowLabel: {
     fontSize: 13,
     fontFamily: MONO_FONT,
     fontWeight: '700',
     color: '#333',
-    flexShrink: 0
+    flexShrink: 0,
   },
   rowRight: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
     justifyContent: 'flex-end',
-    marginLeft: 12
+    marginLeft: 12,
   },
   rowValue: {
     fontSize: 13,
     fontFamily: MONO_FONT,
     color: '#666',
     flex: 1,
-    textAlign: 'right'
+    textAlign: 'right',
   },
   rowIcon: {
     fontSize: 16,
     color: '#999',
-    marginLeft: 8
+    marginLeft: 8,
   },
   separator: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#ddd',
-    marginLeft: 16
+    marginLeft: 16,
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   pickerContent: {
     backgroundColor: '#fff',
@@ -437,25 +437,25 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   pickerTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 16
+    marginBottom: 16,
   },
   pickerOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   radioIcon: {
     fontSize: 18,
     marginRight: 12,
-    color: '#2196F3'
+    color: '#2196F3',
   },
   pickerOptionText: {
-    fontSize: 15
+    fontSize: 15,
   },
   editContent: {
     backgroundColor: '#fff',
@@ -467,12 +467,12 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   editTitle: {
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 12
+    marginBottom: 12,
   },
   editInput: {
     borderWidth: 1,
@@ -481,29 +481,29 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 14,
     fontFamily: MONO_FONT,
-    marginBottom: 16
+    marginBottom: 16,
   },
   editButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 8
+    gap: 8,
   },
   editButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#f0f0f0',
   },
   editButtonText: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   editButtonPrimary: {
-    backgroundColor: '#2196F3'
+    backgroundColor: '#2196F3',
   },
   editButtonPrimaryText: {
-    color: '#fff'
-  }
+    color: '#fff',
+  },
 });
 
 export default Auth;

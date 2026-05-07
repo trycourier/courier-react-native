@@ -1,5 +1,5 @@
 import Courier, {
-  CourierUserPreferencesTopic
+  CourierUserPreferencesTopic,
 } from '@trycourier/courier-react-native';
 import { addListener } from '../../Emitter';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +12,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 const ListItem = (props: {
@@ -23,16 +23,16 @@ const ListItem = (props: {
 
   const styles = StyleSheet.create({
     container: {
-      width: SCREEN_WIDTH
+      width: SCREEN_WIDTH,
     },
     text: {
       fontFamily: Platform.select({
         ios: 'Courier',
         android: 'monospace',
-        default: 'monospace'
+        default: 'monospace',
       }),
-      fontSize: 16
-    }
+      fontSize: 16,
+    },
   });
 
   return (
@@ -111,11 +111,11 @@ const PreferencesCustom = ({ navigation }: any) => {
     container: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     text: {
-      marginBottom: 10
-    }
+      marginBottom: 10,
+    },
   });
 
   return (

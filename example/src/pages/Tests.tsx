@@ -12,7 +12,7 @@ import {
   Button,
   Switch,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Courier, {
@@ -21,7 +21,7 @@ import Courier, {
   CourierUserPreferencesChannel,
   CourierUserPreferencesStatus,
   InboxMessage,
-  iOSForegroundPresentationOptions
+  iOSForegroundPresentationOptions,
 } from '@trycourier/courier-react-native';
 import Env from '../Env';
 import { ExampleServer, Utils } from '../Utils';
@@ -41,7 +41,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       params.jwt ??
       (await ExampleServer.generateJwt({
         authKey: Env.authKey,
-        userId: params.userId
+        userId: params.userId,
       }));
 
     savedClient = new CourierClient({
@@ -50,12 +50,12 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       jwt: token,
       clientKey: params.clientKey,
       tenantId: params.tenantId,
-      connectionId: params.connectionId
+      connectionId: params.connectionId,
     });
 
     return {
       id: savedClient.clientId,
-      options: savedClient.options
+      options: savedClient.options,
     };
   },
 
@@ -68,7 +68,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       savedClient = undefined;
     }
     return {
-      clientId: id
+      clientId: id,
     };
   },
 
@@ -78,7 +78,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     }
     await savedClient.tokens.putUserToken({
       provider: params.provider,
-      token: params.token
+      token: params.token,
     });
     return { token: params.token, provider: params.provider };
   },
@@ -95,7 +95,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       throw new Error('Client not initialized. Run createClient first.');
     }
     const brand = await savedClient.brands.getBrand({
-      brandId: params.brandId
+      brandId: params.brandId,
     });
     return brand;
   },
@@ -109,7 +109,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     }
     return await savedClient.inbox.getMessages({
       paginationLimit: params.paginationLimit,
-      startCursor: params.startCursor
+      startCursor: params.startCursor,
     });
   },
 
@@ -131,7 +131,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     }
     return await savedClient.inbox.getArchivedMessages({
       paginationLimit: params.paginationLimit,
-      startCursor: params.startCursor
+      startCursor: params.startCursor,
     });
   },
 
@@ -146,13 +146,13 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: savedClient!.options.userId,
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
 
     return await savedClient.inbox.getMessageById({
-      messageId: messageId
+      messageId: messageId,
     });
   },
 
@@ -167,13 +167,13 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: savedClient!.options.userId,
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
 
     await savedClient.inbox.open({
-      messageId: messageId
+      messageId: messageId,
     });
 
     return { messageId: messageId };
@@ -190,14 +190,14 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: savedClient!.options.userId,
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
 
     await savedClient.inbox.click({
       messageId: messageId,
-      trackingId: params.trackingId ?? 'test-tracking-id'
+      trackingId: params.trackingId ?? 'test-tracking-id',
     });
 
     return { messageId: messageId };
@@ -214,13 +214,13 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: savedClient!.options.userId,
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
 
     await savedClient.inbox.read({
-      messageId: messageId
+      messageId: messageId,
     });
 
     return { messageId: messageId };
@@ -237,13 +237,13 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: savedClient!.options.userId,
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
 
     await savedClient.inbox.unread({
-      messageId: messageId
+      messageId: messageId,
     });
 
     return { messageId: messageId };
@@ -260,13 +260,13 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: savedClient!.options.userId,
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
 
     await savedClient.inbox.archive({
-      messageId: messageId
+      messageId: messageId,
     });
 
     return { messageId: messageId };
@@ -301,7 +301,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       hasCustomRouting: params.hasCustomRouting,
       customRouting: params.customRouting
         .split(',')
-        .map((channel) => channel.trim() as CourierUserPreferencesChannel)
+        .map((channel) => channel.trim() as CourierUserPreferencesChannel),
     });
   },
 
@@ -310,7 +310,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       throw new Error('Client not initialized. Run createClient first.');
     }
     return await savedClient.preferences.getUserPreferenceTopic({
-      topicId: params.topicId
+      topicId: params.topicId,
     });
   },
 
@@ -323,7 +323,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     }
     return await savedClient.tracking.postTrackingUrl({
       url: params.trackingUrl,
-      event: params.event as CourierTrackingEvent
+      event: params.event as CourierTrackingEvent,
     });
   },
 
@@ -338,7 +338,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       params.accessToken ??
       (await ExampleServer.generateJwt({
         authKey: Env.authKey,
-        userId: params.userId
+        userId: params.userId,
       }));
 
     await Courier.shared.signIn({
@@ -346,7 +346,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       accessToken: token,
       clientKey: params.clientKey,
       tenantId: params.tenantId,
-      showLogs: params.showLogs
+      showLogs: params.showLogs,
     });
 
     const client = await Courier.shared.getClient();
@@ -370,7 +370,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const listener = await Courier.shared.addAuthenticationListener({
       onUserChanged: (userId) => {
         console.log('User changed:', userId);
-      }
+      },
     });
     listener.remove();
     return listener.listenerId;
@@ -388,7 +388,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const client = await Courier.shared.getClient();
     return {
       clientId: client?.clientId,
-      options: client?.options
+      options: client?.options,
     };
   },
 
@@ -408,7 +408,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   testSetToken: async (params: { provider: string; token: string }) => {
     return await Courier.shared.setToken({
       key: params.provider,
-      token: params.token
+      token: params.token,
     });
   },
 
@@ -416,7 +416,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const listener = Courier.shared.addPushNotificationListener({
       onPushNotificationClicked: (push) => {
         console.log('Push notification clicked:', push);
-      }
+      },
     });
     listener.remove();
     return listener.listenerId;
@@ -441,7 +441,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
@@ -456,7 +456,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
@@ -471,7 +471,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
@@ -486,7 +486,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
@@ -501,7 +501,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         const result = await ExampleServer.sendTest({
           authKey: Env.authKey,
           userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox'
+          channel: 'inbox',
         });
         setTimeout(() => resolve(result), 5000);
       }));
@@ -555,7 +555,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         eventName: string
       ) => {
         console.log('Inbox message event:', message, index, feed, eventName);
-      }
+      },
     });
     await listener.remove();
     return listener;
@@ -571,7 +571,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   testFetchNextPageOfMessages: async () => {
     return await Courier.shared.fetchNextPageOfMessages({
-      inboxMessageFeed: 'feed'
+      inboxMessageFeed: 'feed',
     });
   },
 
@@ -587,7 +587,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     options: iOSForegroundPresentationOptions[];
   }) => {
     return Courier.setIOSForegroundPresentationOptions({
-      options: params.options
+      options: params.options,
     });
   },
 
@@ -605,7 +605,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       userId: params.userId,
       channel: 'inbox',
       title: params.title ?? 'Test',
-      body: params.body ?? 'Body'
+      body: params.body ?? 'Body',
     });
     return { messageId: messageId };
   },
@@ -620,7 +620,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       userId: params.userId,
       channel: 'apn',
       title: params.title ?? 'Test',
-      body: params.body ?? 'Body'
+      body: params.body ?? 'Body',
     });
     return { messageId: messageId };
   },
@@ -635,10 +635,10 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       userId: params.userId,
       channel: 'firebase-fcm',
       title: params.title ?? 'Test',
-      body: params.body ?? 'Body'
+      body: params.body ?? 'Body',
     });
     return { messageId: messageId };
-  }
+  },
 };
 
 type TestItem = {
@@ -665,17 +665,17 @@ const getTestSections = async (): Promise<TestSection[]> => [
           clientKey: Env.clientKey,
           showLogs: true,
           tenantId: undefined,
-          connectionId: undefined
+          connectionId: undefined,
         },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Remove Client',
         testId: 'removeClient',
         defaultParams: { clientId: savedClient?.clientId },
-        runOrder: 'skip'
-      }
-    ]
+        runOrder: 'skip',
+      },
+    ],
   },
   {
     title: 'Tokens',
@@ -684,15 +684,15 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Put Token',
         testId: 'testPutToken',
         defaultParams: { token: 'test-token', provider: 'test-provider' },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Delete Token',
         testId: 'testDeleteToken',
         defaultParams: { token: 'test-token' },
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'Brands',
@@ -701,9 +701,9 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Get Brand',
         testId: 'testGetBrands',
         defaultParams: { brandId: Env.brandId },
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'Inbox',
@@ -712,63 +712,63 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Get Messages',
         testId: 'testMessages',
         defaultParams: { paginationLimit: 10, paginationCursor: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Unread Count',
         testId: 'testUnreadCount',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Archived Messages',
         testId: 'testArchivedMessages',
         defaultParams: { paginationLimit: 10, paginationCursor: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Message By ID',
         testId: 'testMessageById',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Open Message',
         testId: 'openMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Click Message',
         testId: 'clickMessage',
         defaultParams: { messageId: undefined, trackingId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Read Message',
         testId: 'readMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Unread Message',
         testId: 'unreadMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Archive Message',
         testId: 'archiveMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Read All Messages',
         testId: 'readAllMessages',
         defaultParams: {},
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'Preferences',
@@ -777,7 +777,7 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Get Preferences',
         testId: 'testGetPreferences',
         defaultParams: { paginationCursor: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Update Preferences',
@@ -786,17 +786,17 @@ const getTestSections = async (): Promise<TestSection[]> => [
           topicId: Env.topicId,
           status: 'OPTED_IN',
           hasCustomRouting: true,
-          customRouting: 'push,sms,email'
+          customRouting: 'push,sms,email',
         },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Preference Topics',
         testId: 'testGetPreferenceTopics',
         defaultParams: { topicId: Env.topicId },
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'Tracking',
@@ -807,11 +807,11 @@ const getTestSections = async (): Promise<TestSection[]> => [
         defaultParams: {
           trackingUrl:
             'https://af6303be-0e1e-40b5-bb80-e1d9299cccff.ct0.app/t/tzgspbr4jcmcy1qkhw96m0034bvy',
-          event: 'delivered'
+          event: 'delivered',
         },
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'Shared Authentication',
@@ -824,47 +824,47 @@ const getTestSections = async (): Promise<TestSection[]> => [
           accessToken: undefined,
           clientKey: Env.clientKey,
           tenantId: undefined,
-          showLogs: true
+          showLogs: true,
         },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get User ID',
         testId: 'testGetUserId',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Tenant ID',
         testId: 'testGetTenantId',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Is User Signed In',
         testId: 'testGetIsUserSignedIn',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Add Authentication Listener',
         testId: 'testAuthenticationListener',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Remove All Authentication Listeners',
         testId: 'testRemoveAllAuthenticationListeners',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Sign Out',
         testId: 'testSignOut',
         defaultParams: {},
-        runOrder: 'skip'
-      }
-    ]
+        runOrder: 'skip',
+      },
+    ],
   },
   {
     title: 'Shared Client',
@@ -873,9 +873,9 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Get Client',
         testId: 'testGetClient',
         defaultParams: {},
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'Shared Push',
@@ -884,33 +884,33 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Set Token',
         testId: 'testSetToken',
         defaultParams: { provider: 'expo', token: 'test-token' },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Token',
         testId: 'testGetToken',
         defaultParams: { provider: 'expo' },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get All Tokens',
         testId: 'testGetAllTokens',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Add Push Notification Listener',
         testId: 'testAddPushNotificationListener',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Remove All Push Notification Listeners',
         testId: 'testRemoveAllPushNotificationListeners',
         defaultParams: {},
-        runOrder: 'skip'
-      }
-    ]
+        runOrder: 'skip',
+      },
+    ],
   },
   {
     title: 'Shared Inbox',
@@ -919,75 +919,75 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Set Inbox Pagination Limit',
         testId: 'testSetInboxPaginationLimit',
         defaultParams: { limit: 20 },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Inbox Pagination Limit',
         testId: 'testGetInboxPaginationLimit',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Open Message',
         testId: 'testOpenMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Click Message',
         testId: 'testClickMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Read Message',
         testId: 'testReadMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Unread Message',
         testId: 'testUnreadMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Archive Message',
         testId: 'testArchiveMessage',
         defaultParams: { messageId: undefined },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Read All Inbox Messages',
         testId: 'testReadAllInboxMessages',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Add Inbox Listener',
         testId: 'testAddInboxListener',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Remove All Inbox Listeners',
         testId: 'testRemoveAllInboxListeners',
         defaultParams: {},
-        runOrder: 'skip'
+        runOrder: 'skip',
       },
       {
         name: 'Refresh Inbox',
         testId: 'testRefreshInbox',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Fetch Next Page of Messages',
         testId: 'testFetchNextPageOfMessages',
         defaultParams: {},
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'System',
@@ -996,27 +996,27 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Request Push Notification Permission',
         testId: 'testRequestPushNotificationPermission',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Get Push Notification Permission Status',
         testId: 'testGetPushNotificationPermissionStatus',
         defaultParams: {},
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Set iOS Foreground Presentation Options',
         testId: 'testSetIOSForegroundPresentationOptions',
         defaultParams: { options: 'badge,sound,list,banner' },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Open Settings for App',
         testId: 'testOpenSettingsForApp',
         defaultParams: {},
-        runOrder: 'normal'
-      }
-    ]
+        runOrder: 'normal',
+      },
+    ],
   },
   {
     title: 'Send',
@@ -1028,9 +1028,9 @@ const getTestSections = async (): Promise<TestSection[]> => [
           userId:
             (await Courier.shared.getUserId()) ?? savedClient?.options.userId,
           title: 'Test',
-          body: 'Body'
+          body: 'Body',
         },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Send APN Message',
@@ -1039,9 +1039,9 @@ const getTestSections = async (): Promise<TestSection[]> => [
           userId:
             (await Courier.shared.getUserId()) ?? savedClient?.options.userId,
           title: 'Test',
-          body: 'Body'
+          body: 'Body',
         },
-        runOrder: 'normal'
+        runOrder: 'normal',
       },
       {
         name: 'Send FCM Message',
@@ -1050,17 +1050,17 @@ const getTestSections = async (): Promise<TestSection[]> => [
           userId:
             (await Courier.shared.getUserId()) ?? savedClient?.options.userId,
           title: 'Test',
-          body: 'Body'
+          body: 'Body',
         },
-        runOrder: 'normal'
-      }
-    ]
-  }
+        runOrder: 'normal',
+      },
+    ],
+  },
 ];
 
 const TestItem = ({
   item,
-  onPress
+  onPress,
 }: {
   item: { name: string; result?: unknown; status?: string; runOrder?: string };
   onPress: () => void;
@@ -1069,7 +1069,7 @@ const TestItem = ({
     <View
       style={[
         styles.testItem,
-        item.status === 'running' && styles.runningTestItem
+        item.status === 'running' && styles.runningTestItem,
       ]}
     >
       <View style={styles.testItemContent}>
@@ -1130,7 +1130,7 @@ const Tests = () => {
         sections.flatMap((section) =>
           section.tests.map((test) => ({
             name: test.name,
-            runOrder: test.runOrder
+            runOrder: test.runOrder,
           }))
         )
       );
@@ -1153,7 +1153,7 @@ const Tests = () => {
             <Text
               style={[
                 styles.runTestsButton,
-                isRunning && styles.disabledButton
+                isRunning && styles.disabledButton,
               ]}
             >
               Run Tests
@@ -1163,7 +1163,7 @@ const Tests = () => {
       ),
       headerTitle: isRunning
         ? `Running Test ${currentTestIndex + 1}/${totalTests}`
-        : 'Tests'
+        : 'Tests',
     });
   }, [isRunning, currentTestIndex]);
 
@@ -1174,7 +1174,7 @@ const Tests = () => {
     if (error instanceof Error) {
       errorMessage = error.message;
       errorDetails = {
-        name: error.name
+        name: error.name,
       };
     } else if (typeof error === 'object' && error !== null) {
       errorMessage = String(error);
@@ -1193,7 +1193,7 @@ const Tests = () => {
       prev.map((item) => ({
         ...item,
         status: undefined,
-        result: undefined
+        result: undefined,
       }))
     );
 
@@ -1258,7 +1258,7 @@ const Tests = () => {
       console.log('Test failed:', {
         testName: test.name,
         errorMessage,
-        errorDetails
+        errorDetails,
       });
 
       setTestResults((prev) =>
@@ -1268,9 +1268,9 @@ const Tests = () => {
                 ...t,
                 result: {
                   errorMessage,
-                  errorDetails
+                  errorDetails,
                 },
-                status: 'failure'
+                status: 'failure',
               }
             : t
         )
@@ -1325,7 +1325,7 @@ const Tests = () => {
                 item={
                   testResults.find((r) => r.name === test.name) || {
                     name: test.name,
-                    runOrder: test.runOrder
+                    runOrder: test.runOrder,
                   }
                 }
                 onPress={() => onTestItemPress(test)}
@@ -1390,7 +1390,7 @@ const Tests = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   testItem: {
     flexDirection: 'row',
@@ -1398,89 +1398,89 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc'
+    borderBottomColor: '#ccc',
   },
   runningTestItem: {
-    backgroundColor: '#e6f3ff'
+    backgroundColor: '#e6f3ff',
   },
   testItemContent: {
     flex: 1,
-    marginRight: 10
+    marginRight: 10,
   },
   testItemTitle: {
     fontFamily: Platform.select({
       ios: 'Courier',
       android: 'monospace',
-      default: 'monospace'
+      default: 'monospace',
     }),
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 8
+    marginBottom: 8,
   },
   testItemStatus: {
     width: 24,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   testItemResult: {
     fontFamily: Platform.select({
       ios: 'Courier',
       android: 'monospace',
-      default: 'monospace'
+      default: 'monospace',
     }),
-    fontSize: 14
+    fontSize: 14,
   },
   statusEmoji: {
     fontSize: 16,
-    lineHeight: 24
+    lineHeight: 24,
   },
   runTestsButton: {
-    fontSize: 16
+    fontSize: 16,
   },
   disabledButton: {
-    opacity: 0.5
+    opacity: 0.5,
   },
   sectionHeader: {
     backgroundColor: '#f0f0f0',
-    padding: 20
+    padding: 20,
   },
   sectionHeaderText: {
     fontFamily: Platform.select({
       ios: 'Courier',
       android: 'monospace',
-      default: 'monospace'
+      default: 'monospace',
     }),
     fontWeight: 'bold',
     fontSize: 24,
-    paddingTop: 20
+    paddingTop: 20,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
-    width: '80%'
+    width: '80%',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   inputLabel: {
     width: 100,
-    marginRight: 10
+    marginRight: 10,
   },
   input: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 5
-  }
+    padding: 5,
+  },
 });
 
 export default Tests;

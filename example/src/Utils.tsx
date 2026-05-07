@@ -15,12 +15,12 @@ export class ExampleServer {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${props.authKey}`
+          'Authorization': `Bearer ${props.authKey}`,
         },
         body: JSON.stringify({
           scope: `user_id:${props.userId} write:user-tokens inbox:read:messages inbox:write:events read:preferences write:preferences read:brands`,
-          expires_in: '2 days'
-        })
+          expires_in: '2 days',
+        }),
       };
 
       fetch(url, request)
@@ -46,28 +46,28 @@ export class ExampleServer {
     const url = `${base}/send`;
     const headers = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${props.authKey}`
+      'Authorization': `Bearer ${props.authKey}`,
     };
     const body = JSON.stringify({
       message: {
         to: {
-          user_id: props.userId
+          user_id: props.userId,
         },
         content: {
           title: props.title ?? 'Test',
-          body: props.body ?? 'Body'
+          body: props.body ?? 'Body',
         },
         routing: {
           method: 'all',
-          channels: [props.channel]
-        }
-      }
+          channels: [props.channel],
+        },
+      },
     });
 
     const response = await fetch(url, {
       method: 'POST',
       headers: headers,
-      body: body
+      body: body,
     });
 
     if (response.status === 202) {

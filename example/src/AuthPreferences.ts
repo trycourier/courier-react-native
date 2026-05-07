@@ -10,7 +10,7 @@ const KEYS = {
   restUrl: '@auth_restUrl',
   graphqlUrl: '@auth_graphqlUrl',
   inboxGraphqlUrl: '@auth_inboxGraphqlUrl',
-  inboxWebSocketUrl: '@auth_inboxWebSocketUrl'
+  inboxWebSocketUrl: '@auth_inboxWebSocketUrl',
 } as const;
 
 export interface AuthPreferencesData {
@@ -33,7 +33,7 @@ export async function loadAuthPreferences(): Promise<AuthPreferencesData> {
     KEYS.restUrl,
     KEYS.graphqlUrl,
     KEYS.inboxGraphqlUrl,
-    KEYS.inboxWebSocketUrl
+    KEYS.inboxWebSocketUrl,
   ]);
 
   return {
@@ -47,7 +47,7 @@ export async function loadAuthPreferences(): Promise<AuthPreferencesData> {
     graphqlUrl: results[KEYS.graphqlUrl] ?? DEFAULT_URLS.graphql,
     inboxGraphqlUrl: results[KEYS.inboxGraphqlUrl] ?? DEFAULT_URLS.inboxGraphql,
     inboxWebSocketUrl:
-      results[KEYS.inboxWebSocketUrl] ?? DEFAULT_URLS.inboxWebSocket
+      results[KEYS.inboxWebSocketUrl] ?? DEFAULT_URLS.inboxWebSocket,
   };
 }
 

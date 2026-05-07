@@ -25,7 +25,7 @@ export enum CourierUserPreferencesStatus {
   OptedIn = 'OPTED_IN',
   OptedOut = 'OPTED_OUT',
   Required = 'REQUIRED',
-  Unknown = 'UNKNOWN'
+  Unknown = 'UNKNOWN',
 }
 
 // Function to get the title of the enum value
@@ -53,7 +53,7 @@ export enum CourierUserPreferencesChannel {
   Push = 'push',
   Sms = 'sms',
   Webhook = 'webhook',
-  Unknown = 'unknown'
+  Unknown = 'unknown',
 }
 
 // Function to get the title of the enum value

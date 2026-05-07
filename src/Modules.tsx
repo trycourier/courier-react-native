@@ -2,7 +2,7 @@ import {
   NativeModules,
   Platform,
   UIManager,
-  requireNativeComponent
+  requireNativeComponent,
 } from 'react-native';
 
 export class Modules {
@@ -30,7 +30,7 @@ export class Modules {
           {
             get() {
               throw new Error(Modules.LINKING_ERROR);
-            }
+            },
           }
         ) as T);
   }

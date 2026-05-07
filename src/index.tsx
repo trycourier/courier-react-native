@@ -13,7 +13,7 @@ import {
   CourierApiUrls,
   DEFAULT_COURIER_API_URLS,
   EU_COURIER_API_URLS,
-  getCourierApiUrlsForRegion
+  getCourierApiUrlsForRegion,
 } from './CourierApiUrls';
 import { CourierClient } from './client/CourierClient';
 import { Events, CourierUtils } from './utils';
@@ -25,7 +25,7 @@ export type { CourierApiUrls, CourierApiRegion };
 export {
   DEFAULT_COURIER_API_URLS,
   EU_COURIER_API_URLS,
-  getCourierApiUrlsForRegion
+  getCourierApiUrlsForRegion,
 };
 export { BrandClient } from './client/BrandClient';
 export { CourierBrandResponse } from './models/CourierBrand';
@@ -54,12 +54,12 @@ export {
   CourierInboxButtonStyle,
   CourierInboxTextStyle,
   CourierInboxUnreadIndicatorStyle,
-  CourierInboxTheme
+  CourierInboxTheme,
 } from './models/CourierInboxTheme';
 export {
   CourierPreferencesTheme,
   CourierPreferencesMode,
-  CourierPreferencesChannel
+  CourierPreferencesChannel,
 } from './models/CourierPreferencesTheme';
 export type iOSForegroundPresentationOptions =
   | 'sound'
@@ -90,7 +90,7 @@ class Courier {
     // Sets the initial SDK values
     // will show all foreground notification styles in iOS
     Courier.setIOSForegroundPresentationOptions({
-      options: ['sound', 'badge', 'list', 'banner']
+      options: ['sound', 'badge', 'list', 'banner'],
     });
 
     // Attach the push notification listeners
@@ -177,7 +177,7 @@ class Courier {
 
     const normalizedParams = Array.from(new Set(props.options));
     return Modules.System.setIOSForegroundPresentationOptions({
-      options: normalizedParams
+      options: normalizedParams,
     });
   }
 
@@ -227,7 +227,7 @@ class Courier {
       clientKey: clientObj.clientKey,
       connectionId: clientObj.connectionId,
       tenantId: clientObj.tenantId,
-      apiUrls: clientObj.apiUrls
+      apiUrls: clientObj.apiUrls,
     });
   }
 
@@ -602,7 +602,7 @@ class Courier {
       totalCount: `inbox_total_count_${CourierUtils.generateUUID()}`,
       messagesChanged: `inbox_messages_changed_${CourierUtils.generateUUID()}`,
       pageAdded: `inbox_page_added_${CourierUtils.generateUUID()}`,
-      messageEvent: `inbox_message_event_${CourierUtils.generateUUID()}`
+      messageEvent: `inbox_message_event_${CourierUtils.generateUUID()}`,
     };
 
     // Create the CourierInboxListener instance

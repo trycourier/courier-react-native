@@ -3,7 +3,7 @@ import {
   CourierUserPreferences,
   CourierUserPreferencesChannel,
   CourierUserPreferencesStatus,
-  CourierUserPreferencesTopic
+  CourierUserPreferencesTopic,
 } from '../models/CourierUserPreferences';
 
 export class PreferenceClient {
@@ -40,9 +40,9 @@ export class PreferenceClient {
         topicId: item.topic_id,
         topicName: item.topic_name,
         sectionName: item.section_name,
-        sectionId: item.section_id
+        sectionId: item.section_id,
       })),
-      paging: rawData.paging
+      paging: rawData.paging,
     };
   }
 
@@ -71,7 +71,7 @@ export class PreferenceClient {
       topicId: rawData.topic_id,
       topicName: rawData.topic_name,
       sectionName: rawData.section_name,
-      sectionId: rawData.section_id
+      sectionId: rawData.section_id,
     };
 
     return convertedTopic;

@@ -14,6 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup
+        uses: ./.github/actions/setup
+
       - name: Generate Env.tsx
         env:
           COURIER_BRAND_ID: ${{ secrets.COURIER_BRAND_ID }}
@@ -22,9 +25,7 @@ jobs:
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
           printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
-
-      - name: Setup
-        uses: ./.github/actions/setup
+          npx prettier --write example/src/Env.tsx
 
       - name: Lint files
         run: yarn lint
@@ -38,6 +39,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup
+        uses: ./.github/actions/setup
+
       - name: Generate Env.tsx
         env:
           COURIER_BRAND_ID: ${{ secrets.COURIER_BRAND_ID }}
@@ -46,9 +50,6 @@ jobs:
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
           printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
-
-      - name: Setup
-        uses: ./.github/actions/setup
 
       - name: Run unit tests
         run: yarn test --maxWorkers=2 --coverage
@@ -73,6 +74,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup
+        uses: ./.github/actions/setup
+
       - name: Generate Env.tsx
         env:
           COURIER_BRAND_ID: ${{ secrets.COURIER_BRAND_ID }}
@@ -81,9 +85,6 @@ jobs:
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
           printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
-
-      - name: Setup
-        uses: ./.github/actions/setup
 
       - name: Cache turborepo for Android
         uses: actions/cache@v4
@@ -125,16 +126,21 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build example for Android
+        env:
+          ORG_GRADLE_PROJECT_newArchEnabled: "false"
         run: |
           yarn turbo run build:android --cache-dir="${{ env.TURBO_CACHE_DIR }}"
 
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-14
     env:
       TURBO_CACHE_DIR: .turbo/ios
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Generate Env.tsx
         env:
@@ -144,9 +150,6 @@ jobs:
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
           printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
-
-      - name: Setup
-        uses: ./.github/actions/setup
 
       - name: Cache turborepo for iOS
         uses: actions/cache@v4

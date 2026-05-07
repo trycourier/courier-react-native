@@ -1,6 +1,6 @@
 import {
   CourierPreferencesView,
-  CourierPreferencesTheme
+  CourierPreferencesTheme,
 } from '@trycourier/courier-react-native';
 import Env from '../../Env';
 import React from 'react';
@@ -16,64 +16,64 @@ const PreferencesStyled = () => {
       sectionTitleFont: {
         family: styles.Fonts.heading,
         size: styles.TextSizes.heading,
-        color: styles.Colors.heading
+        color: styles.Colors.heading,
       },
       topicTitleFont: {
         family: styles.Fonts.title,
         size: styles.TextSizes.title,
-        color: styles.Colors.title
+        color: styles.Colors.title,
       },
       topicSubtitleFont: {
         family: styles.Fonts.subtitle,
         size: styles.TextSizes.subtitle,
-        color: styles.Colors.subtitle
+        color: styles.Colors.subtitle,
       },
       topicButton: {
         font: {
           family: styles.Fonts.subtitle,
           size: styles.TextSizes.subtitle,
-          color: styles.Colors.title
+          color: styles.Colors.title,
         },
         backgroundColor: styles.Colors.option,
-        cornerRadius: styles.Corners.button
+        cornerRadius: styles.Corners.button,
       },
       sheetTitleFont: {
         family: styles.Fonts.heading,
         size: styles.TextSizes.heading,
-        color: styles.Colors.heading
+        color: styles.Colors.heading,
       },
       infoViewStyle: {
         font: {
           family: styles.Fonts.title,
           size: styles.TextSizes.title,
-          color: styles.Colors.title
+          color: styles.Colors.title,
         },
         button: {
           font: {
             family: styles.Fonts.subtitle,
             size: styles.TextSizes.subtitle,
-            color: styles.Colors.action
+            color: styles.Colors.action,
           },
           backgroundColor: styles.Colors.title,
-          cornerRadius: styles.Corners.button
-        }
+          cornerRadius: styles.Corners.button,
+        },
       },
       iOS: {
         topicCellStyles: {
-          separatorStyle: 'none'
+          separatorStyle: 'none',
         },
         sheetSettingStyles: {
           font: {
             family: styles.Fonts.title,
             size: styles.TextSizes.title,
-            color: styles.Colors.title
+            color: styles.Colors.title,
           },
-          toggleColor: styles.Colors.action
+          toggleColor: styles.Colors.action,
         },
         sheetCornerRadius: 20,
         sheetCellStyles: {
-          separatorStyle: 'none'
-        }
+          separatorStyle: 'none',
+        },
       },
       android: {
         topicDividerItemDecoration: 'vertical',
@@ -82,23 +82,23 @@ const PreferencesStyled = () => {
           font: {
             family: styles.Fonts.title,
             size: styles.TextSizes.title,
-            color: styles.Colors.title
+            color: styles.Colors.title,
           },
           toggleThumbColor: styles.Colors.action,
-          toggleTrackColor: styles.Colors.option
-        }
-      }
+          toggleTrackColor: styles.Colors.option,
+        },
+      },
     };
   }
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     box: {
       width: '100%',
-      height: '100%'
-    }
+      height: '100%',
+    },
   });
 
   return (
@@ -106,11 +106,11 @@ const PreferencesStyled = () => {
       <CourierPreferencesView
         mode={{
           type: 'channels',
-          channels: ['push', 'sms', 'email']
+          channels: ['push', 'sms', 'email'],
         }}
         theme={{
           light: getTheme(false),
-          dark: getTheme(true)
+          dark: getTheme(true),
         }}
         onScrollPreferences={(offsetX, offsetY) => {
           console.log(offsetX, offsetY);

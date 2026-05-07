@@ -3,7 +3,7 @@ import React, {
   useEffect,
   useMemo,
   createContext,
-  useContext
+  useContext,
 } from 'react';
 import { View, StyleSheet, ViewStyle, Animated, Easing } from 'react-native';
 
@@ -47,7 +47,7 @@ export const Poke: React.FC<PokeProviderProps> = ({
   children,
   initialEnabled = true,
   initialIndicatorStyle,
-  initialTouchTimeout = 150
+  initialTouchTimeout = 150,
 }) => {
   const [enabled, setEnabled] = useState(initialEnabled);
   const [indicatorStyle, setIndicatorStyle] = useState<TouchIndicatorStyle>(
@@ -59,7 +59,7 @@ export const Poke: React.FC<PokeProviderProps> = ({
     () => ({
       setEnabled,
       setIndicatorStyle,
-      setTouchTimeout
+      setTouchTimeout,
     }),
     []
   );
@@ -88,7 +88,7 @@ const TouchIndicator: React.FC<TouchIndicatorProps> = ({
   children,
   indicatorStyle,
   enabled,
-  touchTimeout
+  touchTimeout,
 }) => {
   const [latestTouch, setLatestTouch] = useState<Touch | null>(null);
 
@@ -115,14 +115,14 @@ const TouchIndicator: React.FC<TouchIndicatorProps> = ({
         x: touch.pageX,
         y: touch.pageY,
         timestamp: Date.now(),
-        animation: new Animated.Value(1)
+        animation: new Animated.Value(1),
       };
 
       Animated.timing(newTouch.animation, {
         toValue: 0,
         duration: touchTimeout,
         useNativeDriver: true,
-        easing: Easing.out(Easing.cubic)
+        easing: Easing.out(Easing.cubic),
       }).start();
 
       setLatestTouch(newTouch);
@@ -137,7 +137,7 @@ const TouchIndicator: React.FC<TouchIndicatorProps> = ({
         height: indicatorSize,
         borderRadius: indicatorSize / 2,
         backgroundColor: indicatorColor,
-        zIndex: 9999
+        zIndex: 9999,
       } as ViewStyle),
     [indicatorSize, indicatorColor]
   );
@@ -158,8 +158,8 @@ const TouchIndicator: React.FC<TouchIndicatorProps> = ({
             {
               left: latestTouch.x - indicatorSize / 2,
               top: latestTouch.y - indicatorSize / 2,
-              opacity: latestTouch.animation
-            }
+              opacity: latestTouch.animation,
+            },
           ]}
         />
       )}
