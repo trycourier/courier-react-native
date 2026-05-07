@@ -18,6 +18,7 @@ export type CourierPreferencesMode =
 
 export interface CourierPreferencesTheme {
   brandId?: string;
+  backgroundColor?: string;
   loadingIndicatorColor?: string;
   sectionTitleFont?: CourierFont;
   topicTitleFont?: CourierFont;

@@ -13,6 +13,7 @@ const PreferencesStyled = () => {
 
     return {
       brandId: Env.brandId,
+      backgroundColor: styles.Colors.background,
       sectionTitleFont: {
         family: styles.Fonts.heading,
         size: styles.TextSizes.heading,

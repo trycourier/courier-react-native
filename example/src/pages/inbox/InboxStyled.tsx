@@ -20,6 +20,7 @@ const InboxStyled = () => {
 
     return {
       brandId: Env.brandId,
+      backgroundColor: styles.Colors.background,
       tabIndicatorColor: styles.Colors.action,
       tabStyle: {
         selected: {

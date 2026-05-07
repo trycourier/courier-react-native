@@ -102,6 +102,7 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
   private fun ReadableMap.toTheme(view: CourierPreferences): CourierPreferencesTheme {
 
     val brandId = getString("brandId")
+    val backgroundColor = getString("backgroundColor")
     val loadingIndicatorColor = getString("loadingIndicatorColor")
     val sectionTitleFont = getMap("sectionTitleFont")
     val topicTitleFont = getMap("topicTitleFont")
@@ -118,6 +119,7 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
 
     return CourierPreferencesTheme(
       brandId = brandId,
+      backgroundColor = backgroundColor?.toColor(),
       loadingIndicatorColor = loadingIndicatorColor?.toColor(),
       sectionTitleFont = sectionTitleFont?.toFont(context) ?: defaultTheme.sectionTitleFont,
       topicDividerItemDecoration = topicDividerItemDecoration?.toDivider(context),

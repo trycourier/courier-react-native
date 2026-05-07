@@ -44,6 +44,14 @@ class CourierPreferencesView : UIView {
         let lightTheme = theme?["light"] as? NSDictionary
         let darkTheme = theme?["dark"] as? NSDictionary
         
+        let lightBgColor = (lightTheme?["backgroundColor"] as? String)?.toColor()
+        let darkBgColor = (darkTheme?["backgroundColor"] as? String)?.toColor()
+        if let bgColor = traitCollection.userInterfaceStyle == .dark ? darkBgColor ?? lightBgColor : lightBgColor ?? darkBgColor {
+            self.backgroundColor = bgColor
+        } else {
+            self.backgroundColor = nil
+        }
+        
         let courierPreferences = CourierPreferences(
             mode: mode?.toMode() ?? .channels(CourierUserPreferencesChannel.allCases),
             lightTheme: lightTheme?.toPreferencesTheme() ?? .defaultLight,
