@@ -40,7 +40,13 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                     "userId": options.userId as Any,
                     "connectionId": options.connectionId as Any,
                     "tenantId": options.tenantId as Any,
-                    "showLogs": options.showLogs as Any
+                    "showLogs": options.showLogs as Any,
+                    "apiUrls": [
+                        "rest": options.apiUrls.rest,
+                        "graphql": options.apiUrls.graphql,
+                        "inboxGraphql": options.apiUrls.inboxGraphql,
+                        "inboxWebSocket": options.apiUrls.inboxWebSocket
+                    ] as Any
                 ]
                 .compactMapValues { $0 }
                 
@@ -90,8 +96,8 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         }
     }
 
-    @objc(signIn:withClientKey:withUserId:withTenantId:withShowLogs:withResolver:withRejecter:)
-    func signIn(accessToken: String, clientKey: String?, userId: String, tenantId: String?, showLogs: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc(signIn:withClientKey:withUserId:withTenantId:withApiUrls:withShowLogs:withResolver:withRejecter:)
+    func signIn(accessToken: String, clientKey: String?, userId: String, tenantId: String?, apiUrls: NSDictionary?, showLogs: Bool, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         
         Task {
             
@@ -100,6 +106,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 tenantId: tenantId,
                 accessToken: accessToken,
                 clientKey: clientKey,
+                baseUrls: apiUrls?.toCourierApiUrls() ?? CourierClient.ApiUrls(),
                 showLogs: showLogs
             )
             

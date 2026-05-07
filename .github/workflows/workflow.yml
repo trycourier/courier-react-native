@@ -46,37 +46,37 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/trycourier/mobile-automation-tests/dispatches \
             -d "$(jq -n \
-                  --arg et 'iOS-ReactNativeClassic' \
-                  --arg prnum '${{ github.event.pull_request.number }}' \
-                  --arg sh '${{ github.event.pull_request.head.sha }}' \
-                  '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
+            --arg et 'iOS-ReactNativeClassic' \
+            --arg prnum '${{ github.event.pull_request.number }}' \
+            --arg sh '${{ github.event.pull_request.head.sha }}' \
+            '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
           curl -sS --fail-with-body -X POST \
             -H "Authorization: token ${{ secrets.AUTOMATION_ACCESS_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/trycourier/mobile-automation-tests/dispatches \
             -d "$(jq -n \
-                  --arg et 'Android-ReactNativeClassic' \
-                  --arg prnum '${{ github.event.pull_request.number }}' \
-                  --arg sh '${{ github.event.pull_request.head.sha }}' \
-                  '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
+            --arg et 'Android-ReactNativeClassic' \
+            --arg prnum '${{ github.event.pull_request.number }}' \
+            --arg sh '${{ github.event.pull_request.head.sha }}' \
+            '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
           curl -sS --fail-with-body -X POST \
             -H "Authorization: token ${{ secrets.AUTOMATION_ACCESS_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/trycourier/mobile-automation-tests/dispatches \
             -d "$(jq -n \
-                  --arg et 'iOS-ReactNativeExpo' \
-                  --arg prnum '${{ github.event.pull_request.number }}' \
-                  --arg sh '${{ github.event.pull_request.head.sha }}' \
-                  '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
+            --arg et 'iOS-ReactNativeExpo' \
+            --arg prnum '${{ github.event.pull_request.number }}' \
+            --arg sh '${{ github.event.pull_request.head.sha }}' \
+            '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
           curl -sS --fail-with-body -X POST \
             -H "Authorization: token ${{ secrets.AUTOMATION_ACCESS_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/trycourier/mobile-automation-tests/dispatches \
             -d "$(jq -n \
-                  --arg et 'Android-ReactNativeExpo' \
-                  --arg prnum '${{ github.event.pull_request.number }}' \
-                  --arg sh '${{ github.event.pull_request.head.sha }}' \
-                  '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
+            --arg et 'Android-ReactNativeExpo' \
+            --arg prnum '${{ github.event.pull_request.number }}' \
+            --arg sh '${{ github.event.pull_request.head.sha }}' \
+            '{event_type:$et, client_payload:{pr:$prnum, sha:$sh}}')"
 
   tests-manual:
     if: github.event_name == 'workflow_dispatch'

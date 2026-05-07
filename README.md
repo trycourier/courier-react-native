@@ -176,3 +176,17 @@ Starter projects using this SDK.
 We want to make this the best SDK for managing notifications! Have an idea or feedback about our SDKs? Let us know!
 
 [Courier React Native Issues](https://github.com/trycourier/courier-react-native/issues)
+
+## EU endpoints
+
+If your workspace uses EU-hosted Courier endpoints, pass the built-in EU preset through `apiUrls`.
+
+```tsx
+import Courier, { getCourierApiUrlsForRegion } from "@trycourier/courier-react-native";
+
+await Courier.shared.signIn({
+  userId: "your_user_id",
+  accessToken: jwt,
+  apiUrls: getCourierApiUrlsForRegion("eu")
+});
+```

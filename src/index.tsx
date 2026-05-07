@@ -1,7 +1,4 @@
-import {
-  Platform,
-  EmitterSubscription,
-} from 'react-native';
+import { Platform, EmitterSubscription } from 'react-native';
 
 // Imports
 import { CourierInboxListener } from './models/CourierInboxListener';
@@ -11,12 +8,25 @@ import { InboxMessage } from './models/InboxMessage';
 import { CourierPushProvider } from './models/CourierPushProvider';
 import { Modules } from './Modules';
 import Broadcaster from './Broadcaster';
+import {
+  CourierApiRegion,
+  CourierApiUrls,
+  DEFAULT_COURIER_API_URLS,
+  EU_COURIER_API_URLS,
+  getCourierApiUrlsForRegion
+} from './CourierApiUrls';
 import { CourierClient } from './client/CourierClient';
 import { Events, CourierUtils } from './utils';
 import { InboxMessageFeed } from './models/InboxMessageFeed';
 import { InboxMessageEvent } from './models/InboxMessageEvent';
 
-export { CourierClient } from './client/CourierClient'  ;
+export { CourierClient } from './client/CourierClient';
+export type { CourierApiUrls, CourierApiRegion };
+export {
+  DEFAULT_COURIER_API_URLS,
+  EU_COURIER_API_URLS,
+  getCourierApiUrlsForRegion
+};
 export { BrandClient } from './client/BrandClient';
 export { CourierBrandResponse } from './models/CourierBrand';
 export { CourierDevice } from './models/CourierDevice';
@@ -40,18 +50,33 @@ export { iOS_CourierSheet } from './models/iOS_CourierSheet';
 export { InboxMessage } from './models/InboxMessage';
 export { InboxMessageFeed } from './models/InboxMessageFeed';
 export { InboxMessageEvent } from './models/InboxMessageEvent';
-export { CourierInboxButtonStyle, CourierInboxTextStyle, CourierInboxUnreadIndicatorStyle, CourierInboxTheme } from './models/CourierInboxTheme';
-export { CourierPreferencesTheme, CourierPreferencesMode, CourierPreferencesChannel } from './models/CourierPreferencesTheme';
-export type iOSForegroundPresentationOptions = 'sound' | 'badge' | 'list' | 'banner';
+export {
+  CourierInboxButtonStyle,
+  CourierInboxTextStyle,
+  CourierInboxUnreadIndicatorStyle,
+  CourierInboxTheme
+} from './models/CourierInboxTheme';
+export {
+  CourierPreferencesTheme,
+  CourierPreferencesMode,
+  CourierPreferencesChannel
+} from './models/CourierPreferencesTheme';
+export type iOSForegroundPresentationOptions =
+  | 'sound'
+  | 'badge'
+  | 'list'
+  | 'banner';
 export { CourierUtils } from './utils';
 
 class Courier {
-
   // Singleton
   private static _sharedInstance: Courier;
 
   // Listeners
-  private authenticationListeners = new Map<string, CourierAuthenticationListener>();
+  private authenticationListeners = new Map<
+    string,
+    CourierAuthenticationListener
+  >();
   private inboxListeners = new Map<string, CourierInboxListener>();
   private pushListeners = new Map<string, CourierPushListener>();
 
@@ -62,7 +87,6 @@ class Courier {
   private pushNotificationDeliveredEmitter: EmitterSubscription | undefined;
 
   public constructor() {
-
     // Sets the initial SDK values
     // will show all foreground notification styles in iOS
     Courier.setIOSForegroundPresentationOptions({
@@ -71,18 +95,15 @@ class Courier {
 
     // Attach the push notification listeners
     this.attachPushNotificationListeners();
-
   }
 
   // Returns the public shared instance
   public static get shared(): Courier {
-
     if (!this._sharedInstance) {
       this._sharedInstance = new Courier();
     }
 
     return this._sharedInstance;
-
   }
 
   // Debugging
@@ -99,39 +120,47 @@ class Courier {
   // System (Static)
 
   private async attachPushNotificationListeners() {
-
     // Remove existing listeners
     // Only allows one subscription to be active
     this.pushNotificationClickedEmitter?.remove();
     this.pushNotificationDeliveredEmitter?.remove();
 
     // When a push notification is clicked
-    this.pushNotificationClickedEmitter = await this.systemBroadcaster.addListener(Events.Push.CLICKED, (event) => {
-      try {
-        const message = JSON.parse(event);
-        this.pushListeners.forEach(listener => {
-          if (listener.onPushNotificationClicked) {
-            listener.onPushNotificationClicked(message);
-          }
-        });
-      } catch (error) {
-        Courier.log(`Error parsing push notification clicked event: ${error}`);
-      }
-    });
+    this.pushNotificationClickedEmitter =
+      await this.systemBroadcaster.addListener(Events.Push.CLICKED, (event) => {
+        try {
+          const message = JSON.parse(event);
+          this.pushListeners.forEach((listener) => {
+            if (listener.onPushNotificationClicked) {
+              listener.onPushNotificationClicked(message);
+            }
+          });
+        } catch (error) {
+          Courier.log(
+            `Error parsing push notification clicked event: ${error}`
+          );
+        }
+      });
 
     // When a push notification is delivered
-    this.pushNotificationDeliveredEmitter = await this.systemBroadcaster.addListener(Events.Push.DELIVERED, (event) => {
-      try {
-        const message = JSON.parse(event);
-        this.pushListeners.forEach(listener => {
-          if (listener.onPushNotificationDelivered) {
-            listener.onPushNotificationDelivered(message);
+    this.pushNotificationDeliveredEmitter =
+      await this.systemBroadcaster.addListener(
+        Events.Push.DELIVERED,
+        (event) => {
+          try {
+            const message = JSON.parse(event);
+            this.pushListeners.forEach((listener) => {
+              if (listener.onPushNotificationDelivered) {
+                listener.onPushNotificationDelivered(message);
+              }
+            });
+          } catch (error) {
+            Courier.log(
+              `Error parsing push notification delivered event: ${error}`
+            );
           }
-        });
-      } catch (error) {
-        Courier.log(`Error parsing push notification delivered event: ${error}`);
-      }
-    });
+        }
+      );
   }
 
   /**
@@ -140,16 +169,16 @@ class Courier {
    * @param props An object containing an array of iOSForegroundPresentationOptions.
    * @returns A string indicating the result of the operation. Returns 'unsupported' on non-iOS platforms.
    */
-  public static setIOSForegroundPresentationOptions(props: { options: iOSForegroundPresentationOptions[] }): string {
-
+  public static setIOSForegroundPresentationOptions(props: {
+    options: iOSForegroundPresentationOptions[];
+  }): string {
     // Only works on iOS
     if (Platform.OS !== 'ios') return 'unsupported';
 
     const normalizedParams = Array.from(new Set(props.options));
     return Modules.System.setIOSForegroundPresentationOptions({
-      options: normalizedParams,
+      options: normalizedParams
     });
-
   }
 
   /**
@@ -183,8 +212,7 @@ class Courier {
    * @returns {Promise<CourierClient | undefined>} The current CourierClient instance, or undefined if not initialized.
    */
   public async getClient(): Promise<CourierClient | undefined> {
-
-    const client = await Modules.Shared.getClient() ?? undefined;
+    const client = (await Modules.Shared.getClient()) ?? undefined;
 
     if (!client) {
       return undefined;
@@ -199,8 +227,8 @@ class Courier {
       clientKey: clientObj.clientKey,
       connectionId: clientObj.connectionId,
       tenantId: clientObj.tenantId,
+      apiUrls: clientObj.apiUrls
     });
-
   }
 
   // Authentication
@@ -210,7 +238,7 @@ class Courier {
    * @returns {Promise<string | undefined>} The current user ID, or undefined if not set.
    */
   public async getUserId(): Promise<string | undefined> {
-    return await Modules.Shared.getUserId() ?? undefined;
+    return (await Modules.Shared.getUserId()) ?? undefined;
   }
 
   /**
@@ -218,7 +246,7 @@ class Courier {
    * @returns {Promise<string | undefined>} The current tenant ID, or undefined if not set.
    */
   public async getTenantId(): Promise<string | undefined> {
-    return await Modules.Shared.getTenantId() ?? undefined;
+    return (await Modules.Shared.getTenantId()) ?? undefined;
   }
 
   /**
@@ -226,7 +254,8 @@ class Courier {
    * @returns {Promise<boolean>} True if a user is signed in, false otherwise.
    */
   public async isUserSignedIn(): Promise<boolean> {
-    const isSignedIn: string = await Modules.Shared.getIsUserSignedIn() ?? 'false';
+    const isSignedIn: string =
+      (await Modules.Shared.getIsUserSignedIn()) ?? 'false';
     return isSignedIn.toLowerCase() === 'true';
   }
 
@@ -248,13 +277,21 @@ class Courier {
    * @param {boolean} [props.showLogs] - Whether to show debug logs (defaults to __DEV__).
    * @returns {Promise<void>} A promise that resolves when the sign-in process is complete.
    */
-  public async signIn(props: { accessToken: string, clientKey?: string, userId: string, tenantId?: string, showLogs?: boolean }): Promise<void> {
+  public async signIn(props: {
+    accessToken: string;
+    clientKey?: string;
+    userId: string;
+    tenantId?: string;
+    apiUrls?: CourierApiUrls;
+    showLogs?: boolean;
+  }): Promise<void> {
     this.isDebugging = props.showLogs ?? __DEV__;
     return await Modules.Shared.signIn(
       props.accessToken,
       props.clientKey,
       props.userId,
       props.tenantId,
+      props.apiUrls ?? null,
       this.isDebugging
     );
   }
@@ -265,19 +302,22 @@ class Courier {
    * @param {function} props.onUserChanged - Callback function triggered when the user changes.
    * @returns {CourierAuthenticationListener} The created authentication listener.
    */
-  public async addAuthenticationListener(props: { onUserChanged: (userId?: string) => void }): Promise<CourierAuthenticationListener> {
-
+  public async addAuthenticationListener(props: {
+    onUserChanged: (userId?: string) => void;
+  }): Promise<CourierAuthenticationListener> {
     // Create a listener
     const listenerId = `authentication_${CourierUtils.generateUUID()}`;
 
     // Attach the listener
     const listener = new CourierAuthenticationListener(listenerId);
-    listener.onUserChanged = await this.sharedBroadcaster.addListener(listenerId, (event) => props.onUserChanged(event));
+    listener.onUserChanged = await this.sharedBroadcaster.addListener(
+      listenerId,
+      (event) => props.onUserChanged(event)
+    );
     const id = await Modules.Shared.addAuthenticationListener(listenerId);
     this.authenticationListeners.set(id, listener);
 
     return listener;
-
   }
 
   /**
@@ -286,8 +326,9 @@ class Courier {
    * @param {string} props.listenerId - The ID of the listener to remove.
    * @returns {Promise<string>} A promise that resolves to the ID of the removed listener.
    */
-  public async removeAuthenticationListener(props: { listenerId: string }): Promise<string> {
-
+  public async removeAuthenticationListener(props: {
+    listenerId: string;
+  }): Promise<string> {
     // Remove the native listener
     await Modules.Shared.removeAuthenticationListener(props.listenerId);
 
@@ -299,7 +340,6 @@ class Courier {
     }
 
     return props.listenerId;
-
   }
 
   /**
@@ -307,7 +347,6 @@ class Courier {
    * This method clears all registered authentication listeners, both native and JavaScript.
    */
   public async removeAllAuthenticationListeners() {
-
     // Remove all native listeners
     await Modules.Shared.removeAllAuthenticationListeners();
 
@@ -318,7 +357,6 @@ class Courier {
 
     // Clear the map of authentication listeners
     this.authenticationListeners.clear();
-
   }
 
   // Push
@@ -352,7 +390,9 @@ class Courier {
    * @param {CourierPushProvider} props.provider - The push notification provider.
    * @returns {Promise<string | undefined>} A promise that resolves to the token or undefined if not found.
    */
-  public async getTokenForProvider(props: { provider: CourierPushProvider }): Promise<string | undefined> {
+  public async getTokenForProvider(props: {
+    provider: CourierPushProvider;
+  }): Promise<string | undefined> {
     return await Modules.Shared.getToken(props.provider);
   }
 
@@ -363,7 +403,7 @@ class Courier {
    * @param {string} props.token - The push notification token.
    * @returns {Promise<void>} A promise that resolves when the token is set.
    */
-  public async setToken(props: { key: string, token: string }): Promise<void> {
+  public async setToken(props: { key: string; token: string }): Promise<void> {
     return await Modules.Shared.setToken(props.key, props.token);
   }
 
@@ -374,7 +414,10 @@ class Courier {
    * @param {string} props.token - The push notification token.
    * @returns {Promise<void>} A promise that resolves when the token is set.
    */
-  public async setTokenForProvider(props: { provider: CourierPushProvider, token: string }): Promise<void> {
+  public async setTokenForProvider(props: {
+    provider: CourierPushProvider;
+    token: string;
+  }): Promise<void> {
     return await Modules.Shared.setToken(props.provider, props.token);
   }
 
@@ -385,8 +428,10 @@ class Courier {
    * @param {function} [props.onPushNotificationDelivered] - Callback function triggered when a push notification is delivered.
    * @returns {CourierPushListener} The created push notification listener.
    */
-  public addPushNotificationListener(props: { onPushNotificationClicked?: (push: any) => void, onPushNotificationDelivered?: (push: any) => void }): CourierPushListener {
-
+  public addPushNotificationListener(props: {
+    onPushNotificationClicked?: (push: any) => void;
+    onPushNotificationDelivered?: (push: any) => void;
+  }): CourierPushListener {
     const listenerId = `push_${CourierUtils.generateUUID()}`;
 
     const pushListener = new CourierPushListener(
@@ -405,7 +450,6 @@ class Courier {
     Modules.System.registerPushNotificationClickedOnKilledState();
 
     return pushListener;
-
   }
 
   /**
@@ -414,7 +458,9 @@ class Courier {
    * @param {string} props.listenerId - The ID of the listener to remove.
    * @returns {string} The ID of the removed listener.
    */
-  public async removePushNotificationListener(props: { listenerId: string }): Promise<string> {
+  public async removePushNotificationListener(props: {
+    listenerId: string;
+  }): Promise<string> {
     if (this.pushListeners.has(props.listenerId)) {
       this.pushListeners.delete(props.listenerId);
     }
@@ -523,15 +569,28 @@ class Courier {
    * @returns {CourierInboxListener} A listener object that can be used to remove the listener later.
    */
   public async addInboxListener(props: {
-    onLoading?: (isRefresh: boolean) => void,
-    onError?: (error: string) => void,
-    onUnreadCountChanged?: (unreadCount: number) => void,
-    onTotalCountChanged?: (totalCount: number, feed: string) => void,
-    onMessagesChanged?: (messages: InboxMessage[], canPaginate: boolean, feed: InboxMessageFeed) => void,
-    onPageAdded?: (messages: InboxMessage[], canPaginate: boolean, isFirstPage: boolean, feed: InboxMessageFeed) => void,
-    onMessageEvent?: (message: InboxMessage, index: number, feed: InboxMessageFeed, eventName: InboxMessageEvent) => void
+    onLoading?: (isRefresh: boolean) => void;
+    onError?: (error: string) => void;
+    onUnreadCountChanged?: (unreadCount: number) => void;
+    onTotalCountChanged?: (totalCount: number, feed: string) => void;
+    onMessagesChanged?: (
+      messages: InboxMessage[],
+      canPaginate: boolean,
+      feed: InboxMessageFeed
+    ) => void;
+    onPageAdded?: (
+      messages: InboxMessage[],
+      canPaginate: boolean,
+      isFirstPage: boolean,
+      feed: InboxMessageFeed
+    ) => void;
+    onMessageEvent?: (
+      message: InboxMessage,
+      index: number,
+      feed: InboxMessageFeed,
+      eventName: InboxMessageEvent
+    ) => void;
   }): Promise<CourierInboxListener> {
-
     // Generate a unique ID for the listener
     const listenerId = `inbox_${CourierUtils.generateUUID()}`;
 
@@ -543,56 +602,91 @@ class Courier {
       totalCount: `inbox_total_count_${CourierUtils.generateUUID()}`,
       messagesChanged: `inbox_messages_changed_${CourierUtils.generateUUID()}`,
       pageAdded: `inbox_page_added_${CourierUtils.generateUUID()}`,
-      messageEvent: `inbox_message_event_${CourierUtils.generateUUID()}`,
+      messageEvent: `inbox_message_event_${CourierUtils.generateUUID()}`
     };
 
     // Create the CourierInboxListener instance
     const listener = new CourierInboxListener(listenerId);
 
     // 1) onLoading
-    listener.onLoading = await this.sharedBroadcaster.addListener(listenerIds.loading, (event: any) => {
-      // event is simply the boolean "isRefresh"
-      props.onLoading?.(event);
-    });
+    listener.onLoading = await this.sharedBroadcaster.addListener(
+      listenerIds.loading,
+      (event: any) => {
+        // event is simply the boolean "isRefresh"
+        props.onLoading?.(event);
+      }
+    );
 
     // 2) onError
-    listener.onError = await this.sharedBroadcaster.addListener(listenerIds.error, (event: any) => {
-      // event is the error message (string)
-      props.onError?.(event);
-    });
+    listener.onError = await this.sharedBroadcaster.addListener(
+      listenerIds.error,
+      (event: any) => {
+        // event is the error message (string)
+        props.onError?.(event);
+      }
+    );
 
     // 3) onUnreadCountChanged
-    listener.onUnreadCountChanged = await this.sharedBroadcaster.addListener(listenerIds.unreadCount, (event: any) => {
-      // event is the unread count (number)
-      props.onUnreadCountChanged?.(event);
-    });
+    listener.onUnreadCountChanged = await this.sharedBroadcaster.addListener(
+      listenerIds.unreadCount,
+      (event: any) => {
+        // event is the unread count (number)
+        props.onUnreadCountChanged?.(event);
+      }
+    );
 
     // 4) onTotalCountChanged
-    listener.onTotalCountChanged = await this.sharedBroadcaster.addListener(listenerIds.totalCount, (event: any) => {
-      // event => { feed: "feed"|"archive", totalCount: number }
-      props.onTotalCountChanged?.(event.totalCount, event.feed);
-    });
+    listener.onTotalCountChanged = await this.sharedBroadcaster.addListener(
+      listenerIds.totalCount,
+      (event: any) => {
+        // event => { feed: "feed"|"archive", totalCount: number }
+        props.onTotalCountChanged?.(event.totalCount, event.feed);
+      }
+    );
 
     // 5) onMessagesChanged
-    listener.onMessagesChanged = await this.sharedBroadcaster.addListener(listenerIds.messagesChanged, (event: any) => {
-      // event => { feed: "feed"|"archive", messages: any[], totalMessageCount: number, canPaginate: boolean }
-      const convertedMessages = this.convertMessages(event.messages);
-      props.onMessagesChanged?.(convertedMessages, event.canPaginate, event.feed);
-    });
+    listener.onMessagesChanged = await this.sharedBroadcaster.addListener(
+      listenerIds.messagesChanged,
+      (event: any) => {
+        // event => { feed: "feed"|"archive", messages: any[], totalMessageCount: number, canPaginate: boolean }
+        const convertedMessages = this.convertMessages(event.messages);
+        props.onMessagesChanged?.(
+          convertedMessages,
+          event.canPaginate,
+          event.feed
+        );
+      }
+    );
 
     // 6) onPageAdded
-    listener.onPageAdded = await this.sharedBroadcaster.addListener(listenerIds.pageAdded, (event: any) => {
-      // event => { feed: "feed"|"archive", messages: any[], totalMessageCount: number, canPaginate: boolean, isFirstPage: boolean }
-      const convertedMessages = this.convertMessages(event.messages);
-      props.onPageAdded?.(convertedMessages, event.canPaginate, event.isFirstPage, event.feed);
-    });
+    listener.onPageAdded = await this.sharedBroadcaster.addListener(
+      listenerIds.pageAdded,
+      (event: any) => {
+        // event => { feed: "feed"|"archive", messages: any[], totalMessageCount: number, canPaginate: boolean, isFirstPage: boolean }
+        const convertedMessages = this.convertMessages(event.messages);
+        props.onPageAdded?.(
+          convertedMessages,
+          event.canPaginate,
+          event.isFirstPage,
+          event.feed
+        );
+      }
+    );
 
     // 7) onMessageEvent
-    listener.onMessageEvent = await this.sharedBroadcaster.addListener(listenerIds.messageEvent, (event: any) => {
-      // event => { feed: "feed"|"archive", index: number, event: string, message: any }
-      const convertedMessage = InboxMessage.fromJson(event.message);
-      props.onMessageEvent?.(convertedMessage, event.index, event.feed, event.event);
-    });
+    listener.onMessageEvent = await this.sharedBroadcaster.addListener(
+      listenerIds.messageEvent,
+      (event: any) => {
+        // event => { feed: "feed"|"archive", index: number, event: string, message: any }
+        const convertedMessage = InboxMessage.fromJson(event.message);
+        props.onMessageEvent?.(
+          convertedMessage,
+          event.index,
+          event.feed,
+          event.event
+        );
+      }
+    );
 
     // Attach the listener to native iOS/Android via bridging
     const id = await Modules.Shared.addInboxListener(
@@ -613,7 +707,7 @@ class Courier {
   }
 
   private convertMessages(messages: string[]): InboxMessage[] {
-    return messages.map(jsonString => InboxMessage.fromJson(jsonString));
+    return messages.map((jsonString) => InboxMessage.fromJson(jsonString));
   }
 
   /**
@@ -622,14 +716,14 @@ class Courier {
    * @param {string} props.listenerId - The ID of the listener to remove.
    * @returns {string} The ID of the removed listener.
    */
-  public async removeInboxListener(props: { listenerId: string }): Promise<string> {
-
+  public async removeInboxListener(props: {
+    listenerId: string;
+  }): Promise<string> {
     // Call native code
     await Modules.Shared.removeInboxListener(props.listenerId);
 
     // Remove the listener
     if (this.inboxListeners.has(props.listenerId)) {
-
       // Remove emitters
       const listener = this.inboxListeners.get(props.listenerId);
       listener?.onLoading?.remove();
@@ -642,18 +736,15 @@ class Courier {
 
       // Remove the listener
       this.inboxListeners.delete(props.listenerId);
-
     }
 
     return props.listenerId;
-
   }
 
   /**
    * Removes all inbox listeners.
    */
   public async removeAllInboxListeners() {
-
     // Call native code
     await Modules.Shared.removeAllInboxListeners();
 
@@ -669,7 +760,6 @@ class Courier {
     });
 
     this.inboxListeners.clear();
-
   }
 
   /**
@@ -685,8 +775,12 @@ class Courier {
    * Fetches the next page of inbox messages.
    * @returns {Promise<InboxMessage[]>} A promise that resolves with an array of fetched inbox messages.
    */
-  public async fetchNextPageOfMessages(props: { inboxMessageFeed: InboxMessageFeed }): Promise<InboxMessage[]> {
-    const data = await Modules.Shared.fetchNextPageOfMessages(props.inboxMessageFeed);
+  public async fetchNextPageOfMessages(props: {
+    inboxMessageFeed: InboxMessageFeed;
+  }): Promise<InboxMessage[]> {
+    const data = await Modules.Shared.fetchNextPageOfMessages(
+      props.inboxMessageFeed
+    );
     const parsedData = data ? JSON.parse(data) : undefined;
     return parsedData?.messages ?? [];
   }
@@ -699,7 +793,6 @@ class Courier {
       Modules.Shared.setIsUITestsActive(isActive);
     }
   }
-
 }
 
 export default Courier;

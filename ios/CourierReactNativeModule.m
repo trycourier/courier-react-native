@@ -37,6 +37,7 @@ RCT_EXTERN_METHOD(
   withClientKey: (NSString*)clientKey
   withUserId: (NSString*)userId
   withTenantId: (NSString*)tenantId
+  withApiUrls: (NSDictionary*)apiUrls
   withShowLogs: (BOOL*)showLogs
   withResolver: (RCTPromiseResolveBlock)resolve
   withRejecter: (RCTPromiseRejectBlock)reject
