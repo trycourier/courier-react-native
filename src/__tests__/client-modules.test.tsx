@@ -6,9 +6,15 @@ jest.mock('../Modules', () => ({
       removeClient: jest.fn(() => 'cid-1'),
       putUserToken: jest.fn(() => Promise.resolve()),
       deleteUserToken: jest.fn(() => Promise.resolve()),
-      getMessages: jest.fn(() => Promise.resolve(JSON.stringify({ data: { messages: { nodes: [] } } }))),
-      getArchivedMessages: jest.fn(() => Promise.resolve(JSON.stringify({ data: { messages: { nodes: [] } } }))),
-      getMessageById: jest.fn(() => Promise.resolve(JSON.stringify({ data: { message: {} } }))),
+      getMessages: jest.fn(() =>
+        Promise.resolve(JSON.stringify({ data: { messages: { nodes: [] } } }))
+      ),
+      getArchivedMessages: jest.fn(() =>
+        Promise.resolve(JSON.stringify({ data: { messages: { nodes: [] } } }))
+      ),
+      getMessageById: jest.fn(() =>
+        Promise.resolve(JSON.stringify({ data: { message: {} } }))
+      ),
       getUnreadMessageCount: jest.fn(() => Promise.resolve(5)),
       openMessage: jest.fn(() => Promise.resolve(200)),
       readMessage: jest.fn(() => Promise.resolve(200)),
@@ -16,7 +22,9 @@ jest.mock('../Modules', () => ({
       clickMessage: jest.fn(() => Promise.resolve(200)),
       archiveMessage: jest.fn(() => Promise.resolve(200)),
       readAllMessages: jest.fn(() => Promise.resolve(200)),
-      getBrand: jest.fn(() => Promise.resolve(JSON.stringify({ data: { brand: {} } }))),
+      getBrand: jest.fn(() =>
+        Promise.resolve(JSON.stringify({ data: { brand: {} } }))
+      ),
       getUserPreferences: jest.fn(() =>
         Promise.resolve(JSON.stringify({ items: [], paging: {} }))
       ),
@@ -71,16 +79,28 @@ describe('TokenClient', () => {
     await tokens.putUserToken({ token: 'tok-1', provider: 'apn' });
 
     expect(mockClient.putUserToken).toHaveBeenCalledWith(
-      'cid-1', 'tok-1', 'apn', undefined
+      'cid-1',
+      'tok-1',
+      'apn',
+      undefined
     );
   });
 
   it('putUserToken passes device when provided', async () => {
-    const device = { appId: 'com.test', adId: 'ad-1', deviceId: 'dev-1', platform: 'ios', token: 'tok-1' };
+    const device = {
+      appId: 'com.test',
+      adId: 'ad-1',
+      deviceId: 'dev-1',
+      platform: 'ios',
+      token: 'tok-1',
+    };
     await tokens.putUserToken({ token: 'tok-1', provider: 'apn', device });
 
     expect(mockClient.putUserToken).toHaveBeenCalledWith(
-      'cid-1', 'tok-1', 'apn', device
+      'cid-1',
+      'tok-1',
+      'apn',
+      device
     );
   });
 
@@ -111,7 +131,11 @@ describe('InboxClient', () => {
   it('getArchivedMessages uses default pagination limit', async () => {
     await inbox.getArchivedMessages({});
 
-    expect(mockClient.getArchivedMessages).toHaveBeenCalledWith('cid-1', 24, undefined);
+    expect(mockClient.getArchivedMessages).toHaveBeenCalledWith(
+      'cid-1',
+      24,
+      undefined
+    );
   });
 
   it('getMessageById forwards messageId', async () => {
@@ -143,7 +167,11 @@ describe('InboxClient', () => {
 
   it('click forwards messageId and trackingId', async () => {
     await inbox.click({ messageId: 'msg-1', trackingId: 'tid-1' });
-    expect(mockClient.clickMessage).toHaveBeenCalledWith('cid-1', 'msg-1', 'tid-1');
+    expect(mockClient.clickMessage).toHaveBeenCalledWith(
+      'cid-1',
+      'msg-1',
+      'tid-1'
+    );
   });
 
   it('archive forwards messageId', async () => {
@@ -175,18 +203,27 @@ describe('PreferenceClient', () => {
 
   it('getUserPreferences calls without cursor by default', async () => {
     await preferences.getUserPreferences();
-    expect(mockClient.getUserPreferences).toHaveBeenCalledWith('cid-1', undefined);
+    expect(mockClient.getUserPreferences).toHaveBeenCalledWith(
+      'cid-1',
+      undefined
+    );
   });
 
   it('getUserPreferences passes pagination cursor', async () => {
     await preferences.getUserPreferences({ paginationCursor: 'cur-1' });
-    expect(mockClient.getUserPreferences).toHaveBeenCalledWith('cid-1', 'cur-1');
+    expect(mockClient.getUserPreferences).toHaveBeenCalledWith(
+      'cid-1',
+      'cur-1'
+    );
   });
 
   it('getUserPreferenceTopic maps snake_case to camelCase', async () => {
     const topic = await preferences.getUserPreferenceTopic({ topicId: 't1' });
 
-    expect(mockClient.getUserPreferenceTopic).toHaveBeenCalledWith('cid-1', 't1');
+    expect(mockClient.getUserPreferenceTopic).toHaveBeenCalledWith(
+      'cid-1',
+      't1'
+    );
     expect(topic.topicId).toBe('t1');
     expect(topic.topicName).toBe('Topic 1');
     expect(topic.defaultStatus).toBe('OPTED_IN');
@@ -203,7 +240,11 @@ describe('PreferenceClient', () => {
     });
 
     expect(mockClient.putUserPreferenceTopic).toHaveBeenCalledWith(
-      'cid-1', 't1', 'OPTED_OUT', true, ['email', 'push']
+      'cid-1',
+      't1',
+      'OPTED_OUT',
+      true,
+      ['email', 'push']
     );
   });
 });
@@ -214,10 +255,15 @@ describe('TrackingClient', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('postTrackingUrl forwards url and event', async () => {
-    await tracking.postTrackingUrl({ url: 'https://t.co/track', event: 'DELIVERED' as any });
+    await tracking.postTrackingUrl({
+      url: 'https://t.co/track',
+      event: 'DELIVERED' as any,
+    });
 
     expect(mockClient.postTrackingUrl).toHaveBeenCalledWith(
-      'cid-1', 'https://t.co/track', 'DELIVERED'
+      'cid-1',
+      'https://t.co/track',
+      'DELIVERED'
     );
   });
 });

@@ -21,14 +21,7 @@ jobs:
           COURIER_CLIENT_KEY: ${{ secrets.COURIER_CLIENT_KEY }}
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
-          cat > example/src/Env.tsx << EOF
-          export default class Env {
-            static readonly brandId = '${COURIER_BRAND_ID}';
-            static readonly authKey = '${COURIER_AUTH_KEY}';
-            static readonly clientKey = '${COURIER_CLIENT_KEY}';
-            static readonly topicId = '${COURIER_TOPIC_ID}';
-          }
-          EOF
+          printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -52,14 +45,7 @@ jobs:
           COURIER_CLIENT_KEY: ${{ secrets.COURIER_CLIENT_KEY }}
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
-          cat > example/src/Env.tsx << EOF
-          export default class Env {
-            static readonly brandId = '${COURIER_BRAND_ID}';
-            static readonly authKey = '${COURIER_AUTH_KEY}';
-            static readonly clientKey = '${COURIER_CLIENT_KEY}';
-            static readonly topicId = '${COURIER_TOPIC_ID}';
-          }
-          EOF
+          printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -94,14 +80,7 @@ jobs:
           COURIER_CLIENT_KEY: ${{ secrets.COURIER_CLIENT_KEY }}
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
-          cat > example/src/Env.tsx << EOF
-          export default class Env {
-            static readonly brandId = '${COURIER_BRAND_ID}';
-            static readonly authKey = '${COURIER_AUTH_KEY}';
-            static readonly clientKey = '${COURIER_CLIENT_KEY}';
-            static readonly topicId = '${COURIER_TOPIC_ID}';
-          }
-          EOF
+          printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -164,14 +143,7 @@ jobs:
           COURIER_CLIENT_KEY: ${{ secrets.COURIER_CLIENT_KEY }}
           COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
         run: |
-          cat > example/src/Env.tsx << EOF
-          export default class Env {
-            static readonly brandId = '${COURIER_BRAND_ID}';
-            static readonly authKey = '${COURIER_AUTH_KEY}';
-            static readonly clientKey = '${COURIER_CLIENT_KEY}';
-            static readonly topicId = '${COURIER_TOPIC_ID}';
-          }
-          EOF
+          printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example/src/Env.tsx
 
       - name: Setup
         uses: ./.github/actions/setup
