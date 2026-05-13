@@ -2,6 +2,7 @@ import {
   NativeModules,
   Platform,
   UIManager,
+  TurboModuleRegistry,
   requireNativeComponent,
 } from 'react-native';
 
@@ -13,18 +14,28 @@ export class Modules {
     '- You are not using Expo Go\n';
 
   static readonly Client = Modules.getNativeModule(
+    'CourierClientModule',
     NativeModules.CourierClientModule
   );
   static readonly Shared = Modules.getNativeModule(
+    'CourierSharedModule',
     NativeModules.CourierSharedModule
   );
   static readonly System = Modules.getNativeModule(
+    'CourierSystemModule',
     NativeModules.CourierSystemModule
   );
 
-  static getNativeModule<T>(nativeModule: T | undefined): T {
-    return nativeModule
-      ? nativeModule
+  static getNativeModule<T>(
+    moduleName: string,
+    bridgeModule: T | undefined
+  ): T {
+    const resolved =
+      (TurboModuleRegistry?.get(moduleName) as T | null) ??
+      bridgeModule ??
+      undefined;
+    return resolved
+      ? resolved
       : (new Proxy(
           {},
           {

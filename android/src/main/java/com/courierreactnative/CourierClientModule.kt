@@ -77,11 +77,7 @@ class CourierClientModule(
         return@launch
       }
 
-      if (reactActivity == null) {
-        promise.rejectMissingContext()
-        return@launch
-      }
-
+      val context = reactApplicationContext
       val courierDevice = device?.let {
         CourierDevice(
           appId = it.getString("appId"),
@@ -97,7 +93,7 @@ class CourierClientModule(
         client.tokens.putUserToken(
           token = token,
           provider = provider,
-          device = courierDevice ?: CourierDevice.current(reactActivity!!)
+          device = courierDevice ?: CourierDevice.current(context)
         )
         promise.resolve(null)
       } catch (e: Exception) {

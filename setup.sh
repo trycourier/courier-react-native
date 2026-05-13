@@ -4,10 +4,10 @@
 echo "\n1️⃣  Installing yarn packages\n"
 yarn
 
-# 2. Link the development package to the example project
+# 2. Link the development package to the example-085 project
 echo "\n2️⃣  Linking development package\n"
 yarn link
-cd example
+cd example-085
 yarn link @trycourier/courier-react-native
 
 # 3. Setup your dev env

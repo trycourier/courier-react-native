@@ -1,6 +1,13 @@
 # Example
-example/src/Env.tsx
-example/android/app/release/
+example-085/src/Env.tsx
+example-085/android/app/release/
+example-073/src/Env.tsx
+example-073/android/app/release/
+example-expo-55/src/Env.tsx
+example-expo-55/android/app/release/
+
+# Ghost directory created by Java LSP / Gradle indexer
+example/
 
 # OSX
 #
@@ -45,13 +52,19 @@ android.iml
 
 # Cocoapods
 #
-example/ios/Pods
+example-085/ios/Pods
+example-073/ios/Pods
+example-expo-55/ios/Pods
 
 # Local Xcode env (machine-specific node path)
-example/ios/.xcode.env.local
+example-085/ios/.xcode.env.local
+example-073/ios/.xcode.env.local
+example-expo-55/ios/.xcode.env.local
 
 # Ruby
-example/vendor/
+example-085/vendor/
+example-073/vendor/
+example-expo-55/vendor/
 
 # node.js
 #
