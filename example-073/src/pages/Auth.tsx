@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { ExampleServer } from '../Utils';
 import {
@@ -38,6 +39,7 @@ interface OptionRow {
 }
 
 const Auth = () => {
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [options, setOptions] = useState<OptionRow[]>([]);
@@ -89,20 +91,7 @@ const Auth = () => {
 
   const saveEnabled = options.length > 1 && options[1]!.value.length > 0;
 
-  const performSave = async () => {
-    setIsSaving(true);
-    try {
-      if (await Courier.shared.getUserId()) {
-        await Courier.shared.signOut();
-      }
-      await performSignIn();
-    } catch (e: any) {
-      Alert.alert('Error', e?.message ?? String(e));
-    }
-    setIsSaving(false);
-  };
-
-  const performSignIn = async () => {
+  const performSignIn = useCallback(async () => {
     const userId = options[1]!.value;
     const tenantId = options[2]!.value || undefined;
     const apiKey = options[3]!.value;
@@ -130,7 +119,49 @@ const Auth = () => {
         inboxWebSocket: options[7]!.value,
       }),
     });
-  };
+  }, [options]);
+
+  const performSave = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      if (await Courier.shared.getUserId()) {
+        await Courier.shared.signOut();
+      }
+      await performSignIn();
+    } catch (e: any) {
+      Alert.alert('Error', e?.message ?? String(e));
+    }
+    setIsSaving(false);
+  }, [performSignIn]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        isSaving ? (
+          <ActivityIndicator
+            size="small"
+            color="#fff"
+            style={{ marginRight: 16 }}
+          />
+        ) : (
+          <TouchableOpacity
+            onPress={performSave}
+            disabled={!saveEnabled}
+            style={{ marginRight: 16 }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: saveEnabled ? '#fff' : 'rgba(255,255,255,0.4)',
+                fontWeight: '600',
+              }}
+            >
+              Save
+            </Text>
+          </TouchableOpacity>
+        ),
+    });
+  }, [navigation, isSaving, saveEnabled, performSave]);
 
   const onRowTapped = (index: number) => {
     if (index === 0) {
@@ -224,26 +255,6 @@ const Auth = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Auth</Text>
-        {isSaving ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <TouchableOpacity onPress={performSave} disabled={!saveEnabled}>
-            <Text
-              style={[
-                styles.saveButton,
-                !saveEnabled && styles.saveButtonDisabled,
-              ]}
-            >
-              Save
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Rows */}
       <FlatList
         data={options}
         keyExtractor={(_, i) => String(i)}
@@ -360,28 +371,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#2196F3',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    paddingTop: Platform.OS === 'ios' ? 56 : 14,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  saveButton: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
-  },
-  saveButtonDisabled: {
-    opacity: 0.4,
   },
   row: {
     flexDirection: 'row',

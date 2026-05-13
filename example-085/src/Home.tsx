@@ -83,7 +83,8 @@ const Home = () => {
   };
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+    >
       <Tab.Screen
         name="Auth"
         component={Auth}

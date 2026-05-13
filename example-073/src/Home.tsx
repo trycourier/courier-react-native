@@ -86,12 +86,18 @@ const Home = () => {
     };
   };
 
+  const headerStyle: BottomTabNavigationOptions = {
+    headerStyle: { backgroundColor: '#2196F3' },
+    headerTintColor: '#fff',
+    headerTitleStyle: { fontWeight: '600' },
+  };
+
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={headerStyle}>
       <Tab.Screen
         name="Auth"
         component={Auth}
-        options={{ ...icon('account-circle'), headerShown: false }}
+        options={icon('account-circle')}
       />
       <Tab.Screen
         name="Push"

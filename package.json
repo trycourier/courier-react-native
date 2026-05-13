@@ -100,6 +100,7 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example-085/node_modules",
       "<rootDir>/example-073/node_modules",
+      "<rootDir>/example-expo-55/node_modules",
       "<rootDir>/lib/"
     ]
   },
