@@ -3,7 +3,7 @@ import UserNotifications
 import Courier_iOS
 import React
 
-@objc class CourierExpoDelegate: NSObject, UNUserNotificationCenterDelegate {
+@objc class CourierDelegate: NSObject, UNUserNotificationCenterDelegate {
 
   private var notificationPresentationOptions: UNNotificationPresentationOptions = []
   private var cachedMessage: [AnyHashable: Any]?
@@ -14,7 +14,7 @@ import React
   override init() {
     super.init()
 
-    Courier.agent = CourierAgent.reactNativeExpoIOS("5.8.0")
+    Courier.agent = CourierAgent.reactNativeIOS("5.8.0")
 
     UIApplication.shared.registerForRemoteNotifications()
 
