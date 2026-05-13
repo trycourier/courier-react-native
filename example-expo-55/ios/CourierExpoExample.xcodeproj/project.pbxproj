@@ -26,7 +26,7 @@
 		A1B2C3D4E5F60002COURIER1 /* CourierExpoDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CourierExpoDelegate.swift; path = CourierExpoExample/CourierExpoDelegate.swift; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = CourierExpoExample/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B2F06E2B52F68064F3A4EBC1 /* Pods-CourierExpoExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CourierExpoExample.debug.xcconfig"; path = "Target Support Files/Pods-CourierExpoExample/Pods-CourierExpoExample.debug.xcconfig"; sourceTree = "<group>"; };
-		B88330C7A62B6DBD194E11C2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = CourierExpoExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		B88330C7A62B6DBD194E11C2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = CourierExpoExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		D6045BF2E32605095D136B38 /* libPods-CourierExpoExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CourierExpoExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -76,7 +76,6 @@
 				B2F06E2B52F68064F3A4EBC1 /* Pods-CourierExpoExample.debug.xcconfig */,
 				428706B496DDCE1C960697D5 /* Pods-CourierExpoExample.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -408,6 +407,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CourierExpoExample/CourierExpoExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 83BJVWGX4Q;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -444,6 +444,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CourierExpoExample/CourierExpoExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 83BJVWGX4Q;
 				INFOPLIST_FILE = CourierExpoExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
