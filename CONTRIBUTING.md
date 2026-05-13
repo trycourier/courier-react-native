@@ -3,14 +3,18 @@
 ## Getting Started
 
 1. From root, run: `yarn setup`
-2. Run `open example/.env`, add your testing credentials, and save the file
-3. Drag and drop your google-services.json file into `example/android/app` (Needed for Firebase FCM testing)
+2. Run `open example-085/.env`, add your testing credentials, and save the file
+3. Drag and drop your google-services.json file into `example-085/android/app` (Needed for Firebase FCM testing)
 
 From here, you are all set to start working on the package! 🙌
 
+> The repository has two example apps:
+> - `example-085/` — fresh React Native **0.85.3** scaffold with the New Architecture on. This is the canonical example referenced by all repo scripts (`yarn example`, CI, etc.).
+> - `example-073/` — the legacy RN 0.73.7 example kept for historical reference. Most repo automation no longer targets it.
+
 ## Testing & Debugging
 
-While developing, you can run the [example app](/example/) to test your changes. Any changes you make in your library's JavaScript code will be reflected in the example app without a rebuild. If you change any native code, then you'll need to rebuild the example app.
+While developing, you can run the [example app](/example-085/) to test your changes. Any changes you make in your library's JavaScript code will be reflected in the example app without a rebuild. If you change any native code, then you'll need to rebuild the example app.
 
 To run the React Native example app use:
 
@@ -24,7 +28,7 @@ yarn example ios
 
 To debug the Android package:
 1. Run `yarn example android` from root
-2. Open `example/android` in Android Studio
+2. Open `example-085/android` in Android Studio
 3. Click Debug
 
 To debug the iOS package:
@@ -43,7 +47,7 @@ yarn link
 yarn prepack
 ```
 
-navigate to example directory, run:
+navigate to the example-085 directory, run:
 
 ```sh
 yarn link @trycourier/courier-react-native
@@ -51,13 +55,13 @@ yarn link @trycourier/courier-react-native
 
 ## Setup Env variables
 
-in the example directory run:
+in the example-085 directory run:
 
 ```sh
 yarn setupEnv
 ```
 
-a .env file will be created in the example directory
+a .env file will be created in the example-085 directory
 populate the variables with appropriate values
 
 ## Android sdk setup
@@ -65,9 +69,9 @@ populate the variables with appropriate values
 open android studio
 
 - open the android folder in root directory in android studio,
-- open example/android folder in android studio. wait for gradle build to finish
+- open example-085/android folder in android studio. wait for gradle build to finish
 
-in example/android directory change the tab to project, paste
+in example-085/android directory change the tab to project, paste
 `google-services.json` in `CourierReactNativeExample/app` directory
 
 To start the packager:

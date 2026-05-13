@@ -161,8 +161,8 @@ Starter projects using this SDK.
     <tbody>
         <tr width="1000px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/tree/master/example">
-                    <code>Example</code>
+                <a href="https://github.com/trycourier/courier-react-native/tree/master/example-085">
+                    <code>Example (React Native 0.85+, New Architecture)</code>
                 </a>
             </td>
         </tr>

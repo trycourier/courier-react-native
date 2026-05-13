@@ -10,7 +10,7 @@ abstract class ReactNativeModule(val tag: String, private val name: String, reac
 
   override fun getName() = name
 
-  val activity: Activity? get() = currentActivity
+  val activity: Activity? get() = reactApplicationContext.currentActivity
 
   init {
     Courier.agent = Utils.COURIER_AGENT

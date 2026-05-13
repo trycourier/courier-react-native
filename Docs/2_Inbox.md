@@ -394,7 +394,7 @@ const Page = () => {
     <tbody>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/example/src/pages/InboxDefault.tsx">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/example-085/src/pages/inbox/InboxDefault.tsx">
                     <code>Default Example</code>
                 </a>
             </td>
@@ -406,7 +406,7 @@ const Page = () => {
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/example/src/pages/InboxStyled.tsx">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/example-085/src/pages/inbox/InboxStyled.tsx">
                     <code>Styled Example</code>
                 </a>
             </td>
@@ -418,7 +418,7 @@ const Page = () => {
         </tr>
         <tr width="600px">
             <td align="left">
-                <a href="https://github.com/trycourier/courier-react-native/blob/master/example/src/pages/InboxCustom.tsx">
+                <a href="https://github.com/trycourier/courier-react-native/blob/master/example-085/src/pages/inbox/InboxCustom.tsx">
                     <code>Custom Example</code>
                 </a>
             </td>
