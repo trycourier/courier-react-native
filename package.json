@@ -148,7 +148,8 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "example-expo-55/"
   ],
   "prettier": {
     "quoteProps": "consistent",
