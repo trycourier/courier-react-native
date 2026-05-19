@@ -16,31 +16,87 @@
       "cwd": "${workspaceFolder}"
     },
     {
-      "name": "Run iOS (Simulator)",
+      "name": "085 – Run iOS (Simulator)",
       "type": "node-terminal",
       "request": "launch",
-      "command": "cd example && npx react-native run-ios; exit",
+      "command": "cd example-085 && npx react-native run-ios",
       "cwd": "${workspaceFolder}"
     },
     {
-      "name": "Run iOS (Device)",
+      "name": "085 – Run iOS (Device)",
       "type": "node-terminal",
       "request": "launch",
-      "command": "cd example && npx react-native run-ios --device; exit",
+      "command": "cd example-085 && npx react-native run-ios --device",
       "cwd": "${workspaceFolder}"
     },
     {
-      "name": "Run Android (Emulator)",
+      "name": "085 – Run Android (Emulator)",
       "type": "node-terminal",
       "request": "launch",
-      "command": "cd example && npx react-native run-android; exit",
+      "command": "cd example-085 && npx react-native run-android",
       "cwd": "${workspaceFolder}"
     },
     {
-      "name": "Run Android (Device)",
+      "name": "085 – Run Android (Device)",
       "type": "node-terminal",
       "request": "launch",
-      "command": "cd example && npx react-native run-android --active-arch-only; exit",
+      "command": "cd example-085 && npx react-native run-android --active-arch-only",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "073 – Run iOS (Simulator)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-073 && npx react-native run-ios",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "073 – Run iOS (Device)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-073 && npx react-native run-ios --device",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "073 – Run Android (Emulator)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-073 && npx react-native run-android",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "073 – Run Android (Device)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-073 && npx react-native run-android --active-arch-only",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Expo 55 – Run iOS (Simulator)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-expo-55 && npx expo run:ios",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Expo 55 – Run iOS (Device)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-expo-55 && npx expo run:ios --device",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Expo 55 – Run Android (Emulator)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-expo-55 && npx expo run:android",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Expo 55 – Run Android (Device)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd example-expo-55 && npx expo run:android --device",
       "cwd": "${workspaceFolder}"
     }
   ]

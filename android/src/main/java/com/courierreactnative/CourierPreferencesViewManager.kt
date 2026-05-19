@@ -43,8 +43,8 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
 
   override fun createViewInstance(reactContext: ThemedReactContext): CourierPreferences {
     themedReactContext = reactContext
-    val activity = reactContext.currentActivity as FragmentActivity
-    return CourierReactNativePreferencesView(activity)
+    val context = (reactContext.currentActivity as? FragmentActivity) ?: reactContext
+    return CourierReactNativePreferencesView(context)
   }
 
   @ReactProp(name = "onScrollPreferences")

@@ -19,8 +19,7 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   init {
 
-    // Listen to push notification events
-    Courier.onPushNotificationEvent { event ->
+    Courier.shared.onPushNotificationEvent { event ->
       when (event.trackingEvent) {
         CLICKED -> postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, event.data)
         DELIVERED -> postPushNotificationJavascriptEvent(CourierEvents.Push.DELIVERED_EVENT, event.data)
@@ -42,8 +41,8 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   @ReactMethod
   fun registerPushNotificationClickedOnKilledState() {
-    reactActivity?.let { activity ->
-      checkIntentForPushNotificationClick(activity.intent)
+    activity?.let { act ->
+      checkIntentForPushNotificationClick(act.intent)
     }
   }
 
@@ -74,8 +73,8 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
   @ReactMethod
   fun requestNotificationPermission(promise: Promise) {
 
-    reactActivity?.let { activity ->
-      Courier.shared.requestNotificationPermission(activity)
+    activity?.let { act ->
+      Courier.shared.requestNotificationPermission(act)
     }
 
     promise.resolve("unknown")
@@ -85,9 +84,9 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
   @ReactMethod
   fun getNotificationPermissionStatus(promise: Promise) {
 
-    reactActivity?.let { context ->
+    activity?.let { act ->
 
-      val isGranted = Courier.shared.isPushPermissionGranted(context)
+      val isGranted = Courier.shared.isPushPermissionGranted(act)
       val status = if (isGranted) "authorized" else "denied"
       promise.resolve(status)
       return
@@ -100,7 +99,6 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   @ReactMethod(isBlockingSynchronousMethod = true)
   fun openSettingsForApp(): String? {
-    // TODO: Move this to the native package in the future
     val context = reactApplicationContext
     try {
       val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)

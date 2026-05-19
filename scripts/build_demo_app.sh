@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
 
-cd example || { echo "Directory not found: example"; exit 1; }
+cd example-085 || { echo "Directory not found: example-085"; exit 1; }
 
 echo "Installing dependencies..."
 yarn install
