@@ -323,8 +323,6 @@ end
 
 ## 1. Add Firebase 
 
-https://user-images.githubusercontent.com/6370613/199335432-aa52028a-f7ae-48bb-abec-427795baa6f4.mov
-
 1. Open Android project
 2. Register your app in Firebase and download your `google-services.json` file
 3. Add the `google-services.json` file to your `yourApp/app/src` directory
@@ -339,56 +337,84 @@ buildscript {
 }
 ```
 
-5. Add this following line to the top of your `/android/app/build.gradle` file:
+5. Add the following to the top of your `/android/app/build.gradle` file:
 
 ```groovy
 apply plugin: "com.android.application"
 apply plugin: "com.google.gms.google-services" // Add this line
 ```
 
-6. Run Gradle Sync
+6. Add Firebase Messaging to your `/android/app/build.gradle` dependencies:
+
+```groovy
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:XXXX')
+    implementation "com.google.firebase:firebase-messaging"
+}
+```
+
+7. Run Gradle Sync
 
 ## 2. Support Notification Callbacks and Automatic FCM Token syncing
 
-https://user-images.githubusercontent.com/6370613/199335233-0880209b-5aec-4584-9726-eaa1077bf80d.mov
-
 1. Change your `MainActivity` to extend the `CourierReactNativeActivity`
    - This allows Courier to handle when push notifications are delivered and clicked
-2. Setup a new Notification Service by creating a new java file and paste the code below in it
-   - This allows you to present a notification to your user when a new notification arrives and will automatically sync new fcm tokens to Courier token management
+2. Create a new `FirebaseMessagingService` subclass to handle push notification delivery and token management
 
 ```java
-// Your project import
+package your.app.package;
 
-import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
+import com.courier.android.Courier;
+import com.courier.android.notifications.CourierPushNotificationIntent;
 import com.courier.android.notifications.RemoteMessageExtensionsKt;
-import com.courier.android.service.CourierService;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-// This is safe. `CourierService` will automatically handle token refreshes.
-@SuppressLint("MissingFirebaseInstanceTokenRefresh")
-public class YourExampleService extends CourierService {
+public class YourNotificationService extends FirebaseMessagingService {
 
     @Override
-    public void showNotification(@NonNull RemoteMessage message) {
-        super.showNotification(message);
+    public void onMessageReceived(@NonNull RemoteMessage message) {
+        super.onMessageReceived(message);
 
-        // TODO: This is where you will customize the notification that is shown to your users
-        // The function below is used to get started quickly.
-        // You likely do not want to use `message.presentNotification(...)`
-        // For React Native, you likely do not want to change RemoteMessageExtensionsKt.presentNotification.handlingClass
-        // More information on how to customize an Android notification here:
-        // https://developer.android.com/develop/ui/views/notifications/build-notification
+        // Notify the Courier SDK a push was delivered
+        Courier.Companion.onMessageReceived(message.getData());
 
-        RemoteMessageExtensionsKt.presentNotification(
-                message,
-                this,
-                MainActivity.class,
-                android.R.drawable.ic_dialog_info,
-                "Notification Service"
+        // Create the PendingIntent that opens your Activity when the notification is tapped
+        CourierPushNotificationIntent notificationIntent = new CourierPushNotificationIntent(
+            this,
+            0,
+            MainActivity.class,
+            message
         );
 
+        // Show the notification to the user
+        // Falls back to notification payload fields if data keys are missing
+        String title = message.getData().get("title");
+        if (title == null && message.getNotification() != null) {
+            title = message.getNotification().getTitle();
+        }
+
+        String body = message.getData().get("body");
+        if (body == null && message.getNotification() != null) {
+            body = message.getNotification().getBody();
+        }
+
+        RemoteMessageExtensionsKt.presentNotification(
+            notificationIntent,
+            title,
+            body,
+            android.R.drawable.ic_dialog_info,
+            "Notification Service"
+        );
+    }
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        super.onNewToken(token);
+
+        // Sync the new FCM token with Courier
+        Courier.Companion.onNewToken(token);
     }
 
 }
@@ -404,15 +430,14 @@ public class YourExampleService extends CourierService {
             ..
         </activity>
 
-        // Add this 👇
+        <!-- Add this -->
         <service
-            android:name=".YourExampleService"
+            android:name=".YourNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        // Add this 👆
 
         ..
 

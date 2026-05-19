@@ -93,10 +93,13 @@ android {
       keyPassword 'android'
     }
     release {
-      storeFile file('/Users/michaelmiller/Desktop/android_keystore')
-      storePassword '12341234'
-      keyAlias 'key0'
-      keyPassword '12341234'
+      def keystoreDir = '/Users/michaelmiller/Desktop/courier/courier-android-keystores/react_native'
+      def props = new Properties()
+      props.load(new FileInputStream("${keystoreDir}/keystore.properties"))
+      storeFile file("${keystoreDir}/keystore")
+      storePassword props['storePassword']
+      keyAlias props['keyAlias']
+      keyPassword props['keyPassword']
     }
   }
   buildTypes {
@@ -116,8 +119,9 @@ android {
 
 dependencies {
 
-  // TODO: Needed for Push Notifications
+  // Needed for Push Notifications
   implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
+  implementation "com.google.firebase:firebase-messaging"
 
   // The version of react-native is set by the React Native Gradle Plugin
   implementation("com.facebook.react:react-android:0.73.7")

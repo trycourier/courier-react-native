@@ -9,13 +9,10 @@ import com.courier.android.models.CourierTrackingEvent.DELIVERED
 import com.courier.android.modules.isPushPermissionGranted
 import com.courier.android.modules.requestNotificationPermission
 import com.courier.android.utils.error
-import com.courier.android.utils.onPushNotificationEvent
-import com.courier.android.utils.pushNotification
 import com.courier.android.utils.trackPushNotificationClick
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
-import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 
 class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeModule(tag = "System Error", name = "CourierSystemModule", reactContext = reactContext) {
@@ -24,8 +21,8 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
     Courier.shared.onPushNotificationEvent { event ->
       when (event.trackingEvent) {
-        CLICKED -> postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, event.remoteMessage)
-        DELIVERED -> postPushNotificationJavascriptEvent(CourierEvents.Push.DELIVERED_EVENT, event.remoteMessage)
+        CLICKED -> postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, event.data)
+        DELIVERED -> postPushNotificationJavascriptEvent(CourierEvents.Push.DELIVERED_EVENT, event.data)
         else -> Log.w("CourierSystemModule", "Unknown tracking event: ${event.trackingEvent}")
       }
     }
@@ -51,14 +48,25 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   private fun checkIntentForPushNotificationClick(intent: Intent?) {
     intent?.trackPushNotificationClick { message ->
-      postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, message)
+      postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, message.data)
     }
   }
 
-  private fun postPushNotificationJavascriptEvent(eventName: String, message: RemoteMessage) {
+  private fun postPushNotificationJavascriptEvent(eventName: String, data: Map<String, String>) {
+    val rawData = data.toMutableMap()
+    val payload = mutableMapOf<String, Any?>()
+    val baseKeys = listOf("title", "subtitle", "body", "badge", "sound")
+    baseKeys.forEach { key ->
+      payload[key] = data[key]
+      rawData.remove(key)
+    }
+    for ((key, value) in rawData) {
+      payload[key] = value
+    }
+    payload["raw"] = data
     reactApplicationContext.sendEvent(
       eventName = eventName,
-      value = JSONObject(message.pushNotification).toString()
+      value = JSONObject(payload).toString()
     )
   }
 
