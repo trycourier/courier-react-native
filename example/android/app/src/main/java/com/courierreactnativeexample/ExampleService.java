@@ -13,8 +13,12 @@ public class ExampleService extends FirebaseMessagingService {
   public void onMessageReceived(@NonNull RemoteMessage message) {
     super.onMessageReceived(message);
 
+    // Notify the Courier SDK that a push was delivered
     Courier.Companion.onMessageReceived(message.getData());
 
+    // Create the PendingIntent that runs when the user taps the notification
+    // This intent targets your Activity and carries the original message payload
+    // TODO: Remove this if you'd like. This is mostly useful for demo purposes.
     CourierPushNotificationIntent notificationIntent = new CourierPushNotificationIntent(
       this,
       0,
@@ -32,6 +36,10 @@ public class ExampleService extends FirebaseMessagingService {
       body = message.getNotification().getBody();
     }
 
+    // Show the notification to the user.
+    // Prefer data-only FCM so this service runs even in background/killed state.
+    // Fall back to notification fields if data keys are missing.
+    // TODO: Remove this if you'd like. This is mostly useful for demo purposes.
     RemoteMessageExtensionsKt.presentNotification(
       notificationIntent,
       title,
@@ -44,7 +52,11 @@ public class ExampleService extends FirebaseMessagingService {
   @Override
   public void onNewToken(@NonNull String token) {
     super.onNewToken(token);
+
+    // Register/refresh this device’s FCM token with Courier.
+    // The SDK caches and updates the token automatically and links it to the current user.
     Courier.Companion.onNewToken(token);
+    
   }
 
 }
