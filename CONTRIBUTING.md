@@ -9,8 +9,8 @@
 From here, you are all set to start working on the package! 🙌
 
 > The repository has two example apps:
-> - `example-085/` — fresh React Native **0.85.3** scaffold with the New Architecture on. This is the canonical example referenced by all repo scripts (`yarn example`, CI, etc.).
-> - `example-073/` — the legacy RN 0.73.7 example kept for historical reference. Most repo automation no longer targets it.
+> - `example-085/` — React Native **0.85.3** scaffold with the New Architecture on. This is the canonical example referenced by all repo scripts (`yarn example`, CI, etc.).
+> - `example-expo-55/` — Expo SDK 55 example for testing the Expo plugin.
 
 ## Testing & Debugging
 

@@ -49,6 +49,8 @@ export interface CourierArchivingSwipeActionStyle {
 export interface CourierInboxTheme {
   brandId?: string;
   backgroundColor?: string;
+  listItemBackgroundColor?: string;
+  tabBackgroundColor?: string;
   tabIndicatorColor?: string;
   tabStyle?: CourierInboxTabStyle;
   readingSwipeActionStyle?: CourierReadingSwipeActionStyle;

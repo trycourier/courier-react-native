@@ -21,8 +21,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - courier-react-native (5.7.1):
-    - Courier_iOS (= 5.8.1)
+  - courier-react-native (6.0.0):
+    - Courier_iOS (= 5.8.3)
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -44,7 +44,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - Courier_iOS (5.8.1)
+  - Courier_iOS (5.8.3)
   - FBLazyVector (0.85.3)
   - hermes-engine (250829098.0.10):
     - hermes-engine/Pre-built (= 250829098.0.10)
@@ -2046,6 +2046,7 @@ PODS:
 DEPENDENCIES:
   - "AsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - courier-react-native (from `../..`)
+  - Courier_iOS (from `https://github.com/trycourier/courier-ios.git`, tag `5.8.3`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -2131,7 +2132,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Courier_iOS
     - SwiftUIIntrospect
 
 EXTERNAL SOURCES:
@@ -2139,6 +2139,9 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   courier-react-native:
     :path: "../.."
+  Courier_iOS:
+    :git: https://github.com/trycourier/courier-ios.git
+    :tag: 5.8.3
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   hermes-engine:
@@ -2303,10 +2306,15 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
+CHECKOUT OPTIONS:
+  Courier_iOS:
+    :git: https://github.com/trycourier/courier-ios.git
+    :tag: 5.8.3
+
 SPEC CHECKSUMS:
   AsyncStorage: 3159283852d8bfabb4653cf17f1a1fef2a8a0eb6
-  courier-react-native: 403ea89199f6534886a5cfc3c294b86ea8888df1
-  Courier_iOS: e0b4c65f8409c95984e6b29babab52cf423ca08a
+  courier-react-native: 5b84aa07199ce2eead79853c01b02c26f9f19115
+  Courier_iOS: f254b899c73d591b68dc39ff82cbe1f300c2b6f7
   FBLazyVector: 24e62c765683b8d89006a88a2c8f5cf019f0074d
   hermes-engine: 14b3c4d35cacb173ac74f56426c9062c4e9dbcb4
   RCTDeprecation: a4c521821fab57cbb125b36effe84d897d0dfa12
@@ -2390,6 +2398,6 @@ SPEC CHECKSUMS:
   SwiftUIIntrospect: fee9aa07293ee280373a591e1824e8ddc869ba5d
   Yoga: 77dfa8673de2874e1855002ae59c68b8be9b007b
 
-PODFILE CHECKSUM: 4861888da3f9f2329f8c6cfcebd2ef724bf0ab29
+PODFILE CHECKSUM: 7ceeb28a915fdc1b064aed5f632a7beaf9fb07b7
 
 COCOAPODS: 1.16.2

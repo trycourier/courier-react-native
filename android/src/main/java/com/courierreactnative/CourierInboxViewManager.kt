@@ -120,6 +120,8 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
 
     val brandId = getString("brandId")
     val backgroundColor = getString("backgroundColor")
+    val listItemBackgroundColor = getString("listItemBackgroundColor")
+    val tabBackgroundColor = getString("tabBackgroundColor")
 
     val tabIndicatorColor = getString("tabIndicatorColor")
     val tabStyle = getMap("tabStyle")
@@ -141,6 +143,8 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
     return CourierInboxTheme(
       brandId = brandId,
       backgroundColor = backgroundColor?.toColor(),
+      listItemBackgroundColor = listItemBackgroundColor?.toColor(),
+      tabBackgroundColor = tabBackgroundColor?.toColor(),
       tabIndicatorColor = tabIndicatorColor?.toColor(),
       tabStyle = tabStyle?.toTabStyle(context) ?: CourierStyles.Inbox.TabStyle(
         selected = CourierStyles.Inbox.TabItemStyle(

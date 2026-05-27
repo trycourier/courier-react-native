@@ -26,5 +26,5 @@
     "target": "esnext",
     "verbatimModuleSyntax": false
   },
-  "exclude": ["example-073", "example-085", "example-expo-55"]
+  "exclude": ["example-085", "example-expo-55"]
 }

@@ -2,7 +2,6 @@ package com.courierreactnative
 
 import android.content.Intent
 import android.provider.Settings
-import android.util.Log
 import com.courier.android.Courier
 import com.courier.android.models.CourierTrackingEvent.CLICKED
 import com.courier.android.models.CourierTrackingEvent.DELIVERED
@@ -17,13 +16,15 @@ import org.json.JSONObject
 
 class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeModule(tag = "System Error", name = "CourierSystemModule", reactContext = reactContext) {
 
+  private var lastClickedPushNotification: String? = null
+
   init {
 
-    Courier.shared.onPushNotificationEvent { event ->
+    Courier.onPushNotificationEvent { event ->
       when (event.trackingEvent) {
-        CLICKED -> postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, event.data)
         DELIVERED -> postPushNotificationJavascriptEvent(CourierEvents.Push.DELIVERED_EVENT, event.data)
-        else -> Log.w("CourierSystemModule", "Unknown tracking event: ${event.trackingEvent}")
+        CLICKED -> postPushNotificationClickedEvent(event.data)
+        else -> {}
       }
     }
 
@@ -41,18 +42,39 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
 
   @ReactMethod
   fun registerPushNotificationClickedOnKilledState() {
-    activity?.let { act ->
-      checkIntentForPushNotificationClick(act.intent)
+    lastClickedPushNotification?.let { payload ->
+      reactApplicationContext.sendEvent(
+        eventName = CourierEvents.Push.CLICKED_EVENT,
+        value = payload
+      )
+      lastClickedPushNotification = null
     }
   }
 
-  private fun checkIntentForPushNotificationClick(intent: Intent?) {
+  fun checkIntentForPushNotificationClick(intent: Intent?) {
     intent?.trackPushNotificationClick { message ->
-      postPushNotificationJavascriptEvent(CourierEvents.Push.CLICKED_EVENT, message.data)
+      postPushNotificationClickedEvent(message.data)
     }
+  }
+
+  private fun postPushNotificationClickedEvent(data: Map<String, String>) {
+    val payload = buildPushPayload(data)
+    lastClickedPushNotification = payload
+    reactApplicationContext.sendEvent(
+      eventName = CourierEvents.Push.CLICKED_EVENT,
+      value = payload
+    )
   }
 
   private fun postPushNotificationJavascriptEvent(eventName: String, data: Map<String, String>) {
+    val payload = buildPushPayload(data)
+    reactApplicationContext.sendEvent(
+      eventName = eventName,
+      value = payload
+    )
+  }
+
+  private fun buildPushPayload(data: Map<String, String>): String {
     val rawData = data.toMutableMap()
     val payload = mutableMapOf<String, Any?>()
     val baseKeys = listOf("title", "subtitle", "body", "badge", "sound")
@@ -64,10 +86,7 @@ class CourierSystemModule(reactContext: ReactApplicationContext): ReactNativeMod
       payload[key] = value
     }
     payload["raw"] = data
-    reactApplicationContext.sendEvent(
-      eventName = eventName,
-      value = JSONObject(payload).toString()
-    )
+    return JSONObject(payload).toString()
   }
 
   @ReactMethod

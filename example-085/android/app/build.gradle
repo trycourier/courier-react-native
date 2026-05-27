@@ -81,10 +81,10 @@ android {
 
     namespace "com.courierreactnativeexample"
     defaultConfig {
-        applicationId "com.courierreactnativeexample"
+        applicationId "com.courierreactnativeexample.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 43
         versionName "1.0"
     }
     signingConfigs {
@@ -94,6 +94,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('/Users/michaelmiller/Desktop/android_keystore')
+            storePassword '12341234'
+            keyAlias 'key0'
+            keyPassword '12341234'
+        }
     }
     buildTypes {
         debug {
@@ -102,7 +108,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -111,6 +117,7 @@ android {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation("com.google.firebase:firebase-messaging")
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")

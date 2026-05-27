@@ -1,8 +1,9 @@
 import { CourierInboxView } from '@trycourier/courier-react-native';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import Env from '../../Env';
 
-const InboxDefault = () => {
+const InboxBranded = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -13,20 +14,12 @@ const InboxDefault = () => {
     },
   });
 
-  const lightTheme = {
-    tabIndicatorColor: '#000000',
-  };
-
-  const darkTheme = {
-    tabIndicatorColor: '#FFFFFF',
-  };
-
   return (
     <View style={styles.container}>
       <CourierInboxView
         theme={{
-          light: lightTheme,
-          dark: darkTheme,
+          light: { brandId: Env.brandId },
+          dark: { brandId: Env.brandId },
         }}
         onClickInboxMessageAtIndex={async (message, _index) => {
           message.isRead
@@ -42,4 +35,4 @@ const InboxDefault = () => {
   );
 };
 
-export default InboxDefault;
+export default InboxBranded;

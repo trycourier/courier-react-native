@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import InboxDefault from './inbox/InboxDefault';
+import InboxBranded from './inbox/InboxBranded';
 import InboxStyled from './inbox/InboxStyled';
 import InboxCustom from './inbox/InboxCustom';
 import { TabControl, TabItem } from '../Tabs';
 
 const tabs: TabItem[] = [
   { title: 'Default', key: 'Default' },
+  { title: 'Branded', key: 'Branded' },
   { title: 'Styled', key: 'Styled' },
   { title: 'Custom', key: 'Custom' },
 ];
@@ -18,6 +20,8 @@ const Inbox = () => {
     switch (selectedTab) {
       case 'Default':
         return <InboxDefault />;
+      case 'Branded':
+        return <InboxBranded />;
       case 'Styled':
         return <InboxStyled />;
       case 'Custom':

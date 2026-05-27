@@ -1,6 +1,6 @@
 {
   "name": "@trycourier/courier-react-native",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Inbox, Push Notifications, and Preferences for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -14,7 +14,6 @@
     "ios",
     "cpp",
     "*.podspec",
-    "!lib/typescript/example-073",
     "!lib/typescript/example-085",
     "!ios/build",
     "!android/build",
@@ -34,7 +33,6 @@
     "prepack": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example-085",
-    "example-073": "yarn --cwd example-073",
     "build:android": "cd example-085/android && ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a",
     "build:ios": "cd example-085/ios && xcodebuild -workspace CourierReactNativeExample.xcworkspace -scheme CourierReactNativeExample -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO",
     "bootstrap": "yarn example && yarn install && yarn example pods",
@@ -99,7 +97,6 @@
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/example-085/node_modules",
-      "<rootDir>/example-073/node_modules",
       "<rootDir>/example-expo-55/node_modules",
       "<rootDir>/lib/"
     ]
