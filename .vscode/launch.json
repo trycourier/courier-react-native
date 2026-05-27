@@ -5,14 +5,14 @@
       "name": "Bump Version",
       "type": "node-terminal",
       "request": "launch",
-      "command": "sh scripts/bump_version.sh; exit",
+      "command": "sh scripts/bump_version.sh",
       "cwd": "${workspaceFolder}"
     },
     {
       "name": "Build Demo App",
       "type": "node-terminal",
       "request": "launch",
-      "command": "sh scripts/build_demo_app.sh; exit",
+      "command": "sh scripts/build_demo_app.sh",
       "cwd": "${workspaceFolder}"
     },
     {
@@ -41,34 +41,6 @@
       "type": "node-terminal",
       "request": "launch",
       "command": "cd example-085 && npx react-native run-android --active-arch-only",
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "name": "073 – Run iOS (Simulator)",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "cd example-073 && npx react-native run-ios",
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "name": "073 – Run iOS (Device)",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "cd example-073 && npx react-native run-ios --device",
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "name": "073 – Run Android (Emulator)",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "cd example-073 && npx react-native run-android",
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "name": "073 – Run Android (Device)",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "cd example-073 && npx react-native run-android --active-arch-only",
       "cwd": "${workspaceFolder}"
     },
     {

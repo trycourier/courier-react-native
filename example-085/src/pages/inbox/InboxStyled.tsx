@@ -12,15 +12,15 @@ import {
   Alert,
 } from 'react-native';
 import { Styles } from '../Styles';
-import Env from '../../Env';
 
 const InboxStyled = () => {
   function getTheme(isDark: boolean): CourierInboxTheme {
     const styles = Styles(isDark);
 
     return {
-      brandId: Env.brandId,
       backgroundColor: styles.Colors.background,
+      listItemBackgroundColor: styles.Colors.listItem,
+      tabBackgroundColor: styles.Colors.tab,
       tabIndicatorColor: styles.Colors.action,
       tabStyle: {
         selected: {

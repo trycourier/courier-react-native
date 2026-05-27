@@ -10,16 +10,11 @@ open class CourierReactNativeActivity : ReactActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
 
-    // Update the user agent
     Courier.agent = Utils.COURIER_AGENT
-
-    // Starts the Courier SDK
-    // Used to ensure shared preferences works properly
     Courier.initialize(this)
 
     super.onCreate(savedInstanceState)
 
-    // See if there is a pending click event
     checkIntentForPushNotificationClick(intent)
 
   }
@@ -30,6 +25,9 @@ open class CourierReactNativeActivity : ReactActivity() {
   }
 
   private fun checkIntentForPushNotificationClick(intent: Intent?) {
+    // The Courier SDK broadcasts a CLICKED event via Courier.onPushNotificationEvent
+    // which is observed in CourierSystemModule. No need to reach into the React
+    // context here, which would crash on Bridgeless / cold start.
     intent?.trackPushNotificationClick {}
   }
 

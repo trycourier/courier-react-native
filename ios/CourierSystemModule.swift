@@ -99,18 +99,15 @@ class CourierSystemModule: CourierReactNativeEventEmitter {
         let pollInterval: UInt64 = 250_000_000  // 250ms
         let timeout: UInt64 = 10_000_000_000    // 10s
 
-        // Poll until react native is ready
         Task.detached(priority: .background) { [weak self] in
             guard let self else { return }
 
             let start = DispatchTime.now().uptimeNanoseconds
 
-            // Hold until react native is ready
             while !self.isReactNativeReady, DispatchTime.now().uptimeNanoseconds - start < timeout {
                 try? await Task.sleep(nanoseconds: pollInterval)
             }
 
-            // If possible, broadcast the message
             await MainActor.run {
                 guard self.isReactNativeReady, let message = self.lastClickedMessage else {
                     NSLog("[Courier] Timed out waiting for React Native or no message available.")
@@ -118,6 +115,7 @@ class CourierSystemModule: CourierReactNativeEventEmitter {
                 }
 
                 self.broadcast(name: PushEvents.CLICKED_EVENT, message: message)
+                self.lastClickedMessage = nil
             }
         }
     }

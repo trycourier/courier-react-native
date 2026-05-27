@@ -46,14 +46,6 @@ class CourierInboxView : UIView {
         let lightTheme = theme?["light"] as? NSDictionary
         let darkTheme = theme?["dark"] as? NSDictionary
         
-        let lightBgColor = (lightTheme?["backgroundColor"] as? String)?.toColor()
-        let darkBgColor = (darkTheme?["backgroundColor"] as? String)?.toColor()
-        if let bgColor = traitCollection.userInterfaceStyle == .dark ? darkBgColor ?? lightBgColor : lightBgColor ?? darkBgColor {
-            self.backgroundColor = bgColor
-        } else {
-            self.backgroundColor = nil
-        }
-        
         let courierInbox = CourierInbox(
             canSwipePages: self.canSwipePages,
             lightTheme: lightTheme?.toInboxTheme() ?? .defaultLight,
@@ -322,6 +314,9 @@ internal extension NSDictionary {
         let defaultTheme = CourierInboxTheme()
         
         let brandId = self["brandId"] as? String
+        let backgroundColor = self["backgroundColor"] as? String
+        let tabBackgroundColor = self["tabBackgroundColor"] as? String
+        let listItemBackgroundColor = self["listItemBackgroundColor"] as? String
         let tabIndicatorColor = self["tabIndicatorColor"] as? String
         let tabStyle = self["tabStyle"] as? NSDictionary
         let readingSwipeActionStyle = self["readingSwipeActionStyle"] as? NSDictionary
@@ -340,6 +335,9 @@ internal extension NSDictionary {
         
         return CourierInboxTheme(
             brandId: brandId,
+            backgroundColor: backgroundColor?.toColor() ?? .systemBackground,
+            tabBackgroundColor: tabBackgroundColor?.toColor() ?? .systemBackground,
+            listItemBackgroundColor: listItemBackgroundColor?.toColor() ?? .systemBackground,
             tabIndicatorColor: tabIndicatorColor?.toColor(),
             tabStyle: tabStyle?.toTabStyle() ?? CourierInboxView.defaultTabStyle(),
             readingSwipeActionStyle: readingSwipeActionStyle?.toReadingSwipeActionStyle() ?? CourierInboxView.defaultReadingStyle(),
