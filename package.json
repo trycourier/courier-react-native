@@ -1,6 +1,6 @@
 {
   "name": "@trycourier/courier-react-native",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "Inbox, Push Notifications, and Preferences for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -54,7 +54,7 @@
   "bugs": {
     "url": "https://github.com/trycourier/courier-react-native/issues"
   },
-  "homepage": "https://github.com/trycourier/courier-react-native#readme",
+  "homepage": "https://courier.com",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
