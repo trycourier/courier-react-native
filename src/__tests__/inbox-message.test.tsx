@@ -193,4 +193,85 @@ describe('InboxMessage', () => {
       expect(Modules.Shared.clickMessage).toHaveBeenCalledWith('m-5');
     });
   });
+
+  /**
+   * trackingIds is published at the root of the message by both the GraphQL read and
+   * the iwpv=v2 socket, and reaches JS through the native toJson(). These pin the
+   * parse path and the clickTrackingId accessor, which exists for parity with the
+   * ios / android / flutter SDKs.
+   */
+  describe('trackingIds', () => {
+    it('parses trackingIds from the native payload', () => {
+      const msg = InboxMessage.fromJson(
+        JSON.stringify({
+          messageId: 'm-6',
+          title: 'Welcome',
+          trackingIds: {
+            archiveTrackingId: 'archive-1',
+            channelTrackingId: 'channel-1',
+            clickTrackingId: 'click-1',
+            deliverTrackingId: 'deliver-1',
+            openTrackingId: 'open-1',
+            readTrackingId: 'read-1',
+            unreadTrackingId: 'unread-1',
+          },
+        })
+      );
+
+      expect(msg.trackingIds?.archiveTrackingId).toBe('archive-1');
+      expect(msg.trackingIds?.channelTrackingId).toBe('channel-1');
+      expect(msg.trackingIds?.clickTrackingId).toBe('click-1');
+      expect(msg.trackingIds?.deliverTrackingId).toBe('deliver-1');
+      expect(msg.trackingIds?.openTrackingId).toBe('open-1');
+      expect(msg.trackingIds?.readTrackingId).toBe('read-1');
+      expect(msg.trackingIds?.unreadTrackingId).toBe('unread-1');
+    });
+
+    it('exposes clickTrackingId, the id client.inbox.click needs', () => {
+      const msg = InboxMessage.fromJson(
+        JSON.stringify({
+          messageId: 'm-7',
+          trackingIds: { clickTrackingId: 'click-1' },
+        })
+      );
+
+      expect(msg.clickTrackingId).toBe('click-1');
+    });
+
+    it('clickTrackingId is null when the message carries no tracking ids', () => {
+      const msg = InboxMessage.fromJson(JSON.stringify({ messageId: 'm-8' }));
+
+      // fromJson passes undefined into a parameter defaulting to null, so the field
+      // lands as null rather than staying absent.
+      expect(msg.trackingIds).toBeNull();
+      expect(msg.clickTrackingId).toBeNull();
+    });
+
+    // Which ids get minted depends on the send, so a partial object is normal.
+    it('clickTrackingId is null when present but without a click id', () => {
+      const msg = InboxMessage.fromJson(
+        JSON.stringify({
+          messageId: 'm-9',
+          trackingIds: { readTrackingId: 'read-1' },
+        })
+      );
+
+      expect(msg.clickTrackingId).toBeNull();
+      expect(msg.trackingIds?.readTrackingId).toBe('read-1');
+    });
+
+    // v2 publishes trackingIds at the root only; a nested copy is the v1/legacy shape.
+    it('does not read a nested data.trackingIds copy', () => {
+      const msg = InboxMessage.fromJson(
+        JSON.stringify({
+          messageId: 'm-10',
+          data: {
+            trackingIds: { clickTrackingId: 'nested-should-be-ignored' },
+          },
+        })
+      );
+
+      expect(msg.clickTrackingId).toBeNull();
+    });
+  });
 });

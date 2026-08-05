@@ -48,6 +48,7 @@ export { CourierInfoViewStyle } from './models/CourierInfoViewStyle';
 export { iOS_CourierCell } from './models/iOS_CourierCell';
 export { iOS_CourierSheet } from './models/iOS_CourierSheet';
 export { InboxMessage } from './models/InboxMessage';
+export type { InboxMessageTrackingIds } from './models/InboxMessage';
 export { InboxMessageFeed } from './models/InboxMessageFeed';
 export { InboxMessageEvent } from './models/InboxMessageEvent';
 export {
