@@ -1,6 +1,24 @@
 import { InboxAction } from '../models/InboxAction';
 
+const mockClick = jest.fn(() => Promise.resolve());
+const mockGetClient = jest.fn(() =>
+  Promise.resolve({ inbox: { click: mockClick } })
+);
+
+jest.mock('../index', () => ({
+  __esModule: true,
+  default: {
+    get shared() {
+      return { getClient: mockGetClient };
+    },
+  },
+}));
+
 describe('InboxAction', () => {
+  beforeEach(() => {
+    mockClick.mockClear();
+    mockGetClient.mockClear();
+  });
   describe('constructor', () => {
     it('stores all fields', () => {
       const action = new InboxAction('Click me', 'https://example.com', {
@@ -41,6 +59,48 @@ describe('InboxAction', () => {
 
     it('throws on invalid JSON', () => {
       expect(() => InboxAction.fromJson('not json')).toThrow();
+    });
+  });
+  describe('trackingId', () => {
+    it('reads the id off data', () => {
+      const action = new InboxAction('View', null, { trackingId: 'trk-1' });
+      expect(action.trackingId).toBe('trk-1');
+    });
+
+    it('is undefined when the action carries no data', () => {
+      expect(new InboxAction().trackingId).toBeUndefined();
+    });
+
+    it('is undefined for an empty or non-string id', () => {
+      expect(
+        new InboxAction('View', null, { trackingId: '' }).trackingId
+      ).toBeUndefined();
+      expect(
+        new InboxAction('View', null, { trackingId: 7 }).trackingId
+      ).toBeUndefined();
+    });
+  });
+
+  describe('markAsClicked', () => {
+    it('reports the click against the action id', async () => {
+      const action = new InboxAction('View', null, { trackingId: 'trk-1' });
+      await action.markAsClicked('msg-1');
+      expect(mockClick).toHaveBeenCalledWith({
+        messageId: 'msg-1',
+        trackingId: 'trk-1',
+      });
+    });
+
+    it('is a no-op when the action has no tracking id', async () => {
+      await new InboxAction('View').markAsClicked('msg-1');
+      expect(mockGetClient).not.toHaveBeenCalled();
+      expect(mockClick).not.toHaveBeenCalled();
+    });
+
+    it('does not throw when no client is signed in', async () => {
+      mockGetClient.mockResolvedValueOnce(null as any);
+      const action = new InboxAction('View', null, { trackingId: 'trk-1' });
+      await expect(action.markAsClicked('msg-1')).resolves.toBeUndefined();
     });
   });
 });
