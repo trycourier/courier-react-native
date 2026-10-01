@@ -38,7 +38,7 @@ export class CourierClient extends ClientModule {
       showLogs: props.showLogs ?? __DEV__,
       jwt: props.jwt,
       clientKey: props.clientKey,
-      connectionId: props.clientKey,
+      connectionId: props.connectionId,
       tenantId: props.tenantId,
       apiUrls: props.apiUrls ? { ...props.apiUrls } : undefined,
     };
