@@ -15,7 +15,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.google.gson.GsonBuilder
 
 internal object Utils {
-  val COURIER_AGENT = CourierAgent.ReactNativeAndroid(version = "6.0.3")
+  val COURIER_AGENT = CourierAgent.ReactNativeAndroid(version = "6.0.5")
 }
 
 internal fun ReactContext.sendEvent(eventName: String, value: Any?) {
