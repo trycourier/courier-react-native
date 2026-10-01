@@ -72,7 +72,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
                 try await client.tokens.putUserToken(
                     token: token,
                     provider: provider,
-                    device: courierDevice
+                    device: courierDevice ?? CourierDevice()
                 )
                 resolve(nil)
             } catch {
