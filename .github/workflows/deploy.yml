@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version-file: .nvmrc
 
       - name: Check version
         id: check
@@ -51,7 +51,9 @@ jobs:
 
       - name: Upgrade npm
         if: steps.check.outputs.deployed == 'true'
-        run: npm install -g npm@latest
+        # Pinned: an unpinned npm@latest drifts past the runner's Node and fails with
+        # EBADENGINE. Trusted publishing needs npm >= 11.5.1.
+        run: npm install -g npm@11
 
       - name: Publish to npm
         if: steps.check.outputs.deployed == 'true'
