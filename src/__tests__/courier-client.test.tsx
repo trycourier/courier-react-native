@@ -57,6 +57,30 @@ describe('CourierClient', () => {
     expect(client.options.showLogs).toBe(true);
   });
 
+  it('passes connectionId through to addClient', () => {
+    const client = new CourierClient({
+      userId: 'u1',
+      clientKey: 'ck-1',
+      connectionId: 'conn-1',
+      showLogs: false,
+    });
+
+    expect(client.options.connectionId).toBe('conn-1');
+    expect(Modules.Client.addClient).toHaveBeenCalledWith(
+      expect.objectContaining({ clientKey: 'ck-1', connectionId: 'conn-1' })
+    );
+  });
+
+  it('leaves connectionId undefined when not provided', () => {
+    const client = new CourierClient({
+      userId: 'u1',
+      clientKey: 'ck-1',
+      showLogs: false,
+    });
+
+    expect(client.options.connectionId).toBeUndefined();
+  });
+
   it('defaults showLogs when omitted', () => {
     const client = new CourierClient({ userId: 'u1' });
     expect(typeof client.options.showLogs).toBe('boolean');
