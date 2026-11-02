@@ -100,18 +100,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pods-
 
-      # `pod update Courier_iOS` rather than `pod install`: bump PRs change the podspec pin without
-      # touching example-085/ios/Podfile.lock, and install would refuse the stale lock.
+      # React Native 0.75+ resolves Courier_iOS through Swift Package Manager (spm_dependency in
+      # the podspec), so it is no longer a pod and Podfile.lock doesn't record it.
       - name: Install pods
         working-directory: example-085/ios
-        run: bundle exec pod update Courier_iOS
+        run: bundle exec pod install
 
-      - name: Check resolved Courier_iOS matches the podspec pin
+      - name: Check Courier_iOS isn't installed from CocoaPods
         run: |
-          PINNED=$(sed -nE 's/.*s\.dependency "Courier_iOS", "([^"]+)".*/\1/p' courier-react-native.podspec)
-          RESOLVED=$(sed -nE 's/^  - Courier_iOS \(([^)]+)\)$/\1/p' example-085/ios/Podfile.lock)
-          echo "Pinned: $PINNED  Resolved: $RESOLVED"
-          [ -n "$PINNED" ] && [ "$PINNED" = "$RESOLVED" ]
+          if grep -q "Courier_iOS" example-085/ios/Podfile.lock; then
+            echo "::error::Podfile.lock still lists Courier_iOS; the podspec fell back to CocoaPods trunk"
+            exit 1
+          fi
 
       # ARCHS=arm64 keeps the generic simulator destination from also building x86_64.
       - name: Build example app for iOS Simulator
@@ -125,3 +125,10 @@ jobs:
             ARCHS=arm64 \
             CODE_SIGNING_ALLOWED=NO \
             -quiet
+
+      - name: Check resolved Courier_iOS matches the podspec pin
+        run: |
+          PINNED=$(sed -nE 's/.*courier_ios_version = "([^"]+)".*/\1/p' courier-react-native.podspec)
+          RESOLVED=$(python3 -c "import json; pins=json.load(open('example-085/ios/CourierReactNativeExample.xcworkspace/xcshareddata/swiftpm/Package.resolved'))['pins']; print(next(p['state']['version'] for p in pins if p['identity'] == 'courier-ios'))")
+          echo "Pinned: $PINNED  Resolved: $RESOLVED"
+          [ -n "$PINNED" ] && [ "$PINNED" = "$RESOLVED" ]
