@@ -3,6 +3,10 @@ on:
   pull_request:
     branches:
       - main
+  # Also check main after every merge
+  push:
+    branches:
+      - main
 
 jobs:
   lint:
