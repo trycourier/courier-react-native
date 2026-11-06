@@ -17,7 +17,20 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   # Courier Core Dependency
-  s.dependency "Courier_iOS", "6.0.7"
+  # React Native 0.75+ pulls Courier_iOS through Swift Package Manager, because CocoaPods trunk
+  # stopped taking new versions after 6.0.7 (it goes read-only on December 2, 2026). Older React
+  # Native falls back to trunk and stays on 6.0.7.
+  courier_ios_version = "6.0.8"
+  courier_ios_trunk_version = "6.0.7"
+  if respond_to?(:spm_dependency, true)
+    spm_dependency(s,
+      url: "https://github.com/trycourier/courier-ios.git",
+      requirement: { kind: "exactVersion", version: courier_ios_version },
+      products: ["Courier_iOS"]
+    )
+  else
+    s.dependency "Courier_iOS", courier_ios_trunk_version
+  end
 
   # Use install_modules_dependencies helper to install the dependencies if React Native version >=0.71.0.
   # See https://github.com/facebook/react-native/blob/febf6b7f33fdb4904669f99d795eba4c0f95d7bf/scripts/cocoapods/new_architecture.rb#L79.
