@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CourierEnvironment, DEFAULT_URLS } from './CourierEnvironment';
+import {
+  CourierEnvironment,
+  DEFAULT_URLS,
+  resolveEnvironment,
+} from './CourierEnvironment';
 import Env from './Env';
 
 const KEYS = {
@@ -52,8 +56,10 @@ export async function loadAuthPreferences(): Promise<AuthPreferencesData> {
 
     return {
       environment:
-        (results[KEYS.environment] as CourierEnvironment) ??
-        CourierEnvironment.Production,
+        resolveEnvironment(
+          (results[KEYS.environment] as string | null | undefined) ??
+            CourierEnvironment.Production
+        ),
       userId: results[KEYS.userId] ?? '',
       tenantId: results[KEYS.tenantId] ?? '',
       apiKey: results[KEYS.apiKey] ?? Env.authKey,
