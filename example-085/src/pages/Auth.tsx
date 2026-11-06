@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ExampleServer } from '../Utils';
 import {
   CourierEnvironment,
+  environmentNames,
   getUrlsForEnvironment,
   toApiUrls,
 } from '../CourierEnvironment';
@@ -286,7 +287,7 @@ const Auth = () => {
         >
           <View style={styles.pickerContent}>
             <Text style={styles.pickerTitle}>Select Environment</Text>
-            {Object.values(CourierEnvironment).map((env) => (
+            {environmentNames().map((env) => (
               <TouchableOpacity
                 key={env}
                 style={styles.pickerOption}
