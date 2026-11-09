@@ -72,10 +72,35 @@ export class ExampleServer {
 
     if (response.status === 202) {
       const json = await response.json();
-      return json.requestId ?? 'Error';
+      if (!json.requestId) {
+        throw new Error('Send returned no requestId');
+      }
+      return json.requestId;
     } else {
       throw new Error('Failed to send test message');
     }
+  }
+
+  public static async getUserTokens(props: {
+    authKey: string;
+    userId: string;
+    baseUrl?: string;
+  }): Promise<{ token: string; provider_key: string }[]> {
+    const base = props.baseUrl ?? 'https://api.courier.com';
+    const url = `${base}/users/${encodeURIComponent(props.userId)}/tokens`;
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${props.authKey}` },
+    });
+
+    // A user with no tokens yet can come back as not found
+    if (response.status === 404) {
+      return [];
+    }
+    if (!response.ok) {
+      throw new Error(`Failed to get user tokens (${response.status})`);
+    }
+    const json = await response.json();
+    return json.tokens ?? [];
   }
 }
 

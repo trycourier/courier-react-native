@@ -28,6 +28,151 @@ import { ExampleServer, Utils } from '../Utils';
 
 let savedClient: CourierClient | undefined;
 
+// A test fails when the call didn't do what it should, not only when it throws
+const check = (condition: unknown, message: string) => {
+  if (!condition) {
+    throw new Error(message);
+  }
+};
+
+const requireClient = (): CourierClient => {
+  check(savedClient, 'Client not initialized. Run createClient first.');
+  return savedClient!;
+};
+
+const requireSharedClient = async (): Promise<CourierClient> => {
+  const client = await Courier.shared.getClient();
+  check(client, 'No user is signed in. Run Sign In first.');
+  return client!;
+};
+
+// Polls, because the server applies new messages and inbox events a moment later
+const waitFor = async <T,>(
+  read: () => Promise<T>,
+  isDone: (value: T) => boolean,
+  description: string,
+  timeoutMs = 20000
+): Promise<T> => {
+  const start = Date.now();
+  let value = await read();
+  while (!isDone(value)) {
+    if (Date.now() - start > timeoutMs) {
+      throw new Error(`Timed out waiting for ${description}`);
+    }
+    await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
+    value = await read();
+  }
+  return value;
+};
+
+const getMessage = async (client: CourierClient, messageId: string) => {
+  try {
+    const response = await client.inbox.getMessageById({ messageId });
+    return response?.data?.message;
+  } catch {
+    return undefined;
+  }
+};
+
+const waitForMessage = (
+  client: CourierClient,
+  messageId: string,
+  isDone: (message: InboxMessage) => boolean,
+  description: string
+) =>
+  waitFor(
+    () => getMessage(client, messageId),
+    (message) => !!message && isDone(message),
+    `message ${messageId} to ${description}`
+  );
+
+const listMessages = async (client: CourierClient) => {
+  const response = await client.inbox.getMessages({ paginationLimit: 25 });
+  return response?.data?.messages?.nodes ?? [];
+};
+
+// The message list can trail the single message query by 20 seconds or more
+const LIST_TIMEOUT_MS = 60000;
+
+// Reads from the message list. Open is checked here, because the single message query
+// always returns opened as null, and read all only sees messages that are listed.
+const waitForListedMessage = (
+  client: CourierClient,
+  messageId: string,
+  isDone: (message: InboxMessage) => boolean,
+  description: string
+) =>
+  waitFor(
+    async () =>
+      (await listMessages(client)).find((m) => m.messageId === messageId),
+    (message) => !!message && isDone(message),
+    `message ${messageId} to ${description}`,
+    LIST_TIMEOUT_MS
+  );
+
+// Sends an inbox message to the client's user and waits until it can be fetched
+const sendInboxMessage = async (client: CourierClient): Promise<string> => {
+  const messageId = await ExampleServer.sendTest({
+    authKey: Env.authKey,
+    userId: client.options.userId,
+    channel: 'inbox',
+  });
+  await waitForMessage(
+    client,
+    messageId,
+    (message) => message.messageId === messageId,
+    'arrive'
+  );
+  return messageId;
+};
+
+const sendListedInboxMessage = async (client: CourierClient) => {
+  const messageId = await sendInboxMessage(client);
+  await waitForListedMessage(client, messageId, () => true, 'be listed');
+  return messageId;
+};
+
+// Courier.shared's message actions only change messages in the loaded inbox,
+// as in a custom inbox list, so this loads the inbox and waits for the message first
+const withLoadedMessage = async (
+  client: CourierClient,
+  messageIdParam: string | undefined,
+  action: (messageId: string) => Promise<void>
+): Promise<string> => {
+  const messageId = messageIdParam ?? (await sendListedInboxMessage(client));
+  const loaded = new Set<string>();
+  const addMessages = (messages: InboxMessage[]) =>
+    messages.forEach((m) => loaded.add(m.messageId));
+  const listener = await Courier.shared.addInboxListener({
+    onMessagesChanged: (messages) => addMessages(messages),
+    onPageAdded: (messages) => addMessages(messages),
+  });
+  try {
+    await Courier.shared.refreshInbox();
+    await waitFor(
+      async () => loaded.has(messageId),
+      (isLoaded) => isLoaded,
+      `the shared inbox to load message ${messageId}`,
+      LIST_TIMEOUT_MS
+    );
+    await action(messageId);
+  } finally {
+    await listener.remove();
+  }
+  return messageId;
+};
+
+const waitForNoUnreadMessages = (client: CourierClient) =>
+  waitFor(
+    () => client.inbox.getUnreadMessageCount(),
+    (count) => count === 0,
+    'the unread count to reach 0',
+    LIST_TIMEOUT_MS
+  );
+
+const userTokens = (userId: string) =>
+  ExampleServer.getUserTokens({ authKey: Env.authKey, userId });
+
 const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   createClient: async (params: {
     userId: string;
@@ -43,6 +188,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         authKey: Env.authKey,
         userId: params.userId,
       }));
+    check(token, 'No JWT was issued. Check authKey in Env.tsx.');
 
     savedClient = new CourierClient({
       userId: params.userId,
@@ -52,6 +198,11 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       tenantId: params.tenantId,
       connectionId: params.connectionId,
     });
+
+    check(
+      savedClient.options.userId === params.userId,
+      `Client has user ${savedClient.options.userId}, expected ${params.userId}`
+    );
 
     return {
       id: savedClient.clientId,
@@ -73,30 +224,39 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testPutToken: async (params: { token: string; provider: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    await savedClient.tokens.putUserToken({
+    const client = requireClient();
+    await client.tokens.putUserToken({
       provider: params.provider,
       token: params.token,
     });
+    await waitFor(
+      () => userTokens(client.options.userId),
+      (tokens) =>
+        tokens.some(
+          (t) => t.token === params.token && t.provider_key === params.provider
+        ),
+      `token ${params.token} to be saved for ${params.provider}`
+    );
     return { token: params.token, provider: params.provider };
   },
 
   testDeleteToken: async (params: { token: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    await savedClient.tokens.deleteUserToken({ token: params.token });
+    const client = requireClient();
+    await client.tokens.deleteUserToken({ token: params.token });
+    await waitFor(
+      () => userTokens(client.options.userId),
+      (tokens) => !tokens.some((t) => t.token === params.token),
+      `token ${params.token} to be deleted`
+    );
   },
 
   testGetBrands: async (params: { brandId: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    const brand = await savedClient.brands.getBrand({
+    const client = requireClient();
+    check(params.brandId, 'brandId is empty. Set it in Env.tsx.');
+    const brand = await client.brands.getBrand({
       brandId: params.brandId,
     });
+    check(brand?.data?.brand, `Brand ${params.brandId} was not returned`);
     return brand;
   },
 
@@ -104,21 +264,28 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     paginationLimit: number;
     startCursor?: string;
   }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    return await savedClient.inbox.getMessages({
+    const client = requireClient();
+    const response = await client.inbox.getMessages({
       paginationLimit: params.paginationLimit,
       startCursor: params.startCursor,
     });
+    const messages = response?.data?.messages?.nodes;
+    check(Array.isArray(messages), 'No message list was returned');
+    check(
+      messages!.length <= params.paginationLimit,
+      `Got ${messages!.length} messages for a limit of ${params.paginationLimit}`
+    );
+    return response;
   },
 
   testUnreadCount: async () => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    const count = await savedClient.inbox.getUnreadMessageCount();
+    const client = requireClient();
+    const count = await client.inbox.getUnreadMessageCount();
     console.log('Unread Count:', count);
+    check(
+      typeof count === 'number' && count >= 0,
+      `Unread count is ${count}`
+    );
     return count;
   },
 
@@ -126,164 +293,104 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     paginationLimit: number;
     startCursor?: string;
   }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    return await savedClient.inbox.getArchivedMessages({
+    const client = requireClient();
+    const response = await client.inbox.getArchivedMessages({
       paginationLimit: params.paginationLimit,
       startCursor: params.startCursor,
     });
+    check(
+      Array.isArray(response?.data?.messages?.nodes),
+      'No archived message list was returned'
+    );
+    return response;
   },
 
   testMessageById: async (params: { messageId?: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: savedClient!.options.userId,
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-
-    return await savedClient.inbox.getMessageById({
-      messageId: messageId,
-    });
+    const client = requireClient();
+    const messageId = params.messageId ?? (await sendInboxMessage(client));
+    const response = await client.inbox.getMessageById({ messageId });
+    check(
+      response?.data?.message?.messageId === messageId,
+      `Message ${messageId} was not returned`
+    );
+    return response;
   },
 
   openMessage: async (params: { messageId?: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: savedClient!.options.userId,
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-
-    await savedClient.inbox.open({
-      messageId: messageId,
-    });
-
-    return { messageId: messageId };
+    const client = requireClient();
+    const messageId = params.messageId ?? (await sendInboxMessage(client));
+    await client.inbox.open({ messageId });
+    await waitForListedMessage(
+      client,
+      messageId,
+      (m) => !!m.opened,
+      'be opened'
+    );
+    return { messageId };
   },
 
   clickMessage: async (params: { messageId?: string; trackingId?: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
+    const client = requireClient();
+    const messageId = params.messageId ?? (await sendInboxMessage(client));
 
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: savedClient!.options.userId,
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-
-    await savedClient.inbox.click({
-      messageId: messageId,
+    // A click only records an event, so there's no message state to check afterwards
+    await client.inbox.click({
+      messageId,
       trackingId: params.trackingId ?? 'test-tracking-id',
     });
-
-    return { messageId: messageId };
+    return { messageId };
   },
 
   readMessage: async (params: { messageId?: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: savedClient!.options.userId,
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-
-    await savedClient.inbox.read({
-      messageId: messageId,
-    });
-
-    return { messageId: messageId };
+    const client = requireClient();
+    const messageId = params.messageId ?? (await sendInboxMessage(client));
+    await client.inbox.read({ messageId });
+    await waitForMessage(client, messageId, (m) => !!m.read, 'be read');
+    return { messageId };
   },
 
   unreadMessage: async (params: { messageId?: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
+    const client = requireClient();
+    const messageId = params.messageId ?? (await sendInboxMessage(client));
 
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: savedClient!.options.userId,
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-
-    await savedClient.inbox.unread({
-      messageId: messageId,
-    });
-
-    return { messageId: messageId };
+    // Read it first, so unread has something to undo
+    await client.inbox.read({ messageId });
+    await waitForMessage(client, messageId, (m) => !!m.read, 'be read');
+    await client.inbox.unread({ messageId });
+    await waitForMessage(client, messageId, (m) => !m.read, 'be unread');
+    return { messageId };
   },
 
   archiveMessage: async (params: { messageId?: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: savedClient!.options.userId,
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-
-    await savedClient.inbox.archive({
-      messageId: messageId,
-    });
-
-    return { messageId: messageId };
+    const client = requireClient();
+    const messageId = params.messageId ?? (await sendInboxMessage(client));
+    await client.inbox.archive({ messageId });
+    await waitForMessage(
+      client,
+      messageId,
+      (m) => !!m.archived,
+      'be archived'
+    );
+    return { messageId };
   },
 
   readAllMessages: async () => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    await savedClient.inbox.readAll();
+    const client = requireClient();
+
+    // Leaves at least one unread message for readAll to clear
+    await sendListedInboxMessage(client);
+    await client.inbox.readAll();
+    await waitForNoUnreadMessages(client);
   },
 
   testGetPreferences: async () => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    return await savedClient.preferences.getUserPreferences();
+    const client = requireClient();
+    const preferences = await client.preferences.getUserPreferences();
+    check(
+      Array.isArray(preferences?.items),
+      'No preference topics were returned'
+    );
+    return preferences;
   },
 
   testUpdatePreferences: async (params: {
@@ -292,36 +399,48 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     hasCustomRouting: boolean;
     customRouting: string;
   }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    await savedClient.preferences.putUserPreferenceTopic({
+    const client = requireClient();
+    check(params.topicId, 'topicId is empty. Set it in Env.tsx.');
+    const customRouting = params.customRouting
+      .split(',')
+      .map((channel) => channel.trim() as CourierUserPreferencesChannel);
+    await client.preferences.putUserPreferenceTopic({
       topicId: params.topicId,
       status: params.status as CourierUserPreferencesStatus,
       hasCustomRouting: params.hasCustomRouting,
-      customRouting: params.customRouting
-        .split(',')
-        .map((channel) => channel.trim() as CourierUserPreferencesChannel),
+      customRouting: customRouting,
     });
+    const topic = await waitFor(
+      () => client.preferences.getUserPreferenceTopic({ topicId: params.topicId }),
+      (t) => t?.status === params.status,
+      `topic ${params.topicId} to be ${params.status}`
+    );
+    check(
+      topic.hasCustomRouting === params.hasCustomRouting,
+      `hasCustomRouting is ${topic.hasCustomRouting}, expected ${params.hasCustomRouting}`
+    );
+    return topic;
   },
 
   testGetPreferenceTopics: async (params: { topicId: string }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    return await savedClient.preferences.getUserPreferenceTopic({
+    const client = requireClient();
+    check(params.topicId, 'topicId is empty. Set it in Env.tsx.');
+    const topic = await client.preferences.getUserPreferenceTopic({
       topicId: params.topicId,
     });
+    check(
+      topic?.topicId === params.topicId,
+      `Topic ${params.topicId} was not returned`
+    );
+    return topic;
   },
 
   testPostTrackingUrl: async (params: {
     trackingUrl: string;
     event: string;
   }) => {
-    if (!savedClient) {
-      throw new Error('Client not initialized. Run createClient first.');
-    }
-    return await savedClient.tracking.postTrackingUrl({
+    const client = requireClient();
+    return await client.tracking.postTrackingUrl({
       url: params.trackingUrl,
       event: params.event as CourierTrackingEvent,
     });
@@ -349,13 +468,29 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       showLogs: params.showLogs,
     });
 
-    const client = await Courier.shared.getClient();
+    const userId = await Courier.shared.getUserId();
+    check(
+      userId === params.userId,
+      `Signed in as ${userId}, expected ${params.userId}`
+    );
+    check(
+      await Courier.shared.isUserSignedIn(),
+      'isUserSignedIn is false after signIn'
+    );
+    const tenantId = await Courier.shared.getTenantId();
+    check(
+      (tenantId || undefined) === (params.tenantId || undefined),
+      `Tenant is ${tenantId}, expected ${params.tenantId}`
+    );
 
-    return client?.options;
+    const client = await requireSharedClient();
+    return client.options;
   },
 
   testGetUserId: async () => {
-    return await Courier.shared.getUserId();
+    const userId = await Courier.shared.getUserId();
+    check(userId, 'No user ID. Run Sign In first.');
+    return userId;
   },
 
   testGetTenantId: async () => {
@@ -363,7 +498,9 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testGetIsUserSignedIn: async () => {
-    return await Courier.shared.isUserSignedIn();
+    const signedIn = await Courier.shared.isUserSignedIn();
+    check(signedIn === true, 'isUserSignedIn is false. Run Sign In first.');
+    return signedIn;
   },
 
   testAuthenticationListener: async () => {
@@ -372,6 +509,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         console.log('User changed:', userId);
       },
     });
+    check(listener?.listenerId, 'The listener has no ID');
     listener.remove();
     return listener.listenerId;
   },
@@ -382,13 +520,26 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   testSignOut: async () => {
     await Courier.shared.signOut();
+    check(
+      !(await Courier.shared.isUserSignedIn()),
+      'isUserSignedIn is still true after signOut'
+    );
+    check(
+      !(await Courier.shared.getUserId()),
+      'A user ID is still set after signOut'
+    );
   },
 
   testGetClient: async () => {
-    const client = await Courier.shared.getClient();
+    const client = await requireSharedClient();
+    const userId = await Courier.shared.getUserId();
+    check(
+      client.options.userId === userId,
+      `Client has user ${client.options.userId}, expected ${userId}`
+    );
     return {
-      clientId: client?.clientId,
-      options: client?.options,
+      clientId: client.clientId,
+      options: client.options,
     };
   },
 
@@ -398,18 +549,37 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     tokens.forEach((value, key) => {
       tokenObject[key] = value;
     });
+    check(Object.keys(tokenObject).length > 0, 'No tokens were returned');
     return tokenObject;
   },
 
   testGetToken: async (params: { provider: string }) => {
-    return await Courier.shared.getToken({ key: params.provider });
+    const token = await Courier.shared.getToken({ key: params.provider });
+    check(token, `No ${params.provider} token. Run Set Token first.`);
+    return token;
   },
 
   testSetToken: async (params: { provider: string; token: string }) => {
-    return await Courier.shared.setToken({
+    await Courier.shared.setToken({
       key: params.provider,
       token: params.token,
     });
+    const token = await Courier.shared.getToken({ key: params.provider });
+    check(
+      token === params.token,
+      `getToken returned ${token}, expected ${params.token}`
+    );
+
+    // setToken also uploads the token for the signed-in user
+    const userId = await Courier.shared.getUserId();
+    if (userId) {
+      await waitFor(
+        () => userTokens(userId),
+        (tokens) => tokens.some((t) => t.token === params.token),
+        `token ${params.token} to be saved for ${userId}`
+      );
+    }
+    return token;
   },
 
   testAddPushNotificationListener: async () => {
@@ -418,6 +588,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         console.log('Push notification clicked:', push);
       },
     });
+    check(listener?.listenerId, 'The listener has no ID');
     listener.remove();
     return listener.listenerId;
   },
@@ -428,98 +599,110 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   testSetInboxPaginationLimit: async (params: { limit: number }) => {
     await Courier.shared.setInboxPaginationLimit(params.limit);
+    const limit = await Courier.shared.getInboxPaginationLimit();
+    check(
+      Number(limit) === Number(params.limit),
+      `Pagination limit is ${limit}, expected ${params.limit}`
+    );
   },
 
   testGetInboxPaginationLimit: async () => {
-    return await Courier.shared.getInboxPaginationLimit();
+    const limit = await Courier.shared.getInboxPaginationLimit();
+    check(limit > 0, `Pagination limit is ${limit}`);
+    return limit;
   },
 
   testOpenMessage: async (params: { messageId?: string }) => {
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-    await Courier.shared.openMessage({ messageId: messageId });
-    return { messageId: messageId };
+    const client = await requireSharedClient();
+    const messageId = await withLoadedMessage(
+      client,
+      params.messageId,
+      (id) => Courier.shared.openMessage({ messageId: id })
+    );
+    await waitForListedMessage(
+      client,
+      messageId,
+      (m) => !!m.opened,
+      'be opened'
+    );
+    return { messageId };
   },
 
   testClickMessage: async (params: { messageId?: string }) => {
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-    await Courier.shared.clickMessage({ messageId: messageId });
-    return { messageId: messageId };
+    const client = await requireSharedClient();
+
+    // A click only records an event, so there's no message state to check afterwards
+    const messageId = await withLoadedMessage(
+      client,
+      params.messageId,
+      (id) => Courier.shared.clickMessage({ messageId: id })
+    );
+    return { messageId };
   },
 
   testReadMessage: async (params: { messageId?: string }) => {
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-    await Courier.shared.readMessage({ messageId: messageId });
-    return { messageId: messageId };
+    const client = await requireSharedClient();
+    const messageId = await withLoadedMessage(
+      client,
+      params.messageId,
+      (id) => Courier.shared.readMessage({ messageId: id })
+    );
+    await waitForMessage(client, messageId, (m) => !!m.read, 'be read');
+    return { messageId };
   },
 
   testUnreadMessage: async (params: { messageId?: string }) => {
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-    await Courier.shared.unreadMessage({ messageId: messageId });
-    return { messageId: messageId };
+    const client = await requireSharedClient();
+
+    // Read it first, so unread has something to undo
+    const messageId = await withLoadedMessage(
+      client,
+      params.messageId,
+      async (id) => {
+        await Courier.shared.readMessage({ messageId: id });
+        await waitForMessage(client, id, (m) => !!m.read, 'be read');
+        await Courier.shared.unreadMessage({ messageId: id });
+      }
+    );
+    await waitForMessage(client, messageId, (m) => !m.read, 'be unread');
+    return { messageId };
   },
 
   testArchiveMessage: async (params: { messageId?: string }) => {
-    const messageId =
-      params.messageId ??
-      (await new Promise<string>(async (resolve) => {
-        const result = await ExampleServer.sendTest({
-          authKey: Env.authKey,
-          userId: (await Courier.shared.getUserId()) ?? '',
-          channel: 'inbox',
-        });
-        setTimeout(() => resolve(result), 5000);
-      }));
-    await Courier.shared.archiveMessage({ messageId: messageId });
-    return { messageId: messageId };
+    const client = await requireSharedClient();
+    const messageId = await withLoadedMessage(
+      client,
+      params.messageId,
+      (id) => Courier.shared.archiveMessage({ messageId: id })
+    );
+    await waitForMessage(
+      client,
+      messageId,
+      (m) => !!m.archived,
+      'be archived'
+    );
+    return { messageId };
   },
 
   testReadAllInboxMessages: async () => {
-    return await Courier.shared.readAllInboxMessages();
+    const client = await requireSharedClient();
+
+    // Leaves at least one unread message for readAll to clear
+    await sendListedInboxMessage(client);
+    await Courier.shared.readAllInboxMessages();
+    await waitForNoUnreadMessages(client);
   },
 
   testAddInboxListener: async () => {
+    let loaded = false;
+    let error: string | undefined;
     const listener = await Courier.shared.addInboxListener({
       onLoading: (isRefresh: boolean) => {
         console.log('Inbox loading:', isRefresh);
       },
-      onError: (error: string) => {
-        console.log('Inbox error:', error);
+      onError: (message: string) => {
+        console.log('Inbox error:', message);
+        error = message;
       },
       onUnreadCountChanged: (unreadCount: number) => {
         console.log('Inbox unread count changed:', unreadCount);
@@ -533,6 +716,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         feed: string
       ) => {
         console.log('Inbox messages changed:', messages, canPaginate, feed);
+        loaded = true;
       },
       onPageAdded: (
         messages: InboxMessage[],
@@ -547,6 +731,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
           isFirstPage,
           feed
         );
+        loaded = true;
       },
       onMessageEvent: (
         message: InboxMessage,
@@ -557,7 +742,18 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
         console.log('Inbox message event:', message, index, feed, eventName);
       },
     });
-    await listener.remove();
+
+    // A new listener should get the inbox's messages, not just an ID
+    try {
+      await waitFor(
+        async () => loaded || !!error,
+        (done) => done,
+        'the listener to receive the inbox'
+      );
+      check(!error, `The inbox listener got an error: ${error}`);
+    } finally {
+      await listener.remove();
+    }
     return listener;
   },
 
@@ -570,17 +766,23 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
   },
 
   testFetchNextPageOfMessages: async () => {
-    return await Courier.shared.fetchNextPageOfMessages({
+    const messages = await Courier.shared.fetchNextPageOfMessages({
       inboxMessageFeed: 'feed',
     });
+    check(Array.isArray(messages), 'No message list was returned');
+    return messages;
   },
 
   testRequestPushNotificationPermission: async () => {
-    return await Courier.requestNotificationPermission();
+    const status = await Courier.requestNotificationPermission();
+    check(status, 'No permission status was returned');
+    return status;
   },
 
   testGetPushNotificationPermissionStatus: async () => {
-    return await Courier.getNotificationPermissionStatus();
+    const status = await Courier.getNotificationPermissionStatus();
+    check(status, 'No permission status was returned');
+    return status;
   },
 
   testSetIOSForegroundPresentationOptions: async (params: {
@@ -1014,7 +1216,8 @@ const getTestSections = async (): Promise<TestSection[]> => [
         name: 'Open Settings for App',
         testId: 'testOpenSettingsForApp',
         defaultParams: {},
-        runOrder: 'normal',
+        // It leaves the app, which stalls the rest of a full run
+        runOrder: 'skip',
       },
     ],
   },
@@ -1165,7 +1368,7 @@ const Tests = () => {
         ? `Running Test ${currentTestIndex + 1}/${totalTests}`
         : 'Tests',
     });
-  }, [isRunning, currentTestIndex]);
+  }, [isRunning, currentTestIndex, testSections, totalTests]);
 
   const handleTestError = (error: unknown) => {
     let errorMessage = 'An unknown error occurred';
