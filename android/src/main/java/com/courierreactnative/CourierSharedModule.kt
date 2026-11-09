@@ -186,13 +186,13 @@ class CourierSharedModule(
 
   @ReactMethod
   fun getInboxPaginationLimit(promise: Promise) {
-    promise.resolve(Courier.shared.inboxPaginationLimit.toString())
+    promise.resolve(Courier.shared.inboxPaginationLimit)
   }
 
   @ReactMethod
   fun setInboxPaginationLimit(limit: Double, promise: Promise) {
     Courier.shared.inboxPaginationLimit = limit.toInt()
-    promise.resolve(Courier.shared.inboxPaginationLimit.toString())
+    promise.resolve(Courier.shared.inboxPaginationLimit)
   }
 
   @ReactMethod

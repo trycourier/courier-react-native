@@ -223,7 +223,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     @objc(getInboxPaginationLimit:withRejecter:)
     func getInboxPaginationLimit(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
-            let limit = await String(describing: Courier.shared.inboxPaginationLimit)
+            let limit = await Courier.shared.inboxPaginationLimit
             resolve(limit)
         }
     }
@@ -232,7 +232,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     func setInboxPaginationLimit(limit: Double, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Task {
             await Courier.shared.setPaginationLimit(Int(limit))
-            let limit = await String(describing: Courier.shared.inboxPaginationLimit)
+            let limit = await Courier.shared.inboxPaginationLimit
             resolve(limit)
         }
     }
