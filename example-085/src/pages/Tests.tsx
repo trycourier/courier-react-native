@@ -1165,7 +1165,7 @@ const Tests = () => {
         ? `Running Test ${currentTestIndex + 1}/${totalTests}`
         : 'Tests',
     });
-  }, [isRunning, currentTestIndex]);
+  }, [isRunning, currentTestIndex, testSections, totalTests]);
 
   const handleTestError = (error: unknown) => {
     let errorMessage = 'An unknown error occurred';
