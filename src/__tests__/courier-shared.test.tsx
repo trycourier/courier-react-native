@@ -180,6 +180,19 @@ describe('Authentication listeners', () => {
     );
   });
 
+  it('listener.remove() removes the native authentication listener', async () => {
+    const listener = await Courier.shared.addAuthenticationListener({
+      onUserChanged: jest.fn(),
+    });
+
+    await listener.remove();
+
+    expect(mockShared.removeAuthenticationListener).toHaveBeenCalledWith(
+      listener.listenerId
+    );
+    expect(mockShared.removeInboxListener).not.toHaveBeenCalled();
+  });
+
   it('removeAllAuthenticationListeners clears all listeners', async () => {
     await Courier.shared.addAuthenticationListener({
       onUserChanged: jest.fn(),
