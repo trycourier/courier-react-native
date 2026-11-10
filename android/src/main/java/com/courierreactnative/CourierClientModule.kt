@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 class CourierClientModule(
   reactContext: ReactApplicationContext
@@ -23,7 +24,8 @@ class CourierClientModule(
   reactContext = reactContext
 ) {
 
-  private var clients: MutableMap<String, CourierClient> = mutableMapOf()
+  // Written on the JS thread, read in coroutines on main
+  private val clients = ConcurrentHashMap<String, CourierClient>()
 
   @ReactMethod
   fun addListener(type: String?) {
