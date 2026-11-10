@@ -16,6 +16,7 @@ import {
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useNavigation } from '@react-navigation/native';
 import { ExampleServer } from '../Utils';
+import { useExampleColors } from '../ExampleColors';
 import {
   CourierEnvironment,
   environmentNames,
@@ -41,6 +42,7 @@ interface OptionRow {
 
 const Auth = () => {
   const navigation = useNavigation();
+  const colors = useExampleColors();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [options, setOptions] = useState<OptionRow[]>([]);
@@ -151,7 +153,7 @@ const Auth = () => {
             <Text
               style={{
                 fontSize: 16,
-                color: saveEnabled ? '#007AFF' : '#ccc',
+                color: saveEnabled ? '#007AFF' : colors.border,
               }}
             >
               Save
@@ -254,7 +256,7 @@ const Auth = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={options}
         keyExtractor={(_, i) => String(i)}
@@ -262,22 +264,35 @@ const Auth = () => {
           const displayValue = item.value || 'NOT SET';
           const icon = getAccessoryIcon(index);
           return (
-            <Pressable style={styles.row} onPress={() => onRowTapped(index)}>
-              <Text style={styles.rowLabel}>{item.key}</Text>
+            <Pressable
+              style={[styles.row, { backgroundColor: colors.card }]}
+              onPress={() => onRowTapped(index)}
+            >
+              <Text style={[styles.rowLabel, { color: colors.label }]}>
+                {item.key}
+              </Text>
               <View style={styles.rowRight}>
                 <Text
-                  style={styles.rowValue}
+                  style={[styles.rowValue, { color: colors.secondaryText }]}
                   numberOfLines={1}
                   ellipsizeMode="middle"
                 >
                   {displayValue}
                 </Text>
-                {icon && <Text style={styles.rowIcon}>{icon}</Text>}
+                {icon && (
+                  <Text style={[styles.rowIcon, { color: colors.tertiaryText }]}>
+                    {icon}
+                  </Text>
+                )}
               </View>
             </Pressable>
           );
         }}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={() => (
+          <View
+            style={[styles.separator, { backgroundColor: colors.separator }]}
+          />
+        )}
       />
 
       <Modal visible={envPickerVisible} transparent animationType="fade">
@@ -285,8 +300,10 @@ const Auth = () => {
           style={styles.modalOverlay}
           onPress={() => setEnvPickerVisible(false)}
         >
-          <View style={styles.pickerContent}>
-            <Text style={styles.pickerTitle}>Select Environment</Text>
+          <View style={[styles.pickerContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.pickerTitle, { color: colors.text }]}>
+              Select Environment
+            </Text>
             {environmentNames().map((env) => (
               <TouchableOpacity
                 key={env}
@@ -299,7 +316,9 @@ const Auth = () => {
                 <Text style={styles.radioIcon}>
                   {env === selectedEnvironment ? '\u25C9' : '\u25CB'}
                 </Text>
-                <Text style={styles.pickerOptionText}>{env}</Text>
+                <Text style={[styles.pickerOptionText, { color: colors.text }]}>
+                  {env}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -311,12 +330,18 @@ const Auth = () => {
           style={styles.modalOverlay}
           onPress={() => setEditModalVisible(false)}
         >
-          <Pressable style={styles.editContent} onPress={() => {}}>
-            <Text style={styles.editTitle}>
+          <Pressable
+            style={[styles.editContent, { backgroundColor: colors.card }]}
+            onPress={() => {}}
+          >
+            <Text style={[styles.editTitle, { color: colors.text }]}>
               {options[editIndex]?.key ?? ''}
             </Text>
             <TextInput
-              style={styles.editInput}
+              style={[
+                styles.editInput,
+                { borderColor: colors.separator, color: colors.text },
+              ]}
               value={editValue}
               onChangeText={setEditValue}
               autoCapitalize="none"
@@ -326,7 +351,7 @@ const Auth = () => {
             />
             <View style={styles.editButtons}>
               <TouchableOpacity
-                style={styles.editButton}
+                style={[styles.editButton, { backgroundColor: colors.fill }]}
                 onPress={() => {
                   if (editValue) {
                     Clipboard.setString(editValue);
@@ -334,13 +359,17 @@ const Auth = () => {
                   }
                 }}
               >
-                <Text style={styles.editButtonText}>Copy</Text>
+                <Text style={[styles.editButtonText, { color: colors.text }]}>
+                  Copy
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.editButton}
+                style={[styles.editButton, { backgroundColor: colors.fill }]}
                 onPress={() => setEditModalVisible(false)}
               >
-                <Text style={styles.editButtonText}>Cancel</Text>
+                <Text style={[styles.editButtonText, { color: colors.text }]}>
+                  Cancel
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.editButton, styles.editButtonPrimary]}
@@ -363,7 +392,6 @@ const Auth = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
@@ -376,13 +404,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#fff',
   },
   rowLabel: {
     fontSize: 13,
     fontFamily: MONO_FONT,
     fontWeight: '700',
-    color: '#333',
     flexShrink: 0,
   },
   rowRight: {
@@ -395,18 +421,15 @@ const styles = StyleSheet.create({
   rowValue: {
     fontSize: 13,
     fontFamily: MONO_FONT,
-    color: '#666',
     flex: 1,
     textAlign: 'right',
   },
   rowIcon: {
     fontSize: 16,
-    color: '#999',
     marginLeft: 8,
   },
   separator: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#ddd',
     marginLeft: 16,
   },
   modalOverlay: {
@@ -416,7 +439,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   pickerContent: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
     minWidth: 280,
@@ -445,7 +467,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   editContent: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
     minWidth: 300,
@@ -463,7 +484,6 @@ const styles = StyleSheet.create({
   },
   editInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
     fontSize: 14,
@@ -479,7 +499,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: '#f0f0f0',
   },
   editButtonText: {
     fontSize: 14,

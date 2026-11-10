@@ -14,12 +14,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useExampleColors } from '../../ExampleColors';
 
 const ListItem = (props: {
   topic: CourierUserPreferencesTopic;
   onClick: () => void;
 }) => {
   const SCREEN_WIDTH = Dimensions.get('screen').width;
+  const colors = useExampleColors();
 
   const styles = StyleSheet.create({
     container: {
@@ -32,6 +34,7 @@ const ListItem = (props: {
         default: 'monospace',
       }),
       fontSize: 16,
+      color: colors.text,
     },
   });
 
