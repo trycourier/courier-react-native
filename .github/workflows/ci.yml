@@ -19,7 +19,8 @@ jobs:
           COURIER_BRAND_ID: ${{ secrets.COURIER_BRAND_ID }}
           COURIER_AUTH_KEY: ${{ secrets.COURIER_AUTH_KEY }}
           COURIER_CLIENT_KEY: ${{ secrets.COURIER_CLIENT_KEY }}
-          COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
+          # Same secret names as the other mobile SDKs. COURIER_TOPIC_ID is the old name.
+          COURIER_TOPIC_ID: ${{ secrets.COURIER_PREFERENCE_TOPIC_ID || secrets.COURIER_TOPIC_ID }}
         run: |
           printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example-085/src/Env.tsx
           npx prettier --write example-085/src/Env.tsx
@@ -44,7 +45,8 @@ jobs:
           COURIER_BRAND_ID: ${{ secrets.COURIER_BRAND_ID }}
           COURIER_AUTH_KEY: ${{ secrets.COURIER_AUTH_KEY }}
           COURIER_CLIENT_KEY: ${{ secrets.COURIER_CLIENT_KEY }}
-          COURIER_TOPIC_ID: ${{ secrets.COURIER_TOPIC_ID }}
+          # Same secret names as the other mobile SDKs. COURIER_TOPIC_ID is the old name.
+          COURIER_TOPIC_ID: ${{ secrets.COURIER_PREFERENCE_TOPIC_ID || secrets.COURIER_TOPIC_ID }}
         run: |
           printf "export default class Env {\n  static readonly brandId = '%s';\n  static readonly authKey = '%s';\n  static readonly clientKey = '%s';\n  static readonly topicId = '%s';\n}\n" "$COURIER_BRAND_ID" "$COURIER_AUTH_KEY" "$COURIER_CLIENT_KEY" "$COURIER_TOPIC_ID" > example-085/src/Env.tsx
 
@@ -64,17 +66,56 @@ jobs:
         run: yarn prepack
 
 
+  # Compiles the library's Kotlin (android/) and the example app against the courier-android
+  # version pinned in android/build.gradle, so a bump that breaks the bridge fails here.
+  # Build-only: no secrets, no signing.
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: build-android-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build example app
+        working-directory: example-085/android
+        run: ./gradlew :app:assembleDebug --no-daemon --console=plain
+
   # Compiles the library's Swift (ios/) against the Courier_iOS version pinned in
   # courier-react-native.podspec. Nothing else in CI builds iOS, so a Courier_iOS bump that breaks
-  # the Swift bridge would otherwise pass. Build-only: no secrets, no signing.
-  build-ios:
-    runs-on: macos-15
+  # the Swift bridge would otherwise pass. Built on the current Xcode and on the oldest one
+  # courier-ios still builds on. Build-only: no secrets, no signing.
+  build-ios-xcode:
+    name: build-ios (Xcode ${{ matrix.xcode }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-26
+            xcode: '26.6'
+          - runner: macos-15
+            xcode: '16.4'
     concurrency:
-      group: build-ios-${{ github.ref }}
+      group: build-ios-${{ matrix.xcode }}-${{ github.ref }}
       cancel-in-progress: true
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
       LANG: en_US.UTF-8
     steps:
       - name: Checkout
@@ -125,3 +166,13 @@ jobs:
             ARCHS=arm64 \
             CODE_SIGNING_ALLOWED=NO \
             -quiet
+
+  # The main branch ruleset requires a check named build-ios. It passes only when every Xcode
+  # build passed. always() keeps it from being skipped, since a skipped check counts as passed.
+  build-ios:
+    needs: build-ios-xcode
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the Xcode builds
+        run: '[ "${{ needs.build-ios-xcode.result }}" = "success" ]'
