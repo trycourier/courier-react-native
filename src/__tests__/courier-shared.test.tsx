@@ -270,6 +270,12 @@ describe('Inbox shared methods', () => {
     expect(limit).toBe(32);
   });
 
+  it('getInboxPaginationLimit returns a number when native resolves a string', async () => {
+    mockShared.getInboxPaginationLimit.mockResolvedValueOnce('20');
+    const limit = await Courier.shared.getInboxPaginationLimit();
+    expect(limit).toBe(20);
+  });
+
   it('setInboxPaginationLimit delegates to native', async () => {
     await Courier.shared.setInboxPaginationLimit(50);
     expect(mockShared.setInboxPaginationLimit).toHaveBeenCalledWith(50);
