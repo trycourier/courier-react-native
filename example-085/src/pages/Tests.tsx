@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import { useExampleColors } from '../ExampleColors';
 import { useNavigation } from '@react-navigation/native';
 import Courier, {
   CourierClient,
@@ -1283,51 +1284,63 @@ const TestItem = ({
 }: {
   item: { name: string; result?: unknown; status?: string; runOrder?: string };
   onPress: () => void;
-}) => (
-  <TouchableOpacity onPress={onPress}>
-    <View
-      style={[
-        styles.testItem,
-        item.status === 'running' && styles.runningTestItem,
-      ]}
-    >
-      <View style={styles.testItemContent}>
-        <Text style={styles.testItemTitle}>{item.name}</Text>
-        {item.status !== undefined && item.status !== 'running' && (
-          <Text style={styles.testItemResult}>
-            {item.result !== undefined
-              ? typeof item.result === 'number'
-                ? item.result.toString()
-                : JSON.stringify(item.result, null, 2)
-              : 'No Response'}
-          </Text>
-        )}
-      </View>
-      <View style={styles.testItemStatus}>
-        {item.status === undefined ? (
-          <Text style={styles.statusEmoji}>🧪</Text>
-        ) : item.status === 'running' ? (
-          <ActivityIndicator size="small" />
-        ) : item.status === 'skipped' ? (
-          <Text style={styles.statusEmoji}>⚠️</Text>
-        ) : (
-          <Text style={styles.statusEmoji}>
-            {item.status === 'success' ? '✅' : '❌'}
-          </Text>
-        )}
-      </View>
-    </View>
-  </TouchableOpacity>
-);
+}) => {
+  const colors = useExampleColors();
 
-const SectionHeader = ({ title }: { title: string }) => (
-  <View style={styles.sectionHeader}>
-    <Text style={styles.sectionHeaderText}>{title}</Text>
-  </View>
-);
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View
+        style={[
+          styles.testItem,
+          { borderBottomColor: colors.border },
+          item.status === 'running' && { backgroundColor: colors.highlight },
+        ]}
+      >
+        <View style={styles.testItemContent}>
+          <Text style={[styles.testItemTitle, { color: colors.text }]}>{item.name}</Text>
+          {item.status !== undefined && item.status !== 'running' && (
+            <Text style={[styles.testItemResult, { color: colors.text }]}>
+              {item.result !== undefined
+                ? typeof item.result === 'number'
+                  ? item.result.toString()
+                  : JSON.stringify(item.result, null, 2)
+                : 'No Response'}
+            </Text>
+          )}
+        </View>
+        <View style={styles.testItemStatus}>
+          {item.status === undefined ? (
+            <Text style={styles.statusEmoji}>🧪</Text>
+          ) : item.status === 'running' ? (
+            <ActivityIndicator size="small" />
+          ) : item.status === 'skipped' ? (
+            <Text style={styles.statusEmoji}>⚠️</Text>
+          ) : (
+            <Text style={styles.statusEmoji}>
+              {item.status === 'success' ? '✅' : '❌'}
+            </Text>
+          )}
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const SectionHeader = ({ title }: { title: string }) => {
+  const colors = useExampleColors();
+
+  return (
+    <View style={[styles.sectionHeader, { backgroundColor: colors.fill }]}>
+      <Text style={[styles.sectionHeaderText, { color: colors.text }]}>
+        {title}
+      </Text>
+    </View>
+  );
+};
 
 const Tests = () => {
   const navigation = useNavigation();
+  const colors = useExampleColors();
   const [testSections, setTestSections] = useState<TestSection[]>([]);
   const [testResults, setTestResults] = useState<
     Array<{
@@ -1372,6 +1385,7 @@ const Tests = () => {
             <Text
               style={[
                 styles.runTestsButton,
+                { color: colors.text },
                 isRunning && styles.disabledButton,
               ]}
             >
@@ -1557,11 +1571,17 @@ const Tests = () => {
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text>Run Test: {selectedTest?.name}</Text>
+            <View
+              style={[styles.modalContent, { backgroundColor: colors.card }]}
+            >
+              <Text style={{ color: colors.text }}>
+                Run Test: {selectedTest?.name}
+              </Text>
               {Object.entries(testParams).map(([key, value]) => (
                 <View key={key} style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>{key}:</Text>
+                  <Text style={[styles.inputLabel, { color: colors.text }]}>
+                    {key}:
+                  </Text>
                   {typeof value === 'boolean' ? (
                     <Switch
                       value={value}
@@ -1571,7 +1591,10 @@ const Tests = () => {
                     />
                   ) : typeof value === 'number' ? (
                     <TextInput
-                      style={styles.input}
+                      style={[
+                        styles.input,
+                        { borderColor: colors.border, color: colors.text },
+                      ]}
                       value={value !== undefined ? String(value) : ''}
                       onChangeText={(text) => {
                         const numValue = Number(text);
@@ -1586,7 +1609,10 @@ const Tests = () => {
                     />
                   ) : (
                     <TextInput
-                      style={styles.input}
+                      style={[
+                        styles.input,
+                        { borderColor: colors.border, color: colors.text },
+                      ]}
                       value={value !== undefined ? String(value) : ''}
                       onChangeText={(text) =>
                         handleParamChange(key, text || undefined)
@@ -1617,10 +1643,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  runningTestItem: {
-    backgroundColor: '#e6f3ff',
   },
   testItemContent: {
     flex: 1,
@@ -1660,7 +1682,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   sectionHeader: {
-    backgroundColor: '#f0f0f0',
     padding: 20,
   },
   sectionHeaderText: {
@@ -1680,7 +1701,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     width: '80%',
@@ -1697,7 +1717,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
     padding: 5,
   },
 });

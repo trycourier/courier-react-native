@@ -13,9 +13,11 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
+import { useExampleColors } from '../../ExampleColors';
 import { InboxMessageFeed } from 'src/models/InboxMessageFeed';
 
 const InboxCustom = () => {
+  const colors = useExampleColors();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -92,10 +94,10 @@ const InboxCustom = () => {
       container: {
         padding: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        borderBottomColor: colors.border,
       },
       unread: {
-        backgroundColor: '#ADD8E6',
+        backgroundColor: colors.unread,
       },
       text: {
         width: Platform.OS === 'ios' ? undefined : '100%',
@@ -105,6 +107,7 @@ const InboxCustom = () => {
           default: 'monospace',
         }),
         fontSize: 16,
+        color: colors.text,
       },
     });
 
@@ -149,11 +152,11 @@ const InboxCustom = () => {
 
   function buildContent() {
     if (isLoading) {
-      return <Text>Loading</Text>;
+      return <Text style={{ color: colors.text }}>Loading</Text>;
     }
 
     if (error) {
-      return <Text>{error}</Text>;
+      return <Text style={{ color: colors.text }}>{error}</Text>;
     }
 
     return (
