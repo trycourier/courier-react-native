@@ -99,7 +99,7 @@ jobs:
   # courier-react-native.podspec. Nothing else in CI builds iOS, so a Courier_iOS bump that breaks
   # the Swift bridge would otherwise pass. Built on the current Xcode and on the oldest one
   # courier-ios still builds on. Build-only: no secrets, no signing.
-  build-ios:
+  build-ios-xcode:
     name: build-ios (Xcode ${{ matrix.xcode }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
@@ -166,3 +166,13 @@ jobs:
             ARCHS=arm64 \
             CODE_SIGNING_ALLOWED=NO \
             -quiet
+
+  # The main branch ruleset requires a check named build-ios. It passes only when every Xcode
+  # build passed. always() keeps it from being skipped, since a skipped check counts as passed.
+  build-ios:
+    needs: build-ios-xcode
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the Xcode builds
+        run: '[ "${{ needs.build-ios-xcode.result }}" = "success" ]'
