@@ -102,6 +102,23 @@ export class ExampleServer {
     const json = await response.json();
     return json.tokens ?? [];
   }
+
+  // The message as the send pipeline tracks it. Opens show up here within seconds,
+  // well before the inbox message list shows them.
+  public static async getMessage(props: {
+    authKey: string;
+    messageId: string;
+    baseUrl?: string;
+  }): Promise<{ status?: string; opened?: number } | undefined> {
+    const base = props.baseUrl ?? 'https://api.courier.com';
+    const response = await fetch(`${base}/messages/${props.messageId}`, {
+      headers: { Authorization: `Bearer ${props.authKey}` },
+    });
+    if (!response.ok) {
+      return undefined;
+    }
+    return response.json();
+  }
 }
 
 export class Utils {

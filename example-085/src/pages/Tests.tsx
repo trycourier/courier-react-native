@@ -94,8 +94,7 @@ const listMessages = async (client: CourierClient) => {
 // The message list can trail the single message query by 20 seconds or more
 const LIST_TIMEOUT_MS = 60000;
 
-// Reads from the message list. Open is checked here, because the single message query
-// always returns opened as null, and read all only sees messages that are listed.
+// Reads from the message list. It can trail the single message query by minutes.
 const waitForListedMessage = (
   client: CourierClient,
   messageId: string,
@@ -133,42 +132,77 @@ const sendListedInboxMessage = async (client: CourierClient) => {
 };
 
 // Courier.shared's message actions only change messages in the loaded inbox,
-// as in a custom inbox list, so this loads the inbox and waits for the message first
+// as in a custom inbox list, so this loads the inbox and waits for the message first.
+// A new message is sent after the inbox loads, so it arrives over the realtime socket
+// instead of waiting for the message list to show it.
 const withLoadedMessage = async (
   client: CourierClient,
   messageIdParam: string | undefined,
   action: (messageId: string) => Promise<void>
 ): Promise<string> => {
-  const messageId = messageIdParam ?? (await sendListedInboxMessage(client));
   const loaded = new Set<string>();
   const addMessages = (messages: InboxMessage[]) =>
     messages.forEach((m) => loaded.add(m.messageId));
   const listener = await Courier.shared.addInboxListener({
     onMessagesChanged: (messages) => addMessages(messages),
     onPageAdded: (messages) => addMessages(messages),
+    onMessageEvent: (message) => loaded.add(message.messageId),
   });
   try {
     await Courier.shared.refreshInbox();
+    const messageId = messageIdParam ?? (await sendInboxMessage(client));
+
+    // Refreshes now and then in case the socket missed it
+    let reads = 0;
     await waitFor(
-      async () => loaded.has(messageId),
+      async () => {
+        reads += 1;
+        if (!loaded.has(messageId) && reads % 15 === 0) {
+          await Courier.shared.refreshInbox();
+        }
+        return loaded.has(messageId);
+      },
       (isLoaded) => isLoaded,
       `the shared inbox to load message ${messageId}`,
       LIST_TIMEOUT_MS
     );
     await action(messageId);
+    return messageId;
   } finally {
     await listener.remove();
   }
-  return messageId;
 };
 
-const waitForNoUnreadMessages = (client: CourierClient) =>
+// The single message query always returns opened as null, and the message list shows
+// an open minutes late, so this reads the open from the server's message record
+const waitForOpened = (messageId: string) =>
   waitFor(
-    () => client.inbox.getUnreadMessageCount(),
-    (count) => count === 0,
-    'the unread count to reach 0',
-    LIST_TIMEOUT_MS
+    () => ExampleServer.getMessage({ authKey: Env.authKey, messageId }),
+    (message) => !!message?.opened,
+    `message ${messageId} to be opened`
   );
+
+// Read all only reaches messages already in the message list, so the check uses the
+// unread ones listed when it runs. Messages the list shows later can still be unread.
+const checkReadAll = async (
+  client: CourierClient,
+  readAll: () => Promise<unknown>
+) => {
+  let unread = (await listMessages(client)).filter((m) => !m.read);
+  if (unread.length === 0) {
+    await sendListedInboxMessage(client);
+    unread = (await listMessages(client)).filter((m) => !m.read);
+  }
+  await readAll();
+  for (const message of unread) {
+    await waitForMessage(
+      client,
+      message.messageId,
+      (m) => !!m.read,
+      'be read by read all'
+    );
+  }
+};
 
 const userTokens = (userId: string) =>
   ExampleServer.getUserTokens({ authKey: Env.authKey, userId });
@@ -320,12 +354,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
     const client = requireClient();
     const messageId = params.messageId ?? (await sendInboxMessage(client));
     await client.inbox.open({ messageId });
-    await waitForListedMessage(
-      client,
-      messageId,
-      (m) => !!m.opened,
-      'be opened'
-    );
+    await waitForOpened(messageId);
     return { messageId };
   },
 
@@ -376,11 +405,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   readAllMessages: async () => {
     const client = requireClient();
-
-    // Leaves at least one unread message for readAll to clear
-    await sendListedInboxMessage(client);
-    await client.inbox.readAll();
-    await waitForNoUnreadMessages(client);
+    await checkReadAll(client, () => client.inbox.readAll());
   },
 
   testGetPreferences: async () => {
@@ -619,12 +644,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
       params.messageId,
       (id) => Courier.shared.openMessage({ messageId: id })
     );
-    await waitForListedMessage(
-      client,
-      messageId,
-      (m) => !!m.opened,
-      'be opened'
-    );
+    await waitForOpened(messageId);
     return { messageId };
   },
 
@@ -686,11 +706,7 @@ const IntegrationTests: Record<string, (params: any) => Promise<any>> = {
 
   testReadAllInboxMessages: async () => {
     const client = await requireSharedClient();
-
-    // Leaves at least one unread message for readAll to clear
-    await sendListedInboxMessage(client);
-    await Courier.shared.readAllInboxMessages();
-    await waitForNoUnreadMessages(client);
+    await checkReadAll(client, () => Courier.shared.readAllInboxMessages());
   },
 
   testAddInboxListener: async () => {
