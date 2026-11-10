@@ -3,35 +3,17 @@ import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
 
+// React Native starts in SceneDelegate. The app delegate keeps the push setup,
+// since APNs tokens are delivered to the application, not to a scene.
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-  var window: UIWindow?
-
-  var reactNativeDelegate: ReactNativeDelegate?
-  var reactNativeFactory: RCTReactNativeFactory?
-
   private let courierDelegate = CourierDelegate()
 
   func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
-    let delegate = ReactNativeDelegate()
-    let factory = RCTReactNativeFactory(delegate: delegate)
-    delegate.dependencyProvider = RCTAppDependencyProvider()
-
-    reactNativeDelegate = delegate
-    reactNativeFactory = factory
-
-    window = UIWindow(frame: UIScreen.main.bounds)
-
-    factory.startReactNative(
-      withModuleName: "CourierReactNativeExample",
-      in: window,
-      launchOptions: launchOptions
-    )
-
-    return true
+    true
   }
 
   func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
