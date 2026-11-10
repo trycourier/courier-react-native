@@ -168,102 +168,76 @@ class CourierInboxView : UIView {
 
 internal extension NSDictionary {
   
-    func toTabStyle() -> CourierStyles.Inbox.TabStyle? {
+    // Each style below fills the fields it leaves out from the fallback, as Android does
+
+    func toTabStyle(fallback: CourierStyles.Inbox.TabStyle) -> CourierStyles.Inbox.TabStyle {
       
-        guard let selectedDict = self["selected"] as? NSDictionary, let unselectedDict = self["unselected"] as? NSDictionary else {
-            return nil
-        }
-        
-        guard let selected = selectedDict.toTabItemStyle(), let unselected = unselectedDict.toTabItemStyle() else {
-          return nil
-        }
+        let selected = self["selected"] as? NSDictionary
+        let unselected = self["unselected"] as? NSDictionary
         
         return CourierStyles.Inbox.TabStyle(
-          selected: selected,
-          unselected: unselected
+          selected: selected?.toTabItemStyle(fallback: fallback.selected) ?? fallback.selected,
+          unselected: unselected?.toTabItemStyle(fallback: fallback.unselected) ?? fallback.unselected
         )
       
     }
   
-    func toTabItemStyle() -> CourierStyles.Inbox.TabItemStyle? {
+    func toTabItemStyle(fallback: CourierStyles.Inbox.TabItemStyle) -> CourierStyles.Inbox.TabItemStyle {
     
-        guard let fontDict = self["font"] as? NSDictionary, let indicatorDict = self["indicator"] as? NSDictionary else {
-            return nil
-        }
+        let font = self["font"] as? NSDictionary
+        let indicator = self["indicator"] as? NSDictionary
         
-        let font = fontDict.toFont()
-        guard let indicator = indicatorDict.toTabIndicatorStyle() else {
-            return nil
-        }
-        
-        return CourierStyles.Inbox.TabItemStyle(font: font, indicator: indicator)
+        return CourierStyles.Inbox.TabItemStyle(
+          font: font?.toFont(fallback: fallback.font) ?? fallback.font,
+          indicator: indicator?.toTabIndicatorStyle(fallback: fallback.indicator) ?? fallback.indicator
+        )
       
     }
   
-    func toTabIndicatorStyle() -> CourierStyles.Inbox.TabIndicatorStyle? {
+    func toTabIndicatorStyle(fallback: CourierStyles.Inbox.TabIndicatorStyle) -> CourierStyles.Inbox.TabIndicatorStyle {
       
-        guard let fontDict = self["font"] as? NSDictionary, let colorString = self["color"] as? String else {
-            return nil
-        }
-      
-        let font = fontDict.toFont()
-        guard let color = colorString.toColor() else {
-          return nil
-        }
+        let font = self["font"] as? NSDictionary
+        let color = self["color"] as? String
         
         return CourierStyles.Inbox.TabIndicatorStyle(
-          font: font,
-          color: color
+          font: font?.toFont(fallback: fallback.font) ?? fallback.font,
+          color: color?.toColor() ?? fallback.color
         )
       
     }
   
-    func toReadingSwipeActionStyle() -> CourierStyles.Inbox.ReadingSwipeActionStyle? {
+    func toReadingSwipeActionStyle(fallback: CourierStyles.Inbox.ReadingSwipeActionStyle) -> CourierStyles.Inbox.ReadingSwipeActionStyle {
       
-        guard let readDict = self["read"] as? NSDictionary, let unreadDict = self["unread"] as? NSDictionary else {
-            return nil
-        }
-        
-        guard let read = readDict.toSwipeActionStyle(), let unread = unreadDict.toSwipeActionStyle() else {
-            return nil
-        }
+        let read = self["read"] as? NSDictionary
+        let unread = self["unread"] as? NSDictionary
         
         return CourierStyles.Inbox.ReadingSwipeActionStyle(
-            read: read,
-            unread: unread
+            read: read?.toSwipeActionStyle(fallback: fallback.read) ?? fallback.read,
+            unread: unread?.toSwipeActionStyle(fallback: fallback.unread) ?? fallback.unread
         )
       
     }
   
-    func toArchivingSwipeActionStyle() -> CourierStyles.Inbox.ArchivingSwipeActionStyle? {
+    func toArchivingSwipeActionStyle(fallback: CourierStyles.Inbox.ArchivingSwipeActionStyle) -> CourierStyles.Inbox.ArchivingSwipeActionStyle {
       
-        guard let archiveDict = self["archive"] as? NSDictionary else {
-            return nil
-        }
+        let archive = self["archive"] as? NSDictionary
         
-        guard let archive = archiveDict.toSwipeActionStyle() else {
-            return nil
-        }
-        
-        return CourierStyles.Inbox.ArchivingSwipeActionStyle(archive: archive)
+        return CourierStyles.Inbox.ArchivingSwipeActionStyle(
+            archive: archive?.toSwipeActionStyle(fallback: fallback.archive) ?? fallback.archive
+        )
       
     }
   
-    func toSwipeActionStyle() -> CourierStyles.Inbox.SwipeActionStyle? {
+    func toSwipeActionStyle(fallback: CourierStyles.Inbox.SwipeActionStyle) -> CourierStyles.Inbox.SwipeActionStyle {
       
       // Get the image from assets if possible
-      var image: UIImage? = nil
-      if let icon = self["icon"] as? String {
-        image = UIImage(named: icon)
-      }
-    
-      guard let colorString = self["color"] as? String else {
-        return nil
-      }
+      let icon = (self["icon"] as? String).flatMap { UIImage(named: $0) }
+      let color = self["color"] as? String
       
-      let color = colorString.toColor() ?? .systemBlue
-      
-      return CourierStyles.Inbox.SwipeActionStyle(icon: image, color: color)
+      return CourierStyles.Inbox.SwipeActionStyle(
+        icon: icon ?? fallback.icon,
+        color: color?.toColor() ?? fallback.color
+      )
       
     }
     
@@ -291,8 +265,8 @@ internal extension NSDictionary {
         let read = self["read"] as? NSDictionary
         
         return CourierStyles.Inbox.TextStyle(
-            unread: unread?.toFont() ?? fallback.unread,
-            read: read?.toFont() ?? fallback.read
+            unread: unread?.toFont(fallback: fallback.unread) ?? fallback.unread,
+            read: read?.toFont(fallback: fallback.read) ?? fallback.read
         )
         
     }
@@ -339,9 +313,9 @@ internal extension NSDictionary {
             tabBackgroundColor: tabBackgroundColor?.toColor() ?? .systemBackground,
             listItemBackgroundColor: listItemBackgroundColor?.toColor() ?? .systemBackground,
             tabIndicatorColor: tabIndicatorColor?.toColor(),
-            tabStyle: tabStyle?.toTabStyle() ?? CourierInboxView.defaultTabStyle(),
-            readingSwipeActionStyle: readingSwipeActionStyle?.toReadingSwipeActionStyle() ?? CourierInboxView.defaultReadingStyle(),
-            archivingSwipeActionStyle: archivingSwipeActionStyle?.toArchivingSwipeActionStyle() ?? CourierInboxView.defaultArchivingStyle(),
+            tabStyle: tabStyle?.toTabStyle(fallback: CourierInboxView.defaultTabStyle()) ?? CourierInboxView.defaultTabStyle(),
+            readingSwipeActionStyle: readingSwipeActionStyle?.toReadingSwipeActionStyle(fallback: CourierInboxView.defaultReadingStyle()) ?? CourierInboxView.defaultReadingStyle(),
+            archivingSwipeActionStyle: archivingSwipeActionStyle?.toArchivingSwipeActionStyle(fallback: CourierInboxView.defaultArchivingStyle()) ?? CourierInboxView.defaultArchivingStyle(),
             messageAnimationStyle: messageAnimationStyle?.toRowAnimation() ?? .left,
             loadingIndicatorColor: loadingIndicatorColor?.toColor(),
             unreadIndicatorStyle: unreadIndicatorStyle?.toUnreadIndicatorStyle() ?? defaultTheme.unreadIndicatorStyle,
@@ -349,7 +323,7 @@ internal extension NSDictionary {
             timeStyle: timeStyle?.toTextStyle(fallback: defaultTheme.timeStyle) ?? defaultTheme.timeStyle,
             bodyStyle: bodyStyle?.toTextStyle(fallback: defaultTheme.bodyStyle) ?? defaultTheme.bodyStyle,
             buttonStyle: buttonStyle?.toButtonStyle(fallback: defaultTheme.buttonStyle) ?? defaultTheme.buttonStyle,
-            cellStyle: cellStyles?.toCellStyle() ?? defaultTheme.cellStyle,
+            cellStyle: cellStyles?.toCellStyle(fallback: defaultTheme.cellStyle) ?? defaultTheme.cellStyle,
             infoViewStyle: infoViewStyle?.toInfoView(fallback: defaultTheme.infoViewStyle) ?? defaultTheme.infoViewStyle
         )
         
