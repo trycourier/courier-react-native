@@ -292,30 +292,22 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
 
   }
 
-  private fun ReadableMap.toReadingSwipeActionStyle(): CourierStyles.Inbox.ReadingSwipeActionStyle? {
+  // A style that leaves a field out keeps the native default for it
 
-    val readDict = getMap("read") ?: return null
-    val unreadDict = getMap("unread") ?: return null
-
-    val read = readDict.toSwipeActionStyle() ?: return null
-    val unread = unreadDict.toSwipeActionStyle() ?: return null
-
+  private fun ReadableMap.toReadingSwipeActionStyle(): CourierStyles.Inbox.ReadingSwipeActionStyle {
     return CourierStyles.Inbox.ReadingSwipeActionStyle(
-      read = read,
-      unread = unread
+      read = getMap("read")?.toSwipeActionStyle() ?: CourierStyles.Inbox.SwipeActionStyle(),
+      unread = getMap("unread")?.toSwipeActionStyle() ?: CourierStyles.Inbox.SwipeActionStyle()
     )
-
   }
 
-  private fun ReadableMap.toArchivingSwipeActionStyle(): CourierStyles.Inbox.ArchivingSwipeActionStyle? {
-
-    val archiveDict = getMap("archive") ?: return null
-    val archive = archiveDict.toSwipeActionStyle() ?: return null
-
-    return CourierStyles.Inbox.ArchivingSwipeActionStyle(archive = archive)
+  private fun ReadableMap.toArchivingSwipeActionStyle(): CourierStyles.Inbox.ArchivingSwipeActionStyle {
+    return CourierStyles.Inbox.ArchivingSwipeActionStyle(
+      archive = getMap("archive")?.toSwipeActionStyle() ?: CourierStyles.Inbox.SwipeActionStyle()
+    )
   }
 
-  private fun ReadableMap.toSwipeActionStyle(): CourierStyles.Inbox.SwipeActionStyle? {
+  private fun ReadableMap.toSwipeActionStyle(): CourierStyles.Inbox.SwipeActionStyle {
 
     // Get the icon if possible
     // Not ideal with the identifier but going to have to work for now
@@ -323,8 +315,7 @@ class CourierInboxViewManager : SimpleViewManager<CourierInbox>() {
       return@let themedReactContext?.resources?.getIdentifier(it, "drawable", themedReactContext?.packageName)
     }.takeIf { it != 0 }
 
-    val colorString = getString("color") ?: return null
-    val color = colorString.toColor()
+    val color = getString("color")?.toColor()
 
     return CourierStyles.Inbox.SwipeActionStyle(icon = icon, color = color)
   }

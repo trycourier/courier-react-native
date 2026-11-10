@@ -36,10 +36,13 @@ internal fun String.toFont(context: Context): Typeface? {
   }
 }
 
+// isNull throws on a key that isn't there, so check hasKey first
+internal fun ReadableMap.getDoubleOrNull(name: String): Double? = if (hasKey(name) && !isNull(name)) getDouble(name) else null
+
 internal fun ReadableMap.toFont(context: Context): CourierStyles.Font {
 
   val typeface = getString("family")
-  val size = if (isNull("size")) null else getDouble("size")
+  val size = getDoubleOrNull("size")
   val color = getString("color")
 
   return CourierStyles.Font(
@@ -54,7 +57,7 @@ internal fun ReadableMap.toButton(context: Context): CourierStyles.Button {
 
   val font = getMap("font")
   val backgroundColor = getString("backgroundColor")
-  val cornerRadius = if (isNull("cornerRadius")) null else getDouble("cornerRadius")
+  val cornerRadius = getDoubleOrNull("cornerRadius")
 
   return CourierStyles.Button(
     font = font?.toFont(context),
