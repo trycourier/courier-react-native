@@ -3,9 +3,9 @@ import Courier_iOS
 @objc(CourierSharedModule)
 class CourierSharedModule: CourierReactNativeEventEmitter {
     
-    private var nativeEmitters = [String]()
-    private var authenticationListeners: [String: CourierAuthenticationListener] = [:]
-    private var inboxListeners: [String: CourierInboxListener] = [:]
+    private let nativeEmitters = Locked([String]())
+    private let authenticationListeners = Locked([String: CourierAuthenticationListener]())
+    private let inboxListeners = Locked([String: CourierInboxListener]())
 
     override func stopObserving() {
         removeAuthListeners()
@@ -15,7 +15,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     @objc(attachEmitter:withResolver:withRejecter:)
     func attachEmitter(emitterId: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
-        nativeEmitters.append(emitterId)
+        nativeEmitters.withValue { $0.append(emitterId) }
         resolve(emitterId)
         
     }
@@ -136,7 +136,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
                 )
             }
             
-            authenticationListeners[listenerId] = listener
+            authenticationListeners.withValue { $0[listenerId] = listener }
             
             resolve(listenerId)
           
@@ -149,13 +149,9 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         
         Task {
             
-            let listener = authenticationListeners[listenerId]
-            
-            // Disable the listener
+            // Take the listener out of the map, then disable it
+            let listener = authenticationListeners.withValue { $0.removeValue(forKey: listenerId) }
             listener?.remove()
-            
-            // Remove the id from the map
-            authenticationListeners.removeValue(forKey: listenerId)
             
             resolve(listenerId)
           
@@ -173,11 +169,14 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
   
     private func removeAuthListeners() {
       
-        for value in authenticationListeners.values {
-            value.remove()
+        let listeners = authenticationListeners.withValue { map in
+            defer { map.removeAll() }
+            return Array(map.values)
         }
       
-        authenticationListeners.removeAll()
+        for listener in listeners {
+            listener.remove()
+        }
       
     }
     
@@ -428,7 +427,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
           )
           
           // Store the listener so you can remove it later if needed
-          inboxListeners[listenerId] = listener
+          inboxListeners.withValue { $0[listenerId] = listener }
           
           // Resolve with the listenerId so JS knows the registration succeeded
           resolve(listenerId)
@@ -440,13 +439,9 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         
         Task {
             
-            let listener = inboxListeners[listenerId]
-            
-            // Disable the listener
+            // Take the listener out of the map, then disable it
+            let listener = inboxListeners.withValue { $0.removeValue(forKey: listenerId) }
             listener?.remove()
-            
-            // Remove the id from the map
-            inboxListeners.removeValue(forKey: listenerId)
             
             resolve(listenerId)
           
@@ -463,10 +458,13 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     }
   
     private func removeInboxListeners() {
-        for value in inboxListeners.values {
-            value.remove()
+        let listeners = inboxListeners.withValue { map in
+            defer { map.removeAll() }
+            return Array(map.values)
         }
-        inboxListeners.removeAll()
+        for listener in listeners {
+            listener.remove()
+        }
     }
     
     @objc(refreshInbox: withRejecter:)
@@ -491,7 +489,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
     }
 
     override func supportedEvents() -> [String]! {
-        return nativeEmitters
+        return nativeEmitters.withValue { $0 }
     }
 
     @objc(setIsUITestsActive:)

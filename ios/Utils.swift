@@ -279,3 +279,22 @@ internal extension RCTEventEmitter {
     }
     
 }
+
+// State that Swift tasks, the module queue and the JS thread all touch.
+// Every read and write goes through the lock.
+internal final class Locked<Value> {
+
+    private var value: Value
+    private let lock = NSLock()
+
+    init(_ value: Value) {
+        self.value = value
+    }
+
+    func withValue<T>(_ body: (inout Value) throws -> T) rethrows -> T {
+        lock.lock()
+        defer { lock.unlock() }
+        return try body(&value)
+    }
+
+}
