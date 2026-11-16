@@ -32,6 +32,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.WritableMap
 import kotlinx.coroutines.CoroutineScope
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -44,8 +45,9 @@ class CourierSharedModule(
 ) {
 
   // Listeners
-  private var authenticationListeners = mutableMapOf<String, CourierAuthenticationListener>()
-  private var inboxListeners = mutableMapOf<String, CourierInboxListener>()
+  // Changed from the main thread and the native modules thread
+  private val authenticationListeners = ConcurrentHashMap<String, CourierAuthenticationListener>()
+  private val inboxListeners = ConcurrentHashMap<String, CourierInboxListener>()
 
   @ReactMethod
   fun addListener(type: String?) {
@@ -186,13 +188,13 @@ class CourierSharedModule(
 
   @ReactMethod
   fun getInboxPaginationLimit(promise: Promise) {
-    promise.resolve(Courier.shared.inboxPaginationLimit.toString())
+    promise.resolve(Courier.shared.inboxPaginationLimit)
   }
 
   @ReactMethod
   fun setInboxPaginationLimit(limit: Double, promise: Promise) {
     Courier.shared.inboxPaginationLimit = limit.toInt()
-    promise.resolve(Courier.shared.inboxPaginationLimit.toString())
+    promise.resolve(Courier.shared.inboxPaginationLimit)
   }
 
   @ReactMethod

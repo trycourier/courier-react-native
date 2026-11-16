@@ -4,7 +4,7 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import { Alert, Button } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Auth from './pages/Auth';
 import Push from './pages/Push';
 import Inbox from './pages/Inbox';

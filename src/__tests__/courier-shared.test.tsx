@@ -180,6 +180,19 @@ describe('Authentication listeners', () => {
     );
   });
 
+  it('listener.remove() removes the native authentication listener', async () => {
+    const listener = await Courier.shared.addAuthenticationListener({
+      onUserChanged: jest.fn(),
+    });
+
+    await listener.remove();
+
+    expect(mockShared.removeAuthenticationListener).toHaveBeenCalledWith(
+      listener.listenerId
+    );
+    expect(mockShared.removeInboxListener).not.toHaveBeenCalled();
+  });
+
   it('removeAllAuthenticationListeners clears all listeners', async () => {
     await Courier.shared.addAuthenticationListener({
       onUserChanged: jest.fn(),
@@ -268,6 +281,12 @@ describe('Inbox shared methods', () => {
   it('getInboxPaginationLimit returns number', async () => {
     const limit = await Courier.shared.getInboxPaginationLimit();
     expect(limit).toBe(32);
+  });
+
+  it('getInboxPaginationLimit returns a number when native resolves a string', async () => {
+    mockShared.getInboxPaginationLimit.mockResolvedValueOnce('20');
+    const limit = await Courier.shared.getInboxPaginationLimit();
+    expect(limit).toBe(20);
   });
 
   it('setInboxPaginationLimit delegates to native', async () => {

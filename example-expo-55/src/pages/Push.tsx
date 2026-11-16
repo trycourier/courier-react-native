@@ -9,8 +9,10 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
+import { useExampleColors } from '../ExampleColors';
 
 const Push = () => {
+  const colors = useExampleColors();
   const [isLoading, setIsLoading] = useState(false);
   const [tokens, setTokens] = useState<Map<string, string>>(new Map());
 
@@ -53,11 +55,12 @@ const Push = () => {
       padding: 20,
     },
     button: {
-      backgroundColor: 'lightgray',
+      backgroundColor: colors.button,
       padding: 10,
       borderRadius: 5,
     },
     buttonText: {
+      color: colors.text,
       fontSize: 16,
       fontFamily: Platform.select({
         ios: 'Courier',
@@ -81,10 +84,12 @@ const Push = () => {
       }),
       fontWeight: 'bold',
       fontSize: 16,
+      color: colors.text,
     },
     valueText: {
       flex: 1,
       textAlign: 'right',
+      color: colors.text,
       fontFamily: Platform.select({
         ios: 'Courier',
         android: 'monospace',

@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useExampleColors } from '../../ExampleColors';
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
 import Courier, {
   CourierUserPreferencesChannel,
@@ -18,6 +19,8 @@ import { emitEvent } from '../../Emitter';
 import Toast from 'react-native-toast-message';
 
 const PreferencesDetail = ({ route, navigation }: any) => {
+  const colors = useExampleColors();
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -28,7 +31,7 @@ const PreferencesDetail = ({ route, navigation }: any) => {
       alignItems: 'center',
       justifyContent: 'space-between',
       borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
+      borderBottomColor: colors.border,
     },
     text: {
       fontFamily: Platform.select({
@@ -37,6 +40,7 @@ const PreferencesDetail = ({ route, navigation }: any) => {
         default: 'monospace',
       }),
       fontSize: 16,
+      color: colors.text,
     },
     section: {
       marginBottom: 20,
@@ -44,6 +48,7 @@ const PreferencesDetail = ({ route, navigation }: any) => {
     title: {
       fontWeight: 'bold',
       marginBottom: 8,
+      color: colors.text,
     },
     loading: {
       flex: 1,

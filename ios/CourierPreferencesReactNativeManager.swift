@@ -110,14 +110,14 @@ internal extension NSDictionary {
         
     }
     
-    func toSheetSettingStyles() -> CourierStyles.Preferences.SettingStyles {
+    func toSheetSettingStyles(fallback: CourierStyles.Preferences.SettingStyles) -> CourierStyles.Preferences.SettingStyles {
         
         let font = self["font"] as? NSDictionary
         let toggleColor = self["toggleColor"] as? String
         
         return CourierStyles.Preferences.SettingStyles(
-            font: font?.toFont(),
-            toggleColor: toggleColor?.toColor()
+            font: font?.toFont(fallback: fallback.font) ?? fallback.font,
+            toggleColor: toggleColor?.toColor() ?? fallback.toggleColor
         )
         
     }
@@ -127,6 +127,7 @@ internal extension NSDictionary {
         let defaultTheme = CourierPreferencesTheme()
         
         let brandId = self["brandId"] as? String
+        let loadingIndicatorColor = self["loadingIndicatorColor"] as? String
         let sectionTitleFont = self["sectionTitleFont"] as? NSDictionary
         let topicTitleFont = self["topicTitleFont"] as? NSDictionary
         let topicSubtitleFont = self["topicSubtitleFont"] as? NSDictionary
@@ -142,15 +143,16 @@ internal extension NSDictionary {
         
         return CourierPreferencesTheme(
             brandId: brandId,
-            sectionTitleFont: sectionTitleFont?.toFont() ?? defaultTheme.sectionTitleFont,
-            topicCellStyles: topicCellStyles?.toCellStyle() ?? defaultTheme.topicCellStyles,
-            topicTitleFont: topicTitleFont?.toFont() ?? defaultTheme.topicTitleFont,
-            topicSubtitleFont: topicSubtitleFont?.toFont() ?? defaultTheme.topicSubtitleFont,
+            loadingIndicatorColor: loadingIndicatorColor?.toColor(),
+            sectionTitleFont: sectionTitleFont?.toFont(fallback: defaultTheme.sectionTitleFont) ?? defaultTheme.sectionTitleFont,
+            topicCellStyles: topicCellStyles?.toCellStyle(fallback: defaultTheme.topicCellStyles) ?? defaultTheme.topicCellStyles,
+            topicTitleFont: topicTitleFont?.toFont(fallback: defaultTheme.topicTitleFont) ?? defaultTheme.topicTitleFont,
+            topicSubtitleFont: topicSubtitleFont?.toFont(fallback: defaultTheme.topicSubtitleFont) ?? defaultTheme.topicSubtitleFont,
             topicButton: topicButton?.toButton(fallback: defaultTheme.topicButton) ?? defaultTheme.topicButton,
-            sheetTitleFont: sheetTitleFont?.toFont() ?? defaultTheme.sheetTitleFont,
-            sheetSettingStyles: sheetSettingStyles?.toSheetSettingStyles() ?? defaultTheme.sheetSettingStyles,
+            sheetTitleFont: sheetTitleFont?.toFont(fallback: defaultTheme.sheetTitleFont) ?? defaultTheme.sheetTitleFont,
+            sheetSettingStyles: sheetSettingStyles?.toSheetSettingStyles(fallback: defaultTheme.sheetSettingStyles) ?? defaultTheme.sheetSettingStyles,
             sheetCornerRadius: sheetCornerRadius ?? defaultTheme.sheetCornerRadius,
-            sheetCellStyles: sheetCellStyles?.toCellStyle() ?? defaultTheme.sheetCellStyles,
+            sheetCellStyles: sheetCellStyles?.toCellStyle(fallback: defaultTheme.sheetCellStyles) ?? defaultTheme.sheetCellStyles,
             infoViewStyle: infoViewStyle?.toInfoView(fallback: defaultTheme.infoViewStyle) ?? defaultTheme.infoViewStyle
         )
         

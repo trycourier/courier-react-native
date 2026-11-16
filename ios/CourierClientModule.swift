@@ -10,7 +10,7 @@ import Courier_iOS
 @objc(CourierClientModule)
 internal class CourierClientModule: CourierReactNativeEventEmitter {
 
-    private var clients: [String: CourierClient] = [:]
+    private let clients = Locked([String: CourierClient]())
 
     @objc(addClient:)
     func addClient(options: NSDictionary) -> String {
@@ -30,7 +30,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
         )
 
         let uuid = UUID().uuidString
-        clients[uuid] = client
+        clients.withValue { $0[uuid] = client }
 
         return uuid
 
@@ -39,7 +39,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(removeClient:)
     func removeClient(clientId: NSString) -> String {
         let id = clientId as String
-        clients.removeValue(forKey: id)
+        clients.withValue { _ = $0.removeValue(forKey: id) }
         return id
     }
 
@@ -48,7 +48,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(putUserToken:withToken:withProvider:withDevice:withResolver:withRejecter:)
     func putUserToken(clientId: NSString, token: NSString, provider: NSString, device: NSDictionary?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -85,7 +85,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(deleteUserToken:withToken:withResolver:withRejecter:)
     func deleteUserToken(clientId: NSString, token: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -109,7 +109,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(getBrand:withBrandId:withResolver:withRejecter:)
     func getBrand(clientId: NSString, brandId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -135,7 +135,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(getMessages:withPaginationLimit:withStartCursor:withResolver:withRejecter:)
     func getMessages(clientId: NSString, paginationLimit: Double, startCursor: NSString?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -160,7 +160,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(getArchivedMessages:withPaginationLimit:withStartCursor:withResolver:withRejecter:)
     func getArchivedMessages(clientId: NSString, paginationLimit: Double, startCursor: NSString?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -185,7 +185,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(getMessageById:withMessageId:withResolver:withRejecter:)
     func getMessageById(clientId: NSString, messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -206,7 +206,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(getUnreadMessageCount:withResolver:withRejecter:)
     func getUnreadMessageCount(clientId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -224,7 +224,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(openMessage:withMessageId:withResolver:withRejecter:)
     func openMessage(clientId: NSString, messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -246,7 +246,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(readMessage:withMessageId:withResolver:withRejecter:)
     func readMessage(clientId: NSString, messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -268,7 +268,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(unreadMessage:withMessageId:withResolver:withRejecter:)
     func unreadMessage(clientId: NSString, messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -290,7 +290,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(clickMessage:withMessageId:withTrackingId:withResolver:withRejecter:)
     func clickMessage(clientId: NSString, messageId: NSString, trackingId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -314,7 +314,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(archiveMessage:withMessageId:withResolver:withRejecter:)
     func archiveMessage(clientId: NSString, messageId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -336,7 +336,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(readAllMessages:withResolver:withRejecter:)
     func readAllMessages(clientId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -354,7 +354,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(getUserPreferences:withPaginationCursor:withResolver:withRejecter:)
     func getUserPreferences(clientId: NSString, paginationCursor: NSString?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -377,7 +377,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(getUserPreferenceTopic:withTopicId:withResolver:withRejecter:)
     func getUserPreferenceTopic(clientId: NSString, topicId: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -400,7 +400,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(putUserPreferenceTopic:withTopicId:withStatus:withHasCustomRouting:withCustomRouting:withResolver:withRejecter:)
     func putUserPreferenceTopic(clientId: NSString, topicId: NSString, status: NSString, hasCustomRouting: Bool, customRouting: NSArray, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }
@@ -427,7 +427,7 @@ internal class CourierClientModule: CourierReactNativeEventEmitter {
     @objc(postTrackingUrl:withUrl:withEvent:withResolver:withRejecter:)
     func postTrackingUrl(clientId: NSString, url: NSString, event: NSString, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-        guard let client = clients[clientId as String] else {
+        guard let client = clients.withValue({ $0[clientId as String] }) else {
             Rejections.missingClient(reject)
             return
         }

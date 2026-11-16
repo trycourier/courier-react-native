@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useExampleColors } from './ExampleColors';
 
 export interface TabItem {
   title: string;
@@ -14,16 +15,28 @@ export const Tab = ({
   title: string;
   isSelected: boolean;
   onPress: () => void;
-}) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.tabButton, isSelected && styles.selectedTabButton]}
-  >
-    <Text style={[styles.tabText, isSelected && styles.selectedTabText]}>
-      {title}
-    </Text>
-  </TouchableOpacity>
-);
+}) => {
+  const colors = useExampleColors();
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.tabButton,
+        isSelected && { borderBottomColor: colors.tabIndicator },
+      ]}
+    >
+      <Text
+        style={[
+          { color: colors.text },
+          isSelected && styles.selectedTabText,
+        ]}
+      >
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 export const TabControl = ({
   tabs,
@@ -66,12 +79,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
-  },
-  selectedTabButton: {
-    borderBottomColor: 'blue',
-  },
-  tabText: {
-    color: 'black',
   },
   selectedTabText: {
     fontWeight: 'bold',

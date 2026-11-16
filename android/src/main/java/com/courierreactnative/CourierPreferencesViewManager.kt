@@ -108,6 +108,7 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
     val topicTitleFont = getMap("topicTitleFont")
     val topicSubtitleFont = getMap("topicSubtitleFont")
     val sheetTitleFont = getMap("sheetTitleFont")
+    val infoViewStyle = getMap("infoViewStyle")
 
     val android = getMap("android")
     val topicDividerItemDecoration = android?.getString("topicDividerItemDecoration")
@@ -127,7 +128,8 @@ class CourierPreferencesViewManager : SimpleViewManager<CourierPreferences>() {
       topicSubtitleFont = topicSubtitleFont?.toFont(context) ?: defaultTheme.topicSubtitleFont,
       sheetTitleFont = sheetTitleFont?.toFont(context) ?: defaultTheme.sheetTitleFont,
       sheetDividerItemDecoration = sheetDividerItemDecoration?.toDivider(context),
-      sheetSettingStyles = sheetSettingStyles?.toSheetSettingStyles(context, fallback = defaultTheme.sheetSettingStyles) ?: defaultTheme.sheetSettingStyles
+      sheetSettingStyles = sheetSettingStyles?.toSheetSettingStyles(context, fallback = defaultTheme.sheetSettingStyles) ?: defaultTheme.sheetSettingStyles,
+      infoViewStyle = infoViewStyle?.toInfoViewStyle(context) ?: defaultTheme.infoViewStyle
     )
 
   }

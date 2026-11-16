@@ -485,7 +485,8 @@ class Courier {
    * Default is 32.
    */
   public async getInboxPaginationLimit(): Promise<number> {
-    return await Modules.Shared.getInboxPaginationLimit();
+    // Native modules before 6.0.7 resolved the limit as a string
+    return Number(await Modules.Shared.getInboxPaginationLimit());
   }
 
   /**
