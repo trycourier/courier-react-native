@@ -99,7 +99,7 @@ jobs:
   # courier-react-native.podspec. Nothing else in CI builds iOS, so a Courier_iOS bump that breaks
   # the Swift bridge would otherwise pass. Build-only: no secrets, no signing.
   build-ios-xcode:
-    name: build-ios (Xcode ${{ matrix.xcode }})
+    name: build-ios (Xcode ${{ matrix.xcode }}${{ matrix.frameworks && ', static frameworks' || '' }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     strategy:
@@ -107,12 +107,18 @@ jobs:
       # Xcode 26 only: on Xcode 16, Courier_iOS from spm_dependency links twice into React
       # Native's static pod libraries (duplicate symbols). The App Store has required Xcode 26
       # since April 28, 2026.
+      # Static frameworks too: apps using @react-native-firebase need use_frameworks!, and the pod's
+      # headers resolve differently there.
       matrix:
         include:
           - runner: macos-26
             xcode: '26.6'
+            frameworks: ''
+          - runner: macos-26
+            xcode: '26.6'
+            frameworks: static
     concurrency:
-      group: build-ios-${{ matrix.xcode }}-${{ github.ref }}
+      group: build-ios-${{ matrix.xcode }}-${{ matrix.frameworks }}-${{ github.ref }}
       cancel-in-progress: true
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
@@ -137,15 +143,16 @@ jobs:
           path: |
             ~/Library/Caches/CocoaPods
             ~/.cocoapods
-          key: ${{ runner.os }}-pods-${{ hashFiles('example-085/ios/Podfile.lock', 'courier-react-native.podspec') }}
+          key: ${{ runner.os }}-pods-${{ matrix.frameworks }}-${{ hashFiles('example-085/ios/Podfile.lock', 'courier-react-native.podspec') }}
           restore-keys: |
-            ${{ runner.os }}-pods-
+            ${{ runner.os }}-pods-${{ matrix.frameworks }}-
 
       # React Native 0.75+ resolves Courier_iOS through Swift Package Manager (spm_dependency in
       # the podspec), so it isn't a pod and Podfile.lock doesn't record it.
+      # USE_FRAMEWORKS is only set for the static entry: the Podfile treats an empty value as a linkage.
       - name: Install pods
         working-directory: example-085/ios
-        run: bundle exec pod install
+        run: ${{ matrix.frameworks && format('USE_FRAMEWORKS={0} ', matrix.frameworks) || '' }}bundle exec pod install
 
       - name: Check Courier_iOS isn't installed from CocoaPods
         run: |
@@ -154,14 +161,18 @@ jobs:
             exit 1
           fi
 
-      # ARCHS=arm64 keeps the generic simulator destination from also building x86_64.
+      # ARCHS=arm64 keeps the generic simulator destination from also building x86_64. The static
+      # frameworks entry builds Release, because React Native's own Debug symbols don't link with
+      # static frameworks, and SKIP_BUNDLING leaves the JS bundle out.
       - name: Build example app for iOS Simulator
         working-directory: example-085/ios
+        env:
+          SKIP_BUNDLING: 1
         run: |
           xcodebuild build \
             -workspace CourierReactNativeExample.xcworkspace \
             -scheme CourierReactNativeExample \
-            -configuration Debug \
+            -configuration ${{ matrix.frameworks && 'Release' || 'Debug' }} \
             -destination 'generic/platform=iOS Simulator' \
             ARCHS=arm64 \
             CODE_SIGNING_ALLOWED=NO \
