@@ -19,12 +19,19 @@ Pod::Spec.new do |s|
   s.exclude_files = "ios/Package.swift"
 
   # Courier Core Dependency
-  # React Native 0.75+ pulls Courier_iOS through Swift Package Manager, because CocoaPods trunk
-  # goes read-only on December 2, 2026. Older React Native falls back to trunk and stays on
-  # 6.0.10, the last Courier_iOS published there.
+  # Courier_iOS comes through Swift Package Manager (spm_dependency, React Native 0.75+), because
+  # CocoaPods trunk goes read-only on December 2, 2026. Otherwise it falls back to trunk, which
+  # stays on 6.0.10, the last Courier_iOS published there.
   courier_ios_version = "6.0.10"
   courier_ios_trunk_version = "6.0.10"
-  if respond_to?(:spm_dependency, true)
+  # React Native 0.87 and 0.88 build static pods with Swift package dependencies into the shared
+  # products dir, but rewrite the app's module map paths with the pod name rather than the module
+  # name, so a pod with a hyphen in its name (this one) fails to build. 0.89 fixed it
+  # (react/react-native#59182). Those versions fall back to CocoaPods trunk.
+  spm_helper = $LOADED_FEATURES.find { |f| f.end_with?("cocoapods/spm.rb") }
+  spm_helper_source = spm_helper ? File.read(spm_helper) : ""
+  spm_helper_broken = spm_helper_source.include?("shared products dir") && !spm_helper_source.include?("product_module_name")
+  if respond_to?(:spm_dependency, true) && !spm_helper_broken
     spm_dependency(s,
       url: "https://github.com/trycourier/courier-ios.git",
       requirement: { kind: "exactVersion", version: courier_ios_version },

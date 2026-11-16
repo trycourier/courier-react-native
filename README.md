@@ -16,9 +16,9 @@ Also available via `yarn add @trycourier/courier-react-native`. After installing
 
 ### iOS
 
-On React Native 0.75 and later, `pod install` gets the native iOS SDK, [Courier_iOS](https://github.com/trycourier/courier-ios), through Swift Package Manager. In React Native's Swift Package Manager mode, `npx react-native spm` picks up the package's own `Package.swift`. Nothing else to set up.
+`pod install` sets up the native iOS SDK, [Courier_iOS](https://github.com/trycourier/courier-ios). In React Native's Swift Package Manager mode, `npx react-native spm` picks up the package instead.
 
-**Notification service extension:** add Courier_iOS to the extension target with Swift Package Manager. In Xcode, choose **File > Add Package Dependencies**, enter `https://github.com/trycourier/courier-ios`, and pick **Up to Next Major Version**. If the extension has `pod 'Courier_iOS'` in your Podfile, remove it and run `pod install`.
+**Notification service extension:** add Courier_iOS to the extension target with Swift Package Manager. In Xcode, choose **File > Add Package Dependencies**, enter `https://github.com/trycourier/courier-ios`, and pick **Up to Next Major Version**. If the extension has `pod 'Courier_iOS'` in your Podfile, remove it.
 
 ## Quick Start
 
