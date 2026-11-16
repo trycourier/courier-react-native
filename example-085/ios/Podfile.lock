@@ -22,7 +22,7 @@ PODS:
     - ReactNativeDependencies
     - Yoga
   - courier-react-native (6.0.9):
-    - Courier_iOS (= 6.0.9)
+    - Courier_iOS (= 6.0.10)
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -44,7 +44,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - Courier_iOS (6.0.9)
+  - Courier_iOS (6.0.10)
   - FBLazyVector (0.85.3)
   - hermes-engine (250829098.0.10):
     - hermes-engine/Pre-built (= 250829098.0.10)
@@ -2305,8 +2305,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AsyncStorage: 3159283852d8bfabb4653cf17f1a1fef2a8a0eb6
-  courier-react-native: 255022d58303b98fda1328fee6d99c00ef9fd310
-  Courier_iOS: be1f55af1b0cc95603511d3ef08e8d0e60e3c09c
+  courier-react-native: a5a72f2747f3c9a182b3e15a6117403e91dd8e9b
+  Courier_iOS: 381d59e25d76228e332115fc65fbdc8e19ac94a2
   FBLazyVector: 24e62c765683b8d89006a88a2c8f5cf019f0074d
   hermes-engine: 071e4e08df3e1b7440b2ed25ce0f4855e12e5599
   RCTDeprecation: a4c521821fab57cbb125b36effe84d897d0dfa12
