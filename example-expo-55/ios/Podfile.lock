@@ -1,8 +1,8 @@
 PODS:
   - boost (1.84.0):
     - ReactNativeDependencies
-  - courier-react-native (6.0.8):
-    - Courier_iOS (= 6.0.7)
+  - courier-react-native (6.1.1):
+    - Courier_iOS (= 6.0.10)
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -25,7 +25,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - Courier_iOS (6.0.7)
+  - Courier_iOS (6.0.10)
   - DoubleConversion (1.1.6):
     - ReactNativeDependencies
   - EXConstants (58.0.15):
@@ -2798,8 +2798,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 2a9d6e1d9873337543f08d9dbc007b288f4e113b
-  courier-react-native: e7eed3d852db29e6d10dc638b601cb224f126cb5
-  Courier_iOS: 4d04496cfd69240d7a20db9f256ab225bb329f01
+  courier-react-native: 80dd092beede86771046c73c4802c79d0fdc33a8
+  Courier_iOS: 381d59e25d76228e332115fc65fbdc8e19ac94a2
   DoubleConversion: e85e4faac763226bfd1cc4c6a98d8355149b27a5
   EXConstants: 5d5a46bb416fa1ea23846ac92b7275bb3e5cb19a
   EXJSONUtils: d59bf6b18639752631a81818559b2675a46f99e2
@@ -2819,7 +2819,7 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: 4b1d72985be0a6762469631fb767160859ce4284
   ExpoLinking: 9d89c7c3f51e1cc9a77c29a4446d7ff2ca7ad295
   ExpoLogBox: b8b45166261495bfea7743267194b543104f49a7
-  ExpoModulesCore: 1d1286963b845c122ad3ebad4bc008926b3f6ebf
+  ExpoModulesCore: 1db0d1795b511967afbaf47f9b3827c74be7d014
   ExpoModulesJSI: 5e2ead8c6ba5b0f94edd59a29429d86ce5f01757
   ExpoModulesWorklets: 5cdbbf5298d020e931be6961b9e0e9f165495f9b
   ExpoModulesWorkletsAdapter: 654b355df0e5dadb2260ce650758ba39d86833b1
