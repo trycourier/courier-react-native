@@ -1,14 +1,16 @@
+import UIKit
 import Courier_iOS
+import React
 
 @available(iOS 15.0, *)
 @objc(CourierPreferencesViewManager)
-class CourierPreferencesViewManager: RCTViewManager {
+public class CourierPreferencesViewManager: RCTViewManager {
 
-    override func view() -> (CourierPreferencesView) {
+    public override func view() -> UIView {
         return CourierPreferencesView()
     }
 
-    @objc override static func requiresMainQueueSetup() -> Bool {
+    @objc public override static func requiresMainQueueSetup() -> Bool {
         return true
     }
     

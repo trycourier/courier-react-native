@@ -5,11 +5,12 @@
 //  Created by Michael Miller on 8/27/24.
 //
 
+import UIKit
 import Courier_iOS
 import React
 
 @objc(CourierSystemModule)
-class CourierSystemModule: CourierReactNativeEventEmitter {
+public class CourierSystemModule: CourierReactNativeEventEmitter {
     
     private var isReactNativeReady: Bool = false
     private var lastClickedMessage: [AnyHashable: Any]? = nil
@@ -164,7 +165,7 @@ class CourierSystemModule: CourierReactNativeEventEmitter {
         
     }
     
-    override func supportedEvents() -> [String]! {
+    public override func supportedEvents() -> [String]! {
         return [
             PushEvents.CLICKED_EVENT,
             PushEvents.DELIVERED_EVENT

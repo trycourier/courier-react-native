@@ -5,9 +5,11 @@
 //  Created by Michael Miller on 8/21/24.
 //
 
+import UIKit
 import Courier_iOS
+import React
 
-internal class CourierReactNativeEventEmitter: RCTEventEmitter {
+public class CourierReactNativeEventEmitter: RCTEventEmitter {
     
     override init() {
         super.init()
@@ -18,7 +20,7 @@ internal class CourierReactNativeEventEmitter: RCTEventEmitter {
         
     }
     
-    @objc override static func requiresMainQueueSetup() -> Bool {
+    @objc public override static func requiresMainQueueSetup() -> Bool {
         return true
     }
     

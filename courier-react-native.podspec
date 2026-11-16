@@ -15,6 +15,8 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/trycourier/courier-react-native.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
+  # The Swift package manifest for React Native's SwiftPM mode, not a source file
+  s.exclude_files = "ios/Package.swift"
 
   # Courier Core Dependency
   # React Native 0.75+ pulls Courier_iOS through Swift Package Manager, because CocoaPods trunk

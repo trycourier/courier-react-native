@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import UIKit
 import Courier_iOS
+import React
 
 extension UNAuthorizationStatus {
 
