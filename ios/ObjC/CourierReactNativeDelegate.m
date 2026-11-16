@@ -6,7 +6,7 @@
 //
 
 @import Courier_iOS;
-#import "CourierReactNativeDelegate.h"
+#import "courier-react-native/CourierReactNativeDelegate.h"
 #import <React/RCTRootView.h>
 #import <React/RCTBridge.h>
 #import <React/RCTBridge+Private.h>
