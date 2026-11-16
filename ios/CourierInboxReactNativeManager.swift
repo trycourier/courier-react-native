@@ -1,13 +1,15 @@
+import UIKit
 import Courier_iOS
+import React
 
 @objc(CourierInboxViewManager)
-class CourierInboxViewManager: RCTViewManager {
+public class CourierInboxViewManager: RCTViewManager {
 
-    override func view() -> (CourierInboxView) {
+    public override func view() -> UIView {
         return CourierInboxView()
     }
 
-    @objc override static func requiresMainQueueSetup() -> Bool {
+    @objc public override static func requiresMainQueueSetup() -> Bool {
         return true
     }
     

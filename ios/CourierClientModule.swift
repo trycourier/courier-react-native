@@ -5,10 +5,12 @@
 //  Created by Michael Miller on 8/21/24.
 //
 
+import UIKit
 import Courier_iOS
+import React
 
 @objc(CourierClientModule)
-internal class CourierClientModule: CourierReactNativeEventEmitter {
+public class CourierClientModule: CourierReactNativeEventEmitter {
 
     private let clients = Locked([String: CourierClient]())
 

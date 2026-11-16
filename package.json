@@ -176,5 +176,8 @@
   },
   "dependencies": {
     "react-native-toast-message": "^2.2.0"
+  },
+  "swiftpmConfig": {
+    "name": "CourierReactNative"
   }
 }

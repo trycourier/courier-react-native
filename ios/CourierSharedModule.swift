@@ -1,13 +1,15 @@
+import UIKit
 import Courier_iOS
+import React
 
 @objc(CourierSharedModule)
-class CourierSharedModule: CourierReactNativeEventEmitter {
+public class CourierSharedModule: CourierReactNativeEventEmitter {
     
     private let nativeEmitters = Locked([String]())
     private let authenticationListeners = Locked([String: CourierAuthenticationListener]())
     private let inboxListeners = Locked([String: CourierInboxListener]())
 
-    override func stopObserving() {
+    public override func stopObserving() {
         removeAuthListeners()
         removeInboxListeners()
     }
@@ -488,7 +490,7 @@ class CourierSharedModule: CourierReactNativeEventEmitter {
         }
     }
 
-    override func supportedEvents() -> [String]! {
+    public override func supportedEvents() -> [String]! {
         return nativeEmitters.withValue { $0 }
     }
 

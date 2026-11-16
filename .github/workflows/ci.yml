@@ -97,20 +97,20 @@ jobs:
 
   # Compiles the library's Swift (ios/) against the Courier_iOS version pinned in
   # courier-react-native.podspec. Nothing else in CI builds iOS, so a Courier_iOS bump that breaks
-  # the Swift bridge would otherwise pass. Built on the current Xcode and on the oldest one
-  # courier-ios still builds on. Build-only: no secrets, no signing.
+  # the Swift bridge would otherwise pass. Build-only: no secrets, no signing.
   build-ios-xcode:
     name: build-ios (Xcode ${{ matrix.xcode }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     strategy:
       fail-fast: false
+      # Xcode 26 only: on Xcode 16, Courier_iOS from spm_dependency links twice into React
+      # Native's static pod libraries (duplicate symbols). The App Store has required Xcode 26
+      # since April 28, 2026.
       matrix:
         include:
           - runner: macos-26
             xcode: '26.6'
-          - runner: macos-15
-            xcode: '16.4'
     concurrency:
       group: build-ios-${{ matrix.xcode }}-${{ github.ref }}
       cancel-in-progress: true
@@ -141,18 +141,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pods-
 
-      # `pod update Courier_iOS` rather than `pod install`: bump PRs change the podspec pin without
-      # touching example-085/ios/Podfile.lock, and install would refuse the stale lock.
+      # React Native 0.75+ resolves Courier_iOS through Swift Package Manager (spm_dependency in
+      # the podspec), so it isn't a pod and Podfile.lock doesn't record it.
       - name: Install pods
         working-directory: example-085/ios
-        run: bundle exec pod update Courier_iOS
+        run: bundle exec pod install
 
-      - name: Check resolved Courier_iOS matches the podspec pin
+      - name: Check Courier_iOS isn't installed from CocoaPods
         run: |
-          PINNED=$(sed -nE 's/.*s\.dependency "Courier_iOS", "([^"]+)".*/\1/p' courier-react-native.podspec)
-          RESOLVED=$(sed -nE 's/^  - Courier_iOS \(([^)]+)\)$/\1/p' example-085/ios/Podfile.lock)
-          echo "Pinned: $PINNED  Resolved: $RESOLVED"
-          [ -n "$PINNED" ] && [ "$PINNED" = "$RESOLVED" ]
+          if grep -q "Courier_iOS" example-085/ios/Podfile.lock; then
+            echo "::error::Podfile.lock still lists Courier_iOS; the podspec fell back to CocoaPods trunk"
+            exit 1
+          fi
 
       # ARCHS=arm64 keeps the generic simulator destination from also building x86_64.
       - name: Build example app for iOS Simulator
@@ -167,12 +167,74 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -quiet
 
-  # The main branch ruleset requires a check named build-ios. It passes only when every Xcode
-  # build passed. always() keeps it from being skipped, since a skipped check counts as passed.
+      # ios/Package.swift (React Native's SwiftPM mode) pins courier-ios separately
+      - name: Check the Package.swift pin matches the podspec
+        run: |
+          PODSPEC=$(sed -nE 's/.*courier_ios_version = "([^"]+)".*/\1/p' courier-react-native.podspec)
+          PACKAGE=$(sed -nE 's/.*courier-ios", exact: "([^"]+)".*/\1/p' ios/Package.swift)
+          echo "podspec: $PODSPEC  Package.swift: $PACKAGE"
+          [ -n "$PODSPEC" ] && [ "$PODSPEC" = "$PACKAGE" ]
+
+      - name: Check resolved Courier_iOS matches the podspec pin
+        run: |
+          PINNED=$(sed -nE 's/.*courier_ios_version = "([^"]+)".*/\1/p' courier-react-native.podspec)
+          RESOLVED=$(python3 -c "import json; pins=json.load(open('example-085/ios/CourierReactNativeExample.xcworkspace/xcshareddata/swiftpm/Package.resolved'))['pins']; print(next(p['state']['version'] for p in pins if p['identity'] == 'courier-ios'))")
+          echo "Pinned: $PINNED  Resolved: $RESOLVED"
+          [ -n "$PINNED" ] && [ "$PINNED" = "$RESOLVED" ]
+
+  # Builds a new app in React Native's Swift Package Manager mode (0.87+), which uses the package's
+  # own ios/Package.swift instead of the podspec. No CocoaPods. The template's lint and test
+  # devDependencies are dropped first: they aren't needed to build, and a broken one shouldn't
+  # fail this job.
+  build-ios-swiftpm:
+    name: build-ios (SwiftPM mode)
+    runs-on: macos-26
+    timeout-minutes: 60
+    concurrency:
+      group: build-ios-swiftpm-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      LANG: en_US.UTF-8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Pack the library
+        run: npm pack --pack-destination "$RUNNER_TEMP"
+
+      - name: Create an app in SwiftPM mode
+        working-directory: ${{ runner.temp }}
+        run: |
+          npx --yes @react-native-community/cli@latest init SpmApp --version 0.88.1 --skip-git-init --skip-install
+          cd SpmApp
+          node -e "const p=require('./package.json');for(const k of Object.keys(p.devDependencies||{}))if(/eslint|prettier|jest|typescript|^@types\//.test(k))delete p.devDependencies[k];require('fs').writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+          npm install
+          npm install "$RUNNER_TEMP"/trycourier-courier-react-native-*.tgz
+          npx react-native spm add --deintegrate --yes | tee spm.log
+          grep -q "Self-managed: CourierReactNative" spm.log
+
+      - name: Build the app for iOS Simulator
+        working-directory: ${{ runner.temp }}/SpmApp/ios
+        run: |
+          xcodebuild build \
+            -project SpmApp.xcodeproj \
+            -scheme SpmApp \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            ARCHS=arm64 \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet
+
+  # The main branch ruleset requires a check named build-ios. It passes only when the CocoaPods
+  # and SwiftPM builds passed. always() keeps it from being skipped, since a skipped check counts as passed.
   build-ios:
-    needs: build-ios-xcode
+    needs: [build-ios-xcode, build-ios-swiftpm]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check the Xcode builds
-        run: '[ "${{ needs.build-ios-xcode.result }}" = "success" ]'
+      - name: Check the CocoaPods and SwiftPM builds
+        run: '[ "${{ needs.build-ios-xcode.result }}" = "success" ] && [ "${{ needs.build-ios-swiftpm.result }}" = "success" ]'
