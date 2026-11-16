@@ -14,7 +14,7 @@ import React
   override init() {
     super.init()
 
-    Courier.agent = CourierAgent.reactNativeIOS("6.0.10")
+    Courier.agent = CourierAgent.reactNativeIOS("6.1.0")
 
     UIApplication.shared.registerForRemoteNotifications()
 
