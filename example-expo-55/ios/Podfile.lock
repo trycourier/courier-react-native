@@ -28,12 +28,12 @@ PODS:
   - Courier_iOS (6.0.10)
   - DoubleConversion (1.1.6):
     - ReactNativeDependencies
-  - EXConstants (58.0.15):
+  - EXConstants (58.0.16):
     - ExpoModulesCore
   - EXJSONUtils (58.0.1)
   - EXManifests (58.0.1):
     - ExpoModulesCore
-  - Expo (58.0.23):
+  - Expo (58.0.25):
     - ExpoModulesCore
     - ExpoModulesJSI
     - hermes-engine
@@ -60,13 +60,13 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - expo-dev-client (58.0.18):
+  - expo-dev-client (58.0.20):
     - EXManifests
     - expo-dev-launcher
     - expo-dev-menu
     - expo-dev-menu-interface
     - EXUpdatesInterface
-  - expo-dev-launcher (58.0.18):
+  - expo-dev-launcher (58.0.20):
     - EXManifests
     - expo-dev-menu
     - expo-dev-menu-interface
@@ -97,8 +97,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - expo-dev-menu (58.0.12):
-    - expo-dev-menu/Main (= 58.0.12)
+  - expo-dev-menu (58.0.13):
+    - expo-dev-menu/Main (= 58.0.13)
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -121,8 +121,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - expo-dev-menu-interface (58.0.1)
-  - expo-dev-menu/Main (58.0.12):
+  - expo-dev-menu-interface (58.0.2)
+  - expo-dev-menu/Main (58.0.13):
     - EXManifests
     - expo-dev-menu-interface
     - ExpoModulesCore
@@ -149,7 +149,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ExpoAsset (58.0.20):
+  - ExpoAsset (58.0.21):
     - ExpoModulesCore
   - ExpoDevice (58.0.5):
     - ExpoModulesCore
@@ -157,19 +157,19 @@ PODS:
     - ExpoModulesCore
   - ExpoFileSystem (58.0.13):
     - ExpoModulesCore
-  - ExpoFont (58.0.11):
+  - ExpoFont (58.0.12):
     - ExpoModulesCore
   - ExpoGlassEffect (58.0.5):
     - ExpoModulesCore
   - ExpoImage (58.0.18):
     - ExpoModulesCore
-  - ExpoKeepAwake (58.0.3):
+  - ExpoKeepAwake (58.0.4):
     - ExpoModulesCore
-  - ExpoLinking (58.0.16):
+  - ExpoLinking (58.0.17):
     - ExpoModulesCore
   - ExpoLogBox (58.0.15):
     - React-Core
-  - ExpoModulesCore (58.0.30):
+  - ExpoModulesCore (58.1.0):
     - ExpoModulesJSI
     - hermes-engine
     - RCTRequired
@@ -194,29 +194,29 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ExpoModulesJSI (58.0.22):
+  - ExpoModulesJSI (58.0.23):
     - React-Core
     - ReactCommon
-  - ExpoModulesWorklets (58.0.30):
+  - ExpoModulesWorklets (58.1.0):
     - ExpoModulesCore
     - ExpoModulesJSI
-  - ExpoModulesWorkletsAdapter (58.0.30):
+  - ExpoModulesWorkletsAdapter (58.1.0):
     - ExpoModulesCore
     - ExpoModulesJSI
     - ExpoModulesWorklets
     - RNWorklets
-  - ExpoRouter (58.0.30):
+  - ExpoRouter (58.0.31):
     - ExpoModulesCore
     - RNScreens
-  - ExpoSplashScreen (58.0.13):
+  - ExpoSplashScreen (58.0.14):
     - ExpoModulesCore
-  - ExpoStatusBar (58.0.4):
+  - ExpoStatusBar (58.0.5):
     - ExpoModulesCore
-  - ExpoSymbols (58.0.4):
+  - ExpoSymbols (58.0.5):
     - ExpoModulesCore
   - ExpoSystemUI (58.0.7):
     - ExpoModulesCore
-  - ExpoWebBrowser (58.0.7):
+  - ExpoWebBrowser (58.0.8):
     - ExpoModulesCore
   - EXUpdatesInterface (58.0.1):
     - ExpoModulesCore
@@ -2801,34 +2801,34 @@ SPEC CHECKSUMS:
   courier-react-native: 80dd092beede86771046c73c4802c79d0fdc33a8
   Courier_iOS: 381d59e25d76228e332115fc65fbdc8e19ac94a2
   DoubleConversion: e85e4faac763226bfd1cc4c6a98d8355149b27a5
-  EXConstants: 5d5a46bb416fa1ea23846ac92b7275bb3e5cb19a
+  EXConstants: ceb37cba5719d97c5262d7618cd47280a0033646
   EXJSONUtils: d59bf6b18639752631a81818559b2675a46f99e2
   EXManifests: 4c2c92154197231d68ac1229056a089175f590e3
-  Expo: 6b384a90d4b27aa1b064496918221ccbf47f7bbe
-  expo-dev-client: 2e976eb36df82a9f3ddb222081287cedfd62ec7e
-  expo-dev-launcher: 330f9c1a6f819621e17afec19eeff619e23042ea
-  expo-dev-menu: 51aac24b90a354c6acf02de0a2dcf25017a6f8d2
-  expo-dev-menu-interface: d304e400271187edf1534704a4a05dcc140076e2
-  ExpoAsset: 5e205f521e60bb070f447e31041e8e049a137cec
+  Expo: 1361240d41ac0efa95bcb7244c77f1847f0900b0
+  expo-dev-client: 7bed74c9793874f0ab68a0ee3f495e587645afd6
+  expo-dev-launcher: 0ad2126296d95b366c069c3f59527dbca45f3b40
+  expo-dev-menu: a01b5d79916d0150471327c0c75014be53f1120c
+  expo-dev-menu-interface: a0ae020737b9f6de39689628181ffd572881cca9
+  ExpoAsset: 8b26eba004d9fad6bf15eff338af18143fecda94
   ExpoDevice: e66f7502d02e0bcab94ccb60385196772b27b283
   ExpoDomWebView: 0d5f78af2d77c988ed5032ec33c0729d3f27936d
   ExpoFileSystem: 28decdbda0c47127888bd16a7ecd53aee27e9af9
-  ExpoFont: cb7e04f2c3bb6425dcc763460925733c3304fafe
+  ExpoFont: 5471ff1ce8e24deb7bb1061a535e6661688e2dbd
   ExpoGlassEffect: 7c0e3917cb58499620eeaa779c17610c3860614a
   ExpoImage: 35fa1bbd7785dd56c27dd09512b77edd52714137
-  ExpoKeepAwake: 4b1d72985be0a6762469631fb767160859ce4284
-  ExpoLinking: 9d89c7c3f51e1cc9a77c29a4446d7ff2ca7ad295
+  ExpoKeepAwake: e1a0e96d021c062c2f454c9d5b2a7c7bf8459279
+  ExpoLinking: bf472429df2c3373aa74c62118606e1621808089
   ExpoLogBox: b8b45166261495bfea7743267194b543104f49a7
-  ExpoModulesCore: 1db0d1795b511967afbaf47f9b3827c74be7d014
-  ExpoModulesJSI: 5e2ead8c6ba5b0f94edd59a29429d86ce5f01757
-  ExpoModulesWorklets: 5cdbbf5298d020e931be6961b9e0e9f165495f9b
-  ExpoModulesWorkletsAdapter: 654b355df0e5dadb2260ce650758ba39d86833b1
-  ExpoRouter: 7933dea306d6f6d52693fa387111afb9664da06a
-  ExpoSplashScreen: c5c3bba5b07edf679348077bc16391fd9e2fa379
-  ExpoStatusBar: 9e7d5cf9d9cef51bdbbb199dfbb738f0e0bf789a
-  ExpoSymbols: 460147375f934214b5cdeaf412e6c15fa4ff9ea3
+  ExpoModulesCore: 81b0e027f6a4f95b0b59746439c9d8b8456da200
+  ExpoModulesJSI: 731946f68e4c4b7c2cbdc91e78a9d3736a62e1c0
+  ExpoModulesWorklets: 4a499e1dfacc0472dd1491f4bf7b6ed093c66dc9
+  ExpoModulesWorkletsAdapter: 581c2ad7ae470267eb48d74523643a7605d85ecb
+  ExpoRouter: 44db0d53734da6411669162d9e2efe44d3c03415
+  ExpoSplashScreen: 7f0bb54c1197425ac10c8219bdc0b3a89b58085f
+  ExpoStatusBar: a712d0eb1f57dd6eec1585e34e426fe32ea6056d
+  ExpoSymbols: 4a4cc0fdb4a630ffeb31a67d33620d9e32c2aba6
   ExpoSystemUI: e6dd3e396d64cbeeffb7a702ba9fce1d4eb763ea
-  ExpoWebBrowser: 0e67e2ac4c0b75f3f54902ce33cf4ec450901ddb
+  ExpoWebBrowser: ab84bf666b2140c60517c12473db38953962c4d7
   EXUpdatesInterface: c917c2087e6a9c0bf4d701fc073f2279efc79fd9
   fast_float: 908e5ee35999f3d91af4b962ac951acac591866c
   FBLazyVector: 67f73ac20aa6866d00d4319696528211c75a37f8
