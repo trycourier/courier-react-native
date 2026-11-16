@@ -6,7 +6,13 @@
 //
 
 @import Courier_iOS;
+// Swift Package Manager finds the header under include/courier-react-native. CocoaPods finds it by
+// name through its header map, including with use_frameworks!, where that folder doesn't exist.
+#if __has_include("courier-react-native/CourierReactNativeDelegate.h")
 #import "courier-react-native/CourierReactNativeDelegate.h"
+#else
+#import "CourierReactNativeDelegate.h"
+#endif
 #import <React/RCTRootView.h>
 #import <React/RCTBridge.h>
 #import <React/RCTBridge+Private.h>
