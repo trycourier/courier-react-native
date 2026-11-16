@@ -14,15 +14,11 @@ npm install @trycourier/courier-react-native
 
 Also available via `yarn add @trycourier/courier-react-native`. After installing, run `cd ios && pod install`.
 
-### iOS: Swift Package Manager
+### iOS
 
-The native iOS SDK, [Courier_iOS](https://github.com/trycourier/courier-ios), comes from Swift Package Manager, because CocoaPods trunk goes read-only on December 2, 2026. How it gets into your app depends on how your app builds:
+On React Native 0.75 and later, `pod install` gets the native iOS SDK, [Courier_iOS](https://github.com/trycourier/courier-ios), through Swift Package Manager. In React Native's Swift Package Manager mode, `npx react-native spm` picks up the package's own `Package.swift`. Nothing else to set up.
 
-- **CocoaPods (React Native 0.75 and later):** `pod install` adds Courier_iOS as a Swift Package Manager dependency, and Xcode downloads it from GitHub. Build with Xcode 26 or later.
-- **React Native's Swift Package Manager mode (0.87 and later):** the package ships its own `ios/Package.swift`, which `npx react-native spm` picks up. No CocoaPods involved.
-- **CocoaPods on React Native 0.74 and older:** Courier_iOS 6.0.10 installs from CocoaPods trunk, and stays on it.
-
-If your app has a notification service extension, add Courier_iOS to that target with Swift Package Manager as well: in Xcode, **File > Add Package Dependencies**, enter `https://github.com/trycourier/courier-ios`, choose **Exact Version** with the version this package pins (`courier_ios_version` in `node_modules/@trycourier/courier-react-native/courier-react-native.podspec`), and add the `Courier_iOS` library to the extension target. Don't add `pod 'Courier_iOS'` to the extension, because the app would end up with two copies of the SDK.
+**Notification service extension:** add Courier_iOS to the extension target with Swift Package Manager. In Xcode, choose **File > Add Package Dependencies**, enter `https://github.com/trycourier/courier-ios`, and pick **Up to Next Major Version**. If the extension has `pod 'Courier_iOS'` in your Podfile, remove it and run `pod install`.
 
 ## Quick Start
 
