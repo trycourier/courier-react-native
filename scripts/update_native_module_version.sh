@@ -52,7 +52,7 @@ update_swift_file "../ios/CourierReactNativeEventEmitter.swift"
 update_swift_file "../example-085/ios/CourierReactNativeExample/CourierDelegate.swift"
 
 # Update the Objective-C file 🍎
-update_objc_file "../ios/CourierReactNativeDelegate.m"
+update_objc_file "../ios/ObjC/CourierReactNativeDelegate.m"
 
 # Update the Kotlin file 🐘
 update_kotlin_file "../android/src/main/java/com/courierreactnative/Utils.kt"

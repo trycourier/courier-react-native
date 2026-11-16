@@ -21,7 +21,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - courier-react-native (6.0.10):
+  - courier-react-native (6.1.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
