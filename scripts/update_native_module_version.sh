@@ -49,6 +49,7 @@ update_objc_file() {
 
 # Update the Swift file 🦅
 update_swift_file "../ios/CourierReactNativeEventEmitter.swift"
+update_swift_file "../example-085/ios/CourierReactNativeExample/CourierDelegate.swift"
 
 # Update the Objective-C file 🍎
 update_objc_file "../ios/CourierReactNativeDelegate.m"
