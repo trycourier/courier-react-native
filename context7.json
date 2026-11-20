@@ -1,4 +1,33 @@
 {
+  "$schema": "https://context7.com/schema/context7.json",
   "url": "https://context7.com/trycourier/courier-react-native",
-  "public_key": "pk_U3bU2CvznIef5RMDpii82"
+  "public_key": "pk_U3bU2CvznIef5RMDpii82",
+  "projectTitle": "Courier React Native SDK (courier.com): Notification Inbox, Push and Preferences",
+  "description": "Official React Native SDK for Courier (courier.com), the notification platform. Add a prebuilt in-app notification Inbox (CourierInboxView), APNs and FCM push notifications with token sync and delivery tracking, and a notification preference center to React Native and Expo apps.",
+  "excludeFolders": [
+    "example-085",
+    "example-expo-55"
+  ],
+  "excludeFiles": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "Contributing.md",
+    "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    "LICENSE.md"
+  ],
+  "rules": [
+    "Use @trycourier/courier-react-native. Do not use the web packages (@trycourier/courier-react) or the deprecated v7 @trycourier/react-inbox in React Native.",
+    "Sign in with await Courier.shared.signIn({ accessToken: jwt, userId }).",
+    "Use CourierInboxView for the prebuilt Inbox and CourierPreferencesView for preferences; use Courier.shared.addInboxListener for a custom UI and remove it on unmount.",
+    "After npm install, run cd ios && pod install, then complete the native iOS and Android push setup in docs/push-notifications.md.",
+    "Mint the Courier JWT on your backend with your Courier API key (POST /auth/issue-token). Never put the API key in the app.",
+    "Call signIn once, after your own login resolves. Credentials persist across app launches. Call signOut when the user logs out.",
+    "The user_id in the JWT scope must match the userId passed to signIn, or the Inbox loads empty.",
+    "Scopes: inbox:read:messages inbox:write:events for Inbox; add read:preferences write:preferences for preferences and write:user-tokens for push.",
+    "Always set expires_in when minting. The SDK does not refresh tokens: mint a new JWT and call signIn again before it expires.",
+    "EU workspaces: mint the JWT at https://api.eu.courier.com/auth/issue-token and pass EU apiUrls to signIn. Token and client must be in the same region."
+  ]
 }
